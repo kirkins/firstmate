@@ -1,0 +1,4 @@
+PASS live Herdr fm-lab-lockguardproof-91946-1943: private setgid namespace normalized to 0700; lock=/Users/philipkirkbride/.no-mistakes/worktrees/9c758a282133/01M3F6AMJCAWDGE5BYCSHMXRC8/.tmp-herdr-lock-live/namespace/order-ccf4a74cf40cdcc1b729098e75aba426.lock
+PASS live Herdr fm-lab-lockguardproof-91946-1943: replaceable parent refused before creation
+PASS live Herdr fm-lab-lockguardproof-91946-1943: existing open namespace refused unchanged
+PASS live Herdr fm-lab-lockguardproof-91946-1943: symlinked namespace refused
