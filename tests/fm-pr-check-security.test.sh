@@ -266,13 +266,120 @@ if [ -n "${FM_TEST_NM_NEXT_ACTION:-}" ]; then
   printf '  next_action:\n    code: %s\n    command: no-mistakes axi status\n' "$FM_TEST_NM_NEXT_ACTION"
 fi
 SH
+  # curl, reproducing the real CLI's contract for the Forgejo REST surface
+  # bin/fm-pr-check.sh, bin/fm-pr-merge.sh, and bin/fm-pr-poll.sh read: the
+  # response body goes to -o's target (or stdout without one), the -w string is
+  # printed after it, and an @/dev/fd/3 header is consumed from the descriptor
+  # rather than an argument. The descriptor header is checked for the bearer
+  # shape and only a marker is logged, so the log can prove the token never
+  # reached a command line. The served readings are driven by FM_TEST_FORGEJO_*
+  # variables, and a POST to the merge endpoint flips later pull reads to the
+  # merged reading unless FM_TEST_FORGEJO_STAYS_OPEN holds them back.
+  cat > "$fakebin/curl" <<'SH'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "${FM_TEST_FORGEJO_CURL_LOG:-/dev/null}"
+method=GET
+url=
+out=
+code=0
+want_code=0
+hdr=
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    -o) out=$2; shift 2 ;;
+    -w) want_code=1; shift 2 ;;
+    -X) method=$2; shift 2 ;;
+    --data) shift 2 ;;
+    --max-time) shift 2 ;;
+    -sS) shift ;;
+    -H)
+      case "$2" in
+        @/dev/fd/3) IFS= read -r hdr <&3 ;;
+      esac
+      shift 2
+      ;;
+    -*) shift ;;
+    *) url=$1; shift ;;
+  esac
+done
+case "$hdr" in
+  'Authorization: token '*) printf 'auth-header-read\n' >&2 ;;
+esac
+[ "${FM_TEST_CURL_FAIL:-0}" = 0 ] || exit 1
+emit() {
+  if [ -n "$out" ]; then
+    printf '%s' "$1" > "$out"
+  else
+    printf '%s\n' "$1"
+  fi
+}
+case "$method $url" in
+  'GET https://'*'/api/v1/repos/'*'/pulls/'*'/merge')
+    code=404
+    emit '{"message":"not found"}'
+    ;;
+  'GET https://'*'/api/v1/repos/'*'/pulls/'*[!0-9]*)
+    code=404
+    emit '{"message":"not found"}'
+    ;;
+  'GET https://'*'/api/v1/repos/'*'/pulls/'*)
+    code=200
+    if [ -n "${FM_TEST_FORGEJO_PULL_RAW:-}" ]; then
+      emit "$FM_TEST_FORGEJO_PULL_RAW"
+    else
+      state=${FM_TEST_FORGEJO_STATE:-open}
+      merged=${FM_TEST_FORGEJO_MERGED:-false}
+      if [ -n "${FM_TEST_FORGEJO_DIR:-}" ] \
+        && [ -e "$FM_TEST_FORGEJO_DIR/forgejo-merge-called" ] \
+        && [ "${FM_TEST_FORGEJO_STAYS_OPEN:-0}" != 1 ]; then
+        state=closed
+        merged=true
+      fi
+      emit "{\"state\":\"$state\",\"draft\":${FM_TEST_FORGEJO_DRAFT:-false},\"merged\":$merged,\"mergeable\":${FM_TEST_FORGEJO_MERGEABLE:-true},\"head\":{\"sha\":\"${FM_TEST_FORGEJO_HEAD:-0123456789abcdef0123456789abcdef01234567}\"}}"
+    fi
+    ;;
+  'GET https://'*'/api/v1/repos/'*'/commits/'*'/status')
+    code=200
+    emit "{\"state\":\"${FM_TEST_FORGEJO_STATUS_STATE:-success}\",\"total_count\":${FM_TEST_FORGEJO_STATUS_COUNT:-1},\"statuses\":[]}"
+    ;;
+  'POST https://'*'/api/v1/repos/'*'/pulls/'*'/merge')
+    code=${FM_TEST_FORGEJO_MERGE_HTTP:-200}
+    if [ -n "${FM_TEST_FORGEJO_DIR:-}" ]; then
+      : > "$FM_TEST_FORGEJO_DIR/forgejo-merge-called"
+    fi
+    emit "{\"message\":\"${FM_TEST_FORGEJO_MERGE_MESSAGE:-}\"}"
+    ;;
+  *)
+    code=404
+    emit '{"message":"not found"}'
+    ;;
+esac
+[ "$want_code" = 0 ] || printf '%s\n' "$code"
+exit 0
+SH
+  # secret-tool, reproducing the real CLI's contract: one lookup answers the
+  # slot's current secret on stdout, and anything else fails. Only the slot
+  # keyed by instance host carries a Forgejo token, so the fake answers that
+  # shape alone and the log names every slot a caller asked for.
+  cat > "$fakebin/secret-tool" <<'SH'
+#!/usr/bin/env bash
+printf 'secret-tool %s\n' "$*" >> "${FM_TEST_FORGEJO_ST_LOG:-/dev/null}"
+[ "${FM_TEST_ST_FAIL:-0}" = 0 ] || exit 1
+[ "${1:-} ${2:-}" = 'lookup service' ] || exit 1
+case "$3" in
+  */forgejo-cli/omarchy) printf 'forgejotoken0123456789abcdef0123456789' ;;
+  *) exit 1 ;;
+esac
+SH
   chmod +x "$fakebin/gh" "$fakebin/gh-axi" "$fakebin/glab" "$fakebin/gerrit-axi"
-  chmod +x "$fakebin/no-mistakes"
+  chmod +x "$fakebin/no-mistakes" "$fakebin/curl" "$fakebin/secret-tool"
   : > "$dir/gh.log"
   : > "$dir/gh-axi.log"
   : > "$dir/glab.log"
   : > "$dir/gerrit-axi.log"
   : > "$dir/guard.log"
+  : > "$dir/forgejo-curl.log"
+  : > "$dir/forgejo-st.log"
   printf '%s\n' "$dir"
 }
 
@@ -308,6 +415,8 @@ run_check_entry() {
     FM_TEST_GUARD_LOG="$dir/guard.log" FM_TEST_GH_LOG="$dir/gh.log" \
     FM_TEST_GH_AXI_LOG="$dir/gh-axi.log" FM_TEST_GLAB_LOG="$dir/glab.log" \
     FM_TEST_GERRIT_AXI_LOG="$dir/gerrit-axi.log" \
+    FM_TEST_FORGEJO_DIR="$dir" FM_TEST_FORGEJO_CURL_LOG="$dir/forgejo-curl.log" \
+    FM_TEST_FORGEJO_ST_LOG="$dir/forgejo-st.log" \
     PATH="$dir/fakebin:$BASE_PATH" \
     "$PR_CHECK" "$@"
 }
@@ -319,6 +428,8 @@ run_merge_entry() {
     FM_TEST_GUARD_LOG="$dir/guard.log" FM_TEST_GH_LOG="$dir/gh.log" \
     FM_TEST_GH_AXI_LOG="$dir/gh-axi.log" FM_TEST_GLAB_LOG="$dir/glab.log" \
     FM_TEST_GERRIT_AXI_LOG="$dir/gerrit-axi.log" \
+    FM_TEST_FORGEJO_DIR="$dir" FM_TEST_FORGEJO_CURL_LOG="$dir/forgejo-curl.log" \
+    FM_TEST_FORGEJO_ST_LOG="$dir/forgejo-st.log" \
     PATH="$dir/fakebin:$BASE_PATH" \
     "$PR_MERGE" "$@"
 }
@@ -367,6 +478,34 @@ INVALID_URLS=(
   'http://gerrit.example/c/proj/+/1'
   'https://github.com/c/proj/+/1'
   'https://gerrit.example/c/proj/+/1 '
+  'https://forge.example/o/r/pulls/0'
+  'https://forge.example/o/r/pulls/01'
+  'https://forge.example/o/r/pulls/1/'
+  'https://forge.example/o/r/pulls/1/2'
+  'https://forge.example/o/r/pulls/1?x=1'
+  'https://forge.example/o/r/pulls/1#f'
+  'https://forge.example/o/r/pull/1'
+  'https://forge.example/o/r/issues/1'
+  'https://forge.example/o/r/compare/pulls/1'
+  'https://forge.example//r/pulls/1'
+  'https://forge.example/o//pulls/1'
+  'https://forge.example/-o/r/pulls/1'
+  'https://forge.example/o-/r/pulls/1'
+  'https://forge.example/o/r.git/pulls/1'
+  'https://forge.example/o/.git/pulls/1'
+  'https://forge.example/o/../pulls/1'
+  'https://forge.example/o/r+s/pulls/1'
+  'https://forge.example/o/r%2Fs/pulls/1'
+  'https://forge.example/o/r/pulls/1x'
+  'https://forge.example/o/r/pulls/+1'
+  'https://FORGE.example/o/r/pulls/1'
+  'https://forge.example:3000/o/r/pulls/1'
+  'https://user@forge.example/o/r/pulls/1'
+  'https://.forge.example/o/r/pulls/1'
+  'https://forge.example./o/r/pulls/1'
+  'http://forge.example/o/r/pulls/1'
+  'https://github.com/o/r/pulls/1'
+  'https://forge.example/o/r/pulls/1 '
   'https://github.com/o/r/pull/1/'
   ' https://github.com/o/r/pull/1'
   'https://github.com/o/r/pull/1 '
@@ -520,6 +659,25 @@ https://review.internal/c/group/apps/console/+/4201|review.internal|group/apps/c
 https://gerrit.example/c/proj/+/1|gerrit.example|proj|1
 https://gerrit.example.co.uk/c/a/b/c/d/+/42|gerrit.example.co.uk|a/b/c/d|42
 https://review.internal/c/All-Projects/+/123456|review.internal|All-Projects|123456
+EOF
+  # A Forgejo project is owner/repository, exactly two segments on a
+  # self-hosted instance, and the plural /pulls route carries the number on
+  # the project, so the owner and repository address the REST reads the way
+  # GitHub's pair addresses gh.
+  while IFS='|' read -r url host path owner repo number; do
+    [ -n "$url" ] || continue
+    fm_pr_url_parse "$url" || fail "parser rejected a canonical Forgejo pull request URL"
+    [ "$FM_PR_PROVIDER" = forgejo ] || fail "parser did not tag a Forgejo pull request URL as forgejo"
+    [ "$FM_PR_URL" = "$url" ] || fail "parser changed a canonical Forgejo pull request URL"
+    [ "$FM_PR_HOST" = "$host" ] || fail "parser returned wrong Forgejo host"
+    [ "$FM_PR_PATH" = "$path" ] || fail "parser returned wrong Forgejo project path"
+    [ "$FM_PR_OWNER" = "$owner" ] || fail "parser returned wrong Forgejo owner"
+    [ "$FM_PR_REPO" = "$repo" ] || fail "parser returned wrong Forgejo repository"
+    [ "$FM_PR_NUMBER" = "$number" ] || fail "parser returned wrong Forgejo pull request number"
+  done <<'EOF'
+https://git.example.dev/owner/repo/pulls/9|git.example.dev|owner/repo|owner|repo|9
+https://forge.internal/my-org/repo-name_with.parts/pulls/42|forge.internal|my-org/repo-name_with.parts|my-org|repo-name_with.parts|42
+https://git.lobbykit.net/hermes/opencode-k8s/pulls/435|git.lobbykit.net|hermes/opencode-k8s|hermes|opencode-k8s|435
 EOF
   fm_pr_url_parse https://github.com/a/b/pull/1 || fail "parser rejected canonical URL"
   [ "$FM_PR_PROVIDER" = github ] || fail "parser did not tag a pull request URL as github"
@@ -945,6 +1103,8 @@ run_poll() {
   local dir=$1
   FM_TEST_GH_LOG="$dir/gh.log" FM_TEST_GLAB_LOG="$dir/glab.log" \
     FM_TEST_GERRIT_AXI_LOG="$dir/gerrit-axi.log" \
+    FM_TEST_FORGEJO_DIR="$dir" FM_TEST_FORGEJO_CURL_LOG="$dir/forgejo-curl.log" \
+    FM_TEST_FORGEJO_ST_LOG="$dir/forgejo-st.log" \
     PATH="$dir/fakebin:$BASE_PATH" \
     bash "$dir/home/state/task-a.check.sh"
 }
@@ -1733,6 +1893,253 @@ test_gerrit_arming_records_no_patch_set_revision() {
   [ ! -e "$state/task-rev.merge-authority" ] || fail "a refused Gerrit merge recorded merge authority"
 
   pass "Gerrit arming records no patch set revision and the merge path refuses to submit"
+}
+
+# A helper for the Forgejo cases: a project clone whose origin binds the pull
+# request URL's instance and repository, as a project registered for that forge
+# would have. The origin spelling is the argument, so a case drives the binding
+# comparison with real remote URLs.
+make_forgejo_project() {  # <dir> <origin>
+  mkdir -p "$1/project"
+  git -C "$1/project" init -q
+  git -C "$1/project" remote add origin "$2"
+}
+
+FORGEJO_URL=https://git.example.dev/owner/repo/pulls/9
+FORGEJO_HEAD=0123456789abcdef0123456789abcdef01234567
+FORGEJO_TOKEN_BYTES=forgejotoken0123456789abcdef0123456789
+
+# Arming records a Forgejo pull request only for a task whose project binds it
+# to the same instance and repository, records the REST-reported head, and arms
+# the poll, with the instance token read from the host-keyed keyring slot and
+# reaching curl only through the descriptor header, never a command line.
+test_forgejo_arming_binds_records_and_arms() {
+  local dir state
+  dir=$(make_case forgejo-arming)
+  state="$dir/home/state"
+  ln -sf "$REAL_JQ" "$dir/fakebin/jq"
+  make_forgejo_project "$dir" https://git.example.dev/owner/repo.git
+  write_task_meta "$dir" task-fj
+  run_check_entry "$dir" task-fj "$FORGEJO_URL" > "$dir/stdout" 2> "$dir/stderr" \
+    || fail "arming refused a bound Forgejo pull request: $(cat "$dir/stderr")"
+  grep -qxF "pr=$FORGEJO_URL" "$state/task-fj.meta" \
+    || fail "arming did not record the pull request URL"
+  grep -qxF "pr_head=$FORGEJO_HEAD" "$state/task-fj.meta" \
+    || fail "arming did not record the REST-reported head"
+  [ "$(cat "$state/task-fj.pr-poll")" = "forgejo
+$FORGEJO_URL
+git.example.dev
+owner/repo
+9" ] || fail "published Forgejo sidecar bytes were not exact"
+  [ -f "$state/task-fj.check.sh" ] || fail "arming left no poll armed"
+  grep -qF "https://git.example.dev/api/v1/repos/owner/repo/pulls/9" "$dir/forgejo-curl.log" \
+    || fail "the pull read did not address the URL's own instance"
+  ! grep -qF "$FORGEJO_TOKEN_BYTES" "$dir/forgejo-curl.log" \
+    || fail "the API token appeared on a curl command line"
+  grep -qF "secret-tool lookup service git.example.dev/forgejo-cli/omarchy" "$dir/forgejo-st.log" \
+    || fail "the token was not read from the host-keyed keyring slot"
+
+  # An SSH origin with a user and port names the same repository, so the
+  # binding compares the host and owner/repository, not the URL spelling.
+  dir=$(make_case forgejo-arming-ssh)
+  state="$dir/home/state"
+  ln -sf "$REAL_JQ" "$dir/fakebin/jq"
+  make_forgejo_project "$dir" 'ssh://git@git.example.dev:2222/owner/repo.git'
+  write_task_meta "$dir" task-fj
+  run_check_entry "$dir" task-fj "$FORGEJO_URL" > "$dir/stdout" 2> "$dir/stderr" \
+    || fail "arming refused an SSH origin naming the same repository: $(cat "$dir/stderr")"
+  [ -f "$state/task-fj.check.sh" ] || fail "an SSH origin left no poll armed"
+  pass "arming records a bound Forgejo pull request, its head, and a poll keyed by the URL's instance"
+}
+
+# A draft cannot be merged, so a poll armed on one waits for an event that
+# cannot occur. A positive Forgejo draft reading refuses before anything is
+# recorded or armed, and an unreadable reading arms as on GitHub.
+test_forgejo_draft_pull_request_is_not_armed() {
+  local dir state rc
+  dir=$(make_case forgejo-draft)
+  state="$dir/home/state"
+  ln -sf "$REAL_JQ" "$dir/fakebin/jq"
+  make_forgejo_project "$dir" https://git.example.dev/owner/repo.git
+  write_task_meta "$dir" task-fj
+  cp "$state/task-fj.meta" "$dir/meta.before"
+  set +e
+  FM_TEST_FORGEJO_DRAFT=true run_check_entry "$dir" task-fj "$FORGEJO_URL" \
+    > "$dir/stdout" 2> "$dir/stderr"; rc=$?
+  set -e
+  [ "$rc" -ne 0 ] || fail "arming accepted a draft Forgejo pull request"
+  grep -qi 'draft' "$dir/stderr" || fail "the refusal did not name the draft state"
+  grep -qF "$FORGEJO_URL" "$dir/stderr" \
+    || fail "the refusal did not name the pull request"
+  cmp -s "$dir/meta.before" "$state/task-fj.meta" \
+    || fail "a refused draft changed the task metadata"
+  [ ! -e "$state/task-fj.check.sh" ] || fail "a refused draft armed a poll"
+  [ ! -e "$state/task-fj.pr-poll" ] || fail "a refused draft wrote a poll sidecar"
+  [ ! -s "$dir/guard.log" ] || fail "a refused draft reached the guard"
+
+  dir=$(make_case forgejo-draft-unreadable)
+  state="$dir/home/state"
+  ln -sf "$REAL_JQ" "$dir/fakebin/jq"
+  make_forgejo_project "$dir" https://git.example.dev/owner/repo.git
+  write_task_meta "$dir" task-fj
+  FM_TEST_FORGEJO_PULL_RAW='not json at all' run_check_entry "$dir" task-fj "$FORGEJO_URL" \
+    > "$dir/stdout" 2> "$dir/stderr" || fail "an unreadable pull reading blocked arming"
+  [ -f "$state/task-fj.check.sh" ] || fail "an unreadable pull reading was not armed"
+  ! grep -q '^pr_head=' "$state/task-fj.meta" \
+    || fail "an unreadable reading still recorded a head"
+  pass "arming refuses a Forgejo draft, naming it, and arms an unreadable reading"
+}
+
+# The binding gate refuses a pull request that names an instance or repository
+# the task's project is not bound to, before anything is recorded or armed,
+# naming the origin it compared against rather than guessing.
+test_forgejo_binding_mismatch_refuses() {
+  local dir state rc
+  dir=$(make_case forgejo-wrong-host)
+  state="$dir/home/state"
+  ln -sf "$REAL_JQ" "$dir/fakebin/jq"
+  make_forgejo_project "$dir" https://other.example/owner/repo.git
+  write_task_meta "$dir" task-fj
+  set +e
+  run_check_entry "$dir" task-fj "$FORGEJO_URL" > "$dir/stdout" 2> "$dir/stderr"; rc=$?
+  set -e
+  [ "$rc" -ne 0 ] || fail "arming accepted a pull request from another instance"
+  grep -qF "whose host is other.example, not git.example.dev" "$dir/stderr" \
+    || fail "the host mismatch refusal did not name the origin: $(cat "$dir/stderr")"
+  ! grep -q '^pr=' "$state/task-fj.meta" \
+    || fail "a host mismatch still recorded pr="
+  [ ! -e "$state/task-fj.check.sh" ] || fail "a host mismatch armed a poll"
+
+  dir=$(make_case forgejo-wrong-repo)
+  state="$dir/home/state"
+  ln -sf "$REAL_JQ" "$dir/fakebin/jq"
+  make_forgejo_project "$dir" https://git.example.dev/owner/other.git
+  write_task_meta "$dir" task-fj
+  set +e
+  run_check_entry "$dir" task-fj "$FORGEJO_URL" > "$dir/stdout" 2> "$dir/stderr"; rc=$?
+  set -e
+  [ "$rc" -ne 0 ] || fail "arming accepted a pull request for another repository"
+  grep -qF "whose repository is owner/other, not owner/repo" "$dir/stderr" \
+    || fail "the repository mismatch refusal did not name the origin: $(cat "$dir/stderr")"
+  [ ! -e "$state/task-fj.check.sh" ] || fail "a repository mismatch armed a poll"
+
+  # A project that is not a git copy cannot be bound at all, so it refuses too.
+  dir=$(make_case forgejo-no-origin)
+  state="$dir/home/state"
+  ln -sf "$REAL_JQ" "$dir/fakebin/jq"
+  mkdir -p "$dir/project"
+  write_task_meta "$dir" task-fj
+  set +e
+  run_check_entry "$dir" task-fj "$FORGEJO_URL" > "$dir/stdout" 2> "$dir/stderr"; rc=$?
+  set -e
+  [ "$rc" -ne 0 ] || fail "arming accepted a pull request with no readable origin"
+  grep -qF 'no readable origin remote' "$dir/stderr" \
+    || fail "the unreadable-origin refusal did not say so: $(cat "$dir/stderr")"
+  [ ! -e "$state/task-fj.check.sh" ] || fail "an unreadable origin armed a poll"
+  pass "arming refuses a Forgejo pull request the task's project is not bound to"
+}
+
+# The Forgejo watch must wake exactly on a merged pull request, on any
+# instance, and never on an unreadable, unparseable, or half-merged reading.
+# The instance token is read fresh each poll from the host-keyed keyring slot
+# and reaches curl through the descriptor header, never a command line.
+test_forgejo_merge_watch() {
+  local dir state out tool notool bindir entry name
+  dir=$(make_case forgejo-merge-watch)
+  state="$dir/home/state"
+  ln -sf "$REAL_JQ" "$dir/fakebin/jq"
+
+  write_poll_meta "$state" task-a "$FORGEJO_URL"
+  fm_pr_poll_prepare "$state" task-a forgejo "$FORGEJO_URL" git.example.dev owner/repo 9 "$POLL" \
+    || fail "could not prepare a Forgejo poll"
+  fm_pr_poll_publish_prepared || fail "could not publish a Forgejo poll"
+  fm_pr_poll_artifacts_valid "$state" task-a "$POLL" \
+    || fail "published Forgejo poll provenance or metadata binding was invalid"
+
+  # Anything but a positive merged reading stays silent, including a pull
+  # whose payload is unparseable, while a merged reading on a closed pull -
+  # what a merged pull request reads back as on Forgejo - still wakes.
+  out=$(run_poll "$dir")
+  [ -z "$out" ] || fail "Forgejo poll emitted for an unmerged pull request"
+  out=$(FM_TEST_FORGEJO_PULL_RAW='not json at all' run_poll "$dir")
+  [ -z "$out" ] || fail "Forgejo poll emitted for an unparseable payload"
+  out=$(FM_TEST_FORGEJO_PULL_RAW='{"merged":"true"}' run_poll "$dir")
+  [ -z "$out" ] || fail "Forgejo poll emitted for a string-typed merged field"
+  out=$(FM_TEST_CURL_FAIL=1 run_poll "$dir")
+  [ -z "$out" ] || fail "Forgejo poll emitted after a curl failure"
+  out=$(FM_TEST_ST_FAIL=1 run_poll "$dir")
+  [ -z "$out" ] || fail "Forgejo poll emitted with the token slot unreadable"
+
+  out=$(FM_TEST_FORGEJO_MERGED=true FM_TEST_FORGEJO_STATE=closed run_poll "$dir")
+  [ "$out" = merged ] || fail "Forgejo poll stayed silent for a closed merged pull request"
+  grep -qF "https://git.example.dev/api/v1/repos/owner/repo/pulls/9" "$dir/forgejo-curl.log" \
+    || fail "the poll did not address the sidecar's own instance"
+  ! grep -qF "$FORGEJO_TOKEN_BYTES" "$dir/forgejo-curl.log" \
+    || fail "the instance token reached a curl command line"
+  ! grep -qF "$FORGEJO_TOKEN_BYTES" "$dir/forgejo-st.log" \
+    || fail "the instance token was logged by the keyring read"
+
+  # A doctored sidecar cannot redirect the poll: the stored parts must rebuild
+  # the stored URL exactly.
+  printf '%s\n%s\n%s\n%s\n%s\n' forgejo "$FORGEJO_URL" elsewhere.example owner/repo 9 \
+    > "$state/task-a.pr-poll"
+  out=$(FM_TEST_FORGEJO_MERGED=true run_poll "$dir")
+  [ -z "$out" ] || fail "Forgejo poll emitted for a sidecar whose host was swapped"
+  printf '%s\n%s\n%s\n%s\n%s\n' forgejo "$FORGEJO_URL" git.example.dev owner/other 9 \
+    > "$state/task-a.pr-poll"
+  out=$(FM_TEST_FORGEJO_MERGED=true run_poll "$dir")
+  [ -z "$out" ] || fail "Forgejo poll emitted for a sidecar whose repository was swapped"
+  printf '%s\n%s\n%s\n%s\n%s\n' forgejo "$FORGEJO_URL" git.example.dev owner/repo 10 \
+    > "$state/task-a.pr-poll"
+  out=$(FM_TEST_FORGEJO_MERGED=true run_poll "$dir")
+  [ -z "$out" ] || fail "Forgejo poll emitted for a sidecar whose number was swapped"
+
+  # An absent tool must produce no wake rather than a false merge, and arming
+  # is where the missing tool is reported. The whole search path is mirrored
+  # without it, because a real one anywhere on PATH would prove nothing.
+  make_forgejo_project "$dir" https://git.example.dev/owner/repo.git
+  for tool in curl jq secret-tool; do
+    notool="$dir/no-$tool"
+    rm -rf "$notool"
+    mkdir -p "$notool"
+    while IFS= read -r bindir; do
+      [ -d "$bindir" ] || continue
+      for entry in "$bindir"/*; do
+        [ -e "$entry" ] || continue
+        name=$(basename "$entry")
+        [ "$name" = "$tool" ] && continue
+        [ -e "$notool/$name" ] || ln -s "$entry" "$notool/$name" 2>/dev/null
+      done
+    done <<EOF
+$dir/fakebin
+$(printf '%s\n' "$BASE_PATH" | tr ':' '\n')
+EOF
+    ! PATH="$notool" command -v "$tool" >/dev/null 2>&1 \
+      || fail "the $tool-free search path still resolved $tool"
+    out=$(FM_TEST_FORGEJO_MERGED=true \
+      FM_TEST_FORGEJO_CURL_LOG="$dir/forgejo-curl.log" \
+      FM_TEST_FORGEJO_ST_LOG="$dir/forgejo-st.log" \
+      PATH="$notool" bash "$state/task-a.check.sh")
+    [ -z "$out" ] || fail "Forgejo poll emitted with $tool absent from PATH"
+
+    write_task_meta "$dir" "task-no-$tool"
+    set +e
+    out=$(FM_ROOT_OVERRIDE="$dir/root" FM_HOME="$dir/home" \
+      FM_TEST_GUARD_LOG="$dir/guard.log" \
+      FM_TEST_FORGEJO_DIR="$dir" FM_TEST_FORGEJO_CURL_LOG="$dir/forgejo-curl.log" \
+      FM_TEST_FORGEJO_ST_LOG="$dir/forgejo-st.log" PATH="$notool" \
+      "$PR_CHECK" "task-no-$tool" "$FORGEJO_URL" 2>&1)
+    rc=$?
+    set -e
+    [ "$rc" -ne 0 ] || fail "arming a Forgejo watch succeeded with $tool absent"
+    case "$out" in
+      *"requires $tool on PATH"*) ;;
+      *) fail "arming with $tool absent did not report the missing tool: $out" ;;
+    esac
+    [ ! -e "$state/task-no-$tool.check.sh" ] || fail "refused Forgejo arming left a poll armed"
+  done
+
+  pass "the Forgejo watch wakes only on an explicit merged reading and never on a moved sidecar"
 }
 
 # A push to refs/for/ leaves no ref a fetch can see, so a remote-tracking ref
@@ -3443,6 +3850,10 @@ test_parser_matrix
 test_gitlab_merge_watch
 test_gerrit_merge_watch
 test_gerrit_arming_records_no_patch_set_revision
+test_forgejo_arming_binds_records_and_arms
+test_forgejo_draft_pull_request_is_not_armed
+test_forgejo_binding_mismatch_refuses
+test_forgejo_merge_watch
 test_gerrit_ready_gate_reads_the_published_tree
 test_gerrit_nm_ready_gate_requires_recovered_custody
 test_merged_poll_retires_once

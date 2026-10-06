@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
-# Static watcher program for a validated pull request, merge request, or Gerrit
-# change poll sidecar.
+# Static watcher program for a validated pull request, merge request, Gerrit
+# change, or Forgejo pull request poll sidecar.
 # It emits exactly one merged line for a merged change and stays silent
 # otherwise, including on every error, so a failed lookup can never be read as
 # a merge. The provider-tagged identity is data in the sidecar and is never
 # interpolated into this source: these bytes are identical for every task.
-# Each provider is read through its own standard CLI, gh for GitHub, glab for
-# GitLab, and gerrit-axi for Gerrit, so an upstream checkout needs no extra
-# tooling to follow the first two. The Gerrit branch additionally needs jq,
-# which bin/fm-pr-check.sh refuses to arm a Gerrit watch without.
+# Each provider is read through its own standard surface, gh for GitHub, glab
+# for GitLab, gerrit-axi for Gerrit, and the instance's own REST API with curl
+# and jq for Forgejo, so an upstream checkout needs no extra tooling to follow
+# the first two. The Gerrit and Forgejo branches additionally need jq, which
+# bin/fm-pr-check.sh refuses to arm either watch without. The Forgejo branch
+# also needs secret-tool for the instance token, read fresh each poll from the
+# same keyring slot the operator helper stack keys by host; it reaches curl as
+# a header read from a file descriptor rather than an argument.
 set -u
 LC_ALL=C
 export LC_ALL
@@ -107,6 +111,54 @@ case "$provider" in
     raw=$(glab mr view "$number" -R "https://$host/$path" 2>/dev/null) || exit 0
     state=$(printf '%s\n' "$raw" | sed -n 's/^state:[[:space:]]*//p' | head -1) || exit 0
     [ "$state" = merged ] && printf '%s\n' merged
+    ;;
+  forgejo)
+    [ "${#host}" -ge 1 ] && [ "${#host}" -le 253 ] || exit 0
+    [ "$host" != github.com ] || exit 0
+    case "$host" in
+      .*|*.|*..*|*[!a-z0-9.-]*) exit 0 ;;
+    esac
+    [ "${#path}" -ge 3 ] && [ "${#path}" -le 201 ] || exit 0
+    case "$path" in
+      /*|*/|*//*) exit 0 ;;
+    esac
+    # A Forgejo project is exactly owner/repository, one organization or user
+    # and then the repository, so the path splits once and only once. The owner
+    # follows the username grammar the forge itself enforces - alphanumerics,
+    # underscores, and single hyphens - and the repository the general name
+    # rules, exactly as bin/fm-pr-lib.sh parses the URL.
+    owner=${path%%/*}
+    repo=${path#*/}
+    [ "$owner/$repo" = "$path" ] || exit 0
+    [ "${#owner}" -ge 1 ] && [ "${#owner}" -le 100 ] || exit 0
+    case "$owner" in
+      .|..|-*|*-|*--*|*[!A-Za-z0-9_-]*) exit 0 ;;
+    esac
+    [ "${#repo}" -ge 1 ] && [ "${#repo}" -le 100 ] || exit 0
+    case "$repo" in
+      .|..|-*|*.git|*[!A-Za-z0-9._-]*) exit 0 ;;
+    esac
+    [ "$url" = "https://$host/$path/pulls/$number" ] || exit 0
+    # The REST read needs curl and jq for the request and the record, and
+    # secret-tool for the instance token from the same keyring slot the
+    # operator helper stack keys by host. The token shape is rechecked because
+    # the fd header below is built from it; a slot that changed into anything
+    # else stays silent rather than sending a malformed credential.
+    command -v curl >/dev/null 2>&1 || exit 0
+    command -v jq >/dev/null 2>&1 || exit 0
+    command -v secret-tool >/dev/null 2>&1 || exit 0
+    token=$(secret-tool lookup service "$host/forgejo-cli/omarchy" 2>/dev/null) || exit 0
+    case "$token" in
+      ''|*[!A-Za-z0-9_-]*) exit 0 ;;
+    esac
+    [ "${#token}" -ge 20 ] && [ "${#token}" -le 256 ] || exit 0
+    json=$(curl -sS --max-time 30 -H @/dev/fd/3 \
+      3< <(printf 'Authorization: token %s\n' "$token") \
+      "https://$host/api/v1/repos/$owner/$repo/pulls/$number" 2>/dev/null) || exit 0
+    merged=$(printf '%s' "$json" | jq -r '
+      if type == "object" and (.merged | type) == "boolean"
+      then (.merged | tostring) else "" end' 2>/dev/null) || exit 0
+    [ "$merged" = true ] && printf '%s\n' merged
     ;;
   gerrit)
     [ "${#host}" -ge 1 ] && [ "${#host}" -le 253 ] || exit 0
