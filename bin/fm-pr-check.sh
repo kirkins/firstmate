@@ -53,6 +53,8 @@ URL=$FM_PR_URL
 PROVIDER=$FM_PR_PROVIDER
 HOST=$FM_PR_HOST
 PROJECT_PATH=$FM_PR_PATH
+OWNER=$FM_PR_OWNER
+REPO=$FM_PR_REPO
 NUMBER=$FM_PR_NUMBER
 
 # Task-derived paths are constructed only after the canonical ID validation.
@@ -131,7 +133,7 @@ fi
 FORGEJO_DRAFT=
 FORGEJO_HEAD=
 if [ "$PROVIDER" = forgejo ]; then
-  if FORGEJO_FIELDS=$(fm_pr_forgejo_read_pull "$HOST" "$FM_PR_OWNER" "$FM_PR_REPO" "$NUMBER"); then
+  if FORGEJO_FIELDS=$(fm_pr_forgejo_read_pull "$HOST" "$OWNER" "$REPO" "$NUMBER"); then
     FORGEJO_DRAFT=$(printf '%s\n' "$FORGEJO_FIELDS" | sed -n 's/^draft=//p')
     FORGEJO_HEAD=$(printf '%s\n' "$FORGEJO_FIELDS" | sed -n 's/^head=//p')
   fi

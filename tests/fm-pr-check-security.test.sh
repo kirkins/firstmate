@@ -2039,6 +2039,65 @@ test_forgejo_binding_mismatch_refuses() {
   pass "arming refuses a Forgejo pull request the task's project is not bound to"
 }
 
+# Arming finishes a crash-left retirement receipt for the task's previous
+# pull request before it reads the new one, and finishing that receipt
+# re-parses the old URL into the shared parse globals. The arming pull read
+# must still address the new URL's own repository whether the recovered
+# receipt carried a GitHub identity or a Forgejo one from another repository
+# of the same instance, and the new pull request is recorded and armed only
+# through that reading.
+test_forgejo_arming_after_retirement_recovery_reads_own_repo() {
+  local dir state
+  dir=$(make_case forgejo-arming-after-github-recovery)
+  state="$dir/home/state"
+  ln -sf "$REAL_JQ" "$dir/fakebin/jq"
+  make_forgejo_project "$dir" https://git.example.dev/owner/repo.git
+  write_task_meta "$dir" task-fj
+  printf 'pr=%s\n' https://github.com/o/r/pull/3 >> "$state/task-fj.meta"
+  seed_canonical_poll "$dir" task-fj https://github.com/o/r/pull/3
+  fm_pr_poll_snapshot_capture "$state" task-fj "$POLL" \
+    || fail "could not snapshot the GitHub crash receipt fixture"
+  fm_pr_poll_retirement_publish "$state" task-fj "$POLL" merged \
+    || fail "could not publish the GitHub crash receipt fixture"
+  run_check_entry "$dir" task-fj "$FORGEJO_URL" > "$dir/stdout" 2> "$dir/stderr" \
+    || fail "arming after a GitHub receipt recovery failed: $(cat "$dir/stderr")"
+  grep -qF "https://git.example.dev/api/v1/repos/owner/repo/pulls/9" "$dir/forgejo-curl.log" \
+    || fail "the pull read after a GitHub receipt recovery did not address the new URL's repository"
+  ! grep -qF "/api/v1/repos/o/r/pulls/" "$dir/forgejo-curl.log" \
+    || fail "the pull read after a GitHub receipt recovery addressed the previous pull request's repository"
+  grep -qxF "pr=$FORGEJO_URL" "$state/task-fj.meta" \
+    || fail "arming after a GitHub receipt recovery did not record the new pull request"
+  grep -qxF "pr_head=$FORGEJO_HEAD" "$state/task-fj.meta" \
+    || fail "arming after a GitHub receipt recovery did not record the REST-reported head"
+  [ -f "$state/task-fj.check.sh" ] \
+    || fail "arming after a GitHub receipt recovery left no poll armed"
+
+  dir=$(make_case forgejo-arming-after-forgejo-recovery)
+  state="$dir/home/state"
+  ln -sf "$REAL_JQ" "$dir/fakebin/jq"
+  make_forgejo_project "$dir" https://git.example.dev/owner/repo.git
+  write_task_meta "$dir" task-fj
+  printf 'pr=%s\n' https://git.example.dev/old/other/pulls/3 >> "$state/task-fj.meta"
+  seed_canonical_poll "$dir" task-fj https://git.example.dev/old/other/pulls/3
+  fm_pr_poll_snapshot_capture "$state" task-fj "$POLL" \
+    || fail "could not snapshot the Forgejo crash receipt fixture"
+  fm_pr_poll_retirement_publish "$state" task-fj "$POLL" merged \
+    || fail "could not publish the Forgejo crash receipt fixture"
+  run_check_entry "$dir" task-fj "$FORGEJO_URL" > "$dir/stdout" 2> "$dir/stderr" \
+    || fail "arming after a Forgejo receipt recovery failed: $(cat "$dir/stderr")"
+  grep -qF "https://git.example.dev/api/v1/repos/owner/repo/pulls/9" "$dir/forgejo-curl.log" \
+    || fail "the pull read after a Forgejo receipt recovery did not address the new URL's repository"
+  ! grep -qF "/api/v1/repos/old/other/pulls/" "$dir/forgejo-curl.log" \
+    || fail "the pull read after a Forgejo receipt recovery addressed the previous pull request's repository"
+  [ "$(cat "$state/task-fj.pr-poll")" = "forgejo
+$FORGEJO_URL
+git.example.dev
+owner/repo
+9" ] \
+    || fail "arming after a Forgejo receipt recovery published the wrong poll identity"
+  pass "arming after a retirement recovery reads and records the new pull request's own repository"
+}
+
 # The Forgejo watch must wake exactly on a merged pull request, on any
 # instance, and never on an unreadable, unparseable, or half-merged reading.
 # The instance token is read fresh each poll from the host-keyed keyring slot
@@ -3853,6 +3912,7 @@ test_gerrit_arming_records_no_patch_set_revision
 test_forgejo_arming_binds_records_and_arms
 test_forgejo_draft_pull_request_is_not_armed
 test_forgejo_binding_mismatch_refuses
+test_forgejo_arming_after_retirement_recovery_reads_own_repo
 test_forgejo_merge_watch
 test_gerrit_ready_gate_reads_the_published_tree
 test_gerrit_nm_ready_gate_requires_recovered_custody
