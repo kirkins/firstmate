@@ -127,7 +127,7 @@
 # flags to pass them to and silently dropping one would change what the
 # caller asked for.
 #
-# Before either forge merge, the task's existing per-task control lock
+# Before any forge merge, the task's existing per-task control lock
 # serializes the captain-hold check through the forge command. A still-held or
 # unreadable row refuses before that command, so a captain approval must be
 # recorded as an `answer --release` before this entrypoint is invoked. While
@@ -1553,7 +1553,7 @@ FIELDS
   printf 'verified: %s is merged (state=%s, merged=true)\n' "$URL" "${state:-closed}"
 }
 
-# Record before either forge call. This arms the merge poll without claiming a
+# Record before any forge call. This arms the merge poll without claiming a
 # landed outcome, so even a provider read failure after a real merge cannot
 # leave teardown without the PR identity it needs to verify the result.
 away_status=0
