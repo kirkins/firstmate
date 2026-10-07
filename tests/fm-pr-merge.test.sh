@@ -2187,6 +2187,36 @@ test_forgejo_url_resolves_and_merges() {
   pass "fm-pr-merge merges a Forgejo pull request through the instance REST API instead of refusing it"
 }
 
+# A repository name may lawfully carry dots inside it (fm_pr_forgejo_path_valid
+# accepts one), so the REST boundary must read those dots as name bytes, not as
+# traversal: only a path segment exactly ".." is refused, and a dotted
+# repository completes the same guarded merge path any other name does.
+test_forgejo_dotted_repository_name_merges() {
+  local case_dir rc path url
+  case_dir=$(make_forgejo_case forgejo-dotted-repo)
+  path=owner/repo..tools
+  url="https://$FJ_HOST/$path/pulls/9"
+  git -C "$case_dir/project" remote set-url origin "https://$FJ_HOST/$path.git"
+
+  set +e
+  FM_TEST_FORGEJO_DIR="$case_dir" \
+  FM_TEST_FORGEJO_CURL_LOG="$case_dir/forgejo-curl.log" \
+  FM_TEST_FORGEJO_ST_LOG="$case_dir/forgejo-st.log" \
+  FM_TEST_HOME="$case_dir/home" \
+    run_pr_merge "$case_dir" task-x1 "$url" \
+    > "$case_dir/stdout" 2> "$case_dir/stderr"
+  rc=$?
+  set -e
+
+  expect_code 0 "$rc" "forgejo-dotted-repo: a validly named dotted repository should merge"
+  grep -qF -- "-X POST -H @/dev/fd/3 https://$FJ_HOST/api/v1/repos/$path/pulls/9/merge" \
+    "$case_dir/forgejo-curl.log" \
+    || fail "forgejo-dotted-repo: the merge did not address the dotted repository endpoint"
+  assert_grep "verified: $url is open and mergeable" "$case_dir/stderr" \
+    "forgejo-dotted-repo: the verified state was not reported"
+  pass "fm-pr-merge merges a pull request on a repository whose name contains dots"
+}
+
 test_forgejo_reports_every_failing_condition() {
   local case_dir rc expected
   case_dir=$(make_forgejo_case forgejo-refuse-all)
@@ -2811,6 +2841,7 @@ test_gitlab_each_condition_refuses_independently
 test_gitlab_reports_every_failing_condition
 test_gitlab_stale_recorded_head_is_reported
 test_forgejo_url_resolves_and_merges
+test_forgejo_dotted_repository_name_merges
 test_forgejo_reports_every_failing_condition
 test_forgejo_already_merged_refuses
 test_forgejo_no_checks_is_not_green

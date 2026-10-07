@@ -6,15 +6,17 @@
 # the default branch, and local-only projects against the local default branch.
 # A task whose meta records base_branch= (bin/fm-spawn.sh) compares against
 # origin/<base_branch> instead of the default branch.
-# When state/<id>.meta records pr= as a GitHub pull-request URL or a bare
-# number for an open PR, the compare side is ALWAYS a freshly fetched
-# refs/pull/<n>/head by default so review stays current after no-mistakes fix
-# rounds push to the PR. A recorded pr_head= is only a fallback when fetch fails
-# (stale recorded SHAs must never win over a reachable remote PR head). If
-# neither PR head can be resolved, fall back to the local branch with a warning.
-# A GitLab merge request and a Gerrit change expose no comparable ref and record
-# no pr_head, so a task recording one always takes that warning path;
-# docs/architecture.md owns that fallback. Without pr=, compare the task's
+# When state/<id>.meta records pr= as a GitHub pull-request URL, a Forgejo
+# pull-request URL (/pulls/<n>, whose instances serve the same
+# refs/pull/<n>/head ref layout as GitHub), or a bare number for an open PR,
+# the compare side is ALWAYS a freshly fetched refs/pull/<n>/head by default so
+# review stays current after no-mistakes fix rounds push to the PR. A recorded
+# pr_head= is only a fallback when fetch fails (stale recorded SHAs must never
+# win over a reachable remote PR head). If neither PR head can be resolved,
+# fall back to the local branch with a warning. A GitLab merge request and a
+# Gerrit change expose no comparable ref and record no pr_head, so a task
+# recording one always takes that warning path; docs/architecture.md owns that
+# fallback. Without pr=, compare the task's
 # immutable ship branch recorded in state/<id>.meta ("fm/<id>" for records
 # created before that field existed), or the worktree's checked-out branch when
 # that branch does not exist in the worktree. A recorded branch that is not a
@@ -98,6 +100,10 @@ pr_number_from_target() {
     '' ) return 1 ;;
     *"/pull/"*)
       n=${target##*/pull/}
+      n=${n%%[!0-9]*}
+      ;;
+    *"/pulls/"*)
+      n=${target##*/pulls/}
       n=${n%%[!0-9]*}
       ;;
     [0-9]*)

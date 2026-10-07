@@ -1225,8 +1225,13 @@ fm_pr_forgejo_api() {  # <method> <host> <api-path> <out-file> [<json-body>]
     /*) ;;
     *) return 1 ;;
   esac
+  # A ".." segment could walk the request out of /api/v1; dots inside one
+  # segment cannot, and a repository name may lawfully carry them
+  # (fm_pr_forgejo_path_valid), so only the exact segment is refused. The
+  # path is already absolute above, so those two patterns cover every
+  # position a ".." segment can occupy.
   case "$api_path" in
-    *..*) return 1 ;;
+    */../*|*/..) return 1 ;;
   esac
   [ -f "$out" ] || return 1
   token=$(fm_pr_forgejo_token "$host") || return 1

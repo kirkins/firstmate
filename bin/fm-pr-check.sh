@@ -168,7 +168,11 @@ fi
 # and treats a recorded value that disagrees as stale rather than authoritative.
 # A Forgejo task records one like GitHub: the REST read firstmate already
 # requires for the poll exposes the head commit's sha directly, and no worktree
-# is needed because the read is repository-independent.
+# is needed because the read is repository-independent. The record stays
+# trustworthy for the same reason GitHub's does: bin/fm-review-diff.sh fetches
+# the instance's refs/pull/<n>/head from the project origin before consulting
+# it, so a fix round's newer head wins and the recording only answers when the
+# fetch cannot reach the remote.
 WT=$(grep '^worktree=' "$META" | tail -1 | cut -d= -f2- || true)
 PR_HEAD=
 if [ "$PROVIDER" = github ] && [ -n "$WT" ] && [ -d "$WT" ] && command -v gh >/dev/null 2>&1; then
