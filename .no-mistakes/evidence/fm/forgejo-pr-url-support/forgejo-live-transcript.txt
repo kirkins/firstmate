@@ -1,0 +1,118 @@
+# Forgejo PR URL support - live validation transcript
+# product: bin/fm-pr-check.sh, bin/fm-pr-poll.sh, bin/fm-pr-merge.sh @ d50ee8c
+# forge: disposable local HTTPS instance speaking the Forgejo REST protocol at forge-live.test (127.0.0.1:18443 via curl connect-to); real curl+jq, keyring stand-in for secret-tool
+
+## 1. base-commit scripts (99da16d) on a Forgejo URL - the reported failure
+$ old fm-pr-check.sh task-live https://forge-live.test/owner/repo/pulls/9
+error: invalid PR check request
+rc=2
+$ old fm-pr-merge.sh task-live https://forge-live.test/owner/repo/pulls/9
+error: invalid PR merge request
+rc=2
+
+## 2. new fm-pr-check.sh arms the watch (local live instance)
+armed: state/task-live.check.sh
+rc=0
+meta: project=/tmp/fjlive.cp53jz/live/project pr=https://forge-live.test/owner/repo/pulls/9 pr_head=aaaa1111bbbb2222cccc3333dddd4444eeee5555 
+sidecar: forgejo:https://forge-live.test/owner/repo/pulls/9:forge-live.test:owner/repo:9
+watcher armed: yes
+REST: GET /api/v1/repos/owner/repo/pulls/9 auth-scheme=token
+
+## 3. armed poll watcher - silent on open, wakes on merged
+open PR -> ''
+merged PR -> 'merged
+'
+
+## 4. draft refusal at arming
+error: https://forge-live.test/owner/repo/pulls/9 is a draft pull request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate
+
+## 5. binding mismatch refusal at arming
+error: refusing to record https://forge-live.test/owner/repo/pulls/9 for task task-live: the project at /tmp/fjlive.cp53jz/live/project is bound to https://forge-live.test/owner/other.git, whose repository is owner/other, not owner/repo
+
+## 6. guarded merge, all green (token-leak sampler ran: 0 bytes of token found on any command line)
+armed: state/task-live.check.sh
+verified: https://forge-live.test/owner/repo/pulls/9 is merged (state=closed, merged=true)
+verified: https://forge-live.test/owner/repo/pulls/9 is open and mergeable, with a successful combined commit status at head aaaa1111bbbb2222cccc3333dddd4444eeee5555
+rc=0
+REST sequence:
+  GET /api/v1/repos/owner/repo/pulls/9 auth-scheme=token
+  GET /api/v1/repos/owner/repo/pulls/9 auth-scheme=token
+  GET /api/v1/repos/owner/repo/commits/aaaa1111bbbb2222cccc3333dddd4444eeee5555/status auth-scheme=token
+  POST /api/v1/repos/owner/repo/pulls/9/merge auth-scheme=token body={"Do":"squash"}
+  GET /api/v1/repos/owner/repo/pulls/9 auth-scheme=token
+wake row: 1791331857	2	check	merged-task-live-https://forge-live.test/owner/repo/pulls/9	check: merge landed: task-live https://forge-live.test/owner/repo/pulls/9
+
+## 7. merge guard refusals - each refuses with zero POSTs
+armed: state/task-live.check.sh
+error: refusing to merge https://forge-live.test/owner/repo/pulls/9
+  - the combined commit status at the head is "none", not success
+POSTs: 0
+armed: state/task-live.check.sh
+error: refusing to merge https://forge-live.test/owner/repo/pulls/9
+  - state is "closed", not open
+  - the pull request is a draft
+  - the pull request is already merged
+  - mergeable is "false", not true
+  - the combined commit status at the head is "none", not success
+POSTs: 0
+
+## 8. stale recorded head is reported, live head verified and merged
+armed: state/task-live.check.sh
+notice: recorded head aaaa1111bbbb2222cccc3333dddd4444eeee5555 disagrees with the live head cccc9999dddd8888eeee7777ffff666600001111; verifying the live head
+verified: https://forge-live.test/owner/repo/pulls/9 is open and mergeable, with a successful combined commit status at head cccc9999dddd8888eeee7777ffff666600001111
+verified: https://forge-live.test/owner/repo/pulls/9 is merged (state=closed, merged=true)
+  GET /api/v1/repos/owner/repo/commits/cccc9999dddd8888eeee7777ffff666600001111/status auth-scheme=token
+
+## 9. stale-owner regression: arm after a crash-left retirement receipt for git.example.dev/old/other/pulls/3
+receipt seeded
+armed: state/task-live.check.sh
+rc=0
+REST reads: GET /api/v1/repos/owner/repo/pulls/9 auth-scheme=token
+reads of the previous PR repo: 0
+meta: project=/tmp/fjlive.cp53jz/live/project pr=https://forge-live.test/owner/repo/pulls/9 pr_head=aaaa1111bbbb2222cccc3333dddd4444eeee5555 
+receipt remaining: 0
+
+## 7b. corrected all-conditions refusal (red status with statuses present)
+armed: state/task-live.check.sh
+error: refusing to merge https://forge-live.test/owner/repo/pulls/9
+  - state is "closed", not open
+  - the pull request is a draft
+  - the pull request is already merged
+  - mergeable is "false", not true
+  - the combined commit status at the head is "failure", not success
+POSTs: 0
+
+## 10. REAL instance git.lobbykit.net - arm the intent's exact URL (read-only; real keyring token via secret-tool)
+$ fm-pr-check.sh task-435 https://git.lobbykit.net/hermes/opencode-k8s/pulls/435
+armed: state/task-435.check.sh
+rc recorded in run: 0
+  project=/tmp/fjlive.cp53jz/real/project
+  pr=https://git.lobbykit.net/hermes/opencode-k8s/pulls/435
+  pr_head=e734490bedd78e10e8e4f99e76f14b5d5f76ed42
+
+## 11. REAL instance - armed watcher wake
+$ bash state/task-435.check.sh        # first re-run: transient instance read failure
+output='' rc=0                        # silent on a failed read, by design - a failed lookup is never a merge
+$ bash state/task-435.check.sh        # retry
+output='merged' rc=0
+$ curl .../api/v1/repos/hermes/opencode-k8s/pulls/435   # independent check of the sidecar identity
+state=closed merged=true
+
+## 12. REAL instance - guarded merge refuses the already-merged PR (no merge request sent)
+  error: refusing to merge https://git.lobbykit.net/hermes/opencode-k8s/pulls/435
+    - state is "closed", not open
+    - the pull request is already merged
+  (rc=1; refusal precedes any merge call)
+
+## 13. REAL instance - binding mismatch refusal
+  error: refusing to record https://git.lobbykit.net/hermes/opencode-k8s/pulls/435 for task task-435: the project at /tmp/fjlive.cp53jz/real/project is bound to https://git.lobbykit.net/hermes/other-project.git, whose repository is hermes/other-project, not hermes/opencode-k8s
+
+## 14. merge style selection and argument/token guards (local live instance)
+$ fm-pr-merge.sh task-live <url> --rebase
+POST /api/v1/repos/owner/repo/pulls/9/merge auth-scheme=token body={"Do":"rebase"}
+$ fm-pr-merge.sh task-live <url> --attended-override -- --remove-source-branch
+error: extra merge arguments are not supported on a Forgejo merge; only --squash, --merge, or --rebase selects the merge style
+rc=2   REST calls: 0
+$ fm-pr-check.sh task-live <url>   (secret-tool present but slot unreadable)
+error: watching a Forgejo pull request on forge-live.test requires an API token in the Linux keyring under service forge-live.test/forgejo-cli/omarchy
+rc=1
