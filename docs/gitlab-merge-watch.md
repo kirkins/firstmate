@@ -267,7 +267,7 @@ It skips only that prompt; the conditions above are what authorize the merge.
 
 ## Why a recorded head is not the authority
 
-`bin/fm-pr-check.sh` records `pr_head=` only for GitHub, where `gh` exposes the head commit as a selectable field.
+`bin/fm-pr-check.sh` records `pr_head=` only for GitHub and Forgejo, where `gh` and the instance REST read expose the head commit as a selectable field.
 It is optional by design, and the other consumers already treat it that way: `bin/fm-teardown.sh` reads the head from the forge at teardown and falls back to its provider-agnostic content check, and `bin/fm-review-diff.sh` fetches a pull-request head from the remote when none is recorded, which a merge request has no ref for, so a GitLab task is diffed against its local branch under that script's warning ([architecture.md](architecture.md) owns that fallback).
 
 The merge path does not record one either, and deliberately does not depend on one.

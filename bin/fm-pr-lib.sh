@@ -5,14 +5,15 @@
 #
 # The stored identity is provider-tagged: provider, url, host, path, number.
 # "path" is the full project path, which is owner/repository on GitHub, an
-# arbitrarily nested group/subgroup/project namespace on GitLab, and an
+# arbitrarily nested group/subgroup/project namespace on GitLab, an
 # arbitrarily nested project name on Gerrit, where "number" is the change
-# number. A GitLab or Gerrit project can sit at any depth, so no
-# owner/repository pair can address one and the sidecar carries the whole path
-# instead. Both also run on self-hosted instances, and Gerrit runs nowhere else,
-# so the host is part of that identity rather than a constant. Every consumer re-derives the identity
-# from the stored URL and refuses any record whose parts do not reconstruct that
-# exact URL.
+# number, and owner/repository on Forgejo, whose projects sit at exactly that
+# depth on a self-hosted instance. A GitLab or Gerrit project can sit at any
+# depth, so no owner/repository pair can address one and the sidecar carries
+# the whole path instead. GitLab, Gerrit, and Forgejo all run self-hosted, so
+# the host is part of that identity rather than a constant. Every consumer
+# re-derives the identity from the stored URL and refuses any record whose
+# parts do not reconstruct that exact URL.
 #
 # A validated exact merged result is retired through a private receipt only
 # after its durable wake is appended.
@@ -115,13 +116,14 @@ fm_task_id_creation_valid() {
   [ "${#id}" -le 64 ]
 }
 
-# GitLab and Gerrit both serve self-hosted instances, so the host is part of the
-# identity rather than a constant. It is accepted only as a lowercase DNS name
-# with no userinfo, port, or trailing dot, which keeps one canonical spelling per
-# change. github.com is refused here even though its shape is otherwise valid:
-# it is GitHub's own host and never another forge's instance, so a URL like
-# https://github.com/o/r/-/merge_requests/1 (a typo'd or spoofed GitHub URL)
-# would otherwise be armed as a watch that can never succeed.
+# GitLab, Gerrit, and Forgejo all serve self-hosted instances, so the host is
+# part of the identity rather than a constant. It is accepted only as a
+# lowercase DNS name with no userinfo, port, or trailing dot, which keeps one
+# canonical spelling per change. github.com is refused here even though its
+# shape is otherwise valid: it is GitHub's own host and never another forge's
+# instance, so a URL like https://github.com/o/r/-/merge_requests/1 (a typo'd
+# or spoofed GitHub URL) would otherwise be armed as a watch that can never
+# succeed.
 fm_pr_forge_host_valid() {
   local host=${1-} label
   local LC_ALL=C
@@ -188,13 +190,47 @@ fm_pr_gerrit_path_valid() {
   done
 }
 
-# Parse a canonical pull request, merge request, or Gerrit change URL into the
-# provider-tagged identity. Validation is strict and per provider: the GitHub
-# username and repository rules are unchanged, and GitLab and Gerrit each get
-# their own namespace rules rather than a loosened GitHub rule.
+# A Forgejo project is owner/repository: an organization or user, then the
+# repository, exactly two segments with none of GitLab's deeper nesting. The
+# repository segment follows the reserved-name rules a forge enforces on any
+# name: ".", "..", a leading hyphen, and a ".git" suffix cannot name a real
+# project part, because Forgejo strips a ".git" suffix and a leading hyphen
+# reads as an option to any CLI that takes a project path. The owner segment
+# additionally follows the username grammar Forgejo itself enforces for users
+# and organizations: alphanumerics, underscores, and single hyphens only, with
+# no leading or trailing hyphen and no dot, so "o-" or "a.b" cannot name the
+# owner of a real pull request.
+fm_pr_forgejo_path_valid() {
+  local path=${1-} segment owner repo
+  local LC_ALL=C
+  local -a segments
+  [ "${#path}" -ge 3 ] && [ "${#path}" -le 201 ] || return 1
+  case "$path" in
+    /*|*/|*//*) return 1 ;;
+  esac
+  IFS=/ read -ra segments <<< "$path"
+  [ "${#segments[@]}" -eq 2 ] || return 1
+  owner=${segments[0]}
+  repo=${segments[1]}
+  [ "${#owner}" -ge 1 ] && [ "${#owner}" -le 100 ] || return 1
+  case "$owner" in
+    .|..|-*|*-|*--*|*[!A-Za-z0-9_-]*) return 1 ;;
+  esac
+  [ "${#repo}" -ge 1 ] && [ "${#repo}" -le 100 ] || return 1
+  case "$repo" in
+    .|..|-*|*.git|*[!A-Za-z0-9._-]*) return 1 ;;
+  esac
+}
+
+# Parse a canonical pull request, merge request, Gerrit change, or Forgejo
+# pull request URL into the provider-tagged identity. Validation is strict and
+# per provider: the GitHub username and repository rules are unchanged, and
+# GitLab, Gerrit, and Forgejo each get their own namespace rules rather than a
+# loosened GitHub rule.
 #
-# FM_PR_OWNER and FM_PR_REPO are additionally set for github because
-# bin/fm-pr-merge.sh addresses GitHub by owner/repository. A gitlab or gerrit
+# FM_PR_OWNER and FM_PR_REPO are additionally set for github and forgejo,
+# because bin/fm-pr-merge.sh addresses GitHub by owner/repository and the
+# Forgejo REST reads address a project by the same pair. A gitlab or gerrit
 # URL leaves them empty, and those paths address the project by FM_PR_HOST and
 # FM_PR_PATH instead, so a change on any instance resolves without a hardcoded
 # host.
@@ -238,6 +274,31 @@ fm_pr_url_parse() {
     FM_PR_HOST=$host
     FM_PR_PATH=$path
     FM_PR_NUMBER=${BASH_REMATCH[3]}
+    return 0
+  fi
+  # A Forgejo pull request URL is https://<host>/<owner>/<repo>/pulls/<n>.
+  # The route is plural where GitHub's is singular and carries the number
+  # directly on the project where GitLab's sits behind "-/merge_requests",
+  # so the shape tags the provider on its own, and fm_pr_forge_host_valid
+  # refuses github.com, whose singular route a typo or spoof could otherwise
+  # land here. FM_PR_OWNER and FM_PR_REPO are set for the same reason as
+  # github: the Forgejo REST reads address a project by owner and repository.
+  pattern='^https://([a-z0-9.-]{1,253})/([A-Za-z0-9._-]{1,100})/([A-Za-z0-9._-]{1,100})/pulls/([1-9][0-9]*)$'
+  if [[ "$raw" =~ $pattern ]]; then
+    host=${BASH_REMATCH[1]}
+    fm_pr_forge_host_valid "$host" || return 1
+    fm_pr_forgejo_path_valid "${BASH_REMATCH[2]}/${BASH_REMATCH[3]}" || return 1
+    FM_PR_PROVIDER=forgejo
+    FM_PR_URL=$raw
+    FM_PR_HOST=$host
+    FM_PR_PATH="${BASH_REMATCH[2]}/${BASH_REMATCH[3]}"
+    # Consumed by the Forgejo REST reads, which address the project by owner
+    # and repository exactly as the GitHub path does.
+    # shellcheck disable=SC2034
+    FM_PR_OWNER=${BASH_REMATCH[2]}
+    # shellcheck disable=SC2034
+    FM_PR_REPO=${BASH_REMATCH[3]}
+    FM_PR_NUMBER=${BASH_REMATCH[4]}
     return 0
   fi
   # A Gerrit change URL is https://<host>/c/<project>/+/<number>. "+" is outside
@@ -1120,6 +1181,236 @@ fm_pr_gerrit_read_revision() {  # <host> <number>
   # Consumed by bin/fm-dod-lib.sh fm_dod_gerrit_change_carries_head.
   # shellcheck disable=SC2034
   FM_PR_RECORD_REVISION=$revision
+}
+
+# --- Forgejo REST reads -------------------------------------------------------
+#
+# Forgejo has no first-party CLI on this stack, so its reads go to the
+# instance's own REST API at https://<host>/api/v1, the same surface the
+# operator helper (lobbykit-forgejo) is built on. Everything is derived from
+# the validated URL identity: the host names the instance, and owner and
+# repository name the project, so no host is hardcoded and a record on any
+# instance resolves the same way a GitLab one does through glab -R.
+
+# The API token for one Forgejo instance, read from the Linux keyring slot the
+# operator helper stack keys by instance host: service
+# "<host>/forgejo-cli/omarchy". The lookup itself is the only credential
+# access, so the token lands in one shell variable and never on a command
+# line; a slot that is missing, empty, or not a bearer token shape fails here
+# rather than sending a malformed credential.
+fm_pr_forgejo_token() {  # <host>
+  local token
+  local LC_ALL=C
+  command -v secret-tool >/dev/null 2>&1 || return 1
+  fm_pr_forge_host_valid "$1" || return 1
+  token=$(secret-tool lookup service "$1/forgejo-cli/omarchy" 2>/dev/null) || return 1
+  [[ "$token" =~ ^[A-Za-z0-9_-]{20,256}$ ]] || return 1
+  printf '%s' "$token"
+}
+
+# One Forgejo REST call. <method> <host> <api-path> <out-file> [<json-body>]
+# writes the response body to <out-file>, prints the HTTP status code, and
+# returns non-zero when curl itself failed. The caller judges the code. The
+# authorization header reaches curl as a header read from a file descriptor
+# (bin/fm-dispatch-resolve.sh's established shape), so the token never appears
+# in a process argument list, and the instance host and API path both come
+# from the validated identity rather than from any ambient default.
+fm_pr_forgejo_api() {  # <method> <host> <api-path> <out-file> [<json-body>]
+  local method=$1 host=$2 api_path=$3 out=$4 body=${5-} token code
+  local LC_ALL=C
+  local -a args
+  command -v curl >/dev/null 2>&1 || return 1
+  fm_pr_forge_host_valid "$host" || return 1
+  case "$api_path" in
+    /*) ;;
+    *) return 1 ;;
+  esac
+  # A ".." segment could walk the request out of /api/v1; dots inside one
+  # segment cannot, and a repository name may lawfully carry them
+  # (fm_pr_forgejo_path_valid), so only the exact segment is refused. The
+  # path is already absolute above, so those two patterns cover every
+  # position a ".." segment can occupy.
+  case "$api_path" in
+    */../*|*/..) return 1 ;;
+  esac
+  [ -f "$out" ] || return 1
+  token=$(fm_pr_forgejo_token "$host") || return 1
+  args=(-sS --max-time 30 -o "$out" -w '%{http_code}' -X "$method"
+    -H @/dev/fd/3 "https://$host/api/v1$api_path")
+  if [ -n "$body" ]; then
+    args=(-H 'Content-Type: application/json' --data "$body" "${args[@]}")
+  fi
+  code=$(curl "${args[@]}" 3< <(printf 'Authorization: token %s\n' "$token") 2>/dev/null) || return 1
+  printf '%s\n' "$code"
+}
+
+# One live reading of a Forgejo pull request as five name=value lines: state,
+# draft, merged, mergeable, head. Every field is type-checked, so an
+# unreadable payload refuses rather than half-arming a decision on it.
+# Consumed by bin/fm-pr-check.sh (draft state and head commit) and
+# bin/fm-pr-merge.sh (every pre-merge condition).
+fm_pr_forgejo_read_pull() {  # <host> <owner> <repo> <number>
+  local host=$1 owner=$2 repo=$3 number=$4 tmp
+  local LC_ALL=C
+  case "$number" in
+    ''|*[!0-9]*) return 1 ;;
+  esac
+  command -v jq >/dev/null 2>&1 || return 1
+  tmp=$(mktemp "${TMPDIR:-/tmp}/fm-pr-forgejo-pull.XXXXXX") || return 1
+  if ! fm_pr_forgejo_api GET "$host" "/repos/$owner/$repo/pulls/$number" "$tmp" >/dev/null; then
+    rm -f -- "$tmp"
+    return 1
+  fi
+  jq -r '
+    if type == "object"
+       and (.state | type) == "string" and (.state | test("\\n") | not)
+       and (.draft | type) == "boolean"
+       and (.merged | type) == "boolean"
+       and (.mergeable | type) == "boolean"
+       and (.head.sha | type) == "string" and (.head.sha | test("\\n") | not)
+    then
+      "state=" + .state,
+      "draft=" + (.draft | tostring),
+      "merged=" + (.merged | tostring),
+      "mergeable=" + (.mergeable | tostring),
+      "head=" + .head.sha
+    else
+      error("pull request payload is unreadable")
+    end' "$tmp" 2>/dev/null || { rm -f -- "$tmp"; return 1; }
+  rm -f -- "$tmp"
+}
+
+# The combined commit-status state at one commit: "success", "pending",
+# "failure", or "error" when any status is recorded, and empty when the
+# commit has none, so a caller can tell "no checks" from each real state.
+# Forgejo Actions reports its workflows as exactly these statuses, so this is
+# the green-checks read for the merge gate, judged at the head the pull
+# request itself reported.
+fm_pr_forgejo_read_status_state() {  # <host> <owner> <repo> <sha>
+  local host=$1 owner=$2 repo=$3 sha=$4 tmp
+  command -v jq >/dev/null 2>&1 || return 1
+  fm_pr_head_valid "$sha" || return 1
+  tmp=$(mktemp "${TMPDIR:-/tmp}/fm-pr-forgejo-status.XXXXXX") || return 1
+  if ! fm_pr_forgejo_api GET "$host" "/repos/$owner/$repo/commits/$sha/status" "$tmp" >/dev/null; then
+    rm -f -- "$tmp"
+    return 1
+  fi
+  jq -r '
+    if type == "object"
+       and (.state | type) == "string" and (.state | test("\\n") | not)
+       and (.total_count | type) == "number"
+    then
+      (if .total_count == 0 then "" else .state end)
+    else
+      error("status payload is unreadable")
+    end' "$tmp" 2>/dev/null || { rm -f -- "$tmp"; return 1; }
+  rm -f -- "$tmp"
+}
+
+# The one gate that binds a Forgejo pull request URL to the project the task
+# shipped for: the project clone's origin remote must name the same instance
+# host and the same owner/repository as the URL. The origin is the registered
+# repo binding - what bin/fm-project-management clones from and what fleet
+# sync updates - so a URL that disagrees with it names a repository this task
+# has no stake in, and arming a merge watch or a merge on it is refused rather
+# than guessed at. Returns 0 when bound; otherwise prints one line naming the
+# mismatch and returns 1. The origin may spell the same repository as an SSH
+# URL with a port, an HTTPS URL, or an scp-like remote; the comparison is on
+# the host and the owner/repository path, with the conventional ".git" suffix
+# and trailing slashes stripped, because a forge serves both spellings of one
+# repository.
+fm_pr_forgejo_binding_problem() {  # <project> <host> <path>
+  local project=${1-} host=$2 path=$3 origin rest userpart hostpart inner port opath
+  local LC_ALL=C
+  [ -n "$project" ] || {
+    printf '%s\n' 'the task records no project, so nothing binds the pull request to a repository'
+    return 1
+  }
+  if [ ! -d "$project" ]; then
+    printf '%s\n' "the recorded project $project is not a directory, so its repository binding cannot be read"
+    return 1
+  fi
+  origin=$(git -C "$project" remote get-url origin 2>/dev/null) || {
+    printf '%s\n' "the project at $project has no readable origin remote, so its repository binding cannot be read"
+    return 1
+  }
+  case "$origin" in
+    https://*|http://*|ssh://*|git://*)
+      rest=${origin#*://}
+      hostpart=${rest%%/*}
+      opath=/${rest#*/}
+      ;;
+    *://*)
+      printf '%s\n' "the project's origin $origin is not a forge URL, so a Forgejo pull request cannot be bound to it"
+      return 1
+      ;;
+    *)
+      # scp-like [user@]host:path, with the user stripped only when its "@"
+      # really precedes the host, exactly as bin/fm-project-origin-lib.sh
+      # splits one.
+      rest=$origin
+      case "$origin" in
+        *@*)
+          userpart=${origin%%@*}
+          case "$userpart" in
+            *:*) ;;
+            *) rest=${origin#*@} ;;
+          esac
+          ;;
+      esac
+      case "$rest" in
+        *:*)
+          hostpart=${rest%%:*}
+          opath=/${rest#*:}
+          ;;
+        *)
+          printf '%s\n' "the project's origin $origin is not a forge URL, so a Forgejo pull request cannot be bound to it"
+          return 1
+          ;;
+      esac
+      ;;
+  esac
+  # Strip userinfo, then a numeric port; a bracketed IPv6 literal reduces to
+  # its inner text, which a DNS host from a parsed URL can never equal.
+  case "$hostpart" in
+    *@*) hostpart=${hostpart##*@} ;;
+  esac
+  case "$hostpart" in
+    '['*']'*)
+      inner=${hostpart%%']*'}
+      hostpart=${inner#\[}
+      ;;
+    *:*)
+      port=${hostpart#*:}
+      case "$port" in
+        *[!0-9]*) ;;
+        *) hostpart=${hostpart%%:*} ;;
+      esac
+      ;;
+  esac
+  hostpart=$(printf '%s' "$hostpart" | tr '[:upper:]' '[:lower:]')
+  opath=${opath#/}
+  while [ "${opath%/}" != "$opath" ]; do
+    opath=${opath%/}
+  done
+  case "$opath" in
+    *.git) opath=${opath%.git} ;;
+  esac
+  while [ "${opath%/}" != "$opath" ]; do
+    opath=${opath%/}
+  done
+  if [ -z "$hostpart" ] || [ -z "$opath" ]; then
+    printf '%s\n' "the project's origin $origin is not a forge URL, so a Forgejo pull request cannot be bound to it"
+    return 1
+  fi
+  [ "$hostpart" = "$host" ] || {
+    printf '%s\n' "the project at $project is bound to $origin, whose host is $hostpart, not $host"
+    return 1
+  }
+  [ "$opath" = "$path" ] || {
+    printf '%s\n' "the project at $project is bound to $origin, whose repository is $opath, not $path"
+    return 1
+  }
 }
 
 fm_pr_poll_retirement_data_valid() {

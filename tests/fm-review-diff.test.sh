@@ -17,6 +17,8 @@
 #       the moved worktree HEAD
 #   (h) meta records base_branch= -> the diff is against origin/<base_branch>,
 #       so the base branch's own commits never appear as task changes
+#   (i) (e) on a Forgejo /pulls/ URL -> the same fetch must recognize that route
+#       and beat the recorded head arming wrote
 set -u
 
 # shellcheck source=tests/lib.sh
@@ -121,6 +123,33 @@ test_stale_recorded_pr_head_loses_to_fetched_pull_head() {
   # Pre-fix behavior preferred reachable recorded pr_head= and would show stale-local.
   [ "$stale_sha" != "$PR_SHA" ] || fail "stale-recorded: fixture did not diverge recorded vs PR head"
   pass "fm-review-diff prefers freshly fetched PR head over a stale recorded pr_head="
+}
+
+# A Forgejo pull request rides the /pulls/ route and its arming records the
+# REST-reported head as pr_head= (bin/fm-pr-check.sh). The review must resolve
+# the current head through the same refs/pull/<n>/head fetch the GitHub route
+# uses - Forgejo instances serve that ref layout - so a worker's newer push is
+# reviewed rather than the stale recorded commit.
+test_forgejo_stale_recorded_pr_head_loses_to_fetched_pull_head() {
+  local case_dir out stale_sha
+  case_dir=$(make_case forgejo-stale-recorded)
+  stale_and_pr_commits "$case_dir"
+  stale_sha=$(git -C "$case_dir/wt" rev-parse fm/task-x1)
+  git -C "$case_dir/wt" push -q origin "pr-head-tmp:refs/pull/9/head"
+  write_task_meta "$case_dir" \
+    "pr=https://git.example.dev/owner/repo/pulls/9" \
+    "pr_head=$stale_sha"
+
+  out=$(run_review_diff "$case_dir" task-x1 2> "$case_dir/stderr")
+
+  assert_contains "$out" '+pr-fixed' \
+    "forgejo-stale-recorded: diff must show the fetched Forgejo pull head, not the recorded stale SHA"
+  assert_not_contains "$out" 'stale-local' \
+    "forgejo-stale-recorded: diff must not use the stale recorded content"
+  assert_not_contains "$(cat "$case_dir/stderr")" 'warning: PR head unavailable' \
+    "forgejo-stale-recorded: fetch of refs/pull/<n>/head should succeed for a /pulls/ URL"
+  [ "$stale_sha" != "$PR_SHA" ] || fail "forgejo-stale-recorded: fixture did not diverge recorded vs PR head"
+  pass "fm-review-diff resolves a Forgejo /pulls/ URL head by fetching it over a stale recorded pr_head="
 }
 
 test_pr_meta_fetches_pull_head_without_recorded_sha() {
@@ -241,6 +270,7 @@ test_recorded_base_branch_is_the_review_base() {
 test_pr_meta_uses_pr_head_not_stale_local
 test_pr_meta_fetches_pull_head_without_recorded_sha
 test_stale_recorded_pr_head_loses_to_fetched_pull_head
+test_forgejo_stale_recorded_pr_head_loses_to_fetched_pull_head
 test_no_pr_meta_uses_local_branch
 test_unreachable_pr_head_falls_back_with_warning
 test_recorded_branch_beats_moved_worktree_head

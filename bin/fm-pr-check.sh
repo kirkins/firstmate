@@ -6,12 +6,18 @@
 # head is that named head and is already stored on the forge.
 # The watcher check source is byte-for-byte bin/fm-pr-poll.sh; task and PR data
 # live only in a private sidecar and are never interpolated into shell source.
-# A GitHub pull request URL, a GitLab merge request URL, and a Gerrit change URL
-# are all accepted, including a merge request or change on a self-hosted
-# instance.
-# A GitHub pull request the forge reports as a draft is refused, naming the draft
-# state and recording and arming nothing: a draft cannot be merged, so a poll armed on it
-# would wait for an event that cannot occur while nobody is asked to act.
+# A GitHub pull request URL, a GitLab merge request URL, a Gerrit change
+# URL, and a Forgejo pull request URL are all accepted, including a merge
+# request, change, or pull request on a self-hosted instance.
+# A Forgejo pull request URL is accepted only for a task whose recorded
+# project binds it to the same instance and repository: bin/fm-pr-lib.sh's
+# binding gate reads the project clone's origin remote and refuses a mismatch
+# loudly rather than guessing, so a watch is never armed for a repository the
+# task has no stake in.
+# A GitHub or Forgejo pull request the forge reports as a draft is refused,
+# naming the draft state and recording and arming nothing: a draft cannot be
+# merged, so a poll armed on it would wait for an event that cannot occur
+# while nobody is asked to act.
 # Mark the pull request ready for review, then arm again; a lane that keeps a
 # draft on purpose declares a wait instead of reporting done. An unreadable
 # draft state does not refuse, matching how the head read below is optional.
@@ -48,6 +54,8 @@ URL=$FM_PR_URL
 PROVIDER=$FM_PR_PROVIDER
 HOST=$FM_PR_HOST
 PROJECT_PATH=$FM_PR_PATH
+OWNER=$FM_PR_OWNER
+REPO=$FM_PR_REPO
 NUMBER=$FM_PR_NUMBER
 
 # Task-derived paths are constructed only after the canonical ID validation.
@@ -97,15 +105,50 @@ if [ "$PROVIDER" = gerrit ]; then
     exit 1
   fi
 fi
+# The Forgejo poll reads the instance REST API, so it needs curl and jq, and
+# secret-tool for the instance token from the same keyring slot the operator
+# helper stack keys by host. A slot that cannot be read arms a watch that can
+# never fire, so the token is proven readable here rather than discovered
+# missing by a silent poll.
+FORGEJO_MISSING=
+if [ "$PROVIDER" = forgejo ]; then
+  command -v curl >/dev/null 2>&1 || FORGEJO_MISSING="curl"
+  command -v jq >/dev/null 2>&1 || FORGEJO_MISSING="${FORGEJO_MISSING:+$FORGEJO_MISSING and }jq"
+  command -v secret-tool >/dev/null 2>&1 || FORGEJO_MISSING="${FORGEJO_MISSING:+$FORGEJO_MISSING and }secret-tool"
+  if [ -n "$FORGEJO_MISSING" ]; then
+    echo "error: watching a Forgejo pull request requires $FORGEJO_MISSING on PATH" >&2
+    exit 1
+  fi
+  if ! fm_pr_forgejo_token "$HOST" >/dev/null; then
+    echo "error: watching a Forgejo pull request on $HOST requires an API token in the Linux keyring under service $HOST/forgejo-cli/omarchy" >&2
+    exit 1
+  fi
+fi
 
 # The draft state is read before anything is recorded or armed. Only a positive
 # draft reading refuses, because an unreadable one must not block arming.
+# Forgejo's draft state and head commit come from one live REST read whose
+# fields are kept in shell variables, because the head is recorded below from
+# the same reading; an unreadable payload leaves both empty, matching the
+# GitHub posture that an unreadable draft state does not block arming.
+FORGEJO_DRAFT=
+FORGEJO_HEAD=
+if [ "$PROVIDER" = forgejo ]; then
+  if FORGEJO_FIELDS=$(fm_pr_forgejo_read_pull "$HOST" "$OWNER" "$REPO" "$NUMBER"); then
+    FORGEJO_DRAFT=$(printf '%s\n' "$FORGEJO_FIELDS" | sed -n 's/^draft=//p')
+    FORGEJO_HEAD=$(printf '%s\n' "$FORGEJO_FIELDS" | sed -n 's/^head=//p')
+  fi
+fi
 if [ "$PROVIDER" = github ] && [ "${FM_PR_CHECK_MERGE:-}" != 1 ] && command -v gh >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
   DRAFT_JSON=$(gh pr view "$URL" --json isDraft 2>/dev/null || true)
   if [ "$(fm_pr_json_draft_state "$DRAFT_JSON")" = true ]; then
     echo "error: $URL is a draft pull request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate" >&2
     exit 1
   fi
+fi
+if [ "$PROVIDER" = forgejo ] && [ "${FM_PR_CHECK_MERGE:-}" != 1 ] && [ "$FORGEJO_DRAFT" = true ]; then
+  echo "error: $URL is a draft pull request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate" >&2
+  exit 1
 fi
 
 "$FM_ROOT/bin/fm-guard.sh" || true
@@ -124,6 +167,13 @@ fi
 # recorded and otherwise diffs the local branch, which is the current content.
 # bin/fm-pr-merge.sh reads a GitLab head live at merge time for the same reason,
 # and treats a recorded value that disagrees as stale rather than authoritative.
+# A Forgejo task records one like GitHub: the REST read firstmate already
+# requires for the poll exposes the head commit's sha directly, and no worktree
+# is needed because the read is repository-independent. The record stays
+# trustworthy for the same reason GitHub's does: bin/fm-review-diff.sh fetches
+# the instance's refs/pull/<n>/head from the project origin before consulting
+# it, so a fix round's newer head wins and the recording only answers when the
+# fetch cannot reach the remote.
 WT=$(grep '^worktree=' "$META" | tail -1 | cut -d= -f2- || true)
 PR_HEAD=
 if [ "$PROVIDER" = github ] && [ -n "$WT" ] && [ -d "$WT" ] && command -v gh >/dev/null 2>&1; then
@@ -132,9 +182,24 @@ if [ "$PROVIDER" = github ] && [ -n "$WT" ] && [ -d "$WT" ] && command -v gh >/d
     PR_HEAD=$REMOTE_HEAD
   fi
 fi
+if [ "$PROVIDER" = forgejo ] && fm_pr_head_valid "$FORGEJO_HEAD"; then
+  PR_HEAD=$FORGEJO_HEAD
+fi
 
 MODE=$(grep '^mode=' "$META" | tail -1 | cut -d= -f2- || true)
 PROJECT=$(grep '^project=' "$META" | tail -1 | cut -d= -f2- || true)
+# A Forgejo pull request is bound to the project the task shipped for before
+# anything is recorded or armed: the URL must name the same instance and
+# repository as the project clone's origin remote, read by bin/fm-pr-lib.sh's
+# binding gate, and a mismatch refuses loudly rather than guessing.
+# bin/fm-pr-merge.sh reaches this same gate through its recording call before
+# any merge runs.
+if [ "$PROVIDER" = forgejo ]; then
+  if ! FORGEJO_PROBLEM=$(fm_pr_forgejo_binding_problem "$PROJECT" "$HOST" "$PROJECT_PATH"); then
+    echo "error: refusing to record $URL for task $ID: $FORGEJO_PROBLEM" >&2
+    exit 1
+  fi
+fi
 # The gate is asked about the ready report this task's worker was told to give;
 # on a Gerrit change both publishing modes report the same published line.
 case "$PROVIDER:$MODE" in
