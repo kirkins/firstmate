@@ -1,0 +1,20 @@
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/9", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/9", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/10", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/11", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/9", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/9", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/12", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/12", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/12", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/commits/4444444444444444444444444444444444444444/status", "auth": "bearer-ok"}
+{"method": "POST", "path": "/api/v1/repos/owner/repo/pulls/12/merge", "auth": "bearer-ok", "body": "{\"Do\":\"squash\"}"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/12", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/13", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/13", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/13", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/commits/5555555555555555555555555555555555555555/status", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/14", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/14", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/pulls/14", "auth": "bearer-ok"}
+{"method": "GET", "path": "/api/v1/repos/owner/repo/commits/6666666666666666666666666666666666666666/status", "auth": "bearer-ok"}

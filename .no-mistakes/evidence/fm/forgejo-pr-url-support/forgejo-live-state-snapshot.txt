@@ -1,0 +1,33 @@
+# Live product-state snapshot (task homes after the live run)
+
+## task-x1.meta (pr= and pr_head= recorded by fm-pr-check.sh)
+window=fm-task-x1
+endpoint_task_id=task-x1
+worktree=/tmp/fm-forgejo-live.MqWKHm/wt-task-x1
+project=/tmp/fm-forgejo-live.MqWKHm/project
+kind=ship
+mode=no-mistakes
+pr=https://localhost/owner/repo/pulls/9
+pr_head=1111111111111111111111111111111111111111
+
+## task-x1.pr-poll sidecar (provider-tagged identity, 5 lines)
+forgejo
+https://localhost/owner/repo/pulls/9
+localhost
+owner/repo
+9
+
+## task-x4.merge-authority (persisted by fm-pr-merge.sh)
+fm-merge-authority-v1
+forgejo
+localhost
+owner/repo
+12
+attended
+
+## state/.wake-queue (durable landed record naming the merged PR)
+1791340971	1	check	merged-task-x4-https://localhost/owner/repo/pulls/12	check: merge landed: task-x4 https://localhost/owner/repo/pulls/12
+
+## task-x2.meta / task-x3.meta show no pr= (draft and binding refusals recorded nothing)
+/tmp/fm-forgejo-live.MqWKHm/homes/main/state/task-x2.meta:0
+/tmp/fm-forgejo-live.MqWKHm/homes/main/state/task-x3.meta:0
