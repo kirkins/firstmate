@@ -2402,6 +2402,11 @@ test_forgejo_missing_tool_refuses_before_recording() {
 
   # A present secret-tool whose slot cannot be read is discovered at the same
   # point, naming the slot the instance token is missing from.
+  # The fixture's own secret-tool is placed on PATH for this invocation so
+  # the unreadable slot is answered by the fixture's FM_TEST_ST_FAIL arm on
+  # every host, including CI runners with no system keyring tool at all: a
+  # host that happens to carry secret-tool must not silently satisfy the
+  # lookup for a host it holds no slot for.
   case_dir=$(make_forgejo_case forgejo-empty-slot)
   set +e
   FM_ROOT_OVERRIDE="$ROOT" \
@@ -2410,10 +2415,13 @@ test_forgejo_missing_tool_refuses_before_recording() {
   FM_TEST_FORGEJO_CURL_LOG="$case_dir/forgejo-curl.log" \
   FM_TEST_FORGEJO_ST_LOG="$case_dir/forgejo-st.log" \
   FM_TEST_ST_FAIL=1 \
+  PATH="$case_dir/fakebin:$PATH" \
     "$PR_MERGE" task-x1 "$FJ_URL" > "$case_dir/stdout" 2> "$case_dir/stderr"
   rc=$?
   set -e
   expect_code 1 "$rc" "forgejo-empty-slot: an unreadable token slot should refuse"
+  grep -qF "secret-tool lookup service $FJ_HOST/forgejo-cli/omarchy" "$case_dir/forgejo-st.log" \
+    || fail "forgejo-empty-slot: the fixture's own secret-tool never answered the lookup"
   assert_grep "requires an API token in the Linux keyring under service $FJ_HOST/forgejo-cli/omarchy" \
     "$case_dir/stderr" "forgejo-empty-slot: refusal did not name the keyring slot"
   assert_no_grep "pr=$FJ_URL" "$case_dir/state/task-x1.meta" \
