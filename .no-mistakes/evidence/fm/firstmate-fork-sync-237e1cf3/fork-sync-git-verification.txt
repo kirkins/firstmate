@@ -1,0 +1,19 @@
+# Fork-sync validation: fm/firstmate-fork-sync-237e1cf3 (merge aeef40d1)
+
+## Merge completeness: diff merged target vs upstream tip 237e1cf3
+ bin/fm-pr-check.sh                 |  77 +++++-
+ bin/fm-pr-lib.sh                   | 331 ++++++++++++++++++++++++--
+ bin/fm-pr-merge.sh                 | 285 +++++++++++++++++++++-
+ bin/fm-pr-poll.sh                  |  64 ++++-
+ bin/fm-review-diff.sh              |  24 +-
+ docs/architecture.md               |   9 +-
+ docs/gitlab-merge-watch.md         |   2 +-
+ docs/scripts.md                    |   6 +-
+ tests/fm-pr-check-security.test.sh | 473 ++++++++++++++++++++++++++++++++++++-
+ tests/fm-pr-merge.test.sh          | 449 +++++++++++++++++++++++++++++++++++
+ tests/fm-review-diff.test.sh       |  30 +++
+ 11 files changed, 1689 insertions(+), 61 deletions(-)
+
+## Second parent of merge commit:
+parent e006ff9b24bfaf3de916af0f87e6050f9f306959
+parent 237e1cf3b035e20c151e8233a0ab842bd1e94e2d

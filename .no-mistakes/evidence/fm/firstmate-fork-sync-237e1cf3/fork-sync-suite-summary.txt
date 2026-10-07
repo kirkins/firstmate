@@ -1,0 +1,17 @@
+# Targeted suite results (all rc=0, run at target commit aeef40d1)
+fm-control                 ok=45
+fm-remote-reply            ok=42
+fm-secondmate-harness      ok=51
+fm-pr-check-security       ok=50
+fm-pr-merge                ok=117
+fm-review-diff             ok=9
+fm-public-followup         ok=90
+
+## Key new-behavior lines:
+ok - fm-control exit: retiring a codex incarnation drops busy_gen with the sidecar
+ok - fm-control exit: an already-open background-task picker is not typed into
+ok - fm-control exit: the Enter that opens the background-task picker is not followed by a confirming Enter
+ok - a later continuity break after repair and re-advance opens the decision again
+ok - a later continuity break after the cursor moves without retirement opens the decision again
+ok - a continuity break after retirement and an identical restore opens the decision once
+ok - harness identity: dash-leading ps command names are basename operands, not options

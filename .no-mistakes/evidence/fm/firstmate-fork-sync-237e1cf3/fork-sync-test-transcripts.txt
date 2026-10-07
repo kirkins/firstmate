@@ -1,0 +1,326 @@
+### /bin/bash tests/fm-control.test.sh (rc recorded in header)
+ok - fm-control exit: every verified harness gets its own verified exit command
+ok - fm-control interrupt: every verified harness gets its own verified key and repeat count
+ok - fm-control Devin interrupt: second press only after the armed hint, then busy invalidated without fabricating idle
+ok - fm-control Devin interrupt: an idle agent gets one Escape and reports not-running
+ok - fm-control Devin exit: a busy record whose turn already ended never opens the revert picker
+ok - fm-control Devin interrupt: a revert picker a press opened is closed with Escape, never Enter
+ok - fm-control Devin: an open revert picker refuses every typed command
+ok - fm-control interrupt: opencode needs a double Escape, claude a single one
+ok - fm-control: a harness with no verified control mechanics is refused, not guessed at
+ok - fm-control-lib: a recorded harness resolves to its verified adapter without guessing
+ok - fm-control-lib: only a runtime's own recorded session has a relaunch resume form
+ok - fm-control: prefixed recorded harnesses reach interrupt and exit mechanics
+ok - fm-control-lib: the backend key matrix matches each adapter's real send-key surface
+ok - fm-control-lib: adapter capability is per task kind, not per adapter alone
+ok - fm-control interrupt: a backend that cannot deliver the harness's key refuses instead of sending another
+ok - fm-control: a backend that cannot prove an agent stopped refuses exit and relaunch
+ok - fm-control-lib: stop-proving verbs are gated on the backends that really classify agent state
+ok - fm-control: a legacy window label is refused and the exact task id is named
+ok - fm-control: an explicit backend endpoint is never a control target
+ok - fm-control: an unrecorded task id is refused
+ok - fm-control: a record whose endpoint identity names another task is refused
+ok - fm-control: a remotely placed secondmate is refused by placement, not by a metadata complaint
+ok - fm-control: interrupt and exit lock before task-state resolution
+ok - fm-control: the verb list is closed - no raw keys, arbitrary text, or clear verb
+ok - fm-control: resume is refused with the determinism reason and the alternative
+ok - fm-control: profile and note flags belong to relaunch only
+ok - fm-control exit: an already-stopped agent is idempotent success with no bytes sent
+ok - fm-control exit: an unprovable tmux endpoint refuses instead of claiming the agent stopped
+ok - fm-control interrupt: refuses when no agent is running rather than keying a shell
+ok - fm-control exit: an endpoint whose process cannot be attributed refuses
+ok - fm-control exit: a busy agent receives interrupt delivery before the exit command
+ok - fm-control exit: an idle agent goes straight to its exit command
+ok - fm-control exit: retiring a codex incarnation drops busy_gen with the sidecar
+ok - fm-control exit: an already-open background-task picker is not typed into
+ok - fm-control exit: the Enter that opens the background-task picker is not followed by a confirming Enter
+ok - fm-control exit: a picker that renders after the submit returned is named when the stop wait times out
+ok - fm-control interrupt: unconfirmed delivery preserves observed busy state
+ok - fm-control interrupt: muse confirms cancellation from its session log
+ok - fm-control interrupt: postconditions are revalidated after acknowledgement polling
+ok - fm-control exit: an interrupt-stopped agent satisfies the gone-state postcondition
+ok - fm-control exit: a stubborn agent reports delivered input and an unconfirmed exit
+ok - fm-control interrupt: grok reports delivery without claiming cancellation
+ok - fm-control interrupt: grok's idle footer does not confirm cancellation
+ok - fm-control: a lifecycle command to a secondmate is unmarked and opens no reply expectation
+ok - fm-control's arrival leaves fm-send's from-firstmate marking untouched
+### /bin/bash tests/fm-remote-reply.test.sh (rc recorded in header)
+ok - default delta reader waits 0.5 seconds then delivers a non-destructive complete-line delta
+ok - override delta reader waits 0.07 seconds then delivers a non-destructive complete-line delta
+ok - a blocking non-destructive remote delta reaches durable process-event capture
+ok - a captured delta is applied, acknowledged, and re-armed without a handler
+ok - ingest appends one validated line, fetches its document, and advances the cursor
+ok - replayed capture has one deduplicated append and one durable handling identity
+ok - later generations cannot invalidate an unacknowledged ingested result
+ok - the remote status and decision model mirrors and the cursor advances
+ok - a remote mate's new decision folds open exactly as a local mate's does
+ok - a replayed mirrored delta is idempotent in both the stream and the cursor
+ok - transported control bytes are normalized in place and never stop the stream
+ok - payload protocol-field names cannot collide with transport metadata
+ok - NUL bytes are normalized in place before shell line processing
+ok - local document storage failures remain retryable until delivery succeeds
+ok - a structured pointer must end at its token boundary
+ok - adjacent pointers are fetched while malformed tokens remain unchanged
+ok - a rejected candidate never gives the following text a false leading boundary
+ok - nested remote reports relay while an undeliverable foreign pointer fails open
+ok - the reported incident raises no standing decision and still delivers the report
+ok - an undeliverable structured offer fails open with one note and never a decision
+ok - a remote refusal surfaces its own reason without opening a decision
+ok - a failed pointer extraction never commits a partial delta
+ok - a failed mirror write never drops status content or advances the cursor
+ok - source-line identity survives commit failure and cursor-loss recapture
+ok - a mirrored reserved-key line cannot squat or clear the parent's own decision
+ok - a reply that arrives after escalation resolves it and clears the open decision
+ok - a remote reply listener stays owned across empty waits and a delta
+ok - a failed remote read exits instead of relistening
+ok - persistent ingestion failure leaves exactly one durable capture
+ok - a preempted reply poll reports a closed window without publishing channel freshness
+ok - a preempted reply poll keeps its listener and reconcile launches nothing
+ok - a quiet reply window publishes the caught-up watermark the reply guard reads
+ok - a cursor-loss whole-log recapture is acknowledged quietly with no duplicate wake
+ok - truncation is detected, escalated once, and not silently rebased
+ok - a repeated continuity break after an operator resolve appends nothing
+ok - remote reply retirement quiesces and refuses unhandled captured results
+ok - a later continuity break after repair and re-advance opens the decision again
+ok - an old-format continuity line does not swallow the next break
+ok - a later continuity break after the cursor moves without retirement opens the decision again
+ok - a continuity break after retirement and an identical restore opens the decision once
+ok - a failed cursor removal does not increase the retirement count
+ok - a retirement that stops after removing the cursor leaves the old count
+ALL TESTS PASSED
+### /bin/bash tests/fm-secondmate-harness.test.sh (rc recorded in header)
+ok - A1 fm-harness.sh secondmate resolves the fallback chain; crew mode unchanged
+ok - fm-harness detects only Cursor Agent CLI's exact invocation marker
+ok - C1 fm-harness.sh secondmate-model/secondmate-effort resolve the optional tokens; bare harness stays empty (backward-compat)
+ok - pi-signed identity: authoritative launch selection distinguishes shared wrapper ancestry
+ok - harness identity: dash-leading ps command names are basename operands, not options
+ok - B1 propagate_inheritable_config: copy, idempotence, convergence, absence-mirror, exclusion, no-op, skip diagnostics
+ok - B2 spawn: secondmate runs the secondmate harness; its home inherits declared config
+ok - B3 spawn: an absent secondmate-harness falls back to the crew harness (backward-compat)
+ok - B4 spawn: no config at all -> own harness and no propagation side effects
+ok - B5 spawn: an explicit per-spawn harness arg overrides config/secondmate-harness
+ok - B6 spawn: an unverified resolved secondmate harness is refused (guard intact)
+ok - B5b spawn: FM_BACKEND wins over inherited config/backend
+ok - B5c spawn: explicit --backend wins over FM_BACKEND and inherited config/backend
+ok - C2 spawn: a bare harness-only secondmate-harness file launches with no model/effort flag (backward-compat)
+ok - C3 spawn: config/secondmate-harness's model token threads --model into the launch and meta
+ok - C4 spawn: config/secondmate-harness's model+effort tokens thread into the launch and meta
+ok - C5 spawn: an explicit --model overrides config/secondmate-harness's model token; the file's effort token still applies
+ok - C6 spawn: an explicit --effort overrides config/secondmate-harness's effort token; the file's model token still applies
+ok - C7 spawn: an explicit --harness starts with clean model/effort defaults
+ok - C8 spawn: an explicit --harness still honors explicit model/effort flags
+ok - C9 spawn: secondmate launch pins supervision to its own harness
+ok - C9 spawn: the harness fallback chain still resolves with no tokens; crew/scout launches are unaffected by this feature
+ok - B7 bootstrap sweep pushes, re-converges, and mirrors absence; never inherits secondmate-harness
+ok - B8 bootstrap sweep propagates config even when the home's tracked files are already current
+ok - B9 bootstrap sweep defers new inherited config until the home ignores it
+ok - B10 bootstrap sweep materializes and inherits the startup-memory default while fast-forwarding
+ok - B12b backend inheritance: present values and primary absence converge exactly
+ok - C2b spawn: config/claude-permission-mode=auto reaches a Claude secondmate launch
+ok - claude secondmate launches cover the parent-home steering inbox in auto and bypass modes
+ok - B12c claude-permission-mode inheritance: present values and primary absence converge exactly
+ok - B12c presentation inheritance: the primary default converges on, and only an explicit opt-out propagates off
+ok - B11 bootstrap sweep surfaces config propagation failures
+ok - B11 bootstrap rereads completed config writes after partial propagation
+ok - B12 config-push propagates via shared live discovery, reports items, rereads on change only, and does not fast-forward
+ok - B13 config-push reports dirty, non-allowing, and invalid homes without failing warnings-only runs
+ok - B14 config-push exits nonzero on real propagation errors
+ok - B14 config-push rereads completed config writes after partial propagation
+ok - B15 config reread is per-home, exact-byte, ordered, and pointer-only
+ok - B16 config reread isolation, ABSENT, generation safety, send failure, and retry
+ok - B20 config reread publication failures retain exact generations for retry
+ok - B21 config reread instruction-write failures retain exact retry generations
+ok - B21 config reread preserves exact bytes when temporary adoption also fails
+ok - B21 config reread serializes concurrent propagation and delivery
+ok - B22 full config reread retry queues drain before new publication
+ok - B23 mixed config reread delivery failures still bound sent history
+ok - B26 config reread delivery stops after the oldest failed generation
+ok - B17 config reread skips unchanged homes and reads destination post-write bytes
+ok - B18 bootstrap config reread path works; spawn flexibility remains defaults-only
+ok - B19 bootstrap respawns before inherited-config reread
+ok - B25 spawn quarantines stale rereads without blocking relaunch
+ok - B24 bootstrap detect-only mode remains filesystem read-only
+# all fm-secondmate-harness tests passed
+### /bin/bash tests/fm-pr-check-security.test.sh (rc recorded in header)
+ok - raw-byte parser accepts canonical URLs and rejects the complete adversarial matrix
+ok - GitLab merge requests are followed on any instance and never wake falsely
+ok - the Gerrit watch wakes only on an explicit merged status and never on submittability
+ok - Gerrit arming records no patch set revision and the merge path refuses to submit
+ok - arming records a bound Forgejo pull request, its head, and a poll keyed by the URL's instance
+ok - arming refuses a Forgejo draft, naming it, and arms an unreadable reading
+ok - arming refuses a Forgejo pull request the task's project is not bound to
+ok - arming after a retirement recovery reads and records the new pull request's own repository
+ok - the Forgejo watch wakes only on an explicit merged reading and never on a moved sidecar
+ok - Gerrit arming accepts a published HEAD only by the change's current patch set tree
+ok - a no-mistakes Gerrit ready report requires the pipeline's fixes recovered into the published copy
+ok - validated merged polls notify once and retire before the next watcher cycle
+ok - a repeat identical merged poll for an already-notified task is absorbed, never queued as a main-blocking row
+ok - a failed upward merge report keeps its poll armed for repair and retry
+ok - staged self-merge and poll interleavings are never silent
+ok - queued merges retain their away authority after captain return
+ok - poll distinguishes attended authorization from external landing
+ok - accepted merge authority refuses rebound task metadata
+ok - accepted merge authority persists under the lifecycle lock
+ok - teardown cannot race merged-poll authority consumption
+ok - poll retirement preserves a replacement authority record
+ok - a merge detected by the poll is reported upward from a secondmate home exactly once
+ok - a different merged PR for the same task gets its own first notification
+ok - a merged poll on a persistent secondmate retires silently: no outcome, marker, or wake, and every lifecycle artifact preserved
+ok - queue, receipt, and every fixed-path removal crash point recover without loss or repeated execution
+ok - open/red, closed-unmerged, malformed, and forge errors remain armed until an exact merged transition
+ok - replacement, nonterminal, tampered, and custom results receive no deletion authority
+ok - queue failure and untrusted receipts preserve canonical poll evidence
+ok - GitHub and GitLab exact merged results share one retirement path
+ok - PR and teardown entrypoints reject invalid arguments before every side effect
+ok - arming refuses a draft pull request, naming it, and arms a ready or unreadable one
+ok - fm-pr-check refuses to record a PR or arm a merge watch on a secondmate record
+ok - fm-pr-check refuses to register a PR whose named head is only in the worker copy
+ok - fm-pr-check refuses a direct-PR registration while a later commit is only in the copy
+ok - valid direct and merge flows record exact metadata and reject multiline head metadata
+ok - rejected metacharacter bytes remain inert at generation and watcher time
+ok - static poll is silent except for one merged line and remains watcher-bounded
+ok - interrupted atomic preparation cleans private temporaries and publishes nothing
+ok - concurrent watchers observe only complete private poll publications
+ok - poll publication paths refuse symlinks and directories
+ok - live poll and custom-check artifacts require private single-link files
+ok - a poll armed before a volume renumber is re-recorded under the control lock and keeps detecting merges
+ok - a renumbered registration is never re-recorded around a tampered artifact: swapped-check altered-check swapped-sidecar altered-sidecar altered-template-hash wrong-mode hardlinked-check split-device foreign-device, or a pending retirement
+ok - direct re-arm publication waits without replacing an armed poll
+ok - device re-record publication waits without rewriting its registration
+ok - post-rename poll validation faults revoke both names and allow a clean retry
+ok - bootstrap does not rewrite unauthenticated checks or emit retired migration diagnostics
+ok - watcher signals promptly stop custom checks and clean private state
+ok - returned custom check descendants are drained on installed and fallback timeout paths
+ok - teardown removes safe poll artifacts and refuses directory-shaped check files without traversal
+### /bin/bash tests/fm-pr-merge.test.sh (rc recorded in header)
+ok - fm-pr-merge propagates a refused Forgejo merge answer without silently succeeding
+ok - fm-pr-merge refuses a Forgejo pull request the task's project is not bound to
+ok - fm-pr-merge refuses before recording anything when jq or the token slot is absent
+ok - fm-pr-merge refuses unsupported Forgejo arguments and forwards the selected style
+ok - fm-pr-merge refuses an unreadable GitLab merge request state rather than merging blind
+ok - fm-pr-merge refuses a GitLab head commit it cannot validate
+ok - fm-pr-merge refuses before recording anything when glab or jq is absent
+ok - fm-pr-merge refuses a GitLab head override before recording state
+ok - a merge a secondmate home performs itself is reported upward exactly once
+ok - a locally routed secondmate home reports the landed PR into its parent's own channel
+ok - a landed GitLab merge request is reported upward on the same channel
+ok - a queued GitLab merge stays silent and leaves confirmation to the armed poll
+ok - a refused or failed merge reports no outcome
+ok - a GitLab merge refused before the forge call reports no outcome
+ok - a merge a main home performs itself leaves one durable wake naming the PR
+ok - a queued GitHub merge stays silent and leaves confirmation to the armed poll
+ok - distinct merged PRs for one task retain distinct captain-facing wakes
+ok - an uncommitted marker retry preserves at least one durable outcome
+ok - a secondmate home that cannot report upward says so instead of merging in silence
+ok - fm-pr-merge proceeds when the home carries no backlog at all
+ok - fm-pr-merge refuses when the backlog exists but cannot be read
+ok - fm-pr-merge refuses when its configured backend cannot be read
+ok - fm-pr-merge refuses when its user backend configuration cannot be read
+ok - fm-pr-merge refuses when its user backend configuration directory cannot be traversed
+ok - fm-pr-merge proceeds once when its user configuration directory and backlog are genuinely absent
+ok - fm-pr-merge honors a backend override over an unreadable user configuration
+ok - fm-pr-merge refuses red GitHub checks and waives only a named --allow-red check
+ok - fm-pr-merge refuses a draft pull request and one with no boolean draft state
+ok - fm-pr-merge merges when a failed check run was replaced by a passing re-run
+ok - fm-pr-merge never lets a check run supersede a legacy status context
+ok - fm-pr-merge still refuses when a check's current run failed after an earlier pass
+ok - fm-pr-merge uses start order when the old success finishes last
+ok - fm-pr-merge supersedes an old cancellation that finishes last
+ok - fm-pr-merge keeps a check red while its re-run is still in flight
+ok - fm-pr-merge never lets one check's pass clear another check's failure
+ok - fm-pr-merge clears a failure only on a proven later pass of the same check
+ok - fm-pr-merge keeps --allow-red scoped to its named check beside a superseded failure
+ok - fm-pr-merge rechecks away presence before an attended red merge
+ok - fm-pr-merge keeps a quiet-mode home's merges attended, the named red-check waiver included
+ok - fm-pr-merge accepts exactly one separately named red-check waiver
+ok - while the away-posture record exists any green merge lands under away authority, yolo or not, and attended merges stay untagged
+ok - under the away-posture record the branch merges a green task, is refused on a red check with or without --allow-red, and is refused at the partition while attended
+ok - a branch merge refuses under the lock when the away record is archived during preflight
+ok - away posture permits immediate merges but refuses every asynchronous path
+ok - away merge proceeds on a plan-gated 403 because that repository cannot have a merge queue
+ok - the away record does not bypass red checks, and a recorded pr= must match the URL
+ok - an unreadable away-posture record refuses the merge instead of skipping the record
+ok - no away-record archive or replacement lands between the authority read and the merge
+ok - a record made unreadable before the merge's own authority read refuses the merge
+ok - a merge that cannot lock the away record refuses instead of merging unlocked
+ok - fm-pr-merge refuses --allow-red on GitLab
+ok - fm-pr-merge refuses when a required check from branch protection or a ruleset never reported
+ok - fm-pr-merge merges when every required check reported and is green
+ok - fm-pr-merge reports a red check and an unreported required check together with every other failure
+ok - fm-pr-merge refuses when the required checks cannot be read, and tells a plan without rules apart
+ok - fm-pr-merge --allow-missing waives only its named unreported check
+ok - fm-pr-merge --allow-missing is single use, attended-only, and GitHub-only like --allow-red
+ok - fm-pr-merge enforces required producer identity and named waivers
+ok - fm-pr-merge matches an app-bound required commit status by name
+ok - fm-pr-merge reports known missing checks and all independent read errors
+### /bin/bash tests/fm-review-diff.test.sh (rc recorded in header)
+ok - fm-review-diff falls back to recorded pr_head when pull head cannot be fetched
+ok - fm-review-diff fetches refs/pull/<n>/head when pr_head= is absent
+ok - fm-review-diff prefers freshly fetched PR head over a stale recorded pr_head=
+ok - fm-review-diff resolves a Forgejo /pulls/ URL head by fetching it over a stale recorded pr_head=
+ok - fm-review-diff without pr= keeps the worktree-branch diff
+ok - fm-review-diff falls back to local branch with a warning when PR head is unreachable
+ok - fm-review-diff reviews the meta-recorded ship branch even when the worktree HEAD moved off it
+ok - fm-review-diff refuses a corrupt recorded ship branch instead of reviewing the wrong content
+ok - fm-review-diff compares a task against its recorded base branch
+### /bin/bash tests/fm-public-followup.test.sh (rc recorded in header)
+ok - a relay-exhausted follow-up binding is escalated rather than retried into the thread
+ok - the relay poll stays inert without a token, silent with no commitments, and surfaces a new result once
+ok - startup surfaces unresolved public commitments only in a relay home that owes one
+ok - typed public-followup records carry only public-safe summaries and deliverables
+ok - dropped-baton regression: delivery retains the loop and pending prints open-loop
+ok - CONTROL: the identical teardown REFUSES the moment a commitment is registered
+ok - rechain posts the shipped follow-on into the same thread
+ok - rechain resumes the same obligation after an interrupted bind
+ok - concurrent rechains cannot fork one delivered source
+ok - failed rechain retirement keeps the source claimed by one resumable destination
+ok - first register succeeds with an empty lock list under /bin/bash
+ok - registration replay preserves delivered and retired loop states
+ok - redelivery does not report a retired loop as open
+ok - retire closes delivered loops after secondmate home removal
+ok - retire fails closed for an unbound existing secondmate
+ok - retire fails closed when a secondmate ID is reassigned
+ok - rechain refuses an unrelated existing destination
+ok - pending skips a registration retired during settlement
+ok - retire --reason closes the loop and drops the open-loop line
+ok - retention creates no false teardown refusal and pending no longer prunes
+ok - expiry escalation is pinned by FMX_NOW_OVERRIDE
+ok - brief fails explicitly when typed deliverable keys are unavailable
+ok - pre-change registrations are open loops and un-rechainable, never a crash
+ok - teardown reports an unreconciled legacy Relay link
+ok - secondmate promotion matches teardown parent resolution
+ok - a public loop bound to a remote secondmate home delivers and retires
+ok - delivered remote registrations skip offline collection routes
+ok - --force still covers only the unresolved obligation, not the link clear
+ok - retire fails closed when a remote route is reassigned
+ok - retire fails closed when remote state is unreadable
+ok - retire fails closed when remote state is non-writable
+ok - retire accepts link absence in non-writable remote state
+ok - the guarded remote clear refuses a lock it cannot acquire instead of hanging
+ok - an unconfirmed remote clear is unknown completion, never a silent close
+ok - a typed terminal result emitted in a remote work home reaches the owning home
+ok - a promise that requires no deliverable is briefable and reportable
+ok - an unreachable remote work home fails loudly instead of reporting an empty inbox
+ok - an unreadable remote outbox fails collection without losing its result
+ok - invalid registration fails collection without dropping the staged result
+ok - unsafe registration entries fail collection without dropping staged results
+ok - route loss fails brief and consume without dropping the staged result
+ok - empty reachable remote collection remains a healthy no-op
+ok - remote brief rejects traversal and empty route path components
+ok - a local work home's emit path is unchanged
+ok - a duplicate report from a remote work home stays a no-op
+ok - staging requires the matching secondmate firstmate home
+ok - brief pre-fills the report path and states the format of every value it cannot know
+ok - the emitter refuses a deliverable tasks-axi would reject, naming key, value, and format
+ok - the emitter refuses a repeated deliverable key by name in both destinations
+ok - the emitter refuses an event missing a required deliverable in both destinations
+ok - the emitter's work-event rules agree with the real tasks-axi consumer on 74 cases
+ok - a rejected event records a specific reason and wakes the owning home once
+ok - a rejection collected from a remote secondmate wakes the owning home
+ok - only a failed result may answer a promise without the deliverable it promised
+ok - a failure promise keeps needing its own error_code
+ok - a rejection whose wake cannot be recorded is retried rather than lost
+ok - a rejection wake survives a poll that could not write its line
+ok - a rejection wake survives a poll that could not read its line
+ok - a wake that cannot be dropped repeats the same refusal
+ok - a refusal whose event was retained repeats its wake instead of a new one
