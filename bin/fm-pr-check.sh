@@ -14,9 +14,10 @@
 # binding gate reads the project clone's origin remote and refuses a mismatch
 # loudly rather than guessing, so a watch is never armed for a repository the
 # task has no stake in.
-# A GitHub pull request the forge reports as a draft is refused, naming the draft
-# state and recording and arming nothing: a draft cannot be merged, so a poll armed on it
-# would wait for an event that cannot occur while nobody is asked to act.
+# A GitHub or Forgejo pull request the forge reports as a draft is refused,
+# naming the draft state and recording and arming nothing: a draft cannot be
+# merged, so a poll armed on it would wait for an event that cannot occur
+# while nobody is asked to act.
 # Mark the pull request ready for review, then arm again; a lane that keeps a
 # draft on purpose declares a wait instead of reporting done. An unreadable
 # draft state does not refuse, matching how the head read below is optional.
