@@ -131,9 +131,13 @@ A lane that reaches its tier bound needs investigation and a distribution or run
 | Tier | Jobs | Bound | Rationale |
 |---|---|---|---|
 | Fast | coverage guard, repo invariants, timing aggregate | 5 minutes | Seconds-long local work, so the tripwire only catches a hung runner. |
-| Normal | lint partitions, portable parallel shards, portable serial shards, macOS stock Bash | 30 minutes, one value shared by every job in the tier | One shared hang tripwire keeps every ordinary test and lint lane on the same policy instead of allowing per-lane packing estimates or one-off caps to set the bound. |
+| Normal | lint partitions, portable parallel shards, portable serial shards, macOS stock Bash | 30 minutes, one value shared by every job in the tier, with the single recorded exception below | One shared hang tripwire keeps every ordinary test and lint lane on the same policy instead of allowing per-lane packing estimates or one-off caps to set the bound. |
 | Heavy | Herdr | family-run step 20 minutes under a 75-minute job-level last-resort backstop | Healthy runs finish in about 7-10 minutes, so the step tripwire fails a wedged suite while the `always()` cleanup and timing upload still run, and the job cap only catches a hang outside that step. |
 
 [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) holds the executable values and names each job's tier beside its `timeout-minutes`.
-[`tests/fm-ci-workflow.test.sh`](../tests/fm-ci-workflow.test.sh) holds the policy against the parsed workflow: every job belongs to exactly one tier, the workflow carries exactly three distinct job-level values, the fast tier stays within 5-10 minutes, the normal jobs share one 30-minute budget, and the Herdr family-run step is the 20-minute tripwire below its job backstop with an `always()` teardown after it.
+
+One measured budget exception is recorded, and only this one: the cancelled "Behavior portable serial 2" check on https://github.com/kirkins/firstmate/pull/3 (github-check-run:113686242701) exhausted the shared 30-minute normal budget with every suite and gate still enabled, so that single shard leg carries 45 minutes while the other eight serial shards stay at 30.
+The exception lives in the serial job's `timeout-minutes` expression, and [`tests/fm-ci-workflow.test.sh`](../tests/fm-ci-workflow.test.sh) resolves that expression per shard to pin it to shard 2 alone; any other lane reaching its bound still needs investigation and a distribution or runtime fix, not a larger timeout.
+
+[`tests/fm-ci-workflow.test.sh`](../tests/fm-ci-workflow.test.sh) holds the policy against the parsed workflow: every job belongs to exactly one tier, the workflow carries exactly the three tier budgets plus the one recorded serial exception, the fast tier stays within 5-10 minutes, the normal jobs share one 30-minute budget whose only exception is the recorded shard-2 leg, and the Herdr family-run step is the 20-minute tripwire below its job backstop with an `always()` teardown after it.
 A passing coverage guard does not establish a healthy job duration; refresh the healthy figures above from the lanes' uploaded timing artifacts.

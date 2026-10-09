@@ -179,8 +179,13 @@ jobs:
   tests-portable-serial:
     name: Behavior portable serial ${{ matrix.shard }}
     runs-on: ubuntu-latest
-    # Normal tier (see the timeout policy above).
-    timeout-minutes: 30
+    # Normal tier (see the timeout policy above), except shard 2: its measured
+    # run on https://github.com/kirkins/firstmate/pull/3 exhausted the shared
+    # 30-minute budget with every suite and gate still enabled, so that leg
+    # alone carries the 45-minute exception recorded
+    # in docs/fm-test-portable-shards.md "Timeouts" and pinned to this shard by
+    # tests/fm-ci-workflow.test.sh. Every other shard stays at the tier budget.
+    timeout-minutes: ${{ matrix.shard == 2 && 45 || 30 }}
     strategy:
       # Every shard reports so one failure never hides another shard's result.
       fail-fast: false
