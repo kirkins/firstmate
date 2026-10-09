@@ -171,12 +171,18 @@ heavy_slot_parallelism_bound() {
   printf '%s\n' "$cpus"
 }
 
+heavy_slot_shell_quote() {
+  printf "'"
+  printf '%s' "$1" | sed "s/'/'\\\\''/g"
+  printf "'"
+}
+
 heavy_slot_acquire_advice() {
   local task=$1 estimate=$2 expiry=$3 rounded jobs release_cmd
   rounded=$(heavy_slot_rounded_mb "$estimate")
   jobs=$(heavy_slot_parallelism_bound)
-  release_cmd=$0
-  [ -z "${FM_HOME:-}" ] || release_cmd="FM_HOME=$FM_HOME $0"
+  release_cmd=$(heavy_slot_shell_quote "$0")
+  [ -z "${FM_HOME:-}" ] || release_cmd="FM_HOME=$(heavy_slot_shell_quote "$FM_HOME") $release_cmd"
   printf 'acquired: task=%s estimate=%sMB pid=%s expires_in=%ss\n' \
     "$task" "$estimate" "${BASHPID:-$$}" "$expiry"
   if command -v systemd-run >/dev/null 2>&1; then

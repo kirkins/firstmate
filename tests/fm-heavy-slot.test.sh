@@ -105,6 +105,18 @@ test_acquire_output_names_the_cap_wrapper() {
   pass "fm-heavy-slot.sh: acquire output carries the cap wrapper and release"
 }
 
+test_release_hint_is_copy_safe() {
+  local home out release_line
+  home=$(make_home "hint home")
+  out=$(FM_HOME="$home" "$SLOT" acquire hint-task --estimate 100 2>/dev/null)
+  release_line=$(printf '%s\n' "$out" | sed -n 's/^release immediately after the job: //p')
+  [ -n "$release_line" ] || fail "acquire output did not print a release command"
+  out=$(eval "$release_line" 2>/dev/null)
+  assert_contains "$out" "released: task=hint-task" \
+    "the printed release command is not safe to copy verbatim under a spaced FM_HOME"
+  pass "fm-heavy-slot.sh: the printed release command survives a spaced FM_HOME"
+}
+
 test_release_is_scoped_and_idempotent() {
   local home
   home=$(make_home release)
@@ -187,6 +199,7 @@ test_usage_is_loud_and_closed_set
 test_concurrent_acquire_admits_exactly_one_holder
 test_held_refusal_names_the_holder
 test_acquire_output_names_the_cap_wrapper
+test_release_hint_is_copy_safe
 test_release_is_scoped_and_idempotent
 test_expiry_allows_takeover_and_surfaces_loudly
 test_heartbeat_refreshes_only_the_holder

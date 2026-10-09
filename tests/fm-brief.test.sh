@@ -1492,12 +1492,16 @@ test_local_resource_rule_emitted_for_crewmates() {
     "ship brief did not teach the release obligation"
   assert_grep "cap wrapper the acquire output prints" "$brief" \
     "ship brief restated wrapper details instead of pointing at the acquire output"
+  assert_grep "the status, steering-inbox, and heavy-slot records authorized below" "$brief" \
+    "ship outside-write rule did not authorize the heavy-slot record the section orders"
 
   FM_HOME="$home" "$ROOT/bin/fm-brief.sh" brief-heavy-scout alpha --scout >/dev/null 2>&1 \
     || fail "scout brief with the heavy-slot rule should scaffold"
   brief="$home/data/brief-heavy-scout/brief.md"
   assert_grep "acquire 'brief-heavy-scout' --estimate <MB>" "$brief" \
     "scout brief missing the heavy-slot acquire command with its task id"
+  assert_grep "the status file below, and this home's heavy-slot record the Local resources section takes" "$brief" \
+    "scout outside-write rule did not authorize the heavy-slot record the section orders"
 
   # One shared string, not two copies: the emitted rule must be byte-identical
   # across the ship and scout scaffolds apart from the task id, so a later edit
