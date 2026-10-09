@@ -13,4 +13,5 @@ When this session owns supervision and away mode is not active:
 8. Failure or missing cycle only: drain queued wakes, inspect the failure, then start a fresh foreground checkpoint.
 
 Codex cannot reason while a foreground tool call is running.
-The bounded checkpoint returns control regularly so user messages and queued wakes can be handled without relying on background-task wake semantics.
+Observe the checkpoint result in the active tool turn, then handle and rearm it before replying.
+A checkpoint completing in a retained exec session after a reply does not guarantee that the native host starts another model turn.
