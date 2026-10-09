@@ -1,0 +1,30 @@
+=============== interpreter: node ===============
+tree: probe(3019199) <- node helper(3019192) <- native codex(3019191)
+helper cmdline: node ./tree/helper.js --task example-codex-witness
+native cmdline: ./tree/codex -c printf "%s\n" "$$" > "$STATE/.lock"; "$INTERP" "./tree/$HS" --task example-codex-witness; rc=$?; exit "$rc"
+lock records: 3019191
+--- AFTER (target): shipped interfaces ---
+ok: helper is NOT a harness (fm_harness_pid_alive refuses)
+ok: ancestry owner = native codex pid 3019191
+ok: session lock owned by own native ancestry
+ok: fm-harness.sh ancestry -> 'comm codex'
+--- BEFORE (base 3991290f): same live tree ---
+repro: base ancestry owner = 3019192 = the node helper itself (ownership stolen from native 3019191)
+repro: base accepts the helper as a harness (fm_harness_pid_alive)
+repro: base reads the session's own lock as NOT owned (fail-closed refusal)
+base fm-harness.sh ancestry -> 'args codex'
+=============== interpreter: python3 ===============
+tree: probe(3019493) <- python3 helper(3019492) <- native codex(3019491)
+helper cmdline: python3 ./tree/helper.py --task example-codex-witness
+native cmdline: ./tree/codex -c printf "%s\n" "$$" > "$STATE/.lock"; "$INTERP" "./tree/$HS" --task example-codex-witness; rc=$?; exit "$rc"
+lock records: 3019491
+--- AFTER (target): shipped interfaces ---
+ok: helper is NOT a harness (fm_harness_pid_alive refuses)
+ok: ancestry owner = native codex pid 3019491
+ok: session lock owned by own native ancestry
+ok: fm-harness.sh ancestry -> 'comm codex'
+--- BEFORE (base 3991290f): same live tree ---
+repro: base ancestry owner = 3019492 = the python3 helper itself (ownership stolen from native 3019491)
+repro: base accepts the helper as a harness (fm_harness_pid_alive)
+repro: base reads the session's own lock as NOT owned (fail-closed refusal)
+base fm-harness.sh ancestry -> 'args codex'

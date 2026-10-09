@@ -1,0 +1,43 @@
+# Live drift guard run 2026-10-09: PATH restricted to direct installed binaries
+# (claude/opencode/pi symlinks to mise-installed ELFs; codex wrapper: disposable precreated CODEX_HOME + '--no-daemon --disable hooks').
+# grok/omp/muse/pi-signed/kimi resolve only through ~/.local/bin (mise launchers) and were deliberately excluded per the
+# verification plan ('global installer launchers ... must not be invoked'); the test therefore reports them as not installed.
+# cursor resolved through fm-cursor-lib's own verified install-path resolver and was checked live.
+
+FM_TEST_BEGIN 2026-10-09T05:19:14Z tests/fm-harness-liveness-drift-live-e2e.test.sh family=live-harness-optin expected_gate_skip=live-capability
+# claude 2.1.291 (Claude Code): title='claude' foreground=[claude ]
+ok - harness liveness: claude 2.1.291 (Claude Code) classifies alive
+# claude 2.1.291 (Claude Code): ancestry verdicts=[comm claude]
+ok - harness detection: claude 2.1.291 (Claude Code) is identified by the ancestry walk at comm strength
+ok - session-lock identity: claude 2.1.291 (Claude Code) retains a verified foreground process
+# codex codex-cli 0.160.1: title='codex' foreground=[codex ]
+ok - harness liveness: codex codex-cli 0.160.1 classifies alive
+# codex codex-cli 0.160.1: ancestry verdicts=[comm codex]
+ok - harness detection: codex codex-cli 0.160.1 is identified by the ancestry walk at comm strength
+ok - session-lock identity: codex codex-cli 0.160.1 retains a verified foreground process
+# opencode 1.18.34: title='opencode' foreground=[opencode ]
+ok - harness liveness: opencode 1.18.34 classifies alive
+# opencode 1.18.34: ancestry verdicts=[comm opencode]
+ok - harness detection: opencode 1.18.34 is identified by the ancestry walk at comm strength
+ok - session-lock identity: opencode 1.18.34 retains a verified foreground process
+# pi 1.0.2: title='pi' foreground=[pi ]
+ok - harness liveness: pi 1.0.2 classifies alive
+# pi 1.0.2: ancestry verdicts=[comm pi]
+ok - harness detection: pi 1.0.2 is identified by the ancestry walk at comm strength
+ok - session-lock identity: pi 1.0.2 retains a verified foreground process
+# skip: pi-signed is not installed on this machine, so its classification is unverified here
+# skip: grok is not installed on this machine, so its classification is unverified here
+# skip: kimi is not installed on this machine, so its classification is unverified here
+# cursor 2026.10.01-e373342: title='bash' foreground=[cursor-agent mise ]
+ok - harness liveness: cursor 2026.10.01-e373342 classifies alive
+# cursor 2026.10.01-e373342: ancestry verdicts=[comm cursor]
+ok - harness detection: cursor 2026.10.01-e373342 is identified by the ancestry walk at comm strength
+ok - session-lock identity: cursor 2026.10.01-e373342 retains a verified foreground process
+# skip: omp is not installed on this machine, so its classification is unverified here
+# skip: muse is not installed on this machine, so its classification is unverified here
+# unverified on this machine (not installed): pi-signed grok kimi omp muse
+# checked 5 installed harness(es)
+FM_TEST_END 2026-10-09T05:19:39Z tests/fm-harness-liveness-drift-live-e2e.test.sh exit=0 duration_ms=25767 gate_skip=false
+FM_TEST_SUMMARY total=1 failed=0 skipped_gate=0 duration_ms=25855
+FM_TEST_SUMMARY_FAMILY family=live-harness-optin count=1 duration_ms=25767 failed=0
+FM_TEST_SLOWEST rank=1 script=tests/fm-harness-liveness-drift-live-e2e.test.sh duration_ms=25767

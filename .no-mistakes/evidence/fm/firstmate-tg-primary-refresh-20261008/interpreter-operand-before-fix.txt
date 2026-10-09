@@ -1,0 +1,10 @@
+FAIL node helper + codex task arg      : expected nomatch, got match  [node /home/u/wt/scripts/helper.js --task codex-4f2a]
+FAIL python helper + claude cwd arg    : expected nomatch, got match  [python3 /home/u/wt/scripts/helper.py --cwd /home/u/vendor/claude]
+FAIL node helper + opencode task arg   : expected nomatch, got match  [node /tmp/helper.js --task opencode]
+FAIL python -c inline code naming codex: expected nomatch, got match  [python3 -c codex]
+FAIL python -m module naming claude   : expected nomatch, got match  [python3 -m claude]
+FAIL node --eval naming claude         : expected nomatch, got match  [node --eval claude]
+FAIL node --require codex loader       : expected nomatch, got match  [node --require /vendor/codex/loader.js /tmp/helper.js]
+FAIL node -X option-led codex script   : expected nomatch, got match  [node -X /vendor/codex/x.js]
+ok node claude cli.js wrapper         -> match (FM_HARNESS_IS_CLAUDE=1)
+FAIL python codex main.py wrapper      : FM_HARNESS_IS_CLAUDE=1 wanted 0  [python3 /vendor/codex/bin/main.py --task claude]

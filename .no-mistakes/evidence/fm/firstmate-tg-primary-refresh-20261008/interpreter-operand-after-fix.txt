@@ -1,0 +1,10 @@
+ok node helper + codex task arg       -> nomatch
+ok python helper + claude cwd arg     -> nomatch
+ok node helper + opencode task arg    -> nomatch
+ok python -c inline code naming codex -> nomatch
+ok python -m module naming claude    -> nomatch
+ok node --eval naming claude          -> nomatch
+ok node --require codex loader        -> nomatch
+ok node -X option-led codex script    -> nomatch
+ok node claude cli.js wrapper         -> match (FM_HARNESS_IS_CLAUDE=1)
+ok python codex main.py wrapper       -> match (FM_HARNESS_IS_CLAUDE=0)
