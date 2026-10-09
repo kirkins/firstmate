@@ -2,7 +2,8 @@
 # tests/fm-harness-liveness-drift-live-e2e.test.sh - default-on drift guard proving
 # every INSTALLED harness is still classified `alive` by the tmux liveness
 # probe (bin/backends/tmux.sh) AND still identified by the harness-detection
-# ancestry walk (bin/fm-harness.sh).
+# ancestry walk (bin/fm-harness.sh). Supported primaries must also retain a
+# real foreground process accepted by the session-lock identity owner.
 #
 # Why this file exists: both verdicts depend on how a harness names its own
 # process, which is a surface the harness vendor controls and changes without
@@ -111,7 +112,7 @@ SKIPPED=
 # cursor matters for the same reason muse does, from the other direction: it
 # runs as a bundled node script, so its pane title is a bare `node` that no name
 # pattern can own, and identity has to come from its install path or argv[0].
-for harness in claude codex opencode pi pi-signed grok kimi cursor muse; do
+for harness in claude codex opencode pi pi-signed grok kimi cursor omp muse; do
   if ! bin_path=$(resolve_harness_binary "$harness"); then
     SKIPPED="$SKIPPED $harness"
     note "skip: $harness is not installed on this machine, so its classification is unverified here"
@@ -223,6 +224,17 @@ EOF
 
   note "$harness $version: ancestry verdicts=[$(printf '%s' "$verdicts" | tr '\n' ';')]"
   pass "harness detection: $harness $version is identified by the ancestry walk at comm strength"
+  case "$harness" in
+    claude|codex|opencode|pi|pi-signed|grok|kimi|cursor|omp)
+      lock_identity=0
+      for fg_pid in $fg_pids; do
+        if fm_harness_pid_alive "$fg_pid"; then lock_identity=1; break; fi
+      done
+      [ "$lock_identity" = 1 ] || fail \
+        "SESSION-LOCK IDENTITY DRIFT: $harness $version has no foreground process accepted by bin/fm-session-lock-lib.sh. $drift_context"
+      pass "session-lock identity: $harness $version retains a verified foreground process"
+      ;;
+  esac
   CHECKED=$((CHECKED + 1))
 done
 

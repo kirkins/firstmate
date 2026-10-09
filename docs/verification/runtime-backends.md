@@ -38,6 +38,40 @@ FM_TEST_SUMMARY total=1 failed=0 skipped_gate=0 duration_ms=3666
 Before that boundary existed, a Codex session started from an environment that had retained `CLAUDECODE=1` reported `claude`, and session start emitted Claude's Stop-owned supervision protocol to a Codex primary.
 The same live shape, reproduced with a real process named `codex` and no installed harness, now reports `codex` with the marker present and `claude` with the marker present and ancestry blinded, which is what proves the case is not vacuous.
 
+### Interpreter helper operands (2026-10-09 UTC)
+
+The shared script-operand parser in `bin/fm-session-lock-lib.sh` limits interpreter identity to the script being run, so a later task id, prompt, cwd, inline-code or module operand cannot claim the session lock or stop detection below the native harness.
+Option-led and quoted flattened records stand down instead of guessing argument boundaries.
+The executable regressions are refreshed with:
+
+```sh
+bash bin/fm-test-run.sh tests/fm-session-lock-ancestry.test.sh tests/fm-harness-precedence.test.sh --jobs 1
+```
+
+The real Python and Node helper cases retain a native-shaped parent's lock while independently rejecting the helper as a harness and checking the public ancestry result.
+The recycled-chain fixture requires a live child to lose its ended daemon parent, then independently proves the original lock owner is absent from its ancestry; it does not require an orphan's adopter to be PID 1.
+
+The token-free installed-harness guard also checks supported primaries through the session-lock identity owner:
+
+```sh
+FM_HARNESS_LIVENESS_DRIFT=1 bash bin/fm-test-run.sh tests/fm-harness-liveness-drift-live-e2e.test.sh --jobs 1
+```
+
+On 2026-10-09 UTC, direct installed binaries ran without model prompts in disposable homes on a private tmux socket.
+Codex ran with `--no-daemon --disable hooks` and an existing disposable `CODEX_HOME`; no shared app-server or hook trust was changed.
+The measured identity results were:
+
+```text
+ok - session-lock identity: claude 2.1.291 (Claude Code) retains a verified foreground process
+ok - session-lock identity: codex codex-cli 0.160.1 retains a verified foreground process
+ok - session-lock identity: opencode 1.18.34 retains a verified foreground process
+ok - session-lock identity: pi 1.0.2 retains a verified foreground process
+# checked 4 installed harness(es)
+```
+
+Pi-signed, Grok, Kimi, Cursor, omp and Muse were unverified in that run; installer launchers that would change global tool settings were excluded from the isolated execution path.
+These are process-identity results, not managed selected-thread, native turn-admission, replacement or restart coverage.
+
 ### A real Codex session holding a retained Claude marker
 
 The portable regression builds its process tree from renamed executables, so the same guarantee is proven again against the real installed Codex.

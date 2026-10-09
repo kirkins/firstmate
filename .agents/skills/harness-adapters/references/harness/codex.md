@@ -49,6 +49,6 @@ Codex runs the Stop command with process PWD set to the hook-loaded project root
 The tracked hook anchors to `pwd -P`, verifies that root is Firstmate-shaped and hook-bearing, and then invokes the guard with the original payload.
 
 Codex's primary watcher protocol is `../../../bin/fm-watch-checkpoint.sh --seconds "${FM_CODEX_WATCH_CHECKPOINT:-180}"`, not `../../../bin/fm-watch-arm.sh`.
-Codex cannot reason while a foreground tool call is running, so the checkpoint is deliberately foreground and bounded to return control regularly for user messages and queued notifications.
+Codex cannot reason while a foreground tool call is running, so the checkpoint is deliberately foreground and bounded; its result must be observed in the active tool turn, since a retained exec session completing after a reply does not guarantee another native model turn.
 In a home with `config/supervision-host` and no `config/supervision-host-off` the checkpoint runs the supervision host instead of the watcher, with Claude's print mode as its headless engine, and holds for at least an hour while away; [`supervision-host.md`](../../../../../docs/supervision-host.md) owns the host and that bound.
 Codex's PreToolUse watcher-arm seatbelt blocks directly through its project hook.

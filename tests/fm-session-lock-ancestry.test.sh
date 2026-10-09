@@ -187,6 +187,88 @@ SH
   pass "session-lock: ordinary script paths under a harness directory are not harness processes"
 }
 
+test_interpreter_identity_uses_only_the_script_operand() {
+  # Public library calls pin positive wrapper identity separately from the
+  # ordinary helper's later operands, including inline code and module flags.
+  bash -c '
+    . "$1"
+    fm_harness_process_matches python3 "python3 /vendor/codex/bin/main.py --task claude" || exit 1
+    [ "$FM_HARNESS_IS_CLAUDE" = 0 ] || exit 2
+    fm_harness_process_matches node "node /vendor/claude/cli.js --cwd codex" || exit 3
+    [ "$FM_HARNESS_IS_CLAUDE" = 1 ] || exit 4
+    for line in \
+      "python3 /tmp/helper.py --task codex" \
+      "python3 /tmp/helper.py --cwd /vendor/claude" \
+      "python3 -c codex" "python3 -m claude" \
+      "node /tmp/helper.js --task opencode" \
+      "node --eval claude" "node --require /vendor/codex/loader.js /tmp/helper.js"; do
+      if fm_harness_process_matches "${line%% *}" "$line"; then exit 5; fi
+    done
+  ' _ "$LIB" || fail "interpreter identity searched beyond the script operand or lost a plain harness wrapper"
+  pass "session-lock: a plain interpreter wrapper identifies; task/cwd/code/module operands do not"
+}
+
+test_real_interpreter_helper_keeps_the_native_owner() {
+  local dir native script interpreter out checked=0
+  dir="$TMP_ROOT/interpreter-helper"
+  mkdir -p "$dir/state"
+  native="$dir/codex"
+  cp /bin/bash "$native"
+  chmod +x "$native"
+  cat > "$dir/helper.py" <<'PY'
+import os
+import subprocess
+command = r'''
+. "$1"
+if fm_harness_pid_alive "$2"; then exit 41; fi
+owner=$(fm_harness_ancestry_pid) || exit 42
+[ "$owner" = "$3" ] || exit 43
+fm_session_lock_owned_by_self "$4" || exit 44
+verdict=$("$5" ancestry) || exit 45
+[ "$verdict" = "comm codex" ] || exit 46
+printf 'verified'
+'''
+subprocess.run(['bash', '-c', command, '_', os.environ['FM_TEST_LOCK_LIB'],
+                str(os.getpid()), str(os.getppid()), os.environ['FM_TEST_STATE'],
+                os.environ['FM_TEST_HARNESS']], check=True)
+PY
+  cat > "$dir/helper.js" <<'JS'
+const { spawnSync } = require('child_process');
+const command = `
+. "$1"
+if fm_harness_pid_alive "$2"; then exit 41; fi
+owner=$(fm_harness_ancestry_pid) || exit 42
+[ "$owner" = "$3" ] || exit 43
+fm_session_lock_owned_by_self "$4" || exit 44
+verdict=$("$5" ancestry) || exit 45
+[ "$verdict" = "comm codex" ] || exit 46
+printf 'verified'
+`;
+const result = spawnSync('bash', ['-c', command, '_', process.env.FM_TEST_LOCK_LIB,
+  String(process.pid), String(process.ppid), process.env.FM_TEST_STATE,
+  process.env.FM_TEST_HARNESS], { stdio: 'inherit' });
+process.exit(result.status === null ? 47 : result.status);
+JS
+  for interpreter in python3 node; do
+    if ! command -v "$interpreter" >/dev/null 2>&1; then
+      printf '# skip: real interpreter helper %s is unavailable\n' "$interpreter"
+      continue
+    fi
+    if [ "$interpreter" = python3 ]; then script="$dir/helper.py"; else script="$dir/helper.js"; fi
+    # Keep the named parent alive while the actual interpreter asks from its
+    # child. The codex-containing task is deliberately an argv operand here.
+    out=$(env -u CLAUDE_CODE_SESSION_ID -u CLAUDE_PID \
+      FM_TEST_LOCK_LIB="$LIB" FM_TEST_STATE="$dir/state" FM_TEST_HARNESS="$ROOT/bin/fm-harness.sh" \
+      "$native" -c 'printf "%s\n" "$$" > "$1/.lock"; "$2" "$3" --task example-codex-witness; rc=$?; exit "$rc"' \
+      _ "$dir/state" "$interpreter" "$script") \
+      || fail "$interpreter helper lost its original native owner to a later task argument"
+    [ "$out" = verified ] || fail "$interpreter helper omitted its independent owner/detection verdicts"
+    checked=$((checked + 1))
+  done
+  [ "$checked" -gt 0 ] || fail "no real interpreter available; helper ancestry coverage checked nothing"
+  pass "session-lock: real interpreter helpers carrying codex task arguments retain their native lock owner"
+}
+
 test_harness_beyond_a_gap_never_owns_the_lock() {
   local dir fakebin got
   dir="$TMP_ROOT/gap"
@@ -765,15 +847,18 @@ test_e2e_background_session_keeps_its_lock_across_a_recycled_chain() {
   grep -qx "$frontend" "$dir/state/phase-1/ancestry" || fail "the healthy chain did not reach the front-end"
   expect_phase_owned "$dir" 1 2 "$frontend" "healthy chain"
 
-  # Recycle the bridge: the daemon ends, the pty-host is reparented to init, and
-  # the front-end that holds the lock stays alive.
+  # Recycle the bridge: the daemon ends, the pty-host loses that parent, and
+  # the front-end that holds the lock stays alive. A tool host may be a child
+  # subreaper, so adoption by pid 1 is not a portable process-tree invariant.
+  # Phase 2 separately proves that the owner is no longer in the ancestry.
   kill -TERM "$daemon"
   i=0
-  while [ "$i" -lt 200 ] && { kill -0 "$daemon" 2>/dev/null || [ "$(ps -o ppid= -p "$ptyhost" 2>/dev/null | tr -d ' ')" != 1 ]; }; do
+  while [ "$i" -lt 200 ] && [ "$(ps -o ppid= -p "$ptyhost" 2>/dev/null | tr -d ' ')" = "$daemon" ]; do
     sleep 0.05
     i=$((i + 1))
   done
-  [ "$(ps -o ppid= -p "$ptyhost" 2>/dev/null | tr -d ' ')" = 1 ] || fail "the pty-host was not reparented to init after the daemon ended"
+  kill -0 "$ptyhost" 2>/dev/null || fail "the pty-host died with the daemon, so the recycled case cannot be exercised"
+  [ "$(ps -o ppid= -p "$ptyhost" 2>/dev/null | tr -d ' ')" != "$daemon" ] || fail "the pty-host still has its ended daemon as parent"
   kill -0 "$frontend" 2>/dev/null || fail "the front-end died with the daemon, so the recycled case cannot be exercised"
 
   # Phase 2: the same session id over the broken chain - the reported drift.
@@ -1102,6 +1187,8 @@ test_verified_reclaim_keeps_new_sidecar() {
 test_version_named_session_is_identified_on_both_platforms
 test_harness_at_namespace_pid1_is_examined
 test_ordinary_paths_are_never_harness_processes
+test_interpreter_identity_uses_only_the_script_operand
+test_real_interpreter_helper_keeps_the_native_owner
 test_harness_beyond_a_gap_never_owns_the_lock
 test_competing_version_named_session_is_seen_as_live
 test_same_session_id_owns_a_recycled_background_chain

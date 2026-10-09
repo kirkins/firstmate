@@ -7,7 +7,9 @@
 # safeguards: PR runs supersede within one PR while main pushes are never
 # cancelled, and every CI job carries a finite hang tripwire drawn from the
 # three-tier timeout policy that docs/fm-test-portable-shards.md "Timeouts"
-# owns (fast, normal, heavy), so no job drifts back to a one-off number.
+# owns (fast, normal, heavy) plus that policy's one recorded measured exception
+# (portable serial shard 2 at 45 minutes), so no job drifts back to a one-off
+# number.
 #
 # The workflow is parsed as YAML and its concurrency expressions are resolved
 # against simulated pull_request and push contexts, so the assertions describe
@@ -64,32 +66,74 @@ puts [interpolate.call(concurrency.fetch("group")),
 ' "$CI_WORKFLOW" "$event" "$pr_number" "$run_id"
 }
 
-job_timeout() {
-  ruby -ryaml -e '
-puts YAML.load_file(ARGV[0]).fetch("jobs").fetch(ARGV[1]).fetch("timeout-minutes", "none")
-' "$CI_WORKFLOW" "$1"
+# Print one "<leg><TAB>minutes" line per effective timeout leg of a job: a
+# matrix job gets one line per shard, a plain job gets one. A literal integer
+# timeout prints as itself; the only expression form this workflow uses - one
+# recorded per-shard exception over the tier default - is resolved against
+# each leg's matrix context the way GitHub would, so the assertions describe
+# effective budgets rather than how the file happens to be spelled.
+job_timeouts() {  # <job>
+  ruby -ryaml - "$CI_WORKFLOW" "$1" <<'RUBY'
+doc = YAML.load_file(ARGV[0])
+name = ARGV[1]
+job = doc.fetch("jobs").fetch(name)
+timeout = job.fetch("timeout-minutes") { raise "no timeout-minutes on #{name}" }
+legs = [[nil, nil]]
+matrix = job.dig("strategy", "matrix")
+if matrix
+  raise "unexpected #{name} matrix dimensions" unless matrix.keys.size == 1
+  key = matrix.keys.fetch(0)
+  legs = matrix.fetch(key).map { |value| [key, value] }
+end
+legs.each do |key, value|
+  if timeout.is_a?(Integer)
+    puts [(key.nil? ? "-" : "#{key}-#{value}"), timeout].join("\t")
+    next
+  end
+  body = timeout.to_s[/\A\$\{\{(.+)\}\}\z/, 1].to_s.strip
+  exception = body.match(/\Amatrix\.(\w+) == (\d+) && (\d+) \|\| (\d+)\z/)
+  raise "unresolvable timeout-minutes on #{name}: #{timeout}" unless exception
+  raise "timeout expression on #{name} does not read its matrix dimension" unless exception[1] == key
+  minutes = value.to_i == exception[2].to_i ? exception[3].to_i : exception[4].to_i
+  puts ["#{key}-#{value}", minutes].join("\t")
+end
+RUBY
 }
 
 # Tier membership is the executable inventory of the timeout policy: a new job
 # must join a tier, and a job-level value outside these tiers is exactly the
-# one-off number the policy removed.
+# one-off number the policy removed. The portable serial lane is normal-tier
+# too, but its legs are asserted separately because one shard carries the
+# policy's single recorded measured exception.
 FAST_TIER_JOBS='test-coverage invariants tests-timing-aggregate'
-NORMAL_TIER_JOBS='lint tests-portable-parallel-1 tests-portable-parallel-2 tests-portable-serial macos-stock-bash'
+NORMAL_TIER_JOBS='lint tests-portable-parallel-1 tests-portable-parallel-2 macos-stock-bash'
+SERIAL_LANE_JOB='tests-portable-serial'
 HEAVY_TIER_JOBS='tests-herdr'
 
+# The one measured budget exception, recorded in docs/fm-test-portable-shards.md
+# "Timeouts": the cancelled "Behavior portable serial 2" check on
+# https://github.com/kirkins/firstmate/pull/3 exhausted
+# the shared 30-minute normal budget with every suite and gate still enabled,
+# so that shard alone carries 45 minutes while the other serial shards stay at 30.
+SERIAL_EXCEPTION_SHARD=2
+SERIAL_EXCEPTION_TIMEOUT=45
+
 # Print the one timeout every listed job shares; fail on any disagreement.
+# These jobs are single-budget lanes: the serial lane's recorded exception leg
+# is pinned by its own test below rather than averaged into a tier value.
 tier_timeout() {  # <tier> <job>...
   local tier=$1 job first actual
   shift
   first=
   for job in "$@"; do
-    actual=$(job_timeout "$job") || fail "could not read the $job timeout"
-    case "$actual" in ''|*[!0-9]*) fail "$job ($tier tier) has no integer timeout, got $actual" ;; esac
-    if [ -z "$first" ]; then
-      first=$actual
-    elif [ "$actual" != "$first" ]; then
-      fail "$tier tier jobs must share one timeout, got $first and $actual ($job)"
-    fi
+    while IFS=$'\t' read -r _ actual; do
+      case "$actual" in ''|*[!0-9]*) fail "$job ($tier tier) has no integer timeout, got $actual" ;; esac
+      if [ -z "$first" ]; then
+        first=$actual
+      elif [ "$actual" != "$first" ]; then
+        fail "$tier tier jobs must share one timeout, got $first and $actual ($job)"
+      fi
+    done < <(job_timeouts "$job")
   done
   printf '%s\n' "$first"
 }
@@ -134,32 +178,37 @@ test_main_pushes_are_never_cancelled() {
 }
 
 test_every_job_has_a_finite_timeout() {
-  local reported
-  reported=$(ruby -ryaml -e '
-YAML.load_file(ARGV[0]).fetch("jobs").each do |name, job|
-  timeout = job["timeout-minutes"]
-  next if timeout.is_a?(Integer) && timeout > 0
-  puts "#{name}: #{timeout.inspect}"
-end
-' "$CI_WORKFLOW") || fail "could not read job timeouts from ci.yml"
-  [ -z "$reported" ] || fail "these CI jobs have no finite hang tripwire:"$'\n'"$reported"
-  pass "every ci.yml job carries a finite timeout"
+  local job legs _ minutes reported
+  reported=
+  while IFS= read -r job; do
+    legs=$(job_timeouts "$job") || fail "could not resolve the $job timeout legs"
+    [ -n "$legs" ] || fail "$job carries no timeout leg"
+    while IFS=$'\t' read -r _ minutes; do
+      case "$minutes" in
+        ''|*[!0-9]*) reported="${reported:+$reported$'\n'}$job: $minutes" ;;
+        *) [ "$minutes" -gt 0 ] || reported="${reported:+$reported$'\n'}$job: $minutes" ;;
+      esac
+    done <<<"$legs"
+  done < <(workflow_jobs)
+  [ -z "$reported" ] || fail "these CI job legs have no finite hang tripwire:"$'\n'"$reported"
+  pass "every ci.yml job leg carries a finite timeout"
 }
 
-# Every job sits in exactly one tier, and the workflow carries exactly three
-# distinct job-level timeouts: one per tier, no one-off numbers.
+# Every job sits in exactly one tier, and the workflow carries no timeout value
+# beyond the three tier budgets plus the one recorded serial exception: still
+# no one-off numbers.
 test_every_job_belongs_to_exactly_one_timeout_tier() {
   local expected actual distinct
   # shellcheck disable=SC2086
-  expected=$(printf '%s\n' $FAST_TIER_JOBS $NORMAL_TIER_JOBS $HEAVY_TIER_JOBS | LC_ALL=C sort)
+  expected=$(printf '%s\n' $FAST_TIER_JOBS $NORMAL_TIER_JOBS $SERIAL_LANE_JOB $HEAVY_TIER_JOBS | LC_ALL=C sort)
   [ "$(printf '%s\n' "$expected" | LC_ALL=C sort -u)" = "$expected" ] \
     || fail "a job is listed in more than one timeout tier:"$'\n'"$expected"
   actual=$(workflow_jobs | LC_ALL=C sort) || fail "could not list ci.yml jobs"
   [ "$actual" = "$expected" ] \
     || fail "ci.yml jobs and the timeout tiers disagree; every job must join one tier"$'\n'"workflow: $(printf '%s' "$actual" | tr '\n' ' ')"$'\n'"tiers: $(printf '%s' "$expected" | tr '\n' ' ')"
-  distinct=$(for job in $expected; do job_timeout "$job"; done | LC_ALL=C sort -u | wc -l | tr -d ' ')
-  [ "$distinct" = 3 ] \
-    || fail "ci.yml must carry exactly three distinct job timeouts (fast, normal, heavy), got $distinct"
+  distinct=$(for job in $expected; do job_timeouts "$job" | cut -f2; done | LC_ALL=C sort -u)
+  [ "$(printf '%s\n' "$distinct" | wc -l | tr -d ' ')" = 4 ] \
+    || fail "ci.yml must carry exactly the three tier budgets plus the one recorded serial exception, got:"$'\n'"$distinct"
   pass "every ci.yml job belongs to one of the three timeout tiers"
 }
 
@@ -173,8 +222,9 @@ test_fast_tier_shares_one_short_tripwire() {
   pass "fast tier jobs share one $fast minute tripwire"
 }
 
-# Normal tier: every test or lint lane shares ONE fixed 30-minute budget,
+# Normal tier: every plain test or lint lane shares ONE fixed 30-minute budget,
 # above the fast tier. That budget is a hang tripwire, not a packing estimate.
+# Every serial shard leg joins this same budget except the recorded exception.
 test_normal_tier_shares_one_budget() {
   local fast normal
   # shellcheck disable=SC2086
@@ -186,6 +236,31 @@ test_normal_tier_shares_one_budget() {
   [ "$normal" = 30 ] \
     || fail "normal tier must be the single 30-minute shared budget, got $normal"
   pass "normal tier jobs share one $normal minute budget"
+}
+
+# The recorded budget exception, and only it: serial shard
+# $SERIAL_EXCEPTION_SHARD alone carries $SERIAL_EXCEPTION_TIMEOUT minutes,
+# while every other serial leg stays on the shared normal budget, so a second
+# shard exception cannot creep in as a one-off number.
+test_serial_exception_is_one_recorded_shard() {
+  local budget legs bad
+  # shellcheck disable=SC2086
+  budget=$(tier_timeout normal $NORMAL_TIER_JOBS) || exit 1
+  legs=$(job_timeouts "$SERIAL_LANE_JOB") || fail "could not read the serial lane timeout legs"
+  bad=$(printf '%s\n' "$legs" | awk -F'\t' \
+    -v shard="shard-$SERIAL_EXCEPTION_SHARD" \
+    -v want="$SERIAL_EXCEPTION_TIMEOUT" \
+    -v budget="$budget" '
+      $1 == shard {
+        if ($2 == want) { seen = 1 } else { print $1 " carries " $2 " minutes" }
+        next
+      }
+      $2 == budget { next }
+      { print $1 " carries " $2 " minutes" }
+      END { if (!seen) print shard " does not carry its " want " minute exception" }
+    ')
+  [ -z "$bad" ] || fail "the serial lane must be $budget minutes except shard $SERIAL_EXCEPTION_SHARD at $SERIAL_EXCEPTION_TIMEOUT:"$'\n'"$bad"
+  pass "serial shard $SERIAL_EXCEPTION_SHARD alone carries the $SERIAL_EXCEPTION_TIMEOUT minute exception"
 }
 
 # Heavy tier: Herdr alone carries a job-level last-resort backstop above the
@@ -257,4 +332,5 @@ test_every_job_has_a_finite_timeout
 test_every_job_belongs_to_exactly_one_timeout_tier
 test_fast_tier_shares_one_short_tripwire
 test_normal_tier_shares_one_budget
+test_serial_exception_is_one_recorded_shard
 test_heavy_tier_keeps_a_step_tripwire_under_a_job_backstop
