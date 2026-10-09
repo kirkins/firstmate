@@ -1465,6 +1465,60 @@ test_crewmate_scaffolds_forbid_pool_administration() {
   pass "fm-brief.sh: every crewmate scaffold forbids administering the shared worktree pool"
 }
 
+# The local-resource rule is the one standard contract for memory-heavy work
+# (bin/fm-heavy-slot.sh owns the turnstile): both crewmate scaffolds must emit
+# it naming this task's id and binding the supervising home, so the slot lands
+# in this home's state/ instead of the worker's own worktree, and a secondmate
+# charter must not grow a second copy (its crews get it from their scaffolds).
+test_local_resource_rule_emitted_for_crewmates() {
+  local home id brief ship_rule scout_rule
+  home="$TMP_ROOT/heavy-slot-rule-home"
+  mkdir -p "$home/data"
+
+  id="brief-heavy-a7"
+  FM_HOME="$home" "$ROOT/bin/fm-brief.sh" "$id" alpha --mode no-mistakes >/dev/null 2>&1 \
+    || fail "ship brief with the heavy-slot rule should scaffold"
+  brief="$home/data/$id/brief.md"
+  assert_grep "# Local resources" "$brief" "ship brief missing the Local resources section"
+  assert_grep "acquire '$id' --estimate <MB>" "$brief" \
+    "ship brief missing the heavy-slot acquire command with its task id"
+  assert_grep "FM_HOME='$home'" "$brief" \
+    "ship brief did not bind the supervising home into the acquire command"
+  assert_grep "$ROOT/bin/fm-heavy-slot.sh" "$brief" \
+    "ship brief did not name the home's turnstile script by absolute path"
+  assert_grep "never run the job without the slot" "$brief" \
+    "ship brief did not teach the refusal contract"
+  assert_grep "release the slot immediately after" "$brief" \
+    "ship brief did not teach the release obligation"
+  assert_grep "cap wrapper the acquire output prints" "$brief" \
+    "ship brief restated wrapper details instead of pointing at the acquire output"
+
+  FM_HOME="$home" "$ROOT/bin/fm-brief.sh" brief-heavy-scout alpha --scout >/dev/null 2>&1 \
+    || fail "scout brief with the heavy-slot rule should scaffold"
+  brief="$home/data/brief-heavy-scout/brief.md"
+  assert_grep "acquire 'brief-heavy-scout' --estimate <MB>" "$brief" \
+    "scout brief missing the heavy-slot acquire command with its task id"
+
+  # One shared string, not two copies: the emitted rule must be byte-identical
+  # across the ship and scout scaffolds apart from the task id, so a later edit
+  # cannot fix one and miss the other.
+  ship_rule=$(sed -n '/^# Local resources/,/^$/{ /acquire /d; p; }' "$home/data/brief-heavy-a7/brief.md")
+  scout_rule=$(sed -n '/^# Local resources/,/^$/{ /acquire /d; p; }' "$brief")
+  [ -n "$ship_rule" ] || fail "ship brief emitted no local-resource rule to compare"
+  [ "$ship_rule" = "$scout_rule" ] \
+    || fail "ship and scout local-resource rules have drifted apart"
+
+  # A secondmate charter is not a delivery contract and its crews take the rule
+  # from their own scaffolds, so the charter must not grow a second copy.
+  FM_SECONDMATE_CHARTER='Supervise the alpha domain.' \
+    FM_HOME="$home" "$ROOT/bin/fm-brief.sh" brief-heavy-mate --secondmate alpha >/dev/null 2>&1 \
+    || fail "fm-brief.sh --secondmate exited non-zero"
+  assert_no_grep "heavy slot" "$home/data/brief-heavy-mate/brief.md" \
+    "secondmate charter must not inherit the crewmate heavy-slot rule"
+
+  pass "fm-brief.sh: crewmate scaffolds emit the standard local-resource rule"
+}
+
 test_script_parses
 test_no_heredoc_in_command_substitution
 test_help_includes_entire_header
@@ -1502,3 +1556,4 @@ test_branch_prefix_is_refused_where_it_does_not_apply
 test_branch_prefix_value_is_validated
 test_branch_prefix_command_is_shell_safe
 test_crewmate_scaffolds_forbid_pool_administration
+test_local_resource_rule_emitted_for_crewmates

@@ -586,6 +586,22 @@ IFS= read -r -d '' SHARED_INFRA_RULE <<'EOF' || true
 EOF
 SHARED_INFRA_RULE=${SHARED_INFRA_RULE%$'\n'}
 
+# One shared string keeps the ship and scout local-resource rule identical:
+# memory-heavy commands take this home's heavy slot first, so heavy jobs wait
+# their turn instead of overlapping into local memory exhaustion. The rule
+# text stays short by contract; bin/fm-heavy-slot.sh's acquire output, not this
+# text, carries the cap wrapper and parallelism details. FM_HOME is bound into
+# the emitted command because a worker's own worktree has no firstmate bin and
+# must land the slot record in this supervising home's state/, not its own.
+HEAVY_SLOT_SCRIPT=$(shell_quote "$FM_ROOT/bin/fm-heavy-slot.sh")
+IFS= read -r -d '' LOCAL_RESOURCE_SECTION <<EOF || true
+# Local resources
+Before any memory-heavy command (a full build, test suite, lint walk, bundle, image build, or language-server index), take this home's heavy slot: run \`FM_HOME=$(shell_quote "$FM_HOME") $HEAVY_SLOT_SCRIPT acquire $(shell_quote "$ID") --estimate <MB>\` with your peak-RAM estimate in MB.
+A refusal means another task holds the slot: append your standard \`$PAUSED_VERB [at=<epoch>]:\` wait naming the holder and stop; retry the acquire later, never run the job without the slot.
+Run the job exactly under the cap wrapper the acquire output prints, and release the slot immediately after, as that output says.
+EOF
+LOCAL_RESOURCE_SECTION=${LOCAL_RESOURCE_SECTION%$'\n'}
+
 if [ -n "$BASE_BRANCH" ]; then
   SETUP_BASE="You are in a disposable git worktree of $REPO, at a detached HEAD on a clean copy of its base branch.
 Base branch: $BASE_BRANCH"
@@ -633,6 +649,8 @@ $CREWMATE_PAUSE_INSTRUCTIONS
    A decision or blocker you opened stays open until a \`resolved\` line carrying its exact key lands; a later \`done:\` or \`working:\` line never closes it, even when the answer is what started that work.
    Firstmate's reply normally writes that closing line at answer time; when a blocker or wait clears WITHOUT a firstmate reply, append \`resolved [at=<epoch>]: {how it cleared}\` yourself (same \`[key=<slug>]\` if you opened it with one) as you resume.
 $SHARED_INFRA_RULE
+
+$LOCAL_RESOURCE_SECTION
 
 $WAIT_BLOCK$INBOX_SECTION
 
@@ -713,6 +731,8 @@ $ASK_USER_BLOCK
    A decision or blocker you opened stays open until a \`resolved\` line carrying its exact key lands; a later \`done:\` or \`working:\` line never closes it, even when the answer is what started that work.
    Firstmate's reply normally writes that closing line at answer time; when a blocker or wait clears WITHOUT a firstmate reply, append \`resolved [at=<epoch>]: {how it cleared}\` yourself (same \`[key=<slug>]\` if you opened it with one) as you resume.
 $SHARED_INFRA_RULE
+
+$LOCAL_RESOURCE_SECTION
 
 $WAIT_BLOCK$INBOX_SECTION
 
