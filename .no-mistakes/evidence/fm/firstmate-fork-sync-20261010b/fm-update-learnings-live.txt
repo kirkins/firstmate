@@ -1,0 +1,35 @@
+=== fixture world: /tmp/fm-live-update.hyeBkV ===
+--- before: secondmate home HEAD=925db34; primary main=925db34; origin tip=27932f7
+--- before: home data/: captain.md
+learnings.md
+
+=== running the real bin/fm-update.sh (one update pass) ===
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  1 task(s) in flight, but no live watcher process holds this home lock (last beat: 0s ago).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  repair a missing or failed watcher cycle with the Pi tool fm_watch_arm_pi, or restart Pi with -e /tmp/fm-live-update.hyeBkV/world1/main/.pi/extensions/fm-primary-turnend-guard.ts -e /tmp/fm-live-update.hyeBkV/world1/main/.pi/extensions/fm-primary-pi-watch.ts if the extensions are not loaded.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+firstmate: updated 925db34..27932f7
+no watches registered
+secondmate sm1: preserved pre-tracking local data/learnings.md at /tmp/fm-live-update.hyeBkV/world1/sm1/data/learnings.local.20261010T081018Z.md
+secondmate sm1: updated 925db34..27932f7
+reread-firstmate: no
+restart-secondmates: fm-sm1
+nudge-secondmates: none
+=== fm-update.sh exit=0 ===
+
+=== observable results ===
+--- primary checkout now at: 27932f7 (tip 27932f7)
+--- primary tracked learnings present: data/learnings.md content: # Fleet learnings (tracked record)
+--- secondmate home now at: 27932f7
+--- home data/ listing:
+captain.md
+learnings.local.20261010T081018Z.md
+learnings.md
+--- home learnings.md (tracked fleet record): # Fleet learnings (tracked record)
+--- preserved sibling: /tmp/fm-live-update.hyeBkV/world1/sm1/data/learnings.local.20261010T081018Z.md content: home-local learning (pre-tracking)
+--- home git status --porcelain: []
+--- git check-ignore in home: data/learnings.md -> not-ignored; data/captain.md -> data/captain.md
+--- divergence record: none

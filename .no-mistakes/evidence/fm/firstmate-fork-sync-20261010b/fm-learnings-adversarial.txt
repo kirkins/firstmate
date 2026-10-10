@@ -1,0 +1,19 @@
+############ A) diverged home: skipped, learnings untouched ############
+●  repair a missing or failed watcher cycle with the Pi tool fm_watch_arm_pi, or restart Pi with -e /tmp/fm-live-adv.Pn912s/advA/main/.pi/extensions/fm-primary-turnend-guard.ts -e /tmp/fm-live-adv.Pn912s/advA/main/.pi/extensions/fm-primary-pi-watch.ts if the extensions are not loaded.
+secondmate sm1: skipped: diverged from origin/main; reconciliation required (record: /tmp/fm-live-adv.Pn912s/advA/home/state/.secondmate-update-reconcile/sm1.pending)
+reread-firstmate: no
+restart-secondmates: none
+nudge-secondmates: none
+--- home HEAD: before=8909c75d47d427ad394d9f4db4f850b7ecf7dd9e after=8909c75d47d427ad394d9f4db4f850b7ecf7dd9e (advanced? no)
+--- home data/ listing: learnings.md 
+--- learnings.md still the local copy: home-local learning (pre-tracking)
+--- sibling created: NONE
+
+############ B) converged home with curated tracked learnings ############
+--- converged at be83b39; porcelain: []
+secondmate sm1: skipped: dirty working tree
+reread-firstmate: no
+restart-secondmates: none
+nudge-secondmates: none
+--- home HEAD after: be83b39 (origin tip 94d050b; advanced? no)
+--- curated bytes still present: # locally curated learning (session wrote here)
