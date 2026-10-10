@@ -231,13 +231,6 @@ case "$CMD" in
           esac
           shift 2
           ;;
-        --estimate=*|--expiry=*)
-          case "$1" in
-            --estimate=*) ESTIMATE=${1#--estimate=} ;;
-            --expiry=*) EXPIRY=${1#--expiry=} ;;
-          esac
-          shift
-          ;;
         *)
           echo "error: unknown acquire argument '$1'" >&2
           usage

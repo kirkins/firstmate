@@ -53,6 +53,8 @@ test_usage_is_loud_and_closed_set() {
   expect_code 2 "$status" "a leading-zero estimate must be a usage error, never an octal crash"
   out=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" acquire t --estimate 100 --expiry 0900 2>&1); status=$?
   expect_code 2 "$status" "a leading-zero expiry must be a usage error, never a persisted octal field"
+  out=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" acquire t --estimate=100 2>&1); status=$?
+  expect_code 2 "$status" "the equals form must stay refused; the taught space-separated spelling is the only one"
   slot "$home" status
   assert_contains "$SLOT_STDOUT" "free" "refused numeric inputs must leave no hold behind"
   slot "$home" acquire stray-task --estimate 100
