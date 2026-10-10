@@ -1,0 +1,105 @@
+disposable fixture lab: /tmp/fm-converge-lab.aaUsrJ (removed on exit)
+gate worktree (read-only object source): /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4KYBW5VQE5CPN399N2SCQS9
+
+========== FIXTURE BUILD: replicate the diverged primary and its origin ==========
+fixture origin refs (pre-merge, exactly the real origin/main yesterday):
+  fm/converge -> 51f117331819ffe4567ecb0641409843d7ba493d (Merge origin/main to converge the learnings history)
+  main -> a39a8e4b728273bf43ae61168a3bc8c30d08bca1 (feat(bin): track the fleet-shared learnings record across home syncs (#6))
+fixture primary local main (the primary's own learnings history):
+  664753d Record 2026-10-10 gateway-outage and zai-config lessons in learnings
+  28612b8 Record 2026-10-10 fleet notes in learnings (mac secondmate, capacity pivots, credential cross-reference rule)
+  79170da Record emergency SSH procedure and debris-cleanup notes in learnings
+  9a38954 feat(bin): add a machine-wide heavy-slot turnstile for memory-heavy jobs (#4)
+primary HEAD=664753dd5edd82a6d114d8c1d036b4356fa908ac  origin/main=a39a8e4b728273bf43ae61168a3bc8c30d08bca1
+PASS: primary is diverged from origin/main (the reported blocked state)
+PASS: primary working tree clean
+pre-update working-tree learnings blob: 318e52b9f6ae8fa53225e858c50b4d23e7d7bcb4
+
+========== S1: primary runs its own /updatefirstmate (bin/fm-update.sh at 664753dd) while origin/main is still the pre-merge tip ==========
+\$ cd /tmp/fm-converge-lab.aaUsrJ/primary && ./bin/fm-update.sh   # primary HEAD: 664753d
+firstmate: skipped: diverged from origin/main
+reread-firstmate: no
+restart-secondmates: none
+nudge-secondmates: none
+exit=0
+PASS: guarded updater refused: 'firstmate: skipped: diverged from origin/main'
+PASS: primary left untouched at 664753dd (no force, no merge)
+
+========== S2: the converge PR lands on origin/main AS THE MERGE COMMIT; primary re-runs its own updater ==========
+origin/main now:   51f1173 Merge origin/main to converge the learnings history
+\$ cd /tmp/fm-converge-lab.aaUsrJ/primary && ./bin/fm-update.sh   # primary HEAD: 664753d (still the pre-fix updater bytes)
+firstmate: updated 664753d..51f1173 (instructions changed: AGENTS.md, bin, .agents/skills)
+no watches registered
+reread-firstmate: yes
+restart-secondmates: none
+nudge-secondmates: none
+exit=0
+PASS: guarded update COMPLETED: primary fast-forwarded onto the landed merge commit 51f11733
+PASS: primary's origin/main converged to the merge commit
+primary graph after convergence:
+  *   51f1173 Merge origin/main to converge the learnings history
+  |\  
+  | * a39a8e4 feat(bin): track the fleet-shared learnings record across home syncs (#6)
+  | * 803598a fix(bin): count the away spend cap by active compute, not live tasks (#5)
+  * | 664753d Record 2026-10-10 gateway-outage and zai-config lessons in learnings
+  * | 28612b8 Record 2026-10-10 fleet notes in learnings (mac secondmate, capacity pivots, credential cross-reference rule)
+  * | 79170da Record emergency SSH procedure and debris-cleanup notes in learnings
+  |/  
+PASS: working-tree learnings record unchanged in content across the advance (318e52b9f6ae8fa53225e858c50b4d23e7d7bcb4)
+PASS: primary working tree clean after update
+idempotent re-run:
+  firstmate: already current
+  reread-firstmate: no
+  restart-secondmates: none
+  nudge-secondmates: none
+
+========== S3: the converged learnings record is the union of both histories ==========
+converged data/learnings.md headings (17 total):
+  # Learnings
+  ## Emergency SSH access to k3s-master-1 (established 2026-10-10)
+  ## Dead-replica debris on k3s (2026-10-10)
+  # Fleet service access
+  # Inventory scouts must cross-reference held credentials
+  # Fresh-worktree launch prompts (pi trust picker)
+  # Codex worker trust dialogs differ from pi
+  # Media-key routing fix location
+  # Local memory exhaustion
+  # No-mistakes worker handoff pattern
+  # Cluster node is inference-critical
+  # dfr-deck local delivery posture
+  # Cluster AI issue-worker fleet
+  # Fork sync conventions
+  # Local Rust toolchain
+  ## Mac secondmate registered (2026-10-10)
+  # zai gateway deployment uses generated ConfigMap names (2026-10-10 outage)
+
+local-only records (only in the primary's 664753dd history, never on origin):
+  PRESENT: Fresh-worktree launch prompts (pi trust picker)
+PASS: local-only record survived: Fresh-worktree launch prompts (pi trust picker)
+  PRESENT: Codex worker trust dialogs differ from pi
+PASS: local-only record survived: Codex worker trust dialogs differ from pi
+  PRESENT: Media-key routing fix location
+PASS: local-only record survived: Media-key routing fix location
+  PRESENT: zai gateway deployment uses generated ConfigMap names (2026-10-10 outage)
+PASS: local-only record survived: zai gateway deployment uses generated ConfigMap names (2026-10-10 outage)
+PASS: every heading of origin/main's pre-merge learnings seed is present
+PASS: zero deleted lines vs origin/main's seed (pure addition: the union)
+PASS: zero deleted lines vs the primary's own pre-convergence record
+
+========== S4: adversarial - a NEW genuine divergence after convergence is still refused (guard intact) ==========
+\$ printf local probe >> README.md && git commit   # on the primary, now running post-convergence bytes
+origin/main advanced to:   d909982 origin-side advance
+\$ cd /tmp/fm-converge-lab.aaUsrJ/primary && ./bin/fm-update.sh   # primary HEAD: 298f36b
+firstmate: skipped: diverged from origin/main
+reread-firstmate: no
+restart-secondmates: none
+nudge-secondmates: none
+exit=0
+PASS: new divergence refused: 'firstmate: skipped: diverged from origin/main'
+PASS: primary HEAD unchanged: local probe commit preserved (nothing forced)
+PASS: local probe edit preserved in the working tree
+PASS: HEAD is single-parent: the updater created no merge commit
+PASS: primary working tree still clean
+
+========== RESULT ==========
+ALL CHECKS PASSED
