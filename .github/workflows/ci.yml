@@ -529,7 +529,11 @@ jobs:
       - name: Personal fleet paths must not be tracked
         run: |
           set -eu
-          tracked=$(git ls-files -- data state config projects .no-mistakes)
+          # data/learnings.md is the one deliberate exception: the tracked
+          # fleet-shared learnings record (docs/configuration.md "Operational
+          # learnings"). Everything else under these paths stays
+          # captain-private and untracked.
+          tracked=$(git ls-files -- data state config projects .no-mistakes ':(exclude)data/learnings.md')
           if [ -n "$tracked" ]; then
             echo "::error::Personal fleet paths are tracked in git:"
             printf '%s\n' "$tracked"

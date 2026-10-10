@@ -899,6 +899,87 @@ test_seed_marker_does_not_mask_real_dirt() {
   pass "T14 marker tolerance does not mask a genuinely dirty home"
 }
 
+# --- T15: the tracked fleet learnings record converges over a home's copy -----
+# data/learnings.md is the one tracked file under the gitignored data/ dir, so a
+# home still holding its own pre-tracking local copy (invisible to the dirty
+# guard, which never sees ignored files) would otherwise fail every future
+# fast-forward with "untracked working tree files would be overwritten by
+# merge". The advance must preserve the local bytes at a dated data/ sibling,
+# land the fleet record, and leave the home reading clean.
+test_tracked_learnings_converge_over_local_copy() {
+  local w c0 base candidate sibling
+  w=$(new_world learnings-converge)
+  c0=$(head_of "$w/main")
+  git -C "$w/main" worktree add -q --detach "$w/sm" "$c0"
+  mkdir -p "$w/sm/data"
+  printf 'home-local learning\n' > "$w/sm/data/learnings.md"
+  # The fleet record lands as a tracked file, with the ignore exception that
+  # keeps its preservation siblings out of a converged home's porcelain.
+  mkdir -p "$w/main/data"
+  printf 'fleet learning\n' > "$w/main/data/learnings.md"
+  git -C "$w/main" add -f data/learnings.md
+  sed -i.bak 's|^data/$|data/*\n!data/learnings.md|' "$w/main/.gitignore"
+  rm -f "$w/main/.gitignore.bak"
+  git -C "$w/main" add .gitignore
+  git -C "$w/main" commit -qm "track the fleet learnings record"
+  base=$(primary_head_commit "$w/main")
+
+  run_ff "$w/sm" "$base"
+
+  [ "$FF_STATUS" = updated ] || fail "FF_STATUS: expected updated, got '$FF_STATUS': $FF_OUT"
+  assert_contains "$FF_OUT" "preserved pre-tracking local data/learnings.md at " \
+    "the advance must report where the home's local copy was preserved"
+  [ "$(head_of "$w/sm")" = "$base" ] || fail "home did not advance onto the fleet record"
+  grep -q 'fleet learning' "$w/sm/data/learnings.md" || fail "the fleet record did not land"
+  sibling=""
+  for candidate in "$w/sm/data"/learnings.local.*.md; do
+    [ -f "$candidate" ] && sibling=$candidate
+  done
+  [ -n "$sibling" ] || fail "no dated sibling preserves the home's local learnings"
+  grep -q 'home-local learning' "$sibling" || fail "sibling $sibling lost the local bytes"
+  [ -z "$(git -C "$w/sm" status --porcelain)" ] \
+    || fail "a converged home must read clean: $(git -C "$w/sm" status --porcelain)"
+  pass "T15 tracked learnings: the fleet record converges while the home's local copy is preserved"
+}
+
+# --- T16: a home that does not advance keeps its learnings at home ----------
+# The pre-tracking preservation is part of an advance that lands the tracked
+# fleet record, never a side effect of a skipped pass: a diverged home holding
+# its own untracked data/learnings.md must be left byte-for-byte untouched, or
+# the running session's next context digest loses the file at its name.
+test_preserve_never_fires_without_advance() {
+  local w c0 base candidate sibling
+  w=$(new_world learnings-no-advance)
+  c0=$(head_of "$w/main")
+  git -C "$w/main" worktree add -q --detach "$w/sm" "$c0"
+  printf 'fork work\n' > "$w/sm/README.md"
+  git -C "$w/sm" add README.md
+  git -C "$w/sm" commit -qm local-work
+  mkdir -p "$w/sm/data"
+  printf 'home-local learning\n' > "$w/sm/data/learnings.md"
+  mkdir -p "$w/main/data"
+  printf 'fleet learning\n' > "$w/main/data/learnings.md"
+  git -C "$w/main" add -f data/learnings.md
+  git -C "$w/main" commit -qm "track the fleet learnings record"
+  base=$(primary_head_commit "$w/main")
+
+  run_ff "$w/sm" "$base"
+
+  [ "$FF_STATUS" = skipped ] || fail "FF_STATUS: expected skipped, got '$FF_STATUS'"
+  assert_contains "$FF_OUT" "secondmate sm: skipped: diverged from $base" \
+    "a uniquely diverged home is skipped"
+  [ "$(head_of "$w/sm")" != "$base" ] || fail "diverged home advanced"
+  [ -f "$w/sm/data/learnings.md" ] || fail "a non-advancing home lost its learnings at the original name"
+  grep -q 'home-local learning' "$w/sm/data/learnings.md" \
+    || fail "a non-advancing home's learnings bytes changed"
+  sibling=""
+  for candidate in "$w/sm/data"/learnings.local.*.md; do
+    [ -f "$candidate" ] && sibling=$candidate
+  done
+  [ -z "$sibling" ] || fail "preservation sibling created without an advance: $sibling"
+  pass "T16 preserve-only-on-advance: a skipped home keeps its learnings untouched"
+}
+
 # --- remote secondmate homes ------------------------------------------------
 # A remote home lives on another machine and is a standalone clone, so it cannot
 # read the primary's object store. The parent therefore resolves ITS primary
@@ -1363,6 +1444,8 @@ test_spawn_warns_when_sync_skipped_before_launch
 test_seed_marker_clean_when_gitignored
 test_seed_marker_converges_existing_home
 test_seed_marker_does_not_mask_real_dirt
+test_tracked_learnings_converge_over_local_copy
+test_preserve_never_fires_without_advance
 test_remote_sync_targets_primary_not_host_copy
 test_remote_sync_reports_the_changed_instruction_surface
 test_remote_sync_imports_from_host_copy

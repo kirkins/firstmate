@@ -11,8 +11,10 @@
 # the target is reconciled with reset --keep; every other unsafe target is
 # skipped and reported, with divergence recorded durably by fm-ff-lib.sh.
 # A tracked-files update never touches the gitignored operational
-# dirs (data/, state/, config/, projects/, .no-mistakes/), so a secondmate's
-# in-flight work is never disrupted. Worktrees of this repo share one object
+# dirs (data/, state/, config/, projects/, .no-mistakes/) except the tracked
+# fleet-shared data/learnings.md, whose pre-tracking local copy it preserves at
+# a dated data/ sibling, so a secondmate's in-flight work is never disrupted.
+# Worktrees of this repo share one object
 # store, so a single fetch refreshes them all; standalone-clone homes are
 # fetched on their own. Secondmate homes are leased at a detached HEAD on the
 # default branch, so a fast-forward there advances HEAD only and never touches

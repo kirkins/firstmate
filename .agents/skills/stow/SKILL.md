@@ -86,7 +86,7 @@ Every `/stow` invocation performs this complete pass, even when the session cont
 2. Read every current memory file completely: `data/captain.md`, `data/captain-shared.md`, and `data/learnings.md`.
    Treat an absent local file as absent, not as an invitation to manufacture content.
    In a primary home, all three are curation inputs under their existing ownership rules.
-   In a secondmate home, `data/captain-shared.md` is a read-only primary-owned input: count it, never edit it, and curate only the editable local files.
+   In a secondmate home, `data/captain-shared.md` and the tracked fleet-shared `data/learnings.md` are read-only primary-shipped inputs: count them, never edit them, and curate only the editable local files.
    Every mutation in the rest of this pass, including reinforcement, retiering, decay archival, legacy migration, consolidation, budget archival, and offload, applies only to an editable memory file.
    When a read-only shared entry appears to require one of those changes, leave it untouched, report the required change as an ownership exception, and route it to the primary owner.
 3. Build one whole-file retention plan before editing, ordered by likelihood of informing a future session.
@@ -217,11 +217,11 @@ A local skill exists only in this home, so offloading an entry out of `data/capt
    Do not re-derive or duplicate that mapping here.
 3. **Write within the existing boundaries.**
    - Captain preferences and fleet-local operational facts belong in the destination selected by AGENTS.md after the required whole-file curation pass.
-     Create `data/learnings.md` only for a genuinely new local learning with no stronger owner.
+     Fleet-local operational facts go into the tracked fleet-shared `data/learnings.md`: the primary curates and ships it through the repo path, and a secondmate surfaces a new fact to the primary instead of editing its synced copy.
    - In a primary home, curate shared captain preferences only under the existing primary-authoritative shared-preference contract.
      In a secondmate home, route a newly discovered shared preference to the main firstmate through marked status or a document pointer instead of editing the inherited file.
    - Project-intrinsic knowledge never goes into a project's `AGENTS.md` through this fleet: a crewmate edits those files only to correct factually wrong information (AGENTS.md section 6), so no ship task carries an addition.
-     Keep the candidate in `data/learnings.md` or surface it in the completion receipt so the captain can extend the file by hand.
+     Surface the candidate in the completion receipt so the captain can extend the file by hand; only the primary edits the tracked `data/learnings.md`.
    - Knowledge general to every Firstmate user belongs in this repo's shared tracked material through the normal branch, no-mistakes, PR, and captain-merge path.
    - For task-scoped notes, inspect the item with `bin/fm-tasks-axi.sh show <id> --full`, classify the change as new, duplicate, superseding, or obsolete, then use a considered replacement body through `bin/fm-tasks-axi.sh update <id> --body-file <path>`.
      Use `--archive-body` when recoverability matters.
@@ -287,7 +287,7 @@ Act on each home by its reported `transport`:
 - `agent` - send the marked request with `bin/fm-send.sh fm-<id> "<request>"` so the live secondmate performs its own `/stow`, including the uncaptured knowledge that exists only in its session.
   Ask it for the same completion receipt this skill defines, and read its reply from its status file or the document it points to, never from its chat.
 - `direct` - curate that local home's editable memory files yourself under the same retention plan, then re-run the cascade to confirm the after totals.
-  `data/captain-shared.md` stays a read-only counted input there, exactly as it is in any secondmate home.
+  `data/captain-shared.md` stays a read-only counted input there, exactly as it is in any secondmate home, and so does the tracked fleet-shared `data/learnings.md`.
 - `deferred` - a remote home with no live agent. Its memory is accounted read-only and cannot be curated from here, because there is no generic remote write path for a home's own memory files.
   Report it as an unresolved exception and leave it to its next cascade.
   Relaunching that secondmate is a separate decision owned by `secondmate-provisioning`, never something `/stow` does on its own.

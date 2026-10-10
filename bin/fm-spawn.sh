@@ -621,6 +621,8 @@ fi
 . "$SCRIPT_DIR/fm-wake-lib.sh"
 # shellcheck source=bin/fm-classify-lib.sh
 . "$SCRIPT_DIR/fm-classify-lib.sh"
+# shellcheck source=bin/fm-spend-lib.sh
+. "$SCRIPT_DIR/fm-spend-lib.sh"
 fm_backlog_directory_present "$STATE" "state directory" || {
   echo "error: spawn refused: $FM_BACKLOG_TRANSITION_ERROR" >&2
   exit 1
@@ -1566,7 +1568,7 @@ if [ "$RELAUNCH" -ne 1 ]; then
   fm_lease_forbid_branch "new-task spawn (fm-spawn)" --away-relocated
 fi
 spawn_refuse_if_away_spend_cap() {
-  local cap live meta
+  local cap live meta id
   [ "$RELAUNCH" -ne 1 ] || return 0
   [ "$KIND" != secondmate ] || return 0
   [ -f "$STATE/.afk-contract" ] || return 0
@@ -1580,23 +1582,33 @@ spawn_refuse_if_away_spend_cap() {
   for meta in "$STATE"/*.meta; do
     [ -f "$meta" ] || continue
     [ "$(grep '^kind=' "$meta" 2>/dev/null | tail -1 | cut -d= -f2-)" != secondmate ] || continue
-    live=$((live + 1))
+    id=$(basename "$meta"); id=${id%.meta}
+    if fm_spend_task_counts_active "$STATE" "$id"; then
+      live=$((live + 1))
+    fi
   done
   if [ "$live" -ge "$cap" ]; then
-    echo "error: spawn refused - the away-posture record caps concurrent workers at $cap and $live ordinary task(s) are live in this home; task $ID stays queued for the captain's return or for a worker to finish (spend cap: bin/fm-afk-contract.sh)" >&2
+    echo "error: spawn refused - the away-posture record caps concurrent active workers at $cap and $live ordinary task(s) count as active compute in this home; task $ID stays queued for the captain's return or for a worker to finish (spend cap: bin/fm-afk-contract.sh; counting: bin/fm-spend-lib.sh)" >&2
     exit 1
   fi
 }
 # Spend cap (bin/fm-afk-contract.sh's spend_max_concurrent_workers): while an
 # away record exists (never a quiet-mode one, whose captain is present and
 # spends as attended: bin/fm-afk-contract.sh mode), a fresh ordinary spawn
-# refuses for BOTH actors once this home already holds that many ordinary task
-# records, counted the same way the return brief counts tasks live at return
-# (every state/*.meta whose kind is not secondmate). A relaunch replaces a
-# worker that already counts, and a secondmate is a persistent home rather than
-# spend, so both are exempt. Checked before any endpoint, worktree, or record
-# exists, so a refusal costs nothing to unwind; rechecked after the task-set
-# lock so two fresh spawns cannot both publish from a stale count.
+# refuses for BOTH actors once this home already holds that many ordinary
+# tasks whose workers count as ACTIVE COMPUTE, classified by
+# bin/fm-spend-lib.sh: working, validating, and driving tasks count, while a
+# declared external wait (paused, blocked, or parked at a gate), a
+# captain-held transfer, and a done-awaiting-cleanup terminal state cost
+# their panes but no cap slot - except a blocked read carrying fm-crew-
+# state.sh's daemon-socket-down component, which fires regardless of an
+# executing attributed run and still counts - and failed, unknown, and every
+# unreadable or unrecognized state still count, so the cap fails closed.
+# A relaunch replaces a worker that already counts, and a
+# secondmate is a persistent home rather than spend, so both are exempt.
+# Checked before any endpoint, worktree, or record exists, so a refusal costs
+# nothing to unwind; rechecked after the task-set lock so two fresh spawns
+# cannot both publish from a stale count.
 spawn_refuse_if_away_spend_cap
 spawn_require_relocated_queued_work() {
   local actor
