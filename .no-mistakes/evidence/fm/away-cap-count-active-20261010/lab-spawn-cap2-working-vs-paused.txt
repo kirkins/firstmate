@@ -1,0 +1,16 @@
+== tighten the record to --spend 2 (new words replace the mandate)
+  reach: hold-for-return only. No phone channel is configured; anything that needs you waits for your return.
+  your words (verbatim):
+    second mandate: keep the fleet moving
+field: 2
+
+== cap 2, two working (work-1, work-2) + six declared waits: spawn
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+error: spawn refused - the away-posture record caps concurrent active workers at 2 and 4 ordinary task(s) count as active compute in this home; task task-new stays queued for the captain's return or for a worker to finish (spend cap: bin/fm-afk-contract.sh; counting: bin/fm-spend-lib.sh)
+exit=0
+
+== flip work-2 to a declared paused wait: one working left, spawn again
+state: paused · source: status-log · waiting for the human review window
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+error: spawn refused - the away-posture record caps concurrent active workers at 2 and 3 ordinary task(s) count as active compute in this home; task task-new stays queued for the captain's return or for a worker to finish (spend cap: bin/fm-afk-contract.sh; counting: bin/fm-spend-lib.sh)
+exit=0

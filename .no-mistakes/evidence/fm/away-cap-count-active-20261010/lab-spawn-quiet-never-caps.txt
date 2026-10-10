@@ -1,0 +1,19 @@
+== archive the away record, then a quiet entry (captain present) with --spend 1
+/tmp/fm-lab.NaqnaD/state/afk-contracts/1791608879.afk-contract
+Quiet mode recorded at 2026-10-10T05:11:06Z: you are present, so nothing waits for your return: every action you ask for, a local landing or a merge included, proceeds now under ordinary attended authority, and quiet mode changes only which updates reach this conversation. Only an explicit /quiet off ends it.
+Quiet mode (recorded):
+mode: quiet
+
+== two working ship tasks again (work-2, work-3 with busy panes)
+work-2: state: unknown · source: pane · harness state unavailable (unknown capture-failed)
+work-3: state: unknown · source: pane · harness state unavailable (unknown capture-failed)
+-- main-actor spawn under the quiet record (cap field 1, two working): must NOT be a spend-cap refusal
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  4 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  repair a missing or failed watcher cycle with the Pi tool fm_watch_arm_pi, or restart Pi with -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4HZTKRFR58Z09VSP690N89V/.pi/extensions/fm-primary-turnend-guard.ts -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4HZTKRFR58Z09VSP690N89V/.pi/extensions/fm-primary-pi-watch.ts if the extensions are not loaded.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+spawn exit=0

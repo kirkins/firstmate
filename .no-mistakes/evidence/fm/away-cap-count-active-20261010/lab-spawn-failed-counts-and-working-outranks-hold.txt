@@ -1,0 +1,19 @@
+== away entry cap 2; tasks: work-2 working, work-4 failed, mate-1 secondmate
+field: 2
+work-2: state: working · source: pane · harness busy (grok-regex)
+work-4: state: failed · source: status-log · the validation run failed
+-- spawn (branch actor): a failed verdict must still count
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+error: spawn refused - the away-posture record caps concurrent active workers at 2 and 3 ordinary task(s) count as active compute in this home; task task-new stays queued for the captain's return or for a worker to finish (spend cap: bin/fm-afk-contract.sh; counting: bin/fm-spend-lib.sh)
+
+== hold the WORKING task for the captain: working outranks the hold
+work-2 held (open exit: 0)
+hold open=0
+-- spawn (branch actor): still refused - a working worker spends its slot even while held
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+error: spawn refused - the away-posture record caps concurrent active workers at 2 and 3 ordinary task(s) count as active compute in this home; task task-new stays queued for the captain's return or for a worker to finish (spend cap: bin/fm-afk-contract.sh; counting: bin/fm-spend-lib.sh)
+
+== flip work-2's pane idle + paused log (still held): only failed work-4 counts -> passes the cap
+state: paused · source: status-log · waiting on the captain hold answer
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+error: spawn refused - the away-posture record caps concurrent active workers at 2 and 2 ordinary task(s) count as active compute in this home; task task-new stays queued for the captain's return or for a worker to finish (spend cap: bin/fm-afk-contract.sh; counting: bin/fm-spend-lib.sh)

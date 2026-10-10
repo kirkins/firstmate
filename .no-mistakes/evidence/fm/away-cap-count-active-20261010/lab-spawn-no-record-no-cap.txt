@@ -1,0 +1,7 @@
+== archive the quiet record -> no record stands
+/tmp/fm-lab.NaqnaD/state/afk-contracts/1791609066.afk-contract
+mode: no record (exit 1)
+-- branch-actor spawn with two working tasks and NO record: attended partition refusal, never a cap
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+error: new-task spawn (fm-spawn) refused - the supervision branch never performs this action; report the outcome and leave it to main (role partition: docs/pi-supervision-branch.md)
+exit=6

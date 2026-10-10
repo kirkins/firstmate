@@ -1,0 +1,10 @@
+== the same home after two workers stop computing and sit blocked (cap 6)
+-- classifier verdicts:
+work-5: state: blocked · source: status-log · no-mistakes run queue full, waiting for a slot
+work-6: state: blocked · source: status-log · no-mistakes run queue full, waiting for a slot
+-- fresh spawn (branch actor):
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+note: new-task spawn (fm-spawn) proceeds for the supervision branch under the away-posture record: main is parked and its standing authority is relocated; this script's own gate still applies (docs/pi-supervision-branch.md "Postures")
+note: new-task spawn (fm-spawn) proceeds for the supervision branch under the away-posture record: main is parked and its standing authority is relocated; this script's own gate still applies (docs/pi-supervision-branch.md "Postures")
+error: spawn refused - the supervision branch under the away-posture record may dispatch only queued unblocked work (already queued, or filed by the branch from the captain's away words); task task-new has no dispatchable backlog item in this home
+exit=1

@@ -1,0 +1,9 @@
+== quiet record still stands; two working ship tasks
+work-2: state: working · source: pane · harness busy (grok-regex)
+work-3: state: working · source: pane · harness busy (grok-regex)
+-- main-actor spawn under the quiet record (cap field 1, two working): must NOT be a spend-cap refusal
+spawn exit=1
+cap-refusal lines: 0
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+bin/fm-spawn.sh: line 1899: POS[1]: unbound variable

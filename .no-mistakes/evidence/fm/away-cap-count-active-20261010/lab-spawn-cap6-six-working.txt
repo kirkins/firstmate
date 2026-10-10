@@ -1,0 +1,15 @@
+== six working workers, two idling-open declared waits, cap 6 (branch actor)
+-- classifier verdicts the cap consumes:
+task-a: state: paused · source: status-log · waiting on the external forge review
+task-b: state: blocked · source: status-log · waiting on the forge merge queue
+work-1: state: working · source: pane · harness busy (grok-regex)
+work-2: state: working · source: pane · harness busy (grok-regex)
+work-3: state: working · source: pane · harness busy (grok-regex)
+work-4: state: working · source: pane · harness busy (grok-regex)
+work-5: state: working · source: pane · harness busy (grok-regex)
+work-6: state: working · source: pane · harness busy (grok-regex)
+-- fresh spawn:
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+note: new-task spawn (fm-spawn) proceeds for the supervision branch under the away-posture record: main is parked and its standing authority is relocated; this script's own gate still applies (docs/pi-supervision-branch.md "Postures")
+error: spawn refused - the away-posture record caps concurrent active workers at 6 and 6 ordinary task(s) count as active compute in this home; task task-new stays queued for the captain's return or for a worker to finish (spend cap: bin/fm-afk-contract.sh; counting: bin/fm-spend-lib.sh)
+exit=1

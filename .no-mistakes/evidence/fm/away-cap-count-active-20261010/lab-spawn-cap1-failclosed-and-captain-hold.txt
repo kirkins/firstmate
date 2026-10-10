@@ -1,0 +1,13 @@
+== fail-closed: work-1's pane is gone and it has no status log -> unreadable state
+state: unknown · source: pane · harness state unavailable (unknown capture-failed)
+-- spawn (branch actor): an unreadable state must still cost a slot (cap 1)
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+error: spawn refused - the away-posture record caps concurrent active workers at 1 and 1 ordinary task(s) count as active compute in this home; task task-new stays queued for the captain's return or for a worker to finish (spend cap: bin/fm-afk-contract.sh; counting: bin/fm-spend-lib.sh)
+
+== place work-1 under a real captain hold (fm-captain-hold.sh hold)
+work-1
+hold-open exit: 0
+open=0 (held)
+-- spawn (branch actor) with the transfer held for the captain:
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+error: spawn refused - the supervision branch under the away-posture record may dispatch only queued unblocked work (already queued, or filed by the branch from the captain's away words); task task-new has no dispatchable backlog item in this home

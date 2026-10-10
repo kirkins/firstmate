@@ -1,0 +1,9 @@
+== cap 2: flip work-3/work-4 to waits too -> only work-1 computing
+-- verdicts now:
+work-1: state: working · source: pane · harness busy (grok-regex)
+work-3: state: paused · source: status-log · waiting on the forge CI window
+work-4: state: blocked · source: status-log · waiting on the human review queue
+-- spawn (branch actor):
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+error: spawn refused - the supervision branch under the away-posture record may dispatch only queued unblocked work (already queued, or filed by the branch from the captain's away words); task task-new has no dispatchable backlog item in this home
+exit=0

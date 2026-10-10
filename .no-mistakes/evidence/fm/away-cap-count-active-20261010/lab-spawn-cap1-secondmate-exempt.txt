@@ -1,0 +1,12 @@
+== reduce the fleet: secondmate mate-1 (busy pane, persistent home) + work-1 (working), cap 1
+field: 1
+afk-contracts
+mate-1.meta
+work-1.meta
+-- secondmate verdict (status-log only for mates; no log -> unknown, but a secondmate is never counted):
+state: unknown · source: none · no current-state source available
+-- spawn (branch actor) under cap 1 with one working ship + one busy secondmate:
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+note: new-task spawn (fm-spawn) proceeds for the supervision branch under the away-posture record: main is parked and its standing authority is relocated; this script's own gate still applies (docs/pi-supervision-branch.md "Postures")
+error: spawn refused - the away-posture record caps concurrent active workers at 1 and 1 ordinary task(s) count as active compute in this home; task task-new stays queued for the captain's return or for a worker to finish (spend cap: bin/fm-afk-contract.sh; counting: bin/fm-spend-lib.sh)
+exit=1

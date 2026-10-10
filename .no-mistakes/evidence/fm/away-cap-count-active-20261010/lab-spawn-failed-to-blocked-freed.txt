@@ -1,0 +1,6 @@
+(fleet inventory: work-2 paused+held, work-3 working, work-4 failed, mate-1 secondmate; cap 2 -> 2 counting: work-3, work-4)
+== flip work-4 from failed to a declared blocked wait -> only work-3 computes
+state: blocked · source: status-log · waiting on a forge slot
+-- spawn (branch actor): passes the cap
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NaqnaD
+error: spawn refused - the supervision branch under the away-posture record may dispatch only queued unblocked work (already queued, or filed by the branch from the captain's away words); task task-new has no dispatchable backlog item in this home
