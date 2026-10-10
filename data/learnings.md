@@ -48,6 +48,34 @@ keys). Brief-writing rule: any capability-inventory scout must be told to
 cross-reference existing credentials (cluster secrets, credential store)
 against provider requirements before recommending anything keyed. <!--a:2026-10-10-->
 
+# Fresh-worktree launch prompts (pi trust picker)
+
+2026-10-10: fresh pi spawns in never-used treehouse paths stall at a launch
+picker (trust/theme) until dismissed; the fix that works is pre-trust the new
+worktree path in ~/.pi/agent/trust.json immediately after spawn, then
+fm-control interrupt (clears the picker/composer) followed by fm-send with a
+begin-the-task line. A bare doorbell alone works only when the composer reads
+empty. Consider pre-trusting the worktree path before the spawn resolves as a
+future improvement. <!--a:2026-10-10-->
+
+# Codex worker trust dialogs differ from pi
+
+2026-10-10: a fresh codex worktree shows a directory-trust dialog that the
+pi-style interrupt+nudge pattern does NOT safely answer - typed text may
+decline it. Correct handling per harness-adapters/references/harness/codex.md:
+accept with Enter and verify instructions begin processing; hook-trust modals
+are unanswerable by design (crew launches disable the hook layer). When a
+codex spawn stalls, peek the pane HEAD (the composer tail can read idle while
+work proceeds above). The captain resolved one manually by clicking trust.
+<!--a:2026-10-10-->
+
+# Media-key routing fix location
+
+2026-10-10: the play/pause dormant-session misfire was fixed live in the
+captain's local omarchy plugin clone ~/.config/omarchy/plugins/kirkins.media
+(outside any fleet repo; no repo change). The captain's on-glass test passed.
+If media keys misroute again, check that clone first. <!--a:2026-10-10-->
+
 # Local memory exhaustion
 
 2026-10-06: Kernel logs record ShellCheck OOM kills at 13:38:18 and 14:01:15 America/Lima, each after roughly 4.2 GiB resident allocation.
@@ -164,3 +192,26 @@ build-test-validation (FitForge focus), GLM via lobbykit-zai only. The captain
 cleared it for routed work on 2026-10-10. Route through marked status returns,
  Rescoped to general capacity the same day at the captain's word (FitForge stays a listed clone, not the focus). The remote home's data/charter.md still carries the original seeded text (fm-on.sh refuses hand edits by design); the registry and data/mac/brief.md here are the rescoped source of truth, and the live mate received the amendment through its inbox. A future reseed/relaunch path should push the rescoped charter file. <!--a:2026-10-10-->
 
+
+# zai gateway deployment uses generated ConfigMap names (2026-10-10 outage)
+
+The opencode/zai-coding-gateway Deployment's live script volume normally
+references a GENERATED ConfigMap name (e.g. opencode-zai-coding-gateway-script-6h2dmffb4b)
+produced by whatever publishes the gateway code; the canonical manifest
+17d-zai-coding-gateway.yaml carries the UNQUALIFIED name
+opencode-zai-coding-gateway-script. A raw kubectl apply of the canonical
+manifest onto the live deployment reset the volume ref to the static name,
+which did not exist: the Recreate rollout killed the serving replica and the
+new pod sat ~50 min in FailedMount (configmap not found), taking all GLM
+inference down fleet-wide (three no-mistakes runs died on provider connection
+errors and needed resume steers). Recovery (Codex, per the incident handoff):
+create only the missing static-name ConfigMap from the verified working
+generated one (SHA-256 recorded in its annotations); the scheduled pod then
+went Ready with no deployment patch. Never raw-apply canonical manifests over
+generator-managed live state in opencode-k8s - same class as the
+runner-restoration scale-reset lesson. Validate referenced nonoptional
+ConfigMaps exist and check rollout success plus live service endpoints after
+any gateway deployment change; a successful apply alone is insufficient. The
+static-name CM is a recovery compatibility artifact until the durable path
+settles (prevention task: opencode-k8s-gateway-apply-safety-20261010).
+<!--a:2026-10-10-->
