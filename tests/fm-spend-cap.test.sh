@@ -2,10 +2,10 @@
 # tests/fm-spend-cap.test.sh - the away-posture spend cap's active-work
 # counting (bin/fm-spend-lib.sh): the classification matrix that decides
 # whether a live ordinary task costs a cap slot. Working, validating, and
-# driving count; a declared external wait (paused, or parked at a gate), a
-# captain-held transfer, and a done-awaiting-cleanup terminal state do not;
-# blocked, failed, unknown, and every unreadable or failing read count
-# conservatively. The matrix is exercised through the library's public
+# driving count; a declared external wait (paused, blocked, or parked at a
+# gate), a captain-held transfer, and a terminal state (done or failed) do
+# not; unknown and every unreadable or failing read count conservatively.
+# The matrix is exercised through the library's public
 # function with the state and hold binaries stubbed through the same override
 # seam bin/fm-classify-lib.sh exposes (FM_CREW_STATE_BIN), never by asserting
 # implementation source bytes.
@@ -110,16 +110,20 @@ test_declared_waits_are_free() {
   make_fixture waits
   printf 'paused\n' > "$STUB_DIR/task-x.state"
   expect_free 'a declared paused: external wait'
+  printf 'blocked\n' > "$STUB_DIR/task-x.state"
+  expect_free 'a declared blocked: external wait'
   printf 'parked\n' > "$STUB_DIR/task-x.state"
   expect_free 'a task parked at a gate or captain decision'
   pass "declared external waits cost their panes but no cap slot"
 }
 
-test_done_awaiting_cleanup_is_free() {
-  make_fixture done-terminal
+test_terminal_states_are_free() {
+  make_fixture terminal
   printf 'done\n' > "$STUB_DIR/task-x.state"
   expect_free 'a done-awaiting-cleanup terminal state'
-  pass "a done terminal state whose record awaits cleanup costs no cap slot"
+  printf 'failed\n' > "$STUB_DIR/task-x.state"
+  expect_free 'a failed terminal state awaiting attention'
+  pass "terminal states whose run is over cost no cap slot"
 }
 
 test_captain_held_transfer_is_free() {
@@ -128,11 +132,6 @@ test_captain_held_transfer_is_free() {
   expect_counts 'an unknown task with no hold still counts'
   : > "$STUB_DIR/task-x.held"
   expect_free 'a captain-held transfer frees an otherwise-counting task'
-  printf 'blocked\n' > "$STUB_DIR/task-x.state"
-  expect_free 'a captain-held transfer frees a blocked task'
-  rm -f "$STUB_DIR/task-x.held"
-  printf 'blocked\n' > "$STUB_DIR/task-x.state"
-  expect_counts 'a blocked task with no hold counts'
   pass "a captain-held transfer costs no cap slot, and only the hold's positive proof frees it"
 }
 
@@ -156,11 +155,9 @@ test_unreadable_states_count_conservatively() {
   expect_counts 'a missing state verdict'
   printf 'unknown\n' > "$STUB_DIR/task-x.state"
   expect_counts 'an unknown state'
-  printf 'failed\n' > "$STUB_DIR/task-x.state"
-  expect_counts 'a failed terminal state'
   : > "$STUB_DIR/task-x.holderr"
   expect_counts 'an unknown state whose hold read errors'
-  pass "unreadable, unknown, failed, and erroring reads all count, so the cap fails closed"
+  pass "unreadable, unknown, and erroring reads all count, so the cap fails closed"
 }
 
 test_state_read_receives_the_callers_state_dir() {
@@ -191,7 +188,7 @@ test_spend_override_wins_over_the_classify_seam() {
 
 test_working_validating_and_driving_count
 test_declared_waits_are_free
-test_done_awaiting_cleanup_is_free
+test_terminal_states_are_free
 test_captain_held_transfer_is_free
 test_working_outranks_a_hold
 test_unreadable_states_count_conservatively
