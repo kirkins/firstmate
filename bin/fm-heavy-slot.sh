@@ -97,7 +97,7 @@ heavy_slot_valid_id() {
 
 heavy_slot_valid_positive_int() {
   case "${1:-}" in
-    '' | 0 | *[!0-9]*) return 1 ;;
+    '' | 0 | 0[0-9]* | *[!0-9]*) return 1 ;;
     *) return 0 ;;
   esac
 }
@@ -269,7 +269,7 @@ case "$CMD" in
     heavy_slot_acquire_advice "$TASK" "$ESTIMATE" "$EXPIRY"
     ;;
   release)
-    [ "$#" -eq 0 ] || usage
+    [ "$#" -eq 0 ] || { usage; exit 2; }
     fm_lock_acquire_wait "$SLOT_COMMAND_LOCK"
     trap 'fm_lock_release "$SLOT_COMMAND_LOCK"' EXIT
     fm_epoch_seconds_to NOW
@@ -294,7 +294,7 @@ case "$CMD" in
     printf 'released: task=%s\n' "$TASK"
     ;;
   heartbeat)
-    [ "$#" -eq 0 ] || usage
+    [ "$#" -eq 0 ] || { usage; exit 2; }
     fm_lock_acquire_wait "$SLOT_COMMAND_LOCK"
     trap 'fm_lock_release "$SLOT_COMMAND_LOCK"' EXIT
     fm_epoch_seconds_to NOW

@@ -49,6 +49,22 @@ test_usage_is_loud_and_closed_set() {
   expect_code 2 "$status" "a zero estimate must be a usage error"
   out=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" acquire t --estimate 100 --expiry nope 2>&1); status=$?
   expect_code 2 "$status" "a non-integer expiry must be a usage error"
+  out=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" acquire t --estimate 0900 2>&1); status=$?
+  expect_code 2 "$status" "a leading-zero estimate must be a usage error, never an octal crash"
+  out=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" acquire t --estimate 100 --expiry 0900 2>&1); status=$?
+  expect_code 2 "$status" "a leading-zero expiry must be a usage error, never a persisted octal field"
+  slot "$home" status
+  assert_contains "$SLOT_STDOUT" "free" "refused numeric inputs must leave no hold behind"
+  slot "$home" acquire stray-task --estimate 100
+  expect_code 0 "$SLOT_STATUS" "setup acquire for the stray-argument checks must succeed"
+  out=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" release stray-task --extra 2>&1); status=$?
+  expect_code 2 "$status" "a stray release argument must be a usage error"
+  slot "$home" status
+  assert_contains "$SLOT_STDOUT" "held task=stray-task" "a refused release must not clear the live slot"
+  out=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" heartbeat stray-task stray 2>&1); status=$?
+  expect_code 2 "$status" "a stray heartbeat argument must be a usage error"
+  slot "$home" release stray-task
+  expect_code 0 "$SLOT_STATUS" "holder cleanup after the stray-argument checks must succeed"
   pass "fm-heavy-slot.sh: usage and value validation refuse loudly"
 }
 
@@ -108,17 +124,22 @@ test_acquire_output_names_the_cap_wrapper() {
 }
 
 test_release_hint_is_copy_safe() {
-  local home out release_line
+  local home spaced out release_line
   home=$(make_home "hint home")
+  spaced="$home/hint dir"
+  mkdir -p "$spaced"
+  ln -s "$ROOT/bin/fm-heavy-slot.sh" "$spaced/fm-heavy-slot.sh"
+  ln -s "$ROOT/bin/fm-wake-lib.sh" "$spaced/fm-wake-lib.sh"
+  ln -s "$ROOT/bin/fm-path-lib.sh" "$spaced/fm-path-lib.sh"
   export XDG_STATE_HOME="$home/xdg"
-  out=$(FM_HOME="$home" "$SLOT" acquire hint-task --estimate 100 2>/dev/null)
+  out=$(FM_HOME="$home" "$spaced/fm-heavy-slot.sh" acquire hint-task --estimate 100 2>/dev/null)
   release_line=$(printf '%s\n' "$out" | sed -n 's/^release immediately after the job: //p')
   [ -n "$release_line" ] || { unset XDG_STATE_HOME; fail "acquire output did not print a release command"; }
   out=$(eval "$release_line" 2>/dev/null)
   unset XDG_STATE_HOME
   assert_contains "$out" "released: task=hint-task" \
-    "the printed release command is not safe to copy verbatim under a spaced machine-state root"
-  pass "fm-heavy-slot.sh: the printed release command survives a spaced state root"
+    "the printed release command is not safe to copy verbatim under a spaced script path"
+  pass "fm-heavy-slot.sh: the printed release command survives a spaced script path"
 }
 
 test_slot_is_machine_wide_across_homes() {
