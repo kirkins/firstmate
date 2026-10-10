@@ -547,6 +547,18 @@ Target detection uses `FM_SUPERVISOR_TARGET`, then `$TMUX_PANE`, then `"${HERDR_
 
 Selecting any other supervisor backend, including `zellij`, `orca`, or `cmux`, refuses at daemon startup instead of trying tmux injection primitives against a non-tmux pane.
 
+## Away-posture spend cap (state/.afk-contract spend_max_concurrent_workers)
+
+The away record's `spend_max_concurrent_workers` field caps how many ordinary tasks may count as active compute at once while the away posture stands; `bin/fm-afk-contract.sh` owns the record and `--spend <n>` sets the field at entry, with a recorded default of 6.
+A quiet-mode record never applies it, because its captain is present and spends as attended.
+
+The cap counts ACTIVE COMPUTE, not live tasks: an open pane whose worker is merely waiting is not spend.
+`bin/fm-spend-lib.sh` owns the counting classification and `bin/fm-spawn.sh` enforces it, refusing a fresh ordinary spawn for either actor once that many tasks count and rechecking under the task-set lock; relaunches and secondmates are exempt.
+
+A task counts while its worker is working, validating, or driving, which `bin/fm-crew-state.sh` reads as `working`.
+A task costs its pane but no cap slot when its current state is a declared external wait (`paused`, or `parked` at a gate), a captain-held transfer (`bin/fm-captain-hold.sh` `open` proves the hold), or a `done`-awaiting-cleanup terminal state.
+Every other combination counts: `blocked`, `failed`, and `unknown` keep their slots unless the captain-held transfer above proves them idle, and a state that is unreadable or a read that fails counts as active, so the cap fails closed - a task is free only on positive proof it is not computing.
+
 ## Away-mode wedge alarm channels (config/wedge-alarm)
 
 When away-mode injection wedges past `FM_MAX_DEFER_SECS`, the sub-supervisor raises a loud, rate-limited alarm.
