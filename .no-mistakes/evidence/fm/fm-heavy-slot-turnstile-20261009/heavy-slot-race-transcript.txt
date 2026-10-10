@@ -1,0 +1,11 @@
+== Scenario D: 8 concurrent acquires, exactly one winner ==
+racer-3 exit=0
+racer-2 exit=6
+racer-5 exit=6
+racer-7 exit=6
+racer-1 exit=6
+racer-8 exit=6
+racer-4 exit=6
+racer-6 exit=6
+held task=racer-3 pid=2556030 estimate=100MB age=1s expires_in=1799s state=live
+released: task=racer-3

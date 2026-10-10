@@ -1,0 +1,204 @@
+== Scenario C: adversarial guards ==
+
+$ [home=primary] acquire octal-task --estimate 0900
+error: --estimate requires a positive integer MB value (got '0900')
+[exit=2]
+
+$ [home=primary] acquire octal-task --estimate 100 --expiry 0900
+error: --expiry requires a positive integer seconds value (got '0900')
+[exit=2]
+
+$ [home=primary] acquire equals-task --estimate=100
+error: unknown acquire argument '--estimate=100'
+fm-heavy-slot.sh - single-slot turnstile for memory-heavy jobs machine-wide.
+
+WHY. Multiple agents on one machine can each run a memory-heavy build, test
+suite, or lint walk, and the local-memory-exhaustion evidence in
+data/learnings.md shows what happens when they overlap: the machine OOMs and
+takes unrelated work down with it. The captain's chosen direction is flexible
+agent count with heavy jobs taking turns, so this turnstile is the mechanism:
+exactly one memory-heavy job may run at a time on this machine, across every
+home's fleet - primary and secondmate alike - while the number of agents
+stays uncapped. It coordinates; it never enforces agent counts and never
+manages cgroups beyond printing the documented wrapper.
+
+CONTRACT.
+  - Slot record: ${XDG_STATE_HOME:-$HOME/.local/state}/firstmate/heavy-slot
+    (directory created mode 0700), one line
+    "<task-id>\t<pid>\t<estimate-mb>\t<heartbeat-epoch>\t<expiry-seconds>",
+    written atomically (temp file + rename) with every mutation serialized by
+    the command lock .heavy-slot.lock beside it through the portable lock
+    helpers (bin/fm-wake-lib.sh, the same no-flock shape bin/fm-lease.sh
+    uses), so concurrent acquires from sibling workers serialize and exactly
+    one wins. The coordination scope is the whole machine, not one home:
+    every home's crews resolve the same canonical state root, so workers
+    spawned by any home contend on this one slot.
+  - Holder identity is the task id the caller passes; the recorded pid is the
+    acquiring shell, kept for audit and display, never for liveness: acquire
+    is a short-lived CLI whose pid is gone before the job runs, so staleness
+    is judged only by the heartbeat window.
+  - Staleness: a holder is stale when now - heartbeat-epoch exceeds the
+    recorded expiry window. acquire refuses fast (exit 6) while a live holder
+    exists, naming the holder so the caller can declare a wait, and takes
+    over a stale holder with a loud note. heartbeat refreshes the window for
+    the recorded holder only. release is idempotent and clears only for the
+    recorded holder or an expired one; a non-holder never clears a live slot.
+  - No daemon, no scheduler, no polling loop: state changes only when a
+    worker or firstmate runs this command, and status is the surface
+    firstmate and the watcher read for holder and staleness.
+  - The memory cap is advisory coordination, not enforcement: acquire prints
+    the mandatory cap wrapper (systemd-run --user --scope with the estimate
+    rounded up to the next 256 MiB) and a bounded parallelism hint, and warns
+    when systemd-run is unavailable because the cap then cannot be applied.
+
+Usage:
+  fm-heavy-slot.sh acquire <task-id> --estimate <MB> [--expiry <seconds>]
+      Take the heavy slot for one task. --estimate is the caller's peak-RAM
+      estimate in MB for the job it will run; --expiry is the heartbeat
+      window in seconds the holder must outlive (default 1800, so size it to
+      the job and renew with heartbeat for chained work). Refuses with exit 6
+      and the current holder named when another task holds a live slot.
+      Re-acquiring as the live holder refreshes the hold. A stale or torn
+      record is taken over with a loud note.
+  fm-heavy-slot.sh release <task-id>
+      Drop the slot. Idempotent: releasing an unheld slot succeeds silently.
+      Clears for the recorded holder or when the recorded hold is expired;
+      a different task releasing a live slot is refused with exit 6.
+  fm-heavy-slot.sh heartbeat <task-id>
+      Refresh the heartbeat window for the recorded holder, keeping the
+      recorded estimate and acquiring pid. Refused (exit 6) for a task that
+      is not the live holder; exit 1 when no slot is held.
+  fm-heavy-slot.sh status
+      Print one line for firstmate and the watcher:
+      "held task=<id> pid=<pid> estimate=<MB> age=<s> expires_in=<s> state=live"
+      or "... state=stale", plus a loud stderr warning when stale, or
+      "free" when no slot is held.
+
+Exit codes: 0 ok, 1 no slot held (heartbeat), 2 usage, 6 refused (another
+live holder, or a non-holder acting on a live slot).
+[exit=2]
+
+$ [home=primary] acquire bad-id --estimate 0
+error: --estimate requires a positive integer MB value (got '0')
+[exit=2]
+
+$ [home=primary] status
+free
+[exit=0]
+
+$ [home=primary] acquire live-task --estimate 100
+acquired: task=live-task estimate=100MB pid=2555591 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=256M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4HGM2DYJH1EFN2GN1XASJZE/bin/fm-heavy-slot.sh' release live-task
+[exit=0]
+
+$ [home=primary] release live-task --extra
+fm-heavy-slot.sh - single-slot turnstile for memory-heavy jobs machine-wide.
+
+WHY. Multiple agents on one machine can each run a memory-heavy build, test
+suite, or lint walk, and the local-memory-exhaustion evidence in
+data/learnings.md shows what happens when they overlap: the machine OOMs and
+takes unrelated work down with it. The captain's chosen direction is flexible
+agent count with heavy jobs taking turns, so this turnstile is the mechanism:
+exactly one memory-heavy job may run at a time on this machine, across every
+home's fleet - primary and secondmate alike - while the number of agents
+stays uncapped. It coordinates; it never enforces agent counts and never
+manages cgroups beyond printing the documented wrapper.
+
+CONTRACT.
+  - Slot record: ${XDG_STATE_HOME:-$HOME/.local/state}/firstmate/heavy-slot
+    (directory created mode 0700), one line
+    "<task-id>\t<pid>\t<estimate-mb>\t<heartbeat-epoch>\t<expiry-seconds>",
+    written atomically (temp file + rename) with every mutation serialized by
+    the command lock .heavy-slot.lock beside it through the portable lock
+    helpers (bin/fm-wake-lib.sh, the same no-flock shape bin/fm-lease.sh
+    uses), so concurrent acquires from sibling workers serialize and exactly
+    one wins. The coordination scope is the whole machine, not one home:
+    every home's crews resolve the same canonical state root, so workers
+    spawned by any home contend on this one slot.
+  - Holder identity is the task id the caller passes; the recorded pid is the
+    acquiring shell, kept for audit and display, never for liveness: acquire
+    is a short-lived CLI whose pid is gone before the job runs, so staleness
+    is judged only by the heartbeat window.
+  - Staleness: a holder is stale when now - heartbeat-epoch exceeds the
+    recorded expiry window. acquire refuses fast (exit 6) while a live holder
+    exists, naming the holder so the caller can declare a wait, and takes
+    over a stale holder with a loud note. heartbeat refreshes the window for
+    the recorded holder only. release is idempotent and clears only for the
+    recorded holder or an expired one; a non-holder never clears a live slot.
+  - No daemon, no scheduler, no polling loop: state changes only when a
+    worker or firstmate runs this command, and status is the surface
+    firstmate and the watcher read for holder and staleness.
+  - The memory cap is advisory coordination, not enforcement: acquire prints
+    the mandatory cap wrapper (systemd-run --user --scope with the estimate
+    rounded up to the next 256 MiB) and a bounded parallelism hint, and warns
+    when systemd-run is unavailable because the cap then cannot be applied.
+
+Usage:
+  fm-heavy-slot.sh acquire <task-id> --estimate <MB> [--expiry <seconds>]
+      Take the heavy slot for one task. --estimate is the caller's peak-RAM
+      estimate in MB for the job it will run; --expiry is the heartbeat
+      window in seconds the holder must outlive (default 1800, so size it to
+      the job and renew with heartbeat for chained work). Refuses with exit 6
+      and the current holder named when another task holds a live slot.
+      Re-acquiring as the live holder refreshes the hold. A stale or torn
+      record is taken over with a loud note.
+  fm-heavy-slot.sh release <task-id>
+      Drop the slot. Idempotent: releasing an unheld slot succeeds silently.
+      Clears for the recorded holder or when the recorded hold is expired;
+      a different task releasing a live slot is refused with exit 6.
+  fm-heavy-slot.sh heartbeat <task-id>
+      Refresh the heartbeat window for the recorded holder, keeping the
+      recorded estimate and acquiring pid. Refused (exit 6) for a task that
+      is not the live holder; exit 1 when no slot is held.
+  fm-heavy-slot.sh status
+      Print one line for firstmate and the watcher:
+      "held task=<id> pid=<pid> estimate=<MB> age=<s> expires_in=<s> state=live"
+      or "... state=stale", plus a loud stderr warning when stale, or
+      "free" when no slot is held.
+
+Exit codes: 0 ok, 1 no slot held (heartbeat), 2 usage, 6 refused (another
+live holder, or a non-holder acting on a live slot).
+[exit=2]
+
+$ [home=primary] status
+held task=live-task pid=2555591 estimate=100MB age=0s expires_in=1800s state=live
+[exit=0]
+
+$ [home=secondmate] release live-task
+released: task=live-task
+[exit=0]
+
+$ [home=secondmate] heartbeat live-task
+error: heartbeat refused - no heavy slot is held
+[exit=1]
+
+$ [home=primary] release live-task
+free: no heavy slot was held
+[exit=0]
+
+$ [home=primary] heartbeat live-task
+error: heartbeat refused - no heavy slot is held
+[exit=1]
+
+torn-record handling:
+
+$ [home=primary] status
+warning: heavy-slot record is torn (unreadable holder); acquire will replace it
+free
+[exit=0]
+
+$ [home=secondmate] acquire after-torn --estimate 100
+note: replacing a torn heavy-slot record
+acquired: task=after-torn estimate=100MB pid=2555903 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=256M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4HGM2DYJH1EFN2GN1XASJZE/bin/fm-heavy-slot.sh' release after-torn
+[exit=0]
+
+$ [home=secondmate] release after-torn
+released: task=after-torn
+[exit=0]

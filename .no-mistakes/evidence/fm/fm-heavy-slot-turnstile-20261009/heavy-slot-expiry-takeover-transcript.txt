@@ -1,0 +1,35 @@
+== Scenario B: heartbeat expiry, loud staleness, takeover ==
+
+$ [home=primary] acquire stale-task --estimate 512 --expiry 1
+acquired: task=stale-task estimate=512MB pid=2555205 expires_in=1s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=512M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4HGM2DYJH1EFN2GN1XASJZE/bin/fm-heavy-slot.sh' release stale-task
+[exit=0]
+
+$ [home=primary] status
+warning: heavy slot holder 'stale-task' is stale - heartbeat expired 1s ago (age 2s over window 1s); acquire will take it over
+held task=stale-task pid=2555205 estimate=512MB age=2s expires_in=-1s state=stale
+[exit=0]
+
+$ [home=secondmate] acquire fresh-task --estimate 256
+note: taking over the stale heavy slot held by task 'stale-task' (heartbeat expired 1s ago)
+acquired: task=fresh-task estimate=256MB pid=2555298 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=256M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4HGM2DYJH1EFN2GN1XASJZE/bin/fm-heavy-slot.sh' release fresh-task
+[exit=0]
+
+$ [home=secondmate] heartbeat fresh-task
+heartbeat: task=fresh-task estimate=256MB expires_in=1800s
+[exit=0]
+
+$ [home=secondmate] status
+held task=fresh-task pid=2555298 estimate=256MB age=0s expires_in=1800s state=live
+[exit=0]
+
+$ [home=secondmate] release fresh-task
+released: task=fresh-task
+[exit=0]

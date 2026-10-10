@@ -1,0 +1,7 @@
+== acquire via a path containing a space; printed release hint:
+'/tmp/fm-heavy-live2.8WGekv/spaced dir/fm-heavy-slot.sh' release hint-task
+== eval the printed release command verbatim (same shell, inherited env):
+released: task=hint-task
+[exit=0]
+== the slot record is gone afterwards:
+free

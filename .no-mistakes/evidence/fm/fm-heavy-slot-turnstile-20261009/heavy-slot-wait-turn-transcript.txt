@@ -1,0 +1,36 @@
+== Scenario A: two homes take turns on the one machine slot ==
+
+$ [home=primary] acquire heavy-build --estimate 4000
+acquired: task=heavy-build estimate=4000MB pid=2554926 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=4096M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4HGM2DYJH1EFN2GN1XASJZE/bin/fm-heavy-slot.sh' release heavy-build
+[exit=0]
+
+$ [home=secondmate] status
+held task=heavy-build pid=2554926 estimate=4000MB age=0s expires_in=1800s state=live
+[exit=0]
+
+$ [home=secondmate] acquire lint-walk --estimate 1024
+error: heavy slot held by task 'heavy-build' (pid 2554926, estimate 4000MB, held 0s, expires in 1800s); declare a wait and retry acquire later, never run the job uncapped
+[exit=6]
+
+$ [home=primary] release heavy-build
+released: task=heavy-build
+[exit=0]
+
+$ [home=secondmate] acquire lint-walk --estimate 1024
+acquired: task=lint-walk estimate=1024MB pid=2555113 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=1024M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4HGM2DYJH1EFN2GN1XASJZE/bin/fm-heavy-slot.sh' release lint-walk
+[exit=0]
+
+$ [home=secondmate] release lint-walk
+released: task=lint-walk
+[exit=0]
+
+canonical record root permissions:
+700 /tmp/fm-heavy-live.OlZNkf/machine-state/firstmate

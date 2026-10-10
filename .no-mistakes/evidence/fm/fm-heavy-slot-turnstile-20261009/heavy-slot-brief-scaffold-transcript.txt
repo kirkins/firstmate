@@ -1,0 +1,20 @@
+== real ship scaffold: fm-brief.sh brief-heavy-live alpha --mode no-mistakes
+[scaffolded ok]
+
+-- emitted '# Local resources' section (ship):
+# Local resources
+Before any memory-heavy command (a full build, test suite, lint walk, bundle, image build, or language-server index), take the machine's heavy slot: run `'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4HGM2DYJH1EFN2GN1XASJZE/bin/fm-heavy-slot.sh' acquire 'brief-heavy-live' --estimate <MB>` with your peak-RAM estimate in MB.
+A refusal means another task holds the slot: append your standard `paused [at=<epoch>]:` wait naming the holder and stop; retry the acquire later, never run the job without the slot.
+Run the job exactly under the cap wrapper the acquire output prints, and release the slot immediately after, as that output says.
+
+-- ship outside-write authorization line:
+28:   Outside the worktree, write only that task material and the status, steering-inbox, and heavy-slot records authorized below.
+
+== real scout scaffold: fm-brief.sh brief-heavy-scout-live alpha --scout
+[scaffolded ok]
+-- emitted '# Local resources' section (scout):
+# Local resources
+Before any memory-heavy command (a full build, test suite, lint walk, bundle, image build, or language-server index), take the machine's heavy slot: run `'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4HGM2DYJH1EFN2GN1XASJZE/bin/fm-heavy-slot.sh' acquire 'brief-heavy-scout-live' --estimate <MB>` with your peak-RAM estimate in MB.
+A refusal means another task holds the slot: append your standard `paused [at=<epoch>]:` wait naming the holder and stop; retry the acquire later, never run the job without the slot.
+Run the job exactly under the cap wrapper the acquire output prints, and release the slot immediately after, as that output says.
+
