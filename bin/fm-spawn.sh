@@ -1599,9 +1599,12 @@ spawn_refuse_if_away_spend_cap() {
 # tasks whose workers count as ACTIVE COMPUTE, classified by
 # bin/fm-spend-lib.sh: working, validating, and driving tasks count, while a
 # declared external wait (paused, blocked, or parked at a gate), a
-# captain-held transfer, and a terminal state (done or failed) cost their
-# panes but no cap slot, and every unreadable or unrecognized state still
-# counts, so the cap fails closed. A relaunch replaces a worker that already counts, and a
+# captain-held transfer, and a done-awaiting-cleanup terminal state cost
+# their panes but no cap slot - except a blocked read carrying fm-crew-
+# state.sh's daemon-socket-down component, which fires regardless of an
+# executing attributed run and still counts - and failed, unknown, and every
+# unreadable or unrecognized state still count, so the cap fails closed.
+# A relaunch replaces a worker that already counts, and a
 # secondmate is a persistent home rather than spend, so both are exempt.
 # Checked before any endpoint, worktree, or record exists, so a refusal costs
 # nothing to unwind; rechecked after the task-set lock so two fresh spawns

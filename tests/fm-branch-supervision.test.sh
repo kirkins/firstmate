@@ -1326,12 +1326,12 @@ test_away_record_relocates_main_owned_actions_to_the_branch() {
   [ "$status" -eq 1 ] || fail "main spawn past the cap exited $status, not 1: $out"
   assert_contains "$out" "caps concurrent active workers" "main was not held to the spend cap"
   # The cap counts ACTIVE COMPUTE, not live records: with both workers
-  # classified as declared waits or terminal states (bin/fm-spend-lib.sh
-  # reuses the fm-crew-state.sh vocabulary), two live records hold no slot
-  # against a cap of 2 - including two workers sitting blocked, the exact
-  # idling-open complaint the captain approved this counting for - while two
-  # working workers refuse (bin/fm-spend-lib.sh's counting rule; the stub
-  # stands in for the state read through the same override seam
+  # classified as declared waits (bin/fm-spend-lib.sh reuses the
+  # fm-crew-state.sh vocabulary), two live records hold no slot against a
+  # cap of 2 - including two workers sitting blocked, the exact idling-open
+  # complaint the captain approved this counting for - while two failed or
+  # two working workers refuse (bin/fm-spend-lib.sh's counting rule; the
+  # stub stands in for the state read through the same override seam
   # fm-classify-lib.sh exposes).
   stub="$TMP_ROOT/away-crew-state-stub.sh"
   cat > "$stub" <<'STUB'
@@ -1360,7 +1360,7 @@ STUB
   out=$(FM_HOME="$home" FM_ROOT_OVERRIDE="$root" FM_SPEND_CREW_STATE_BIN="$stub" \
     FM_AWAY_CAP_STUB_STATE="$home/away-cap-stub-state" \
     "$ROOT/bin/fm-spawn.sh" task-new --mode no-mistakes --yolo off 2>&1)
-  assert_not_contains "$out" "caps concurrent active workers" "two failed-terminal workers still consumed cap slots"
+  assert_contains "$out" "caps concurrent active workers at 2 and 2 ordinary task(s) count as active compute" "two failed workers did not keep their cap slots"
   printf 'working\n' > "$home/away-cap-stub-state"
   out=$(FM_HOME="$home" FM_ROOT_OVERRIDE="$root" FM_SPEND_CREW_STATE_BIN="$stub" \
     FM_AWAY_CAP_STUB_STATE="$home/away-cap-stub-state" \

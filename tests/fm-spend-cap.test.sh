@@ -3,8 +3,11 @@
 # counting (bin/fm-spend-lib.sh): the classification matrix that decides
 # whether a live ordinary task costs a cap slot. Working, validating, and
 # driving count; a declared external wait (paused, blocked, or parked at a
-# gate), a captain-held transfer, and a terminal state (done or failed) do
-# not; unknown and every unreadable or failing read count conservatively.
+# gate), a captain-held transfer, and a done terminal state do not - except a
+# blocked read carrying the classifier's daemon-socket-down component, which
+# counts because fm-crew-state.sh emits it regardless of an executing
+# attributed run; failed, unknown, and every unreadable or failing read
+# count conservatively.
 # The matrix is exercised through the library's public
 # function with the state and hold binaries stubbed through the same override
 # seam bin/fm-classify-lib.sh exposes (FM_CREW_STATE_BIN), never by asserting
@@ -33,6 +36,7 @@ case "$v" in
   FAIL) exit 1 ;;
   EMPTY) printf '\n' ;;
   GARBAGE) printf 'not a state line at all\n' ;;
+  BLOCKED_DOWN) printf 'state: blocked · source: status-log · blocked: no-mistakes daemon socket connection refused · daemon socket down despite attributed run record\n' ;;
   *) printf 'state: %s · source: status-log · stubbed\n' "$v" ;;
 esac
 STUB
@@ -117,13 +121,21 @@ test_declared_waits_are_free() {
   pass "declared external waits cost their panes but no cap slot"
 }
 
-test_terminal_states_are_free() {
-  make_fixture terminal
+test_blocked_over_a_dead_daemon_socket_counts() {
+  make_fixture blocked-down
+  # fm-crew-state.sh emits this blocked shape regardless of an executing
+  # attributed run - the crew's own latest status line is the stronger
+  # witness there - so the reading is not positive proof the worker is idle.
+  printf 'BLOCKED_DOWN\n' > "$STUB_DIR/task-x.state"
+  expect_counts 'a blocked read carrying the daemon-socket-down component'
+  pass "a blocked verdict over a dead daemon socket keeps its cap slot"
+}
+
+test_done_awaiting_cleanup_is_free() {
+  make_fixture done-terminal
   printf 'done\n' > "$STUB_DIR/task-x.state"
   expect_free 'a done-awaiting-cleanup terminal state'
-  printf 'failed\n' > "$STUB_DIR/task-x.state"
-  expect_free 'a failed terminal state awaiting attention'
-  pass "terminal states whose run is over cost no cap slot"
+  pass "a done terminal state whose record awaits cleanup costs no cap slot"
 }
 
 test_captain_held_transfer_is_free() {
@@ -155,9 +167,11 @@ test_unreadable_states_count_conservatively() {
   expect_counts 'a missing state verdict'
   printf 'unknown\n' > "$STUB_DIR/task-x.state"
   expect_counts 'an unknown state'
+  printf 'failed\n' > "$STUB_DIR/task-x.state"
+  expect_counts 'a failed terminal state'
   : > "$STUB_DIR/task-x.holderr"
   expect_counts 'an unknown state whose hold read errors'
-  pass "unreadable, unknown, and erroring reads all count, so the cap fails closed"
+  pass "unreadable, unknown, failed, and erroring reads all count, so the cap fails closed"
 }
 
 test_state_read_receives_the_callers_state_dir() {
@@ -188,7 +202,8 @@ test_spend_override_wins_over_the_classify_seam() {
 
 test_working_validating_and_driving_count
 test_declared_waits_are_free
-test_terminal_states_are_free
+test_blocked_over_a_dead_daemon_socket_counts
+test_done_awaiting_cleanup_is_free
 test_captain_held_transfer_is_free
 test_working_outranks_a_hold
 test_unreadable_states_count_conservatively

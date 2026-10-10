@@ -556,8 +556,9 @@ The cap counts ACTIVE COMPUTE, not live tasks: an open pane whose worker is mere
 `bin/fm-spend-lib.sh` owns the counting classification and `bin/fm-spawn.sh` enforces it, refusing a fresh ordinary spawn for either actor once that many tasks count and rechecking under the task-set lock; relaunches and secondmates are exempt.
 
 A task counts while its worker is working, validating, or driving, which `bin/fm-crew-state.sh` reads as `working`.
-A task costs its pane but no cap slot when its current state is a declared external wait (`paused`, `blocked`, or `parked` at a gate), a captain-held transfer (`bin/fm-captain-hold.sh` `open` proves the hold), or a terminal state (`done` awaiting cleanup, or `failed` awaiting attention): `bin/fm-crew-state.sh` never reads those verdicts while a run is executing or a pane is busy, so each is itself positive proof the worker is not computing.
-Every other combination counts: `unknown` keeps its slot unless the captain-held transfer above proves it idle, and a state that is unreadable or a read that fails counts as active, so the cap fails closed - a task is free only on positive proof it is not computing.
+A task costs its pane but no cap slot when its current state is a declared external wait (`paused`, `blocked`, or `parked` at a gate), a captain-held transfer (`bin/fm-captain-hold.sh` `open` proves the hold), or a `done`-awaiting-cleanup terminal state.
+One blocked reading is not that proof: `bin/fm-crew-state.sh` emits `blocked` with a `daemon socket down despite attributed run record` component even while an attributed run executes, because the crew's own latest status line is there the stronger witness, so a blocked read carrying that component keeps its slot.
+Every other combination counts: `failed` and `unknown` keep their slots unless the captain-held transfer above proves them idle, and a state that is unreadable or a read that fails counts as active, so the cap fails closed - a task is free only on positive proof it is not computing.
 
 ## Away-mode wedge alarm channels (config/wedge-alarm)
 

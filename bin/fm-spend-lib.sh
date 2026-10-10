@@ -13,31 +13,27 @@
 #   free, no cap slot       - declared external wait: fm-crew-state.sh reads
 #                             `paused` (a declared paused: wait), `blocked`
 #                             (a declared blocked: wait), or `parked` (parked
-#                             at a gate or on a captain decision);
+#                             at a gate or on a captain decision) - except a
+#                             `blocked` line carrying fm-crew-state.sh's
+#                             `daemon socket down despite attributed run
+#                             record` component, an emission that fires
+#                             regardless of an executing attributed run and
+#                             is therefore not positive proof;
 #                           - captain-held transfer: bin/fm-captain-hold.sh's
 #                             `open` proves an active hold, so the work sits
 #                             with the captain rather than in the pane;
-#                           - terminal state: fm-crew-state.sh reads `done` or
-#                             `failed`, verdicts whose run is over and whose
-#                             task record awaits ordinary cleanup or
-#                             attention. The classifier never reads `blocked`
-#                             or `failed` while a run is executing or a pane
-#                             is busy - executing runs read `working` and
-#                             supersede the log, and the pane fallback reads
-#                             the status verb only after an exact idle - so
-#                             each definitive not-computing verdict is itself
-#                             positive proof.
+#                           - done-awaiting-cleanup: fm-crew-state.sh reads
+#                             `done`, a terminal state whose task record
+#                             awaits ordinary cleanup.
 #   counts, one cap slot    - `working` (working, validating, and driving all
 #                             read as working there), which outranks a hold:
 #                             while the worker is provably computing, the slot
 #                             is spent even when a decision waits behind it;
-#                           - everything else, deliberately: `unknown`, an
-#                             unreadable state line, or a failed read all
-#                             count, so the cap fails closed. A task is free
-#                             only on positive proof it is not computing,
-#                             and `unknown` is the absence of a verdict: a
-#                             wedged daemon or unreadable pane can hide live
-#                             compute.
+#                           - everything else, deliberately: `failed`,
+#                             `unknown`, an unreadable state line, or a failed
+#                             read all count, so the cap fails closed. A task
+#                             is free only on positive proof it is not
+#                             computing.
 #
 # The state read is bin/fm-crew-state.sh's current-state classification,
 # reused verbatim through its public one-line output, and the hold read is
@@ -62,19 +58,25 @@ FM_SPEND_CAPTAIN_HOLD_BIN="${FM_SPEND_CAPTAIN_HOLD_BIN:-$_FM_SPEND_LIB_DIR/fm-ca
 # not a slot. Never exits with any other status and never writes to the
 # terminal, so the caller's count arithmetic stays the only output.
 fm_spend_task_counts_active() {
-  local state_dir=$1 id=$2 line st
+  local state_dir=$1 id=$2 line st rest comp
   line=$(FM_STATE_OVERRIDE="$state_dir" "$FM_SPEND_CREW_STATE_BIN" "$id" </dev/null 2>/dev/null) || return 0
   line=${line%%$'\n'*}
   st=${line#state: }
   st=${st%% *}
+  rest="$line · "
+  while [ -n "$rest" ]; do
+    comp=${rest%% · *}
+    rest=${rest#* · }
+    [ "$comp" = "daemon socket down despite attributed run record" ] && return 0
+  done
   case "$st" in
     working) return 0 ;;
-    paused | blocked | parked | done | failed) return 1 ;;
+    paused | blocked | parked | done) return 1 ;;
   esac
-  # unknown or an unrecognized line: the one remaining proven-idle class is
-  # a captain-held transfer, and only its positive `open` proof frees the
-  # slot. Every other outcome, including a hold read that fails or cannot
-  # answer, keeps it, so the count fails closed.
+  # failed, unknown, or an unrecognized line: the one remaining proven-idle
+  # class is a captain-held transfer, and only its positive `open` proof
+  # frees the slot. Every other outcome, including a hold read that fails
+  # or cannot answer, keeps it, so the count fails closed.
   if FM_STATE_OVERRIDE="$state_dir" "$FM_SPEND_CAPTAIN_HOLD_BIN" open "$id" >/dev/null 2>&1; then
     return 1
   fi
