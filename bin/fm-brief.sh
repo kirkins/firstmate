@@ -586,6 +586,23 @@ IFS= read -r -d '' SHARED_INFRA_RULE <<'EOF' || true
 EOF
 SHARED_INFRA_RULE=${SHARED_INFRA_RULE%$'\n'}
 
+# One shared string keeps the ship and scout local-resource rule identical:
+# memory-heavy commands take the machine's heavy slot first, so heavy jobs wait
+# their turn instead of overlapping into local memory exhaustion. The rule
+# text stays short by contract; bin/fm-heavy-slot.sh's acquire output, not this
+# text, carries the cap wrapper and parallelism details. The turnstile is
+# named by absolute path because a worker's own worktree has no firstmate bin,
+# and its slot record lands in the machine's canonical state root that every
+# home's crews resolve identically, not in the worker's own worktree.
+HEAVY_SLOT_SCRIPT=$(shell_quote "$FM_ROOT/bin/fm-heavy-slot.sh")
+IFS= read -r -d '' LOCAL_RESOURCE_SECTION <<EOF || true
+# Local resources
+Before any memory-heavy command (a full build, test suite, lint walk, bundle, image build, or language-server index), take the machine's heavy slot: run \`$HEAVY_SLOT_SCRIPT acquire $(shell_quote "$ID") --estimate <MB>\` with your peak-RAM estimate in MB.
+A refusal means another task holds the slot: append your standard \`$PAUSED_VERB [at=<epoch>]:\` wait naming the holder and stop; retry the acquire later, never run the job without the slot.
+Run the job exactly under the cap wrapper the acquire output prints, and release the slot immediately after, as that output says.
+EOF
+LOCAL_RESOURCE_SECTION=${LOCAL_RESOURCE_SECTION%$'\n'}
+
 if [ -n "$BASE_BRANCH" ]; then
   SETUP_BASE="You are in a disposable git worktree of $REPO, at a detached HEAD on a clean copy of its base branch.
 Base branch: $BASE_BRANCH"
@@ -614,7 +631,7 @@ The report is the only thing that survives, so anything worth keeping must be in
 
 # Rules
 1. Never push to any remote and never open a PR.
-2. Stay inside this worktree; the only files you may write outside it are the report and the status file below.
+2. Stay inside this worktree; the only files you may write outside it are the report, the status file below, and the machine's heavy-slot record the Local resources section takes.
 3. Use gh-axi for GitHub operations and chrome-devtools-axi for browser operations.
 4. Report status by appending one line:
    \`$STATUS_APPEND\`
@@ -633,6 +650,8 @@ $CREWMATE_PAUSE_INSTRUCTIONS
    A decision or blocker you opened stays open until a \`resolved\` line carrying its exact key lands; a later \`done:\` or \`working:\` line never closes it, even when the answer is what started that work.
    Firstmate's reply normally writes that closing line at answer time; when a blocker or wait clears WITHOUT a firstmate reply, append \`resolved [at=<epoch>]: {how it cleared}\` yourself (same \`[key=<slug>]\` if you opened it with one) as you resume.
 $SHARED_INFRA_RULE
+
+$LOCAL_RESOURCE_SECTION
 
 $WAIT_BLOCK$INBOX_SECTION
 
@@ -689,7 +708,7 @@ If the top-level path is the primary checkout or not the worktree you were launc
 # Rules
 $RULE1
 2. Keep project edits inside this worktree; keep proof and scratch output outside it, under \`$DATA/$ID/\` or a temporary directory.
-   Outside the worktree, write only that task material and the status and steering-inbox records authorized below.
+   Outside the worktree, write only that task material and the status, steering-inbox, and heavy-slot records authorized below.
    Leave the worktree clean before reporting done.
 3. Use gh-axi for GitHub operations and chrome-devtools-axi for browser operations.
 4. Report status by appending one line:
@@ -713,6 +732,8 @@ $ASK_USER_BLOCK
    A decision or blocker you opened stays open until a \`resolved\` line carrying its exact key lands; a later \`done:\` or \`working:\` line never closes it, even when the answer is what started that work.
    Firstmate's reply normally writes that closing line at answer time; when a blocker or wait clears WITHOUT a firstmate reply, append \`resolved [at=<epoch>]: {how it cleared}\` yourself (same \`[key=<slug>]\` if you opened it with one) as you resume.
 $SHARED_INFRA_RULE
+
+$LOCAL_RESOURCE_SECTION
 
 $WAIT_BLOCK$INBOX_SECTION
 

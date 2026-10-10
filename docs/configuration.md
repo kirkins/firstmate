@@ -110,6 +110,17 @@ Untracked files and directories whose names begin with `scratchpad` are also git
 
 - Wake, watcher, away-mode, and Relay-specific state mechanics remain with their named scripts and reference sections rather than being duplicated into one exhaustive state tree here.
 
+### Heavy-slot turnstile (machine-shared state)
+
+Every home's crews on one machine coordinate their memory-heavy jobs through a single shared turnstile, so a flexible number of concurrent workers takes turns on heavy builds, test suites, and lint walks instead of overlapping into local memory exhaustion.
+`bin/fm-heavy-slot.sh` owns the whole command contract: `acquire <task-id> --estimate <MB> [--expiry <seconds>]`, `heartbeat <task-id>`, `release <task-id>`, and `status`, with a live holder refusing new acquires by name, heartbeat expiry making a holder stale and takeable, and release idempotent and holder-scoped.
+The script's header and `--help` own the record format, exit codes, staleness rules, and the printed cap wrapper that runs the job under `systemd-run --user --scope -p MemoryMax=<estimate-rounded>` with a bounded `-j`.
+There is no daemon, scheduler, or polling loop; state changes only when a worker or firstmate runs the command, and `status` is the surface firstmate reads for holder and staleness.
+The slot record and its command lock live in one canonical machine-shared root, `${XDG_STATE_HOME:-$HOME/.local/state}/firstmate/` (created mode 0700), so the lock, holder identity, heartbeat, and expiry behave as one machine-wide slot that every home resolves identically.
+`bin/fm-brief.sh` emits the standard worker rule into every ship and scout scaffold, naming the turnstile script by absolute path so the slot record lands in that machine-shared root rather than a worker's own worktree.
+The coordination scope is the whole machine, not one home's fleet: workers spawned by any home, primary or secondmate, contend on the same slot.
+Agent count stays deliberately uncapped; the turnstile never enforces worker counts and manages no cgroups beyond printing the documented wrapper.
+
 ### Session-start references
 
 - `bin/fm-session-start.sh`'s header is the single owner of session-start ordering, composed commands, digest contents, and the digest's startup mechanism.
