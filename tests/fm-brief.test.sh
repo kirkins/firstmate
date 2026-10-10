@@ -1467,9 +1467,10 @@ test_crewmate_scaffolds_forbid_pool_administration() {
 
 # The local-resource rule is the one standard contract for memory-heavy work
 # (bin/fm-heavy-slot.sh owns the turnstile): both crewmate scaffolds must emit
-# it naming this task's id and binding the supervising home, so the slot lands
-# in this home's state/ instead of the worker's own worktree, and a secondmate
-# charter must not grow a second copy (its crews get it from their scaffolds).
+# it naming this task's id and the turnstile's absolute path, so the slot lands
+# in the machine-shared state root instead of the worker's own worktree, and a
+# secondmate charter must not grow a second copy (its crews get it from their
+# scaffolds).
 test_local_resource_rule_emitted_for_crewmates() {
   local home id brief ship_rule scout_rule
   home="$TMP_ROOT/heavy-slot-rule-home"
@@ -1482,8 +1483,8 @@ test_local_resource_rule_emitted_for_crewmates() {
   assert_grep "# Local resources" "$brief" "ship brief missing the Local resources section"
   assert_grep "acquire '$id' --estimate <MB>" "$brief" \
     "ship brief missing the heavy-slot acquire command with its task id"
-  assert_grep "FM_HOME='$home'" "$brief" \
-    "ship brief did not bind the supervising home into the acquire command"
+  assert_grep "'$ROOT/bin/fm-heavy-slot.sh' acquire '$id' --estimate <MB>" "$brief" \
+    "ship brief did not emit the turnstile acquire command unbound to any home"
   assert_grep "$ROOT/bin/fm-heavy-slot.sh" "$brief" \
     "ship brief did not name the home's turnstile script by absolute path"
   assert_grep "never run the job without the slot" "$brief" \
@@ -1500,7 +1501,7 @@ test_local_resource_rule_emitted_for_crewmates() {
   brief="$home/data/brief-heavy-scout/brief.md"
   assert_grep "acquire 'brief-heavy-scout' --estimate <MB>" "$brief" \
     "scout brief missing the heavy-slot acquire command with its task id"
-  assert_grep "the status file below, and this home's heavy-slot record the Local resources section takes" "$brief" \
+  assert_grep "the status file below, and the machine's heavy-slot record the Local resources section takes" "$brief" \
     "scout outside-write rule did not authorize the heavy-slot record the section orders"
 
   # One shared string, not two copies: the emitted rule must be byte-identical

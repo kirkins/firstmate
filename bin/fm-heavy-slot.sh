@@ -1,25 +1,27 @@
 #!/usr/bin/env bash
-# fm-heavy-slot.sh - single-slot turnstile for memory-heavy jobs in one home.
+# fm-heavy-slot.sh - single-slot turnstile for memory-heavy jobs machine-wide.
 #
 # WHY. Multiple agents on one machine can each run a memory-heavy build, test
 # suite, or lint walk, and the local-memory-exhaustion evidence in
 # data/learnings.md shows what happens when they overlap: the machine OOMs and
 # takes unrelated work down with it. The captain's chosen direction is flexible
 # agent count with heavy jobs taking turns, so this turnstile is the mechanism:
-# exactly one memory-heavy job may run at a time inside one firstmate home's
-# fleet, while the number of agents stays uncapped. It coordinates; it never
-# enforces agent counts and never manages cgroups beyond printing the
-# documented wrapper.
+# exactly one memory-heavy job may run at a time on this machine, across every
+# home's fleet - primary and secondmate alike - while the number of agents
+# stays uncapped. It coordinates; it never enforces agent counts and never
+# manages cgroups beyond printing the documented wrapper.
 #
 # CONTRACT.
-#   - Slot record: $STATE/heavy-slot, one line
+#   - Slot record: ${XDG_STATE_HOME:-$HOME/.local/state}/firstmate/heavy-slot
+#     (directory created mode 0700), one line
 #     "<task-id>\t<pid>\t<estimate-mb>\t<heartbeat-epoch>\t<expiry-seconds>",
 #     written atomically (temp file + rename) with every mutation serialized by
-#     the command lock $STATE/.heavy-slot.lock through the home's portable lock
+#     the command lock .heavy-slot.lock beside it through the portable lock
 #     helpers (bin/fm-wake-lib.sh, the same no-flock shape bin/fm-lease.sh
 #     uses), so concurrent acquires from sibling workers serialize and exactly
-#     one wins. The coordination scope is one firstmate home's fleet, like the
-#     supervision lease: workers spawned by other homes do not share this slot.
+#     one wins. The coordination scope is the whole machine, not one home:
+#     every home's crews resolve the same canonical state root, so workers
+#     spawned by any home contend on this one slot.
 #   - Holder identity is the task id the caller passes; the recorded pid is the
 #     acquiring shell, kept for audit and display, never for liveness: acquire
 #     is a short-lived CLI whose pid is gone before the job runs, so staleness
@@ -66,15 +68,14 @@
 set -eu
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-FM_ROOT="${FM_ROOT_OVERRIDE:-${FM_ROOT:-$(cd "$SCRIPT_DIR/.." && pwd)}}"
-FM_HOME="${FM_HOME:-${FM_ROOT_OVERRIDE:-$FM_ROOT}}"
-STATE="${FM_STATE_OVERRIDE:-$FM_HOME/state}"
 # shellcheck source=bin/fm-wake-lib.sh
 . "$SCRIPT_DIR/fm-wake-lib.sh"
 
-mkdir -p "$STATE"
-SLOT="$STATE/heavy-slot"
-SLOT_COMMAND_LOCK="$STATE/.heavy-slot.lock"
+HEAVY_SLOT_STATE="${XDG_STATE_HOME:-$HOME/.local/state}/firstmate"
+mkdir -p -- "$HEAVY_SLOT_STATE"
+chmod 700 -- "$HEAVY_SLOT_STATE"
+SLOT="$HEAVY_SLOT_STATE/heavy-slot"
+SLOT_COMMAND_LOCK="$HEAVY_SLOT_STATE/.heavy-slot.lock"
 FM_HEAVY_SLOT_DEFAULT_EXPIRY=1800
 
 usage() {
@@ -144,7 +145,7 @@ heavy_slot_live() {
 
 heavy_slot_write() {
   local task=$1 pid=$2 estimate=$3 epoch=$4 expiry=$5 tmp
-  tmp=$(mktemp "$STATE/.heavy-slot-tmp.XXXXXX")
+  tmp=$(mktemp "$HEAVY_SLOT_STATE/.heavy-slot-tmp.XXXXXX")
   printf '%s\t%s\t%s\t%s\t%s\n' "$task" "$pid" "$estimate" "$epoch" "$expiry" > "$tmp"
   mv -f -- "$tmp" "$SLOT"
 }
@@ -182,7 +183,6 @@ heavy_slot_acquire_advice() {
   rounded=$(heavy_slot_rounded_mb "$estimate")
   jobs=$(heavy_slot_parallelism_bound)
   release_cmd=$(heavy_slot_shell_quote "$0")
-  [ -z "${FM_HOME:-}" ] || release_cmd="FM_HOME=$(heavy_slot_shell_quote "$FM_HOME") $release_cmd"
   printf 'acquired: task=%s estimate=%sMB pid=%s expires_in=%ss\n' \
     "$task" "$estimate" "${BASHPID:-$$}" "$expiry"
   if command -v systemd-run >/dev/null 2>&1; then

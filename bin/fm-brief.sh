@@ -587,16 +587,17 @@ EOF
 SHARED_INFRA_RULE=${SHARED_INFRA_RULE%$'\n'}
 
 # One shared string keeps the ship and scout local-resource rule identical:
-# memory-heavy commands take this home's heavy slot first, so heavy jobs wait
+# memory-heavy commands take the machine's heavy slot first, so heavy jobs wait
 # their turn instead of overlapping into local memory exhaustion. The rule
 # text stays short by contract; bin/fm-heavy-slot.sh's acquire output, not this
-# text, carries the cap wrapper and parallelism details. FM_HOME is bound into
-# the emitted command because a worker's own worktree has no firstmate bin and
-# must land the slot record in this supervising home's state/, not its own.
+# text, carries the cap wrapper and parallelism details. The turnstile is
+# named by absolute path because a worker's own worktree has no firstmate bin,
+# and its slot record lands in the machine's canonical state root that every
+# home's crews resolve identically, not in the worker's own worktree.
 HEAVY_SLOT_SCRIPT=$(shell_quote "$FM_ROOT/bin/fm-heavy-slot.sh")
 IFS= read -r -d '' LOCAL_RESOURCE_SECTION <<EOF || true
 # Local resources
-Before any memory-heavy command (a full build, test suite, lint walk, bundle, image build, or language-server index), take this home's heavy slot: run \`FM_HOME=$(shell_quote "$FM_HOME") $HEAVY_SLOT_SCRIPT acquire $(shell_quote "$ID") --estimate <MB>\` with your peak-RAM estimate in MB.
+Before any memory-heavy command (a full build, test suite, lint walk, bundle, image build, or language-server index), take the machine's heavy slot: run \`$HEAVY_SLOT_SCRIPT acquire $(shell_quote "$ID") --estimate <MB>\` with your peak-RAM estimate in MB.
 A refusal means another task holds the slot: append your standard \`$PAUSED_VERB [at=<epoch>]:\` wait naming the holder and stop; retry the acquire later, never run the job without the slot.
 Run the job exactly under the cap wrapper the acquire output prints, and release the slot immediately after, as that output says.
 EOF
@@ -630,7 +631,7 @@ The report is the only thing that survives, so anything worth keeping must be in
 
 # Rules
 1. Never push to any remote and never open a PR.
-2. Stay inside this worktree; the only files you may write outside it are the report, the status file below, and this home's heavy-slot record the Local resources section takes.
+2. Stay inside this worktree; the only files you may write outside it are the report, the status file below, and the machine's heavy-slot record the Local resources section takes.
 3. Use gh-axi for GitHub operations and chrome-devtools-axi for browser operations.
 4. Report status by appending one line:
    \`$STATUS_APPEND\`

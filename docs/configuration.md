@@ -91,7 +91,6 @@ Each effective `FM_HOME` contains private operational directories.
 - Private secondmate config-reread generations with their retry and quarantine state.
 - Per-task steering-inbox records under `state/<id>.inbox/` (`bin/fm-task-inbox-lib.sh`).
 - Parent-owned secondmate pending-reply records under `state/pending-replies/` (`bin/fm-pending-reply-lib.sh`).
-- The home fleet's heavy-slot turnstile record under `state/heavy-slot` (`bin/fm-heavy-slot.sh`).
 
 `config/` holds local gitignored operating choices, including explicit extension bindings under `config/extensions.d/`.
 
@@ -111,14 +110,15 @@ Untracked files and directories whose names begin with `scratchpad` are also git
 
 - Wake, watcher, away-mode, and Relay-specific state mechanics remain with their named scripts and reference sections rather than being duplicated into one exhaustive state tree here.
 
-### Heavy-slot turnstile (state/heavy-slot)
+### Heavy-slot turnstile (machine-shared state)
 
-One firstmate home coordinates its memory-heavy jobs through a single-slot turnstile, so a flexible number of concurrent workers takes turns on heavy builds, test suites, and lint walks instead of overlapping into local memory exhaustion.
+Every home's crews on one machine coordinate their memory-heavy jobs through a single shared turnstile, so a flexible number of concurrent workers takes turns on heavy builds, test suites, and lint walks instead of overlapping into local memory exhaustion.
 `bin/fm-heavy-slot.sh` owns the whole command contract: `acquire <task-id> --estimate <MB> [--expiry <seconds>]`, `heartbeat <task-id>`, `release <task-id>`, and `status`, with a live holder refusing new acquires by name, heartbeat expiry making a holder stale and takeable, and release idempotent and holder-scoped.
 The script's header and `--help` own the record format, exit codes, staleness rules, and the printed cap wrapper that runs the job under `systemd-run --user --scope -p MemoryMax=<estimate-rounded>` with a bounded `-j`.
 There is no daemon, scheduler, or polling loop; state changes only when a worker or firstmate runs the command, and `status` is the surface firstmate reads for holder and staleness.
-`bin/fm-brief.sh` emits the standard worker rule into every ship and scout scaffold, binding the acquire command to the supervising home so the slot record lands in this home's `state/` rather than a worker's own worktree.
-The coordination scope is one home's fleet, like the supervision lease: workers spawned by other homes on the same machine do not share this slot.
+The slot record and its command lock live in one canonical machine-shared root, `${XDG_STATE_HOME:-$HOME/.local/state}/firstmate/` (created mode 0700), so the lock, holder identity, heartbeat, and expiry behave as one machine-wide slot that every home resolves identically.
+`bin/fm-brief.sh` emits the standard worker rule into every ship and scout scaffold, naming the turnstile script by absolute path so the slot record lands in that machine-shared root rather than a worker's own worktree.
+The coordination scope is the whole machine, not one home's fleet: workers spawned by any home, primary or secondmate, contend on the same slot.
 Agent count stays deliberately uncapped; the turnstile never enforces worker counts and manages no cgroups beyond printing the documented wrapper.
 
 ### Session-start references

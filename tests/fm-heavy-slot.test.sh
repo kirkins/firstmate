@@ -14,20 +14,22 @@ set -u
 SLOT="$ROOT/bin/fm-heavy-slot.sh"
 TMP_ROOT=$(fm_test_tmproot fm-heavy-slot)
 
-# make_home <name>: a scratch home whose state/ the turnstile coordinates in.
+# make_home <name>: a scratch home plus its own machine-state root, the XDG
+# location the machine-wide turnstile coordinates in.
 make_home() {
   local home
   home="$TMP_ROOT/$1"
-  mkdir -p "$home/state"
+  mkdir -p "$home/xdg"
   printf '%s\n' "$home"
 }
 
-# slot <home> <args...>: run the turnstile against one scratch home, capturing
-# stdout and stderr separately and the exit code in SLOT_STATUS.
+# slot <home> <args...>: run the turnstile as one home's crew against that
+# scratch machine state, capturing stdout and stderr separately and the exit
+# code in SLOT_STATUS.
 slot() {
   local home=$1
   shift
-  SLOT_STDOUT=$(FM_HOME="$home" "$SLOT" "$@" 2>"$TMP_ROOT/stderr")
+  SLOT_STDOUT=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" "$@" 2>"$TMP_ROOT/stderr")
   SLOT_STATUS=$?
   SLOT_STDERR=$(cat "$TMP_ROOT/stderr")
 }
@@ -35,17 +37,17 @@ slot() {
 test_usage_is_loud_and_closed_set() {
   local home out status
   home=$(make_home usage)
-  out=$(FM_HOME="$home" "$SLOT" 2>&1); status=$?
+  out=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" 2>&1); status=$?
   expect_code 2 "$status" "no subcommand must be a usage error"
   assert_contains "$out" "fm-heavy-slot.sh acquire" "usage did not render the command surface"
-  out=$(FM_HOME="$home" "$SLOT" acquire bad-id 2>&1); status=$?
+  out=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" acquire bad-id 2>&1); status=$?
   expect_code 2 "$status" "a missing --estimate must be a usage error"
   assert_contains "$out" "--estimate requires a positive integer" "missing estimate refusal did not explain the contract"
-  out=$(FM_HOME="$home" "$SLOT" acquire 'bad id' --estimate 100 2>&1); status=$?
+  out=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" acquire 'bad id' --estimate 100 2>&1); status=$?
   expect_code 2 "$status" "a task id with a space must be a usage error"
-  out=$(FM_HOME="$home" "$SLOT" acquire t --estimate 0 2>&1); status=$?
+  out=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" acquire t --estimate 0 2>&1); status=$?
   expect_code 2 "$status" "a zero estimate must be a usage error"
-  out=$(FM_HOME="$home" "$SLOT" acquire t --estimate 100 --expiry nope 2>&1); status=$?
+  out=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" acquire t --estimate 100 --expiry nope 2>&1); status=$?
   expect_code 2 "$status" "a non-integer expiry must be a usage error"
   pass "fm-heavy-slot.sh: usage and value validation refuse loudly"
 }
@@ -53,8 +55,8 @@ test_usage_is_loud_and_closed_set() {
 test_concurrent_acquire_admits_exactly_one_holder() {
   local home a b winners=0 holder_line
   home=$(make_home concurrent)
-  ( FM_HOME="$home" "$SLOT" acquire worker-a --estimate 100 >/dev/null 2>&1; echo $? >"$TMP_ROOT/race-a.rc" ) &
-  ( FM_HOME="$home" "$SLOT" acquire worker-b --estimate 100 >/dev/null 2>&1; echo $? >"$TMP_ROOT/race-b.rc" ) &
+  ( FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" acquire worker-a --estimate 100 >/dev/null 2>&1; echo $? >"$TMP_ROOT/race-a.rc" ) &
+  ( FM_HOME="$home" XDG_STATE_HOME="$home/xdg" "$SLOT" acquire worker-b --estimate 100 >/dev/null 2>&1; echo $? >"$TMP_ROOT/race-b.rc" ) &
   wait
   a=$(cat "$TMP_ROOT/race-a.rc")
   b=$(cat "$TMP_ROOT/race-b.rc")
@@ -108,13 +110,35 @@ test_acquire_output_names_the_cap_wrapper() {
 test_release_hint_is_copy_safe() {
   local home out release_line
   home=$(make_home "hint home")
+  export XDG_STATE_HOME="$home/xdg"
   out=$(FM_HOME="$home" "$SLOT" acquire hint-task --estimate 100 2>/dev/null)
   release_line=$(printf '%s\n' "$out" | sed -n 's/^release immediately after the job: //p')
-  [ -n "$release_line" ] || fail "acquire output did not print a release command"
+  [ -n "$release_line" ] || { unset XDG_STATE_HOME; fail "acquire output did not print a release command"; }
   out=$(eval "$release_line" 2>/dev/null)
+  unset XDG_STATE_HOME
   assert_contains "$out" "released: task=hint-task" \
-    "the printed release command is not safe to copy verbatim under a spaced FM_HOME"
-  pass "fm-heavy-slot.sh: the printed release command survives a spaced FM_HOME"
+    "the printed release command is not safe to copy verbatim under a spaced machine-state root"
+  pass "fm-heavy-slot.sh: the printed release command survives a spaced state root"
+}
+
+test_slot_is_machine_wide_across_homes() {
+  local home_a home_b shared out status
+  home_a=$(make_home machine-a)
+  home_b=$(make_home machine-b)
+  shared="$TMP_ROOT/machine-shared"
+  mkdir -p "$shared"
+  FM_HOME="$home_a" XDG_STATE_HOME="$shared" "$SLOT" acquire crew-a --estimate 100 >/dev/null 2>&1
+  expect_code 0 "$?" "the first home's acquire must succeed"
+  out=$(FM_HOME="$home_b" XDG_STATE_HOME="$shared" "$SLOT" acquire crew-b --estimate 100 2>&1); status=$?
+  expect_code 6 "$status" "a second home's acquire must refuse on the one machine slot"
+  assert_contains "$out" "held by task 'crew-a'" "cross-home refusal did not name the holder"
+  out=$(FM_HOME="$home_b" XDG_STATE_HOME="$shared" "$SLOT" status 2>/dev/null)
+  assert_contains "$out" "held task=crew-a" "the second home must see the first home's hold"
+  FM_HOME="$home_b" XDG_STATE_HOME="$shared" "$SLOT" release crew-a >/dev/null 2>&1
+  expect_code 0 "$?" "the second home must clear the first home's hold on the shared record"
+  out=$(FM_HOME="$home_a" XDG_STATE_HOME="$shared" "$SLOT" status 2>/dev/null)
+  assert_contains "$out" "free" "both homes must see the shared slot free again"
+  pass "fm-heavy-slot.sh: two homes contend on one machine-wide slot"
 }
 
 test_release_is_scoped_and_idempotent() {
@@ -197,6 +221,7 @@ test_status_reports_free_and_live_holds() {
 
 test_usage_is_loud_and_closed_set
 test_concurrent_acquire_admits_exactly_one_holder
+test_slot_is_machine_wide_across_homes
 test_held_refusal_names_the_holder
 test_acquire_output_names_the_cap_wrapper
 test_release_hint_is_copy_safe
