@@ -2,7 +2,9 @@
 # Behavior tests for primary-authoritative shared captain-preference inheritance.
 #
 # The narrow shared surface is exactly data/captain-shared.md.
-# data/captain.md and data/learnings.md remain domain-local in every home.
+# data/captain.md remains domain-local in every home, and data/learnings.md is
+# the tracked fleet-shared record that rides the ordinary fast-forward, so
+# neither is part of this copy contract.
 set -u
 
 # shellcheck source=tests/lib.sh
