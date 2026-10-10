@@ -482,7 +482,6 @@ ff_target() {
     echo "$label: skipped: cannot read $base"
     return 0
   }
-  preserve_pretracking_learnings "$dir" "$label" "$local_rev" "$base_rev" || return 0
   if [ "$local_rev" = "$base_rev" ]; then
     FF_STATUS="current"
     [ -z "$reconciliation_state" ] || secondmate_update_reconcile_clear "$reconciliation_state" "$secondmate_id" || true
@@ -494,6 +493,7 @@ ff_target() {
       && divergence_is_redundant "$dir" "$local_rev" "$base_rev"; then
       instr=$(changed_instr "$dir" "$base")
       before=$(git -C "$dir" rev-parse --short HEAD)
+      preserve_pretracking_learnings "$dir" "$label" "$local_rev" "$base_rev" || return 0
       if git -C "$dir" reset --keep "$base" >/dev/null 2>&1; then
         after=$(git -C "$dir" rev-parse --short HEAD)
         FF_STATUS="updated"
@@ -524,6 +524,7 @@ ff_target() {
 
   instr=$(changed_instr "$dir" "$base")
   before=$(git -C "$dir" rev-parse --short HEAD)
+  preserve_pretracking_learnings "$dir" "$label" "$local_rev" "$base_rev" || return 0
   if ! out=$(git -C "$dir" merge --ff-only "$base" 2>&1); then
     echo "$label: skipped: fast-forward failed: $(first_line "$out")"
     return 0
