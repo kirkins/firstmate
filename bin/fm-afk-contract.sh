@@ -52,7 +52,9 @@
 #   expected_return: <UTC ISO 8601> | -
 #   reach_channels: none
 #   reach_announced: <the one-sentence reach announcement>
-#   spend_max_concurrent_workers: <n>
+#   spend_max_concurrent_workers: <n>   cap on ordinary tasks that count as
+#                                       active compute (bin/fm-spend-lib.sh owns
+#                                       the counting; default 6, docs/configuration.md)
 #   confirmed: <UTC ISO 8601>       when this mandate was recorded; /afk itself
 #   confirmed_epoch: <seconds>        is the go, so no later human step stamps it
 #   mode: quiet                    only on a quiet entry (FM_AFK_MODE=quiet); absent
@@ -137,7 +139,7 @@ FM_AFK_CONTRACT_VERSION=2
 # Older record versions this script still reads (never writes).
 FM_AFK_CONTRACT_READABLE_VERSIONS="1 2"
 FM_AFK_CONTRACT_REACH_ANNOUNCED='No phone channel is configured; anything that needs you waits for your return.'
-FM_AFK_CONTRACT_SPEND_DEFAULT=4
+FM_AFK_CONTRACT_SPEND_DEFAULT=6
 FM_AFK_CONTRACT_QUIET_HOLDS_NOTHING='you are present, so nothing waits for your return: every action you ask for, a local landing or a merge included, proceeds now under ordinary attended authority, and quiet mode changes only which updates reach this conversation.'
 # Generous against the longest legitimate holder, a merge waiting on the forge,
 # so the bound only ever trips on something genuinely wedged.
