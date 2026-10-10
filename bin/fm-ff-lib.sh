@@ -22,8 +22,11 @@
 # only when it already has the target; otherwise it is skipped until the origin
 # path updates it.
 # A tracked-files fast-forward never touches the gitignored operational dirs
-# (data/, state/, config/, projects/, .no-mistakes/), so it cannot disturb a
-# secondmate's backlog, projects, or in-flight work.
+# (data/, state/, config/, projects/, .no-mistakes/) except the tracked
+# fleet-shared data/learnings.md: a target that introduces that file over a
+# home's pre-tracking local copy preserves the copy at a dated data/ sibling
+# (preserve_pretracking_learnings) before advancing, so a secondmate's backlog,
+# projects, and in-flight work are never disturbed or lost.
 # The seeded .fm-secondmate-home identity marker is gitignored too; the local
 # sync tolerates only that marker during the one-time upgrade of pre-ignore
 # linked-worktree homes.
@@ -276,6 +279,40 @@ dirty_status() {
   fi
 }
 
+# The one tracked path inside the otherwise-gitignored operational dirs: the
+# fleet-shared learnings record under data/. A target that introduces it into a
+# home still holding a pre-tracking local copy would make the advance refuse
+# forever (that copy is invisible to the dirty guard, which never sees ignored
+# files), so preserve the copy at a dated data/ sibling first. The sibling stays
+# gitignored, so a converged home still reads clean.
+FF_TRACKED_LEARNINGS_REL="data/learnings.md"
+
+preserve_pretracking_learnings() { # <dir> <label> <local-rev> <base-rev>
+  local dir=$1 label=$2 local_rev=$3 base_rev=$4 rel parent stem stamp sibling n
+  rel=$FF_TRACKED_LEARNINGS_REL
+  [ -e "$dir/$rel" ] || [ -L "$dir/$rel" ] || return 0
+  git -C "$dir" cat-file -e "$base_rev:$rel" 2>/dev/null || return 0
+  git -C "$dir" cat-file -e "$local_rev:$rel" 2>/dev/null && return 0
+  parent="$dir/${rel%/*}"
+  stem=$(basename "$rel" .md)
+  if ! stamp=$(date -u +%Y%m%dT%H%M%SZ 2>/dev/null); then
+    echo "$label: skipped: cannot name a preservation copy of untracked $rel"
+    return 1
+  fi
+  sibling="$parent/$stem.local.$stamp.md"
+  n=0
+  while [ -e "$sibling" ] || [ -L "$sibling" ]; do
+    n=$((n + 1))
+    sibling="$parent/$stem.local.$stamp.$n.md"
+  done
+  if ! mv -f -- "$dir/$rel" "$sibling" 2>/dev/null; then
+    echo "$label: skipped: cannot preserve untracked $rel before advancing"
+    return 1
+  fi
+  echo "$label: preserved pre-tracking local $rel at $sibling"
+  return 0
+}
+
 secondmate_update_reconcile_marker_path() { # <state> <id>
   local state=$1 id=$2
   case "$id" in *[!A-Za-z0-9._-]*|'') return 1 ;; esac
@@ -445,6 +482,7 @@ ff_target() {
     echo "$label: skipped: cannot read $base"
     return 0
   }
+  preserve_pretracking_learnings "$dir" "$label" "$local_rev" "$base_rev" || return 0
   if [ "$local_rev" = "$base_rev" ]; then
     FF_STATUS="current"
     [ -z "$reconciliation_state" ] || secondmate_update_reconcile_clear "$reconciliation_state" "$secondmate_id" || true

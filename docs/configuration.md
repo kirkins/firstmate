@@ -663,10 +663,12 @@ Shared captain preferences that apply across secondmate domains live only in the
 
 ## Operational learnings (data/learnings.md)
 
-Fleet-local operational facts and gotchas live locally in `data/learnings.md`; it is gitignored and printed after the captain-preference files in the session-start context digest.
-The file is created lazily on first learning and follows the internal [`stow` skill's](../.agents/skills/stow/SKILL.md) aging-tier and cold-archive contract: inspect the current file first and curate it instead of appending forever.
+Fleet-local operational facts and gotchas live in `data/learnings.md`; it is printed after the captain-preference files in the session-start context digest.
+It is the one tracked file under `data/`: the primary curates the fleet's shared learnings record and ships it through the normal repo path, and every home's update pass fast-forwards onto it, while every other `data/` entry stays captain-private and gitignored.
+The file follows the internal [`stow` skill's](../.agents/skills/stow/SKILL.md) aging-tier and cold-archive contract: inspect the current file first and curate it instead of appending forever.
 
-There is no shared learnings file by captain decision.
+When an update introduces the tracked file over a home's pre-tracking local copy, the fast-forward preserves that copy at a dated `data/learnings.local.*.md` sibling instead of refusing or clobbering it.
+A home that then edits its tracked copy holds an ordinary local tracked-file edit: its own sync pauses at the dirty guard until the edit is reconciled or shipped through the primary, exactly as for any other tracked file.
 
 ## Startup memory budget (config/startup-memory-budget)
 
