@@ -558,7 +558,7 @@ The cap counts ACTIVE COMPUTE, not live tasks: an open pane whose worker is mere
 A task counts while its worker is working, validating, or driving, which `bin/fm-crew-state.sh` reads as `working`.
 A task costs its pane but no cap slot when its current state is a declared external wait (`paused`, `blocked`, or `parked` at a gate), a captain-held transfer (`bin/fm-captain-hold.sh` `open` proves the hold), or a `done`-awaiting-cleanup terminal state.
 One blocked reading is not that proof: `bin/fm-crew-state.sh` emits `blocked` with a `daemon socket down despite attributed run record` component even while an attributed run executes, because the crew's own latest status line is there the stronger witness, so a blocked read carrying that component keeps its slot.
-Every other combination counts: `failed` and `unknown` keep their slots unless the captain-held transfer above proves them idle, and a state that is unreadable or a read that fails counts as active, so the cap fails closed - a task is free only on positive proof it is not computing.
+Every other combination counts: `failed` and `unknown` keep their slots unless the captain-held transfer above proves them idle, an unreadable or unrecognized state line keeps its slot the same way, and a read that fails counts as active outright, so the cap fails closed - a task is free only on positive proof it is not computing.
 
 ## Away-mode wedge alarm channels (config/wedge-alarm)
 
@@ -2370,7 +2370,9 @@ FM_CREW_STATE_NM_TIMEOUT=10   # seconds allowed per no-mistakes query inside fm-
 FM_TEARDOWN_NM_TIMEOUT=10    # seconds allowed per no-mistakes query or abort inside fm-teardown.sh
 FM_CREW_STATE_RUNS_LIMIT=200  # plain runs-ledger rows scanned for fallback attribution; does not change the CLI's AXI overview window (selection owner: bin/fm-nm-run-lib.sh)
 FM_TEARDOWN_NM_RUNS_LIMIT=200  # recent no-mistakes run rows scanned to prove an unresolved-head parked run belongs to teardown's task
-FM_CREW_STATE_BIN=bin/fm-crew-state.sh   # test override for the current-state reader used by watcher triage: the working/paused classification, and the wedge timer's parked-gate wait evidence
+FM_CREW_STATE_BIN=bin/fm-crew-state.sh   # test override for the current-state reader used by watcher triage: the working/paused classification, the wedge timer's parked-gate wait evidence, and the away spend cap's counting read (bin/fm-spend-lib.sh, behind FM_SPEND_CREW_STATE_BIN)
+FM_SPEND_CREW_STATE_BIN=                 # test override for the away spend cap's state read (bin/fm-spend-lib.sh); wins over FM_CREW_STATE_BIN, then falls back to the sibling bin/fm-crew-state.sh
+FM_SPEND_CAPTAIN_HOLD_BIN=bin/fm-captain-hold.sh   # test override for the away spend cap's captain-hold read (bin/fm-spend-lib.sh)
 FM_MAIL_USER=      # mail-plane IMAP/SMTP login, from .env or environment (docs/configuration.md "Mail plane")
 FM_MAIL_PASS=      # mail-plane IMAP/SMTP password
 FM_IMAP_HOST=      # mail-plane IMAP server hostname
