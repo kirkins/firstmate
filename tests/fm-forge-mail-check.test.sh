@@ -185,6 +185,23 @@ test_arm_refuses_an_unconfigured_home() {
   pass "fm-forge-mail-check: arming an unconfigured home is refused, not silently armed"
 }
 
+test_arm_refuses_when_only_the_callers_environment_configures_the_plane() {
+  # The documented direct-invocation workflow exports the two keys; arming a
+  # home whose .env lacks them must still be refused, because the watcher
+  # runs the shim with only FM_HOME exported and the poll would be the inert
+  # no-op - exactly the armed-but-silent gap the refusal exists to prevent.
+  local home out rc=0
+  home=$(make_home envonly)
+  out=$(env FM_FORGE_MAIL_HOST="$TEST_HOST" FM_FORGE_MAIL_REPO=own/mailbox \
+    FM_HOME="$home" "$CHECK" arm 2>&1) || rc=$?
+  expect_code 1 "$rc" "ambient environment keys must not satisfy the arm probe"
+  assert_contains "$out" "FM_FORGE_MAIL_HOST" "the refusal names the missing .env key"
+  assert_contains "$out" ".env" "the refusal points at the home's .env"
+  assert_absent "$home/state/forge-mail.check.sh" "no shim is written for an env-only home"
+  assert_absent "$home/state/forge-mail.check-trust" "no trust binding is written for an env-only home"
+  pass "fm-forge-mail-check: the arm probe judges the home's .env, not the caller's environment"
+}
+
 test_check_silent_on_an_unconfigured_home() {
   local home out rc=0
   home=$(make_home off)
@@ -302,6 +319,7 @@ test_arm_writes_and_binds_the_check_and_disarm_removes_it
 test_arm_resolves_a_relative_home_into_the_shim
 test_arm_refuses_a_symlink_at_the_shim_path
 test_arm_refuses_an_unconfigured_home
+test_arm_refuses_when_only_the_callers_environment_configures_the_plane
 test_check_silent_on_an_unconfigured_home
 test_check_silent_on_a_proven_noop_poll
 test_check_reports_new_mail_once

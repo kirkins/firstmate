@@ -1612,6 +1612,7 @@ Firstmate handles a `check: forge-mail` wake by reading the message, triaging it
 `read <n>` prints one message, with `from:` always the authenticated principal's login fetched live with a fallback to the poll-time stash when the forge is unreachable; a bare `read` digests the open mailbox.
 An actionable request routes through ordinary intake like any other request; a question is answered in the turn; a mere acknowledgment needs no reply.
 `ack <n> [--note <text>]` optionally posts the note as a one-line receipt comment and then closes the issue, which removes it from the live queue, records the number locally, and removes its stash.
+Before writing, `ack` fetches the mailbox repo id and refuses with a named error when it no longer matches the cursor's stored generation, so a number reused by a repository deletion and recreation is never commented or closed in the wrong generation; run `poll` first to adopt the new generation.
 Receipts carry no secrets, like bodies.
 
 **Arm unattended polling**

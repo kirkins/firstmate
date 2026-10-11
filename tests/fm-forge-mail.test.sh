@@ -625,6 +625,55 @@ test_ack_aborts_when_the_close_is_unverified() {
   pass "fm-forge-mail: an unverified close fails the ack instead of claiming it"
 }
 
+test_ack_refuses_a_recreated_repo() {
+  # The wake named number 12 under generation 70001; the repo was deleted
+  # and recreated as 80002 with a new #12 before any post-recreation poll
+  # ran. ack must refuse rather than comment or close the recreated repo's
+  # unrelated message.
+  local home out rc=0
+  home=$(make_home ackgen)
+  make_fake_tools
+  write_repo 70001
+  set_issues "$(mk_issue 12 sender "Original" "first body")"
+  run_plane "$home" poll >/dev/null 2>&1 || rc=$?
+  expect_code 0 "$rc" "the poll before the recreation must succeed"
+  write_repo 80002
+  set_issues "$(mk_issue 12 stranger "Recreated" "second body")"
+  rm -f "$FORGE_ROOT/curl.log"
+  : > "$FORGE_ROOT/ackgen-bodies.log"
+  out=$(FM_FAKE_CURL_BODIES="$FORGE_ROOT/ackgen-bodies.log" \
+    run_plane "$home" ack 12 --note "receipt" 2>&1) || rc=$?
+  expect_code 1 "$rc" "ack must refuse when the forge generation differs"
+  assert_contains "$out" "recreated" "the refusal names the generation change"
+  assert_not_contains "$(cat "$FORGE_ROOT/curl.log")" " -X POST " "no receipt comment is attempted"
+  assert_not_contains "$(cat "$FORGE_ROOT/curl.log")" " -X PATCH " "no close is attempted"
+  assert_equals "" "$(cat "$FORGE_ROOT/ackgen-bodies.log")" "no request body is sent"
+  assert_present "$home/state/forge-mail-inbox/12.json" "the refused ack keeps the stash"
+  rc=0
+  out=$(run_plane "$home" poll 2>&1) || rc=$?
+  expect_code 0 "$rc" "the post-recreation poll must succeed"
+  assert_contains "$out" "woke for own/mailbox#12" "the recreated repo's number 12 wakes again"
+  rc=0
+  out=$(run_plane "$home" ack 12 2>&1) || rc=$?
+  expect_code 0 "$rc" "ack proceeds once the cursor holds the new generation"
+  assert_contains "$out" "acked: own/mailbox#12 closed" "the message closes under the new generation"
+  pass "fm-forge-mail: ack refuses a recreated repo and proceeds after the poll adopts it"
+}
+
+test_ack_proceeds_without_a_stored_generation() {
+  # An ack with no prior poll has no stored generation to compare, so the
+  # close proceeds: there is no prior generation the number could misname.
+  local home out rc=0
+  home=$(make_home acknopoll)
+  make_fake_tools
+  write_repo 70001
+  set_issues "$(mk_issue 7 sender "First" "body")"
+  out=$(run_plane "$home" ack 7 2>&1) || rc=$?
+  expect_code 0 "$rc" "ack with no stored generation proceeds"
+  assert_contains "$out" "acked: own/mailbox#7 closed" "the close still lands"
+  pass "fm-forge-mail: an ack with no stored generation is not refused"
+}
+
 test_help_and_usage_plumbing() {
   local home out rc=0
   home=$(make_home usage)
@@ -671,4 +720,6 @@ test_ack_posts_receipt_then_closes
 test_ack_without_note_only_closes
 test_ack_aborts_when_the_receipt_fails
 test_ack_aborts_when_the_close_is_unverified
+test_ack_refuses_a_recreated_repo
+test_ack_proceeds_without_a_stored_generation
 test_help_and_usage_plumbing

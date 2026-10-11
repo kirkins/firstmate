@@ -624,7 +624,7 @@ forge_mail_read() {
 }
 
 forge_mail_ack() {
-  local n=$1 note=${2:-} out code body closed
+  local n=$1 note=${2:-} out code body closed stored fetched
   case "$n" in
     ''|*[!0-9]*)
       echo "fm-forge-mail: ack needs an issue number, got: $n" >&2
@@ -632,6 +632,28 @@ forge_mail_ack() {
       ;;
   esac
   out=$(mktemp "${TMPDIR:-/tmp}/fm-forge-mail-ack.XXXXXX") || return 1
+  if ! code=$(forge_mail_api GET "/repos/$MAILBOX_REPO" "$out"); then
+    echo "fm-forge-mail: could not fetch the mailbox generation on $FORGE_HOST to verify $MAILBOX_REPO#$n; refusing to ack" >&2
+    rm -f -- "$out"
+    return 1
+  fi
+  if [ "$code" != 200 ]; then
+    echo "fm-forge-mail: fetching the mailbox generation for $MAILBOX_REPO#$n failed with HTTP $code; refusing to ack" >&2
+    rm -f -- "$out"
+    return 1
+  fi
+  fetched=$(jq -r 'if (.id | type) == "number" then (.id | tostring) else "" end' "$out" 2>/dev/null) || fetched=
+  if [ -z "$fetched" ]; then
+    echo "fm-forge-mail: the mailbox repo payload is unreadable; refusing to ack $MAILBOX_REPO#$n" >&2
+    rm -f -- "$out"
+    return 1
+  fi
+  stored=$(forge_mail_stored_generation)
+  if [ -n "$stored" ] && [ "$stored" != "$fetched" ]; then
+    echo "fm-forge-mail: refusing to ack $MAILBOX_REPO#$n: the mailbox repo was recreated (stored generation $stored, forge generation $fetched); run poll first" >&2
+    rm -f -- "$out"
+    return 1
+  fi
   if [ -n "$note" ]; then
     body=$(jq -nc --arg body "$note" '{body: $body}') || { rm -f -- "$out"; return 1; }
     if ! code=$(forge_mail_api POST "/repos/$MAILBOX_REPO/issues/$n/comments" "$out" "$body"); then

@@ -355,7 +355,7 @@ action_arm() {
   # The poll is a hard no-op until the mailbox is configured, so an armed
   # unconfigured home would watch silently forever. Refuse the arm and name
   # the gap instead; `status` is the plane's own public off/on probe.
-  out=$(FM_HOME="$home" "$FORGE_MAIL_BIN" status 2>&1) || true
+  out=$(env -u FM_FORGE_MAIL_HOST -u FM_FORGE_MAIL_REPO FM_HOME="$home" "$FORGE_MAIL_BIN" status 2>&1) || true
   if printf '%s\n' "$out" | grep -q '^forge-mail: off'; then
     printf 'fm-forge-mail-check: cannot arm: the forge-mail plane is off; set FM_FORGE_MAIL_HOST and FM_FORGE_MAIL_REPO in %s/.env\n' "$home" >&2
     return 1
