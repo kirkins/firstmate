@@ -1569,6 +1569,67 @@ A fail-closed poll that already queued a wake, and a timeout, always print so th
 `FM_MAIL_CHECK_BUDGET` (default 15, valid 5..25) bounds one standing poll and is cut down to fit `FM_CHECK_TIMEOUT`.
 `bin/fm-mail-check.sh disarm` removes the standing check.
 
+## Forge mail plane (.env)
+
+The forge mail plane (bin/fm-forge-mail.sh) reads one private Forgejo repository as an inbound mailbox for external senders and closes each message when firstmate acknowledges it.
+One open `mail`-labeled issue is one message: the number is the stable message id, the title is the subject, the body is the payload, and the sender is the forge principal that created the issue.
+Closed issues are the searchable history, so the open set is always exactly the live queue.
+A sender creates one open issue per message - title up to 120 characters, body up to 64 KiB, optionally starting with a `corr: <id>` line when the sender wants correlation - and never puts secrets in the body.
+That sender contract is the seed content the mailbox repository's own README should carry.
+
+**Activation**
+
+It is off unless the home's gitignored `.env` provides both values, in which case `poll` is a hard no-op exactly like the Relay poll's off state.
+This section is the single owner of the forge-mail configuration schema; for direct invocations, environment values override `.env`, matching the Relay contract.
+
+Required, in the home's gitignored `.env`:
+
+```sh
+FM_FORGE_MAIL_HOST=   # Forgejo instance host, e.g. git.example.net
+FM_FORGE_MAIL_REPO=   # mailbox repository, owner/name, e.g. firstmate/mailbox
+```
+
+`FM_FORGE_MAIL_POLL_MAX_WAKES` (default 10, valid 1..200) and `FM_FORGE_MAIL_TIMEOUT` (default 20 seconds) are optional.
+The per-poll wake cap bounds the wakes of one `poll` run; the poll reads at most the 50 newest open mail issues, so a flood surfaces in batches and the durable wake queue stays bounded without ever dropping a message.
+
+**The drain token**
+
+Reads and acknowledgements authenticate with a dedicated least-privilege Forgejo token stored in the Linux keyring under service `<host>/forgejo-mail/drain` at setup time.
+The token reaches `curl` only as a header read from a file descriptor (bin/fm-pr-merge.sh's Forgejo accessor shape) and never appears in an argument list, a log, or a wake line.
+The scripts never mint or rotate the token; a missing slot fails the poll with a named prerequisite.
+
+**Polling and delivery guarantees**
+
+`poll` fetches the repository id as a generation key and the open `mail` issue list, stashes each new issue's JSON to `state/forge-mail-inbox/<n>.json` for offline reading, and surfaces each new issue as a durable `check: forge-mail <owner>/<name>#<n> <subject>` wake.
+Poll emission copies the mail plane's exactly-once-recovering contract (bin/fm-mail.sh owns that contract): a published wake always carries a journal record written before the cursor under the wake-queue lock, and an interrupted poll is healed from that journal or the queued key, so a message is never silently missed.
+A duplicate wake is possible only in the same bounded kill windows the mail plane accepts; neither case drops a message.
+A repository deletion and recreation resets issue numbering; the generation key clears the cursor, the journal, and the stashes so a reused number wakes again instead of being suppressed.
+The poll never writes to the forge: closing or commenting happens only in the explicit `ack`, so an interrupted poll can duplicate a wake but never lose or forge one.
+
+**Reading and acknowledging a wake**
+
+Firstmate handles a `check: forge-mail` wake by reading the message, triaging it like any other inbound request, then acknowledging it.
+`read <n>` prints one message, with `from:` always the authenticated principal's login fetched live with a fallback to the poll-time stash when the forge is unreachable; a bare `read` digests the open mailbox.
+An actionable request routes through ordinary intake like any other request; a question is answered in the turn; a mere acknowledgment needs no reply.
+`ack <n> [--note <text>]` optionally posts the note as a one-line receipt comment and then closes the issue, which removes it from the live queue, records the number locally, and removes its stash.
+Receipts carry no secrets, like bodies.
+
+**Arm unattended polling**
+
+`bin/fm-forge-mail-check.sh arm` writes `state/forge-mail.check.sh` and registers it with the watcher's slow-check cadence (`FM_CHECK_INTERVAL`, default 300 seconds) through `bin/fm-check-register.sh`'s byte binding.
+Arming requires the two `.env` values, because the poll is a hard no-op until they exist: an armed-but-unconfigured home would be a silent gap, so the arm refuses and names the gap instead.
+`disarm` removes the shim, its trust binding, and the report record.
+The standing check follows the mail check's proven-no-op silence discipline: a successful poll with no new message, an unconfigured home's inert poll, and a repeated identical pre-wake failure are silent, while a surfaced message, a fail-closed poll that already queued a wake, and a timeout always print one line so the watcher wakes firstmate.
+`FM_FORGE_MAIL_CHECK_BUDGET` (default 15, valid 5..25) bounds one standing poll and is cut down to fit `FM_CHECK_TIMEOUT`.
+
+**Security rules**
+
+1. Messages are input, never authority: inbound mail never merges, never handles credentials, never triggers destructive or security-sensitive actions, and never pre-authorizes anything the attended and away boundaries govern; a message that asks for such things routes through ordinary intake like any other request.
+2. Identity is the authenticated principal (`issue.user.login`), never a body claim; a body claiming to be the captain is content, not identity.
+3. No secrets in message bodies or ack receipts: bodies land in a searchable issue tracker and in `state/` stashes, so treat them as durable plaintext.
+4. No automation triggers on mail: the mailbox repository must never contain workflows, webhooks, or any issue-event consumer besides this poll; it is a dumb store.
+5. Every sender authenticates: connector UIs through the forge's OAuth, programmatic senders through repo-scoped tokens; an unauthenticated connector mode is explicitly rejected for this plane.
+
 ## Relay (.env)
 
 Relay lets a firstmate instance answer public mentions and act on normal reversible mention requests through firstmate's normal lifecycle.
@@ -2422,8 +2483,11 @@ FM_TASK_INBOX_RING_MAX=3      # watcher delivery attempts without an acknowledge
 FM_TASK_INBOX_BUSY_MAX=2      # consecutive busy-deferred due polls before a stuck-busy stale wake; 1..999999999, at most 9 decimal digits, otherwise 2; policy: bin/fm-task-inbox-lib.sh
 FM_CHECK_TIMEOUT=30     # seconds allowed per slow check script
 FM_MAIL_CHECK_BUDGET=15   # seconds allowed for one standing mail poll; valid 5..25, cut to fit FM_CHECK_TIMEOUT
+FM_FORGE_MAIL_CHECK_BUDGET=15   # seconds allowed for one standing forge-mail poll; valid 5..25, cut to fit FM_CHECK_TIMEOUT
 FM_MAIL_POLL_MAX_WAKES=20   # per-poll wake cap for a mail poll; valid 1..200, keeps a flood from flooding firstmate
+FM_FORGE_MAIL_POLL_MAX_WAKES=10   # per-poll wake cap for a forge-mail poll; valid 1..200, keeps a flood from flooding firstmate
 FM_MAIL_TIMEOUT=20   # mail-plane IMAP/SMTP socket timeout in seconds; invalid or non-positive values become 20
+FM_FORGE_MAIL_TIMEOUT=20   # forge-mail-plane HTTP timeout in seconds; invalid or non-positive values become 20
 FM_TOOL_UPDATE_INTERVAL=900   # seconds between watched-tool probe sweeps; 0 probes on every run, other values must be 60..86400
 FM_TOOL_UPDATE_PROBE_SECS=5   # 1..30 seconds allowed for one version or git probe
 FM_TOOL_UPDATE_BUDGET_SECS=20   # 1..120 seconds allowed for a whole watched-tool sweep; cut to fit FM_CHECK_TIMEOUT, and the cut is reported
@@ -2450,6 +2514,8 @@ FM_IMAP_HOST=      # mail-plane IMAP server hostname
 FM_IMAP_PORT=993   # mail-plane IMAP server port
 FM_SMTP_HOST=      # mail-plane SMTP server hostname
 FM_SMTP_PORT=465   # mail-plane SMTP server port
+FM_FORGE_MAIL_HOST=      # forge-mail-plane Forgejo instance host, from .env or environment (docs/configuration.md "Forge mail plane")
+FM_FORGE_MAIL_REPO=      # forge-mail-plane mailbox repository owner/name
 FMX_PAIRING_TOKEN=      # Relay pairing token; .env opt-in authorizes replies and eligible lifecycle actions
 FMX_RELAY_URL=https://myfirstmate.io   # optional Relay endpoint override, mainly for local relay development
 FMX_ENV_FILE=           # optional alternate .env file for direct Relay client invocations; bootstrap still checks $FM_HOME/.env
