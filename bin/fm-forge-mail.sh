@@ -661,11 +661,11 @@ forge_mail_ack() {
       rm -f -- "$out"
       return 1
     fi
-    if [ "$code" != 201 ]; then
+    case $code in 200|201) ;; *)
       echo "fm-forge-mail: posting the ack receipt on $MAILBOX_REPO#$n failed with HTTP $code" >&2
       rm -f -- "$out"
       return 1
-    fi
+    esac
   fi
   body=$(jq -nc '{state: "closed"}') || { rm -f -- "$out"; return 1; }
   if ! code=$(forge_mail_api PATCH "/repos/$MAILBOX_REPO/issues/$n" "$out" "$body"); then
@@ -673,11 +673,11 @@ forge_mail_ack() {
     rm -f -- "$out"
     return 1
   fi
-  if [ "$code" != 200 ]; then
+  case $code in 200|201) ;; *)
     echo "fm-forge-mail: closing $MAILBOX_REPO#$n failed with HTTP $code" >&2
     rm -f -- "$out"
     return 1
-  fi
+  esac
   closed=$(jq -r '.state // ""' "$out" 2>/dev/null) || closed=
   if [ "$closed" != "closed" ]; then
     echo "fm-forge-mail: $MAILBOX_REPO#$n did not report closed (state: ${closed:-unreadable})" >&2
