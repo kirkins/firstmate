@@ -1,0 +1,32 @@
+== S2: fixed script under BSD chmod semantics ==
+stub in effect: /tmp/fmhs-live.Li6OvG/bsd-bin-chmod/chmod
+$ PATH=bsd-chmod-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh acquire mac-audit-build --estimate 4096
+  acquired: task=mac-audit-build estimate=4096MB pid=3635328 expires_in=1800s
+  run the memory-heavy job under the cap wrapper:
+    systemd-run --user --scope -p MemoryMax=4096M -- <command>
+  keep the job parallelism bounded: no more than -j4
+  release immediately after the job: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh' release mac-audit-build
+  [exit 0, expected 0]
+ok: acquire works under BSD-style chmod
+state dir mode: 700 (expect 700)
+ok: state dir is 0700 under BSD-style chmod
+$ PATH=bsd-chmod-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh status
+  held task=mac-audit-build pid=3635328 estimate=4096MB age=0s expires_in=1800s state=live
+  [exit 0, expected 0]
+ok: status reports the live hold
+$ PATH=bsd-chmod-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh acquire second-worker --estimate 512
+  error: heavy slot held by task 'mac-audit-build' (pid 3635328, estimate 4096MB, held 0s, expires in 1800s); declare a wait and retry acquire later, never run the job uncapped
+  [exit 6, expected 6]
+ok: a second task's acquire still refuses under BSD-style chmod
+$ PATH=bsd-chmod-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh heartbeat mac-audit-build
+  heartbeat: task=mac-audit-build estimate=4096MB expires_in=1800s
+  [exit 0, expected 0]
+ok: holder heartbeat refreshes
+$ PATH=bsd-chmod-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh release mac-audit-build
+  released: task=mac-audit-build
+  [exit 0, expected 0]
+ok: holder release succeeds
+$ PATH=bsd-chmod-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh status
+  free
+  [exit 0, expected 0]
+ok: status reports free after release

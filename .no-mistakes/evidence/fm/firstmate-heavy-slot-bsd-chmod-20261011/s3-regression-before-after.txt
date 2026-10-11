@@ -1,0 +1,32 @@
+== S3: pre-fix vs fixed under identical BSD chmod semantics ==
+-- build base-version bin (only fm-heavy-slot.sh differs from the worktree):
+diff (old vs fixed) in the whole bin tree:
+  diff -r /tmp/fmhs-live.Li6OvG/bin-base/fm-heavy-slot.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh
+  76c76,78
+  < chmod 700 -- "$HEAVY_SLOT_STATE"
+  ---
+  > # No chmod end-of-options separator: BSD chmod stops at the mode operand and
+  > # would treat a following -- as a file path (absolute, so no dash ambiguity).
+  > chmod 700 "$HEAVY_SLOT_STATE"
+  old: 76:chmod 700 -- "$HEAVY_SLOT_STATE"
+  new: 78:chmod 700 "$HEAVY_SLOT_STATE"
+-- pre-fix script, BSD-style chmod, a lane acquires a heavy job:
+$ env FM_HOME=/tmp/fmhs-live.Li6OvG/s3-home XDG_STATE_HOME=/tmp/fmhs-live.Li6OvG/s3-home/xdg PATH=/tmp/fmhs-live.Li6OvG/bsd-bin-chmod:/home/kirkins/.pi/agent/bin:/home/kirkins/.local/bin:/home/kirkins/.local/share/mise/installs/pi/latest/pi:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin /tmp/fmhs-live.Li6OvG/bin-base/fm-heavy-slot.sh acquire mac-audit-build --estimate 4096
+  chmod: --: No such file or directory
+  [exit 1, expected 1]
+ok: pre-fix acquire FAILS under BSD chmod (the reported macOS breakage)
+ok: no slot record was written by the failed pre-fix acquire
+$ env FM_HOME=/tmp/fmhs-live.Li6OvG/s3-home XDG_STATE_HOME=/tmp/fmhs-live.Li6OvG/s3-home/xdg PATH=/tmp/fmhs-live.Li6OvG/bsd-bin-chmod:/home/kirkins/.pi/agent/bin:/home/kirkins/.local/bin:/home/kirkins/.local/share/mise/installs/pi/latest/pi:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin /tmp/fmhs-live.Li6OvG/bin-base/fm-heavy-slot.sh status
+  chmod: --: No such file or directory
+  [exit 1, expected 1]
+ok: pre-fix status also dies at startup under BSD chmod
+-- fixed script, identical environment, same lane:
+$ env FM_HOME=/tmp/fmhs-live.Li6OvG/s3-home XDG_STATE_HOME=/tmp/fmhs-live.Li6OvG/s3-home/xdg PATH=/tmp/fmhs-live.Li6OvG/bsd-bin-chmod:/home/kirkins/.pi/agent/bin:/home/kirkins/.local/bin:/home/kirkins/.local/share/mise/installs/pi/latest/pi:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh acquire mac-audit-build --estimate 4096
+  acquired: task=mac-audit-build estimate=4096MB pid=3637075 expires_in=1800s
+  run the memory-heavy job under the cap wrapper:
+    systemd-run --user --scope -p MemoryMax=4096M -- <command>
+  keep the job parallelism bounded: no more than -j4
+  release immediately after the job: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh' release mac-audit-build
+  [exit 0, expected 0]
+ok: fixed acquire succeeds under identical BSD chmod conditions
+ok: hold record written by the fixed acquire

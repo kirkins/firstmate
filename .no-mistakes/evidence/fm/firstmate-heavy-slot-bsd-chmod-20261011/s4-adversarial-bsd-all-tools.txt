@@ -1,0 +1,70 @@
+== S4: full discipline under BSD-getopt stubs for chmod/mv/rm/mkdir/mktemp ==
+stubs in effect: /tmp/fmhs-live.Li6OvG/bsd-bin-all/chmod /tmp/fmhs-live.Li6OvG/bsd-bin-all/mv /tmp/fmhs-live.Li6OvG/bsd-bin-all/rm /tmp/fmhs-live.Li6OvG/bsd-bin-all/mkdir /tmp/fmhs-live.Li6OvG/bsd-bin-all/mktemp
+$ PATH=bsd-all-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh acquire fleet-build --estimate 8192
+  acquired: task=fleet-build estimate=8192MB pid=3644807 expires_in=1800s
+  run the memory-heavy job under the cap wrapper:
+    systemd-run --user --scope -p MemoryMax=8192M -- <command>
+  keep the job parallelism bounded: no more than -j4
+  release immediately after the job: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh' release fleet-build
+  [exit 0, expected 0]
+ok: initial acquire
+$ PATH=bsd-all-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh status
+  held task=fleet-build pid=3644807 estimate=8192MB age=0s expires_in=1800s state=live
+  [exit 0, expected 0]
+ok: status shows the live hold
+$ PATH=bsd-all-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh acquire lane-two --estimate 256
+  error: heavy slot held by task 'fleet-build' (pid 3644807, estimate 8192MB, held 0s, expires in 1800s); declare a wait and retry acquire later, never run the job uncapped
+  [exit 6, expected 6]
+ok: a different task's acquire is refused, holder named
+$ PATH=bsd-all-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh release lane-two
+  error: release refused - the live heavy slot is held by task 'fleet-build' (pid 3644807), not 'lane-two'; a non-holder never clears a live slot (expired slots clear for anyone)
+  [exit 6, expected 6]
+ok: a non-holder release is refused
+$ PATH=bsd-all-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh heartbeat fleet-build
+  heartbeat: task=fleet-build estimate=8192MB expires_in=1800s
+  [exit 0, expected 0]
+ok: the holder's heartbeat refreshes
+$ PATH=bsd-all-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh release fleet-build
+  released: task=fleet-build
+  [exit 0, expected 0]
+ok: the holder releases
+$ PATH=bsd-all-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh release fleet-build
+  free: no heavy slot was held
+  [exit 0, expected 0]
+ok: release is idempotent when already free
+$ PATH=bsd-all-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh status
+  free
+  [exit 0, expected 0]
+ok: status is free
+$ PATH=bsd-all-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh acquire gone-task --estimate 100 --expiry 1
+  acquired: task=gone-task estimate=100MB pid=3645182 expires_in=1s
+  run the memory-heavy job under the cap wrapper:
+    systemd-run --user --scope -p MemoryMax=256M -- <command>
+  keep the job parallelism bounded: no more than -j4
+  release immediately after the job: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh' release gone-task
+  [exit 0, expected 0]
+ok: short-window acquire for the expiry path
+$ PATH=bsd-all-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh status
+  warning: heavy slot holder 'gone-task' is stale - heartbeat expired 1s ago (age 2s over window 1s); acquire will take it over
+  held task=gone-task pid=3645182 estimate=100MB age=2s expires_in=-1s state=stale
+  [exit 0, expected 0]
+ok: stale status still works and reports stale
+$ PATH=bsd-all-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh acquire fresh-task --estimate 100
+  note: taking over the stale heavy slot held by task 'gone-task' (heartbeat expired 1s ago)
+  acquired: task=fresh-task estimate=100MB pid=3645290 expires_in=1800s
+  run the memory-heavy job under the cap wrapper:
+    systemd-run --user --scope -p MemoryMax=256M -- <command>
+  keep the job parallelism bounded: no more than -j4
+  release immediately after the job: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh' release fresh-task
+  [exit 0, expected 0]
+ok: takeover of the expired holder succeeds
+$ PATH=bsd-all-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh status
+  held task=fresh-task pid=3645290 estimate=100MB age=0s expires_in=1800s state=live
+  [exit 0, expected 0]
+ok: post-takeover status names the new holder, live
+$ PATH=bsd-all-first /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4MTQZAZHDYGKQE0H9KJEK5N/bin/fm-heavy-slot.sh release fresh-task
+  released: task=fresh-task
+  [exit 0, expected 0]
+ok: final release
+state dir mode: 700 (expect 700)
+ok: state dir is 0700
