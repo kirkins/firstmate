@@ -1,0 +1,39 @@
+Targeted validation of the fork-sync merge (base 46c491a -> target fccf166a)
+All suites run via bin/fm-test-run.sh with TMPDIR outside the full host /tmp.
+
+PASSED (exit=0):
+  tests/fm-heavy-slot.test.sh            fork-only BSD-chmod fix preserved (11 ok incl. "acquire works under BSD-style chmod")
+  tests/fm-spend-cap.test.sh             fork-only active-compute spend counting (9 ok)
+  tests/fm-afk-contract.test.sh          fork spend-cap integration in merged fm-spawn.sh
+  tests/fm-project-capacity.test.sh      upstream feature #5343 (16 ok, real fm-spawn deferrals)
+  tests/fm-busy-adapter-wiring.test.sh   upstream busy adapter wiring (real fm-spawn + Node host)
+  tests/fm-pending-reply.test.sh         upstream fix #6792
+  tests/fm-teardown.test.sh              incl. sync-added Herdr per-account lock namespace tests
+  tests/fm-spawn-dispatch-profile.test.sh merge-critical fm-spawn.sh (fork spend + upstream capacity/lock)
+  tests/fm-control-relaunch.test.sh      new upstream suite
+  tests/fm-test-fixtures.test.sh         upstream fixture hardening (GIT_DIR clearing)
+  tests/fm-watcher-lock.test.sh          upstream race-fixture stabilization
+  tests/fm-contributions.test.sh         fleet snapshot argument-size guards
+  tests/fm-procevent.test.sh             see environment note below
+  tests/fm-secondmate-harness.test.sh    secondmate busy contract arming
+  tests/fm-control-herdr-smoke.test.sh   Herdr control plane over a private lab session
+  tests/fm-backend-herdr.test.sh         Herdr backend contract
+  tests/fm-secondmate-busy-contract-live-e2e.test.sh  LIVE (FM_LIVE=1): real claude 2.1.296,
+        opencode 1.18.34, pi 1.1.0, omp 18.8.6 processes beside armed busy wiring;
+        grok/codex correctly unarmed; pi-signed absent (reported, not faked)
+
+LIVE manual lab drive (runbook contract):
+  fm-lab-home.sh create + private tmux socket + real `claude` primary booted on the
+  merged worktree, workspace trust confirmed, full interactive UI rendered at 120x30;
+  lab killed and removed in the same evidence turn. Captures:
+  claude-primary-lab-boot.txt, claude-primary-lab-session.txt
+
+Environment notes (pre-existing, not introduced by this sync):
+  - fm-procevent.test.sh "listener reparented" check asserts ppid==1; this host's
+    systemd --user (pid 875) is a subreaper, so orphans reparent to 875. Assertion is
+    byte-identical at base and upstream tip. A subreaper-aware diagnostic copy of the
+    suite passes all 139 checks (diagnostic copy deleted after use).
+  - fm-teardown.test.sh leak-reap path requires host lsof (absent; system installs are
+    out of scope). A disposable /proc-backed lsof shim in a temp PATH made the full
+    suite pass; with the shim removed, teardown by design falls back to the backend
+    process-group reap.

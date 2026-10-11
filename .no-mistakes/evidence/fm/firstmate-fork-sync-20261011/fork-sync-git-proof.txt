@@ -1,0 +1,16 @@
+# Fork-sync proof: fm/firstmate-fork-sync-20261011
+merge: fccf166a9b742f88526a2ecdadcb61424941451d 46c491a755109a5cb0c185c73a6ac2b0dfd465e6 072a7da3eee2632fc02a6e0674d7601ca25a30ba
+upstream commits brought in: 27 (expected 27)
+upstream tip 072a7da3 is an ancestor of the merge: YES
+fork-only fix 12ff22a5 (BSD chmod heavy-slot) preserved: YES
+diff vs fork parent touches only files upstream owns or merge resolutions:
+64
+files whose merge resolution differs from BOTH parents (conflict resolutions):
+AGENTS.md
+.agents/skills/operational-home-layout/SKILL.md
+bin/fm-pr-check.sh
+bin/fm-spawn.sh
+CONTRIBUTING.md
+docs/configuration.md
+docs/verification/runtime-backends.md
+fork's own bin/fm-heavy-slot.sh unchanged by the merge: YES
