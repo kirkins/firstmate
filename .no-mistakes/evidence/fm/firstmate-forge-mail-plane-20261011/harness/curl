@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Real curl, with its argv recorded: the drain token must never appear here.
+printf '%s\n' "$*" >> /tmp/fm-forge-live/curl-argv.log
+exec /usr/bin/curl "$@"

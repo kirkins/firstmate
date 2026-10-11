@@ -1,0 +1,190 @@
+
+===== S1: unconfigured home is a hard no-op (off unless .env configures it)
+PASS: S1 unconfigured poll exits 0
+PASS: S1 unconfigured poll prints nothing at all
+PASS: S1 unconfigured status exits 0
+PASS: S1 status names its off state
+PASS: S1 off status names the missing keys
+PASS: S1 half-configured poll stays a silent no-op
+PASS: S1 half-configured poll prints nothing
+PASS: S1 read on a half-configured home fails
+PASS: S1 read names the missing key
+
+===== S2: poll surfaces each new mail-labeled open issue once, reads only, stashes the body
+PASS: S2 first poll succeeds
+  | fm-forge-mail: woke for own/mailbox#12
+  | fm-forge-mail: woke for own/mailbox#13
+PASS: S2 poll wakes issue 12 (oldest first)
+PASS: S2 poll wakes issue 13
+  queue| 1791757445	1	check	forge-mail:70001/12	check: forge-mail own/mailbox#12 - message from chatgpt-bot - Findings
+  queue| 1791757445	2	check	forge-mail:70001/13	check: forge-mail own/mailbox#13 - message from hermes - Second
+PASS: S2 wake key is generation-scoped (repo id)
+PASS: S2 wake payload names mailbox, number, sender principal, subject
+PASS: S2 cursor records the generation key
+PASS: S2 cursor records the surfaced number
+PASS: S2 journal records generation+number
+PASS: S2 poll stashes the body for offline reading
+  api| 0047 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+  api| 0048 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=2
+PASS: S2 every API call authenticated with the drain token over the wire
+PASS: S2 no unauthenticated call
+PASS: S2 poll never writes (no comment)
+PASS: S2 poll never closes an issue
+PASS: S2 second poll succeeds
+PASS: S2 re-poll reports no new mail
+PASS: S2 two issues wake exactly once each
+
+===== S3: read prints the principal, subject, and body; offline falls back to the poll-time stash
+PASS: S3 live read of #12 succeeds
+  | issue: own/mailbox#12
+  | from: chatgpt-bot
+  | subject: Findings
+  | state: open
+  | body:
+  | corr: abc
+  | line two
+PASS: S3 read names the mailbox issue
+PASS: S3 read prints the authenticated principal's login
+PASS: S3 read prints the subject
+PASS: S3 read prints the body verbatim
+PASS: S3 digest read succeeds
+  | #12  chatgpt-bot  Findings
+  | #13  hermes  Second
+PASS: S3 digest lists number, principal, subject
+PASS: S3 digest lists every open message
+PASS: S3 offline read of a stashed issue still succeeds
+  | fm-forge-mail: live fetch failed (HTTP unreachable); reading the poll-time stash for own/mailbox#12
+  | issue: own/mailbox#12
+  | from: chatgpt-bot
+  | subject: Findings
+  | state: open
+  | body:
+  | corr: abc
+  | line two
+PASS: S3 offline read names its stash source
+PASS: S3 stashed principal still prints
+PASS: S3 offline read with no stash fails
+PASS: S3 failure names the missing stash
+
+===== S4: ack posts the one-line receipt then closes (close-on-ack); the open set shrinks
+PASS: S4 ack with a note succeeds
+  | acked: own/mailbox#12 closed
+PASS: S4 ack reports the close
+  api| 0053 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+  api| 0054 POST /api/v1/repos/own/mailbox/issues/12/comments auth=ok 201 body={"body": "receipt: triaged"}
+  api| 0055 PATCH /api/v1/repos/own/mailbox/issues/12 auth=ok 200 body={"state": "closed"} ret-state=closed
+PASS: S4 the receipt comment is posted before the close
+PASS: S4 receipt body is the note alone (one line, no secrets)
+PASS: S4 the forge recorded exactly one receipt comment on #12
+PASS: S4 digest after ack succeeds
+  | #13  hermes  Second
+PASS: S4 the open set still holds the unacked message
+PASS: S4 the acked message left the live queue (open set == live queue)
+PASS: S4 ack records the number locally
+PASS: S4 ack removes the stash
+PASS: S4 plain ack (no note) succeeds
+  api| 0057 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+  api| 0058 PATCH /api/v1/repos/own/mailbox/issues/13 auth=ok 200 body={"state": "closed"} ret-state=closed
+PASS: S4 no comment is posted without --note
+PASS: S4 the close is still sent
+
+===== S5 (adversarial): ack refuses a recreated repo, writes nothing, then proceeds once poll adopts the new generation
+PASS: S5 poll wakes #5 under generation 70001
+PASS: S5 the wake names #5
+PASS: S5 wake keyed by the original repo id
+PASS: S5 ack refuses when the forge generation differs
+  | fm-forge-mail: refusing to ack own/mailbox#5: the mailbox repo was recreated (stored generation 70001, forge generation 80002); run poll first
+PASS: S5 the refusal names the generation change
+PASS: S5 the refusal tells the operator to poll first
+  api| 0061 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=80002
+PASS: S5 no receipt comment touches the recreated repo
+PASS: S5 no close touches the recreated repo
+PASS: S5 the forge state holds no receipt from the refused ack
+PASS: S5 the stranger's #5 was never closed
+PASS: S5 the refused ack keeps the stash
+PASS: S5 post-recreation poll succeeds
+PASS: S5 the recreated repo's reused #5 wakes again
+PASS: S5 the new wake is keyed by the new generation
+PASS: S5 ack proceeds once the cursor holds the new generation
+PASS: S5 the message closes under the new generation
+PASS: S5 the forge recorded the close
+PASS: S5 ack with no stored generation (no prior poll) proceeds
+PASS: S5 the close lands with no prior generation to compare
+
+===== S6: a repo recreation resets numbering without suppressing reused numbers; stale evidence is cleared
+PASS: S6 second-generation poll succeeds
+PASS: S6 a reused number wakes again under the new repo id
+PASS: S6 the new wake is keyed by the new generation
+PASS: S6 the cursor carries the new generation
+PASS: S6 stale prior-generation journal evidence is cleared
+PASS: S6 old-generation stashes are pruned
+
+===== S7: the per-poll wake cap bounds a flood (default 10); the remainder surfaces on the next poll
+PASS: S7 capped poll succeeds
+PASS: S7 the default cap of ten is reported
+PASS: S7 one poll wakes at most ten messages
+PASS: S7 the oldest messages surface first under the cap
+PASS: S7 the capped tail does not surface yet
+PASS: S7 follow-up poll succeeds
+PASS: S7 the capped remainder surfaces on the next poll
+PASS: S7 all twelve issues surface across two polls (none dropped)
+
+===== S8: the drain token comes only from its dedicated keyring slot and never reaches curl's argv
+PASS: S8 a different keyring slot answering must not satisfy the plane
+PASS: S8 the failure names the dedicated slot
+PASS: S8 nothing is woken with the wrong slot
+PASS: S8 an empty slot fails the poll
+PASS: S8 the empty-slot failure names the slot
+PASS: S8 the dedicated slot's token works
+PASS: S8 the message surfaces with the dedicated token
+PASS: S8 the drain slot is the one looked up
+PASS: S8 the token never appears in any curl argv
+PASS: S8 every authenticated call carried the token header over the wire
+
+===== S9: arm/disarm the standing check; the arm probe judges the home's .env, not the caller's environment
+PASS: S9 arm succeeds on a configured home
+  | armed: state/forge-mail.check.sh
+PASS: S9 arm names the shim it wrote
+PASS: S9 the check shim exists and is executable
+PASS: S9 the trust binding exists for the watcher
+PASS: S9 the shim dispatches the check action
+PASS: S9 the shim pins the absolute home
+PASS: S9 re-arm is idempotent
+PASS: S9 the armed shim runs cleanly as the watcher would run it
+  | forge-mail: new mail: woke for own/mailbox#20
+PASS: S9 the armed shim doorbells one line for new mail
+PASS: S9 the shim's poll queued the durable wake
+PASS: S9 disarm succeeds
+PASS: S9 disarm removes the shim
+PASS: S9 disarm removes the trust binding
+PASS: S9 arming is refused when only the caller's environment configures the plane
+  | fm-forge-mail-check: cannot arm: the forge-mail plane is off; set FM_FORGE_MAIL_HOST and FM_FORGE_MAIL_REPO in /tmp/fm-forge-live/homes/s9-envonly/.env
+PASS: S9 the refusal names the missing key
+PASS: S9 the refusal points at the home's .env
+PASS: S9 no shim is written for an env-only home
+PASS: S9 no trust binding is written for an env-only home
+PASS: S9 arming a fully unconfigured home is refused
+
+===== S10: the standing check reports new mail once, stays silent on proven no-ops, and always doorbells a timeout
+PASS: S10 the surfacing check exits 0
+  | forge-mail: new mail: woke for own/mailbox#7
+PASS: S10 new mail doorbells one line naming the message
+PASS: S10 the poll behind the check queued the durable wake
+PASS: S10 the second check exits 0
+PASS: S10 the surfaced message is not re-reported (proven no-op silence)
+PASS: S10 an unconfigured home's check exits 0
+PASS: S10 an unconfigured home's check stays silent
+PASS: S10 nothing is queued for an unconfigured home
+PASS: S10 a timed-out check itself exits 0
+  | forge-mail: poll did not finish within the 5s budget
+PASS: S10 a poll that does not finish doorbells
+PASS: S10 the repeated timed-out check exits 0
+PASS: S10 a repeated timeout still doorbells (never silenced)
+PASS: S10 a pre-wake failure check exits 0
+  | forge-mail: could not reach https://mailbox.test.forge/api/v1/repos/own/mailbox
+PASS: S10 a first pre-wake failure reports one line
+PASS: S10 the repeated pre-wake failure check exits 0
+PASS: S10 a repeated identical pre-wake failure silences
+
+===== SUMMARY
+PASS=129 FAIL=0

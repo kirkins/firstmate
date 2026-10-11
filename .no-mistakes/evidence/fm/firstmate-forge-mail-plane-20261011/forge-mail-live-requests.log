@@ -1,0 +1,41 @@
+0047 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0048 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=2
+0049 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0050 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=2
+0051 GET /api/v1/repos/own/mailbox/issues/12 auth=ok 200 open
+0052 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=2
+0053 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0054 POST /api/v1/repos/own/mailbox/issues/12/comments auth=ok 201 body={"body": "receipt: triaged"}
+0055 PATCH /api/v1/repos/own/mailbox/issues/12 auth=ok 200 body={"state": "closed"} ret-state=closed
+0056 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=1
+0057 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0058 PATCH /api/v1/repos/own/mailbox/issues/13 auth=ok 200 body={"state": "closed"} ret-state=closed
+0059 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0060 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=1
+0061 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=80002
+0062 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=80002
+0063 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=1
+0064 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=80002
+0065 PATCH /api/v1/repos/own/mailbox/issues/5 auth=ok 200 body={"state": "closed"} ret-state=closed
+0066 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0067 PATCH /api/v1/repos/own/mailbox/issues/7 auth=ok 200 body={"state": "closed"} ret-state=closed
+0068 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0069 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=1
+0070 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=80002
+0071 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=1
+0072 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0073 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=12
+0074 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0075 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=12
+0076 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0077 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=1
+0078 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0079 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=1
+0080 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0081 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=1
+0082 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0083 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=1
+0084 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0085 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0086 GET /api/v1/repos/own/mailbox auth=ok 200 repo-id=70001
+0087 GET /api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1 auth=ok 200 open=1

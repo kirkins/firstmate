@@ -1,0 +1,45 @@
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.jFOuYG -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.jFOuYG -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.riQbNw -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.riQbNw -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
+-sS --max-time 20 -o /tmp/fm-forge-mail-read.svKEju -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues/12
+-sS --max-time 20 -o /tmp/fm-forge-mail-read.pOeB38 -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
+-sS --max-time 20 -o /tmp/fm-forge-mail-read.ePMszM -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues/12
+-sS --max-time 20 -o /tmp/fm-forge-mail-read.mFcuG6 -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues/999
+-sS --max-time 20 -o /tmp/fm-forge-mail-ack.LtY3q6 -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-H Content-Type: application/json --data {"body":"receipt: triaged"} -sS --max-time 20 -o /tmp/fm-forge-mail-ack.LtY3q6 -w %{http_code} -X POST -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues/12/comments
+-H Content-Type: application/json --data {"state":"closed"} -sS --max-time 20 -o /tmp/fm-forge-mail-ack.LtY3q6 -w %{http_code} -X PATCH -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues/12
+-sS --max-time 20 -o /tmp/fm-forge-mail-read.Ma6sSn -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
+-sS --max-time 20 -o /tmp/fm-forge-mail-ack.TbZdYz -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-H Content-Type: application/json --data {"state":"closed"} -sS --max-time 20 -o /tmp/fm-forge-mail-ack.TbZdYz -w %{http_code} -X PATCH -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues/13
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.LiOEFu -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.LiOEFu -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
+-sS --max-time 20 -o /tmp/fm-forge-mail-ack.rK6arO -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.k7fytZ -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.k7fytZ -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
+-sS --max-time 20 -o /tmp/fm-forge-mail-ack.roLW5z -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-H Content-Type: application/json --data {"state":"closed"} -sS --max-time 20 -o /tmp/fm-forge-mail-ack.roLW5z -w %{http_code} -X PATCH -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues/5
+-sS --max-time 20 -o /tmp/fm-forge-mail-ack.lcX09L -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-H Content-Type: application/json --data {"state":"closed"} -sS --max-time 20 -o /tmp/fm-forge-mail-ack.lcX09L -w %{http_code} -X PATCH -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues/7
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.QiXaKT -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.QiXaKT -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.icPxv0 -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.icPxv0 -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.Rctgd6 -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.Rctgd6 -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.oKCxsh -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.oKCxsh -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.uvtce8 -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.uvtce8 -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.vjX81x -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.vjX81x -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.N1Xbxk -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.N1Xbxk -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.7Amutz -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.7Amutz -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.NQZLAx -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.PDmbGS -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.4j1vcC -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.8Abk4S -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.yv3eRn -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox
+-sS --max-time 20 -o /tmp/fm-forge-mail-poll.yv3eRn -w %{http_code} -X GET -H @/dev/fd/3 https://mailbox.test.forge/api/v1/repos/own/mailbox/issues?labels=mail&type=issues&state=open&limit=50&page=1
