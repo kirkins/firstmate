@@ -242,6 +242,39 @@ test_status_reports_free_and_live_holds() {
   pass "fm-heavy-slot.sh: status reports free, held, and window state"
 }
 
+test_acquire_survives_bsd_chmod_and_sets_mode() {
+  local home bsd_bin out status
+  home=$(make_home bsdchmod)
+  # A BSD-style chmod stub: BSD chmod stops option parsing at the mode operand,
+  # so a trailing -- is treated as a file path and the call fails. Acquire must
+  # survive that regime, proving the script never passes GNU-only chmod forms.
+  bsd_bin="$TMP_ROOT/bsd-bin"
+  mkdir -p "$bsd_bin"
+  cat >"$bsd_bin/chmod" <<'STUB'
+#!/bin/sh
+for arg in "$@"; do
+  if [ "$arg" = "--" ]; then
+    echo "chmod: --: No such file or directory" >&2
+    exit 1
+  fi
+done
+exec /bin/chmod "$@"
+STUB
+  chmod +x "$bsd_bin/chmod"
+  out=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" PATH="$bsd_bin:$PATH" \
+    "$SLOT" acquire bsd-task --estimate 100 2>&1); status=$?
+  expect_code 0 "$status" "acquire must not pass GNU-only chmod forms a BSD chmod rejects"
+  assert_contains "$out" "acquired: task=bsd-task" "acquire under a BSD-style chmod did not report the hold"
+  out=$(FM_HOME="$home" XDG_STATE_HOME="$home/xdg" PATH="$bsd_bin:$PATH" \
+    "$SLOT" status 2>&1); status=$?
+  expect_code 0 "$status" "status under a BSD-style chmod must succeed"
+  assert_contains "$out" "held task=bsd-task" "status under a BSD-style chmod did not report the hold"
+  local mode
+  if [ "$(uname)" = Darwin ]; then mode=$(stat -f '%Lp' "$home/xdg/firstmate"); else mode=$(stat -c '%a' "$home/xdg/firstmate"); fi
+  assert_contains "$mode" "700" "the state directory must be created mode 0700"
+  pass "fm-heavy-slot.sh: acquire works under BSD-style chmod and sets 0700"
+}
+
 test_usage_is_loud_and_closed_set
 test_concurrent_acquire_admits_exactly_one_holder
 test_slot_is_machine_wide_across_homes
@@ -252,3 +285,4 @@ test_release_is_scoped_and_idempotent
 test_expiry_allows_takeover_and_surfaces_loudly
 test_heartbeat_refreshes_only_the_holder
 test_status_reports_free_and_live_holds
+test_acquire_survives_bsd_chmod_and_sets_mode

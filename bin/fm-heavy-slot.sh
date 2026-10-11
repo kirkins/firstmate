@@ -73,7 +73,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 HEAVY_SLOT_STATE="${XDG_STATE_HOME:-$HOME/.local/state}/firstmate"
 mkdir -p -- "$HEAVY_SLOT_STATE"
-chmod 700 -- "$HEAVY_SLOT_STATE"
+# No chmod end-of-options separator: BSD chmod stops at the mode operand and
+# would treat a following -- as a file path (absolute, so no dash ambiguity).
+chmod 700 "$HEAVY_SLOT_STATE"
 SLOT="$HEAVY_SLOT_STATE/heavy-slot"
 SLOT_COMMAND_LOCK="$HEAVY_SLOT_STATE/.heavy-slot.lock"
 FM_HEAVY_SLOT_DEFAULT_EXPIRY=1800
