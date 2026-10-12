@@ -1650,7 +1650,8 @@ Optional tuning, in the home's gitignored `.env`:
 FM_REMOTE_HANDS=                # truthy switches the lane on; absent or falsy stays off
 FM_REMOTE_HANDS_SECRET=opencode/opencode-docker-cloud   # <namespace>/<secret> holding DOCKER_ID and DOCKER_PAT
 FM_REMOTE_HANDS_TTL_MARGIN=50   # percent added over the expected wall time when sizing the sandbox TTL; valid 10..300
-FM_REMOTE_HANDS_TIMEOUT=60      # seconds bounding each sandbox control-plane call; valid 10..3600
+FM_REMOTE_HANDS_TIMEOUT=60      # seconds bounding each sbx control-plane call (login, create, cp, rm, exec, wait polls); valid 10..3600
+FM_REMOTE_HANDS_PREPARE_TIMEOUT=900   # seconds bounding prepare's long exec streams (node probe, apt install, full clone); valid 10..3600
 ```
 
 **Credentials**
@@ -1674,6 +1675,7 @@ Creation always passes `--on-timeout delete` with the TTL sized as the expected 
 The default sandbox-scoped network allowances cover github.com, GitHub's release/raw CDNs, nodejs.org, the npm registry, and Ubuntu's apt ports; `--allow` extends them per sandbox.
 Long jobs run inside the sandbox under a daemonized tmux on the dedicated `fm-hands` socket so they survive exec-stream teardown, with `wait` polling the exit marker and `log`, `copy-in`, and `copy-out` moving artifacts.
 `prepare` brings a sandbox to the fidelity baseline: the closed apt tool set, node pinned to the local machine's major with a SHA-256-verified nodejs.org tarball, and a full clone (never `--depth`, with `git fetch --unshallow` healing an existing shallow clone).
+Prepare's exec streams run under their own `FM_REMOTE_HANDS_PREPARE_TIMEOUT` bound (default 900 s), separate from the control-plane `FM_REMOTE_HANDS_TIMEOUT`, because the apt install and the full clone routinely outlast a control-plane call.
 pi and zellij are never installed: tool-absent classes are clean gate-skips, and SHA-pinned lint builds are produced locally and uploaded with `copy-in` rather than rebuilt inside the sandbox.
 
 **Records**
@@ -2539,7 +2541,8 @@ FM_FORGE_MAIL_POLL_MAX_WAKES=10   # per-poll wake cap for a forge-mail poll; val
 FM_MAIL_TIMEOUT=20   # mail-plane IMAP/SMTP socket timeout in seconds; invalid or non-positive values become 20
 FM_FORGE_MAIL_TIMEOUT=20   # forge-mail-plane HTTP timeout in seconds; invalid or non-positive values become 20
 FM_REMOTE_HANDS_TTL_MARGIN=50   # percent over expected wall time when sizing a remote-hands sandbox TTL; valid 10..300 (docs/configuration.md "Remote hands")
-FM_REMOTE_HANDS_TIMEOUT=60   # seconds bounding each remote-hands sandbox control-plane call; valid 10..3600
+FM_REMOTE_HANDS_TIMEOUT=60   # seconds bounding each remote-hands sbx control-plane call; valid 10..3600
+FM_REMOTE_HANDS_PREPARE_TIMEOUT=900   # seconds bounding remote-hands prepare's long exec streams; valid 10..3600 (docs/configuration.md "Remote hands")
 FM_TOOL_UPDATE_INTERVAL=900   # seconds between watched-tool probe sweeps; 0 probes on every run, other values must be 60..86400
 FM_TOOL_UPDATE_PROBE_SECS=5   # 1..30 seconds allowed for one version or git probe
 FM_TOOL_UPDATE_BUDGET_SECS=20   # 1..120 seconds allowed for a whole watched-tool sweep; cut to fit FM_CHECK_TIMEOUT, and the cut is reported

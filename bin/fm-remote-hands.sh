@@ -61,8 +61,7 @@
 # Usage:
 #   fm-remote-hands.sh enabled
 #       Print `on` or `off` for the configured lane; no cloud, no state.
-#   fm-remote-hands.sh route --class <suite|sweep|other> [--estimate <MB>]
-#                          [--task <id>]
+#   fm-remote-hands.sh route --class <suite|sweep|other> [--task <id>]
 #       Print the routing decision for one heavy job class: `local reason=off`
 #       on an unconfigured home, `local reason=fits class=<c> peak=<MB>
 #       local=<MB>`, or `sandbox shape=<medium|large> class=<c>
@@ -118,7 +117,11 @@
 #                                    # <namespace>/<secret> holding DOCKER_ID
 #                                    # and DOCKER_PAT
 #   FM_REMOTE_HANDS_TTL_MARGIN=50   # percent over expected wall; valid 10..300
-#   FM_REMOTE_HANDS_TIMEOUT=60      # seconds bounding each sbx call; 10..3600
+#   FM_REMOTE_HANDS_TIMEOUT=60      # seconds bounding each sbx control-plane
+#                                    # call; 10..3600
+#   FM_REMOTE_HANDS_PREPARE_TIMEOUT=900
+#                                    # seconds bounding prepare's exec streams
+#                                    # (node probe, apt, clone); 10..3600
 #
 # Exit codes: 0 ok (including every decided `route` line and a propagated job
 # exit of 0), the hosted job's own nonzero exit code from `wait`, 1 failure
@@ -142,6 +145,7 @@ FM_REMOTE_HANDS="${FM_REMOTE_HANDS:-$(fmx_env_get FM_REMOTE_HANDS "$ENV_FILE")}"
 FM_REMOTE_HANDS_SECRET="${FM_REMOTE_HANDS_SECRET:-$(fmx_env_get FM_REMOTE_HANDS_SECRET "$ENV_FILE")}"
 FM_REMOTE_HANDS_TTL_MARGIN="${FM_REMOTE_HANDS_TTL_MARGIN:-$(fmx_env_get FM_REMOTE_HANDS_TTL_MARGIN "$ENV_FILE")}"
 FM_REMOTE_HANDS_TIMEOUT="${FM_REMOTE_HANDS_TIMEOUT:-$(fmx_env_get FM_REMOTE_HANDS_TIMEOUT "$ENV_FILE")}"
+FM_REMOTE_HANDS_PREPARE_TIMEOUT="${FM_REMOTE_HANDS_PREPARE_TIMEOUT:-$(fmx_env_get FM_REMOTE_HANDS_PREPARE_TIMEOUT "$ENV_FILE")}"
 FM_REMOTE_HANDS_SECRET=${FM_REMOTE_HANDS_SECRET:-opencode/opencode-docker-cloud}
 case "${FM_REMOTE_HANDS_TTL_MARGIN:-}" in
   ''|*[!0-9]*) FM_REMOTE_HANDS_TTL_MARGIN=50 ;;
@@ -156,6 +160,13 @@ esac
 if [ "$FM_REMOTE_HANDS_TIMEOUT" -lt 10 ] || [ "$FM_REMOTE_HANDS_TIMEOUT" -gt 3600 ]; then
   echo "note: FM_REMOTE_HANDS_TIMEOUT='$FM_REMOTE_HANDS_TIMEOUT' is outside 10..3600; using 60" >&2
   FM_REMOTE_HANDS_TIMEOUT=60
+fi
+case "${FM_REMOTE_HANDS_PREPARE_TIMEOUT:-}" in
+  ''|*[!0-9]*) FM_REMOTE_HANDS_PREPARE_TIMEOUT=900 ;;
+esac
+if [ "$FM_REMOTE_HANDS_PREPARE_TIMEOUT" -lt 10 ] || [ "$FM_REMOTE_HANDS_PREPARE_TIMEOUT" -gt 3600 ]; then
+  echo "note: FM_REMOTE_HANDS_PREPARE_TIMEOUT='$FM_REMOTE_HANDS_PREPARE_TIMEOUT' is outside 10..3600; using 900" >&2
+  FM_REMOTE_HANDS_PREPARE_TIMEOUT=900
 fi
 
 HANDS_STATE="$FM_HOME/state/remote-hands"
@@ -224,13 +235,16 @@ remote_hands_valid_positive_int() {
 }
 
 remote_hands_valid_endpoint() {
+  local port
   case "${1:-}" in
     '' | *[!A-Za-z0-9.:-]*) return 1 ;;
     *[!A-Za-z0-9.-]*:*) return 1 ;;
-    *:*[!0-9]*) return 1 ;;
-    *:*) return 0 ;;
+    *:*[!0-9]* | *: | *:[0-9][0-9][0-9][0-9][0-9][0-9]*) return 1 ;;
+    *:*) ;;
     *) return 1 ;;
   esac
+  port=${1##*:}
+  [ "$port" -ge 1 ] && [ "$port" -le 65535 ]
 }
 
 remote_hands_valid_class() {
@@ -336,10 +350,13 @@ remote_hands_secret_value() {
   printf '%s' "$decoded"
 }
 
-# Run one bounded sbx call.
+# Run one bounded sbx call: FM_REMOTE_HANDS_TIMEOUT bounds control-plane
+# calls; a caller with long exec streams (prepare) raises the bound by setting
+# REMOTE_HANDS_CALL_TIMEOUT before its execs.
 remote_hands_sbx() {
+  local secs=${REMOTE_HANDS_CALL_TIMEOUT:-$FM_REMOTE_HANDS_TIMEOUT}
   if command -v timeout >/dev/null 2>&1; then
-    timeout "$FM_REMOTE_HANDS_TIMEOUT" sbx "$@"
+    timeout "$secs" sbx "$@"
   else
     sbx "$@"
   fi
@@ -370,7 +387,11 @@ remote_hands_login() {
     || { echo "error: sbx login failed against the credentials from cluster secret '$FM_REMOTE_HANDS_SECRET'" >&2; exit 1; }
 }
 
-# Run one short script inside the sandbox under the fidelity locale.
+# Run one short script inside the sandbox under the fidelity locale. sbx
+# exec joins the post-`--` words and re-evaluates them through the remote
+# shell, so the script must travel as one single-quoted argument - the exact
+# shape the live proof ran end to end
+# (data/docker-sandboxes-first-proof-20261011/report.md, section 5).
 remote_hands_run() {
   local name=$1 script=$2
   remote_hands_sbx --cloud exec "$name" -- bash -lc "$(remote_hands_q "$script")"
@@ -433,7 +454,6 @@ fi
 # --- shared argument parsing -----------------------------------------------
 NAME=
 CLASS=
-ESTIMATE=
 TASK=
 EXPECTED_MINS=
 ALLOW_EXTRA=()
@@ -447,12 +467,11 @@ OUT=
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    --name|--class|--estimate|--task|--expected-mins|--allow|--repo|--branch|--node-major|--dest|--interval|--max-secs|--out)
+    --name|--class|--task|--expected-mins|--allow|--repo|--branch|--node-major|--dest|--interval|--max-secs|--out)
       [ "$#" -ge 2 ] || { echo "error: $1 requires a value" >&2; usage; exit 2; }
       case "$1" in
         --name) NAME=${2:-} ;;
         --class) CLASS=${2:-} ;;
-        --estimate) ESTIMATE=${2:-} ;;
         --task) TASK=${2:-} ;;
         --expected-mins) EXPECTED_MINS=${2:-} ;;
         --allow) ALLOW_EXTRA+=("${2:-}") ;;
@@ -481,9 +500,6 @@ done
 
 if [ "$CMD" = route ]; then
   remote_hands_valid_class "$CLASS" || { echo "error: --class must be one of: $REMOTE_HANDS_CLASSES (got '${CLASS:-none}')" >&2; exit 2; }
-  if [ -n "$ESTIMATE" ]; then
-    remote_hands_valid_positive_int "$ESTIMATE" || { echo "error: --estimate requires a positive integer MB value (got '$ESTIMATE')" >&2; exit 2; }
-  fi
   if [ -n "$TASK" ]; then
     remote_hands_valid_id "$TASK" || { echo "error: --task requires a task id (got '$TASK')" >&2; exit 2; }
   fi
@@ -492,7 +508,7 @@ else
 fi
 
 case "$CMD" in
-  create|prepare|wait|log|teardown)
+  create|prepare|route|wait|log|teardown)
     [ "$#" -eq 0 ] || { echo "error: $CMD takes no positional arguments (got '$1'; flags come first)" >&2; exit 2; }
     ;;
 esac
@@ -504,7 +520,6 @@ if [ "$CMD" = route ]; then
     exit 0
   fi
   PEAK=$(remote_hands_class_peak "$CLASS")
-  [ -z "$ESTIMATE" ] || PEAK=$ESTIMATE
   LOCAL_MEM=$(remote_hands_local_mem_mb)
   SHAPE=$(remote_hands_class_shape "$CLASS")
   if [ $(( PEAK * 10 )) -gt $(( LOCAL_MEM * 7 )) ]; then
@@ -537,7 +552,7 @@ if [ "$CMD" = create ]; then
   CPUS=$(remote_hands_shape_cpus "$SHAPE")
   MEMORY=$(remote_hands_shape_memory "$SHAPE")
   ALLOWANCES=("${DEFAULT_ALLOWANCES[@]}")
-  for endpoint in "${ALLOW_EXTRA[@]}"; do
+  for endpoint in ${ALLOW_EXTRA[@]+"${ALLOW_EXTRA[@]}"}; do
     remote_hands_valid_endpoint "$endpoint" \
       || { echo "error: --allow requires a <host>:<port> value (got '$endpoint')" >&2; exit 2; }
     ALLOWANCES+=("$endpoint")
@@ -574,6 +589,7 @@ if [ "$CMD" = prepare ]; then
   DEST=${DEST:-$DEFAULT_DEST_DIR/$(printf '%s' "$REPO" | sed 's:/*$::;s:\.git$::;s:.*/::')}
   remote_hands_pin_sbx_state
   remote_hands_login
+  REMOTE_HANDS_CALL_TIMEOUT=$FM_REMOTE_HANDS_PREPARE_TIMEOUT
   SANDBOX_NODE=$(remote_hands_run "$NAME" 'node -p process.versions.node 2>/dev/null || true' 2>/dev/null) || SANDBOX_NODE=
   LOCAL_NODE_MAJOR=$NODE_MAJOR
   if [ -z "$LOCAL_NODE_MAJOR" ]; then
@@ -631,10 +647,13 @@ if [ "$CMD" = exec ]; then
     CMD_STR="$CMD_STR$(remote_hands_q "$word")"
   done
   # shellcheck disable=SC2016  # $? is captured by the sandbox shell, not here.
-  JOB_SCRIPT='export LANG=C.UTF-8 LC_ALL=C.UTF-8
+  JOB_SCRIPT='rm -f '"$JOB_LOG"' '"$JOB_EXIT"'
+export LANG=C.UTF-8 LC_ALL=C.UTF-8
 ('"$CMD_STR"') > '"$JOB_LOG"' 2>&1
 printf "%s\n" "$?" > '"$JOB_EXIT"
   LAUNCH='tmux -L '"$SBX_SOCKET"' new-session -d -s '"$SBX_SOCKET"' bash -lc '"$(remote_hands_q "$JOB_SCRIPT")"
+  # Same proof-pinned exec shape as remote_hands_run: one single-quoted
+  # payload re-evaluated by the joining remote shell.
   remote_hands_pin_sbx_state
   remote_hands_login
   remote_hands_sbx --cloud exec "$NAME" -- bash -lc "$(remote_hands_q "$LAUNCH")"
@@ -649,7 +668,7 @@ if [ "$CMD" = wait ]; then
   remote_hands_valid_positive_int "$MAX_SECS" || { echo "error: --max-secs requires a positive integer seconds value (got '$MAX_SECS')" >&2; exit 2; }
   remote_hands_pin_sbx_state
   remote_hands_login
-  MARKER_SCRIPT='cat '"$JOB_EXIT"' 2>/dev/null'
+  MARKER_SCRIPT='cat '"$JOB_EXIT"' 2>/dev/null || true'
   START=$(date +%s)
   DEADLINE=$(( START + MAX_SECS ))
   FAILS=0

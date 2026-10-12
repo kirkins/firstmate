@@ -21,6 +21,8 @@ TMP_ROOT=$(fm_test_tmproot fm-remote-hands)
 FAKEBIN="$TMP_ROOT/fakebin"
 COREBIN="$TMP_ROOT/corebin"
 SBX_LOG="$TMP_ROOT/sbx.argv.log"
+SBX_ARGV_LOG="$TMP_ROOT/sbx.args.log"
+TIMEOUT_LOG="$TMP_ROOT/timeout.argv.log"
 KUBECTL_LOG="$TMP_ROOT/kubectl.argv.log"
 EXEC_SEQ="$TMP_ROOT/exec-sequence.txt"
 EXEC_CALLS="$TMP_ROOT/exec-calls.txt"
@@ -32,11 +34,18 @@ make_fake_tools() {
   mkdir -p "$FAKEBIN"
   cat > "$FAKEBIN/sbx" <<SH
 #!/usr/bin/env bash
-# Fake sandbox CLI. Records its full argument vector, consumes login stdin so
-# the driver's pipe never blocks, and answers each --cloud exec call from the
-# next line of the scripted output sequence. FM_FAKE_SBX_EXEC_RC fails every
-# exec to simulate an unreachable sandbox; FM_FAKE_SBX_RC fails everything.
+# Fake sandbox CLI. Records its full argument vector (joined, plus one
+# record-separator-delimited argument per invocation when FM_FAKE_SBX_ARGV_LOG
+# is armed), consumes login stdin so the driver's pipe never blocks, and
+# answers each --cloud exec call from the next line of the scripted output
+# sequence. FM_FAKE_SBX_EVAL makes exec re-evaluate the words after the --
+# separator through a shell - the semantics the live proof pinned for sbx exec -
+# instead of serving scripted output. FM_FAKE_SBX_EXEC_RC fails every exec to
+# simulate an unreachable sandbox; FM_FAKE_SBX_RC fails everything.
 [ -z "\${FM_FAKE_SBX_LOG:-}" ] || printf '%s\n' "\$*" >> "\$FM_FAKE_SBX_LOG"
+if [ -n "\${FM_FAKE_SBX_ARGV_LOG:-}" ]; then
+  for a in "\$@"; do printf '%s' "\$a"; printf '\036'; done > "\${FM_FAKE_SBX_ARGV_LOG}"
+fi
 if [ "\$1" = login ]; then
   cat > /dev/null
   exit \${FM_FAKE_SBX_LOGIN_RC:-0}
@@ -47,6 +56,10 @@ fi
 case "\$1 \$2" in
   '--cloud exec')
     if [ "\${FM_FAKE_SBX_EXEC_RC:-0}" != 0 ]; then exit "\${FM_FAKE_SBX_EXEC_RC}"; fi
+    if [ "\${FM_FAKE_SBX_EVAL:-0}" = 1 ]; then
+      shift 4
+      exec bash -c "\$*"
+    fi
     seq_file="\${FM_FAKE_SBX_EXEC_SEQ:?}"
     calls_file="\${FM_FAKE_SBX_EXEC_CALLS:?}"
     n=1
@@ -81,6 +94,16 @@ SH
 printf '%s\n' "\${FM_FAKE_LOCAL_NODE:-26.10.0}"
 SH
   chmod +x "$FAKEBIN/sbx" "$FAKEBIN/kubectl" "$FAKEBIN/node"
+  cat > "$FAKEBIN/timeout" <<SH
+#!/usr/bin/env bash
+# Fake timeout wrapper: records "<secs> <command>" when FM_FAKE_TIMEOUT_LOG is
+# armed, then runs the command unbounded; the tests assert the bound the
+# driver chose for each call, not that the bound kills anything.
+[ -z "\${FM_FAKE_TIMEOUT_LOG:-}" ] || printf '%s\n' "\$*" >> "\${FM_FAKE_TIMEOUT_LOG}"
+shift
+exec "\$@"
+SH
+  chmod +x "$FAKEBIN/timeout"
   : > "$EXEC_SEQ"
   : > "$EXEC_CALLS"
 }
@@ -104,7 +127,7 @@ hands() {
     shift
   done
   shift
-  HANDS_STDOUT=$(env "${envs[@]}" \
+  HANDS_STDOUT=$(env ${envs[@]+"${envs[@]}"} \
     FM_HOME="$HOME_UNDER_TEST" \
     PATH="$ACTIVE_PATH" \
     FM_FAKE_SBX_LOG="$SBX_LOG" \
@@ -131,6 +154,8 @@ make_home() {
 
 reset_logs() {
   : > "$SBX_LOG"
+  : > "$SBX_ARGV_LOG"
+  : > "$TIMEOUT_LOG"
   : > "$KUBECTL_LOG"
   : > "$EXEC_CALLS"
   : > "$TMP_ROOT/stderr"
@@ -151,6 +176,8 @@ test_help_and_usage_plumbing() {
   hands FM_REMOTE_HANDS=1 -- frobnicate; expect_code 2 "$HANDS_STATUS" "unknown subcommand must exit 2"
   hands FM_REMOTE_HANDS=1 -- route --class bogus
   expect_code 2 "$HANDS_STATUS" "route with an invalid class must exit 2"
+  hands FM_REMOTE_HANDS=1 -- route --class suite --estimate 6000
+  expect_code 2 "$HANDS_STATUS" "route must reject unknown or removed arguments"
   hands FM_REMOTE_HANDS=1 -- create --name bad/name --class suite
   expect_code 2 "$HANDS_STATUS" "create with an unsafe name must exit 2"
   hands FM_REMOTE_HANDS=1 -- enabled extra
@@ -202,9 +229,9 @@ test_route_local_memory_decisions() {
   hands FM_REMOTE_HANDS=1 FM_REMOTE_HANDS_LOCAL_MEM_MB=16000 XDG_STATE_HOME="$xdg" -- route --class sweep
   assert_contains "$HANDS_STDOUT" "local reason=fits class=sweep peak=6144MB local=16000MB" \
     "a 16 GiB machine must keep the sweep local"
-  hands FM_REMOTE_HANDS=1 FM_REMOTE_HANDS_LOCAL_MEM_MB=7900 XDG_STATE_HOME="$xdg" -- route --class other --estimate 6000
-  assert_contains "$HANDS_STDOUT" "reason=oversized peak=6000MB" \
-    "an explicit --estimate must override the class peak"
+  hands FM_REMOTE_HANDS=1 FM_REMOTE_HANDS_LOCAL_MEM_MB=7900 XDG_STATE_HOME="$xdg" -- route --class other
+  assert_contains "$HANDS_STDOUT" "local reason=fits class=other peak=2048MB local=7900MB" \
+    "the other class must route by its own table peak"
   hands FM_REMOTE_HANDS=1 XDG_STATE_HOME="$xdg" -- route --class suite
   printf '%s\n' "$HANDS_STDOUT" | grep -qE 'local=[0-9]+MB' \
     || fail "without the seam the router must detect real machine RAM (got: $HANDS_STDOUT)"
@@ -280,6 +307,16 @@ test_create_sizes_shapes_ttl_and_allowances() {
   assert_contains "$create_line" "--allow-network example.test:8443" "--allow extras must extend the allowances"
   hands FM_REMOTE_HANDS=1 -- create --class suite --name t-badport --allow example.test
   expect_code 2 "$HANDS_STATUS" "an allowance without a port must be refused"
+  hands FM_REMOTE_HANDS=1 -- create --class suite --name t-badport --allow example.test:
+  expect_code 2 "$HANDS_STATUS" "an allowance with an empty port must be refused"
+  hands FM_REMOTE_HANDS=1 -- create --class suite --name t-badport --allow example.test:0
+  expect_code 2 "$HANDS_STATUS" "port zero must be refused"
+  hands FM_REMOTE_HANDS=1 -- create --class suite --name t-badport --allow example.test:99999
+  expect_code 2 "$HANDS_STATUS" "a port above 65535 must be refused"
+  reset_logs
+  hands FM_REMOTE_HANDS=1 -- create --class suite --name t-hiport --allow example.test:65535 --expected-mins 60
+  create_line=$(grep -F -- '--cloud create' "$SBX_LOG")
+  assert_contains "$create_line" "--allow-network example.test:65535" "the highest valid port must be allowed"
   hands FM_REMOTE_HANDS=1 -- create --class suite --name t-badmins --expected-mins 0
   expect_code 2 "$HANDS_STATUS" "a zero expected wall must be refused"
   pass "fm-remote-hands.sh: create sizes shape, TTL, allowances, and manifest per class"
@@ -303,6 +340,47 @@ test_exec_hosts_the_job_on_a_dedicated_tmux_socket() {
   pass "fm-remote-hands.sh: exec survives exec-stream teardown via the hosted socket"
 }
 
+test_exec_pins_the_proof_exec_argv_shape() {
+  make_home argv-home >/dev/null
+  reset_logs
+  hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_ARGV_LOG="$SBX_ARGV_LOG" -- exec --name t-argv -- make test 'X=1 y'
+  expect_code 0 "$HANDS_STATUS" "exec must succeed against the fake cloud"
+  local n payload launch
+  n=$(tr -cd '\036' < "$SBX_ARGV_LOG" | wc -c | tr -d ' ')
+  [ "$n" -eq 7 ] || fail "exec must hand sbx the proof's seven-word argv (got $n words)"
+  [ "$(awk 'BEGIN{RS="\036"} NR==1 {printf "%s", $0}' "$SBX_ARGV_LOG")" = --cloud ] \
+    || fail "word 1 must be --cloud"
+  [ "$(awk 'BEGIN{RS="\036"} NR==2 {printf "%s", $0}' "$SBX_ARGV_LOG")" = exec ] \
+    || fail "word 2 must be exec"
+  [ "$(awk 'BEGIN{RS="\036"} NR==3 {printf "%s", $0}' "$SBX_ARGV_LOG")" = t-argv ] \
+    || fail "word 3 must be the sandbox name"
+  [ "$(awk 'BEGIN{RS="\036"} NR==4 {printf "%s", $0}' "$SBX_ARGV_LOG")" = -- ] \
+    || fail "word 4 must be the -- separator"
+  [ "$(awk 'BEGIN{RS="\036"} NR==5 {printf "%s", $0}' "$SBX_ARGV_LOG")" = bash ] \
+    || fail "word 5 must be bash"
+  [ "$(awk 'BEGIN{RS="\036"} NR==6 {printf "%s", $0}' "$SBX_ARGV_LOG")" = -lc ] \
+    || fail "word 6 must be -lc"
+  payload=$(awk 'BEGIN{RS="\036"} NR==7 {printf "%s", $0}' "$SBX_ARGV_LOG")
+  case "$payload" in
+    "'"*"'") ;;
+    *) fail "the script must travel as one single-quoted argv word the joining remote shell re-parses" ;;
+  esac
+  launch=$(eval "printf '%s' $payload")
+  assert_contains "$launch" "tmux -L fm-hands new-session -d -s fm-hands bash -lc" \
+    "the payload must unquote to the tmux launch of the job script"
+  # Unquote the second layer the same way the joining remote shell would: the
+  # launch's bash -lc word is the quoted job script the sandbox receives.
+  quoted_job=$(printf '%s' "$launch" | sed 's/^.*bash -lc //')
+  job_script=$(eval "printf '%s' $quoted_job")
+  assert_contains "$job_script" "'make' 'test' 'X=1 y'" \
+    "each command word must stay its own quoted word in the job script"
+  assert_contains "$job_script" "rm -f /tmp/fm-hands.log /tmp/fm-hands.exit" \
+    "the job script must clear the previous job's markers before launching"
+  assert_contains "$job_script" 'printf "%s\n" "$?"' \
+    "the job script must record its own exit code in the marker"
+  pass "fm-remote-hands.sh: exec hands sbx the proof-pinned joined-exec argv shape"
+}
+
 test_wait_propagates_the_hosted_exit_code() {
   make_home wait-home >/dev/null
   reset_logs
@@ -321,6 +399,21 @@ test_wait_propagates_the_hosted_exit_code() {
   expect_code 1 "$HANDS_STATUS" "a bounded wait with no marker must time out"
   assert_contains "$HANDS_STDERR" "timed out after 1s" "the timeout must name its bound"
   pass "fm-remote-hands.sh: wait polls the marker and propagates or aborts"
+}
+
+test_wait_keeps_polling_a_reachable_sandbox_with_no_marker_yet() {
+  make_home wait-live-home >/dev/null
+  if [ -e /tmp/fm-hands.exit ]; then
+    pass "fm-remote-hands.sh: wait no-marker case skipped (host has a real /tmp/fm-hands.exit)"
+    return
+  fi
+  reset_logs
+  hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 -- wait --name t-live --interval 1 --max-secs 2
+  expect_code 1 "$HANDS_STATUS" "a reachable sandbox with no marker yet must end on the wait bound"
+  assert_contains "$HANDS_STDERR" "timed out after 2s" "the bound, not a false abort, must end the wait"
+  assert_not_contains "$HANDS_STDERR" "unreachable" \
+    "a reachable sandbox must never be diagnosed unreachable while its job runs"
+  pass "fm-remote-hands.sh: wait keeps polling a reachable sandbox with no marker yet"
 }
 
 test_copy_and_log_paths() {
@@ -470,6 +563,27 @@ test_prepare_pins_the_fidelity_recipe() {
   pass "fm-remote-hands.sh: prepare pins locale, node major, SHA checks, and full clones"
 }
 
+test_prepare_runs_exec_streams_under_the_prepare_bound() {
+  make_home prep-bound-home >/dev/null
+  reset_logs
+  printf '22.22.1\n' > "$EXEC_SEQ"
+  hands FM_REMOTE_HANDS=1 FM_FAKE_TIMEOUT_LOG="$TIMEOUT_LOG" -- prepare --name t-bound --repo https://github.com/kirkins/firstmate
+  expect_code 0 "$HANDS_STATUS" "prepare must succeed while its bounds are recorded"
+  assert_grep "60 sbx login --username $FAKE_DOCKER_ID --password-stdin" "$TIMEOUT_LOG" \
+    "login must keep the control-plane bound"
+  local exec_bounds
+  exec_bounds=$(grep -c '^900 sbx --cloud exec' "$TIMEOUT_LOG")
+  [ "$exec_bounds" -eq 3 ] \
+    || fail "prepare's three exec streams must run under the 900s prepare bound (got $exec_bounds)"
+  reset_logs
+  printf '22.22.1\n' > "$EXEC_SEQ"
+  hands FM_REMOTE_HANDS=1 FM_FAKE_TIMEOUT_LOG="$TIMEOUT_LOG" FM_REMOTE_HANDS_PREPARE_TIMEOUT=1200 -- prepare --name t-bound2 --repo https://github.com/kirkins/firstmate
+  expect_code 0 "$HANDS_STATUS" "prepare must succeed under a raised prepare bound"
+  assert_grep "1200 sbx --cloud exec" "$TIMEOUT_LOG" \
+    "FM_REMOTE_HANDS_PREPARE_TIMEOUT must bound the exec streams"
+  pass "fm-remote-hands.sh: prepare exec streams run under their own bound"
+}
+
 test_prepare_without_local_node_pins_nothing_loudly() {
   make_home nonode-home >/dev/null
   mkdir -p "$TMP_ROOT/nonode-bin"
@@ -496,10 +610,13 @@ test_route_local_memory_decisions
 test_route_reads_the_real_heavy_slot
 test_create_sizes_shapes_ttl_and_allowances
 test_exec_hosts_the_job_on_a_dedicated_tmux_socket
+test_exec_pins_the_proof_exec_argv_shape
 test_wait_propagates_the_hosted_exit_code
+test_wait_keeps_polling_a_reachable_sandbox_with_no_marker_yet
 test_copy_and_log_paths
 test_teardown_removes_and_cleans_the_manifest
 test_credentials_load_in_process_and_never_leak
 test_missing_tools_fail_closed
 test_prepare_pins_the_fidelity_recipe
+test_prepare_runs_exec_streams_under_the_prepare_bound
 test_prepare_without_local_node_pins_nothing_loudly
