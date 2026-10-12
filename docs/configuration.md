@@ -13,6 +13,7 @@ Start with the directory layout, then use the setting reference for the behavior
 | Backlog, preferences, and memory | [Backlog backend](#backlog-backend-taskstoml--configbacklog-backend), [captain preferences](#captain-preferences-datacaptainmd--datacaptain-sharedmd), and [startup memory budget](#startup-memory-budget-configstartup-memory-budget) |
 | Supervision and presentation | [Pi supervision branch](#pi-supervision-branch), [supervision host](#supervision-host-configsupervision-host), and [Calm preference](#calm-preference-configcalm) |
 | Persistent secondmates | [Secondmate routes](#secondmate-routes-datasecondmatesmd) |
+| Heavy jobs running remotely | [Remote hands](#remote-hands-docker-cloud-sandboxes-env) |
 | Per-run overrides and tuning | [Environment variables](#environment-variables) |
 
 ## FM_HOME
@@ -120,6 +121,7 @@ The slot record and its command lock live in one canonical machine-shared root, 
 `bin/fm-brief.sh` emits the standard worker rule into every ship and scout scaffold, naming the turnstile script by absolute path so the slot record lands in that machine-shared root rather than a worker's own worktree.
 The coordination scope is the whole machine, not one home's fleet: workers spawned by any home, primary or secondmate, contend on the same slot.
 Agent count stays deliberately uncapped; the turnstile never enforces worker counts and manages no cgroups beyond printing the documented wrapper.
+When the [remote-hands lane](#remote-hands-docker-cloud-sandboxes-env) is enabled, heavy jobs can instead route to a cloud sandbox through the router that reads this turnstile's `status`; the slot's own semantics stay unchanged.
 
 ### Session-start references
 
@@ -1631,6 +1633,53 @@ The standing check follows the mail check's proven-no-op silence discipline: a s
 4. No automation triggers on mail: the mailbox repository must never contain workflows, webhooks, or any issue-event consumer besides this poll; it is a dumb store.
 5. Every sender authenticates: connector UIs through the forge's OAuth, programmatic senders through repo-scoped tokens; an unauthenticated connector mode is explicitly rejected for this plane.
 
+## Remote hands (Docker Cloud Sandboxes) (.env)
+
+The remote-hands lane (bin/fm-remote-hands.sh) lets a local worker drive a disposable Docker Cloud Sandbox as a pure remote executor for heavy builds and tests, instead of queueing them on the local machine's heavy slot.
+The model never runs in the sandbox: the sandbox is dumb compute, and the driver is the full owner of the sandbox lifecycle (create, prepare, exec, wait, log, copy-in, copy-out, teardown) and of the routing decision.
+This section is the single owner of the remote-hands configuration schema; for direct invocations, environment values override `.env`, matching the Relay contract.
+
+**Activation**
+
+The lane is off unless the home's gitignored `.env` provides a truthy `FM_REMOTE_HANDS` (1, on, true, yes, any case).
+While off, `route` prints `local reason=off` as a hard no-op, every sandbox-creating command refuses naming the missing value, and `teardown` still works because removing a leftover sandbox is the safety action.
+
+Optional tuning, in the home's gitignored `.env`:
+
+```sh
+FM_REMOTE_HANDS=                # truthy switches the lane on; absent or falsy stays off
+FM_REMOTE_HANDS_SECRET=opencode/opencode-docker-cloud   # <namespace>/<secret> holding DOCKER_ID and DOCKER_PAT
+FM_REMOTE_HANDS_TTL_MARGIN=50   # percent added over the expected wall time when sizing the sandbox TTL; valid 10..300
+FM_REMOTE_HANDS_TIMEOUT=60      # seconds bounding each sandbox control-plane call; valid 10..3600
+```
+
+**Credentials**
+
+`DOCKER_ID` and `DOCKER_PAT` are read live from the cluster secret named by `FM_REMOTE_HANDS_SECRET` through kubectl and reach `sbx login` only as `--password-stdin`.
+They are never printed, logged, or persisted by the driver, and the sandbox is always the bare `shell` agent with no provider credential set inside it: the driver never invokes `sbx secret set`.
+The sbx CLI's own login state is pinned under `state/remote-hands/sbx-config` inside the home so no machine-global config is touched.
+A missing kubectl, a missing sbx CLI (0.45.0 or newer), or a secret that does not carry both keys fails closed with a named prerequisite.
+
+**Routing**
+
+`fm-remote-hands.sh route --class <suite|sweep|other>` is the decision a worker consults before a memory-heavy job; it never touches the cloud.
+It routes to the sandbox when the job class's peak estimate exceeds 70 percent of local RAM (the `sweep` class on the 8 GiB machine) or another live task holds the machine's heavy slot, and otherwise answers local.
+The class table sizes the sandbox: `suite` runs on Medium (4 vCPU / 8 GiB), `sweep` - anything that includes the shellcheck sweep - runs on Large (8 vCPU / 16 GiB), and `other` defaults to Medium.
+A job routed to the sandbox takes no local heavy slot at all.
+When the lane is enabled, ship and scout briefs append one routing line to their local-resource rule (bin/fm-brief.sh) so workers know to consult the router instead of only waiting on the slot.
+
+**Lifecycle and fidelity**
+
+Creation always passes `--on-timeout delete` with the TTL sized as the expected wall time plus `FM_REMOTE_HANDS_TTL_MARGIN` percent, clamped to the platform's 24 h ceiling, so a forgotten sandbox cannot linger billed.
+The default sandbox-scoped network allowances cover github.com, GitHub's release/raw CDNs, nodejs.org, the npm registry, and Ubuntu's apt ports; `--allow` extends them per sandbox.
+Long jobs run inside the sandbox under a daemonized tmux on the dedicated `fm-hands` socket so they survive exec-stream teardown, with `wait` polling the exit marker and `log`, `copy-in`, and `copy-out` moving artifacts.
+`prepare` brings a sandbox to the fidelity baseline: the closed apt tool set, node pinned to the local machine's major with a SHA-256-verified nodejs.org tarball, and a full clone (never `--depth`, with `git fetch --unshallow` healing an existing shallow clone).
+pi and zellij are never installed: tool-absent classes are clean gate-skips, and SHA-pinned lint builds are produced locally and uploaded with `copy-in` rather than rebuilt inside the sandbox.
+
+**Records**
+
+`create` records one manifest per sandbox in `state/remote-hands/<name>.rec` and `teardown` removes it; `sbx --cloud ls` remains the authoritative live list.
+
 ## Relay (.env)
 
 Relay lets a firstmate instance answer public mentions and act on normal reversible mention requests through firstmate's normal lifecycle.
@@ -2489,6 +2538,8 @@ FM_MAIL_POLL_MAX_WAKES=20   # per-poll wake cap for a mail poll; valid 1..200, k
 FM_FORGE_MAIL_POLL_MAX_WAKES=10   # per-poll wake cap for a forge-mail poll; valid 1..200, keeps a flood from flooding firstmate
 FM_MAIL_TIMEOUT=20   # mail-plane IMAP/SMTP socket timeout in seconds; invalid or non-positive values become 20
 FM_FORGE_MAIL_TIMEOUT=20   # forge-mail-plane HTTP timeout in seconds; invalid or non-positive values become 20
+FM_REMOTE_HANDS_TTL_MARGIN=50   # percent over expected wall time when sizing a remote-hands sandbox TTL; valid 10..300 (docs/configuration.md "Remote hands")
+FM_REMOTE_HANDS_TIMEOUT=60   # seconds bounding each remote-hands sandbox control-plane call; valid 10..3600
 FM_TOOL_UPDATE_INTERVAL=900   # seconds between watched-tool probe sweeps; 0 probes on every run, other values must be 60..86400
 FM_TOOL_UPDATE_PROBE_SECS=5   # 1..30 seconds allowed for one version or git probe
 FM_TOOL_UPDATE_BUDGET_SECS=20   # 1..120 seconds allowed for a whole watched-tool sweep; cut to fit FM_CHECK_TIMEOUT, and the cut is reported
@@ -2517,6 +2568,8 @@ FM_SMTP_HOST=      # mail-plane SMTP server hostname
 FM_SMTP_PORT=465   # mail-plane SMTP server port
 FM_FORGE_MAIL_HOST=      # forge-mail-plane Forgejo instance host, from .env or environment (docs/configuration.md "Forge mail plane")
 FM_FORGE_MAIL_REPO=      # forge-mail-plane mailbox repository owner/name
+FM_REMOTE_HANDS=         # remote-hands lane master opt-in, truthy on; absent or falsy keeps the lane off (docs/configuration.md "Remote hands")
+FM_REMOTE_HANDS_SECRET=opencode/opencode-docker-cloud   # remote-hands <namespace>/<secret> holding DOCKER_ID and DOCKER_PAT, from .env or environment
 FMX_PAIRING_TOKEN=      # Relay pairing token; .env opt-in authorizes replies and eligible lifecycle actions
 FMX_RELAY_URL=https://myfirstmate.io   # optional Relay endpoint override, mainly for local relay development
 FMX_ENV_FILE=           # optional alternate .env file for direct Relay client invocations; bootstrap still checks $FM_HOME/.env

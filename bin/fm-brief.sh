@@ -603,6 +603,17 @@ Run the job exactly under the cap wrapper the acquire output prints, and release
 EOF
 LOCAL_RESOURCE_SECTION=${LOCAL_RESOURCE_SECTION%$'\n'}
 
+# The remote-hands routing line appears only on a home that switched the
+# lane on, so unconfigured homes keep the standard wait-on-the-slot rule
+# alone. The driver's `enabled` subcommand is the single owner of that
+# truthy-on check; this scaffold never re-implements it.
+REMOTE_HANDS_STATE=$("$FM_ROOT/bin/fm-remote-hands.sh" enabled 2>/dev/null) || REMOTE_HANDS_STATE=
+if [ "$REMOTE_HANDS_STATE" = on ]; then
+  REMOTE_HANDS_SCRIPT=$(shell_quote "$FM_ROOT/bin/fm-remote-hands.sh")
+  LOCAL_RESOURCE_SECTION="$LOCAL_RESOURCE_SECTION
+When the remote-hands lane is on and the acquire is refused or the job class is too large for local memory, run \`$REMOTE_HANDS_SCRIPT route --class <suite|sweep|other>\` and follow its sandbox decision instead of waiting on the slot."
+fi
+
 if [ -n "$BASE_BRANCH" ]; then
   SETUP_BASE="You are in a disposable git worktree of $REPO, at a detached HEAD on a clean copy of its base branch.
 Base branch: $BASE_BRANCH"

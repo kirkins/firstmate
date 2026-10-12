@@ -1524,6 +1524,41 @@ test_local_resource_rule_emitted_for_crewmates() {
   pass "fm-brief.sh: crewmate scaffolds emit the standard local-resource rule"
 }
 
+# The remote-hands routing line is the optional escalation of the same
+# local-resource rule: present exactly when the lane is on for that home
+# (env or .env, the driver's own `enabled` check), naming the router's
+# absolute path, and absent on an unconfigured home so the standard rule
+# stays the whole contract there.
+test_remote_hands_line_follows_lane_state() {
+  local home brief
+  home="$TMP_ROOT/remote-hands-line-home"
+  mkdir -p "$home/data"
+
+  FM_REMOTE_HANDS="" FM_HOME="$home" "$ROOT/bin/fm-brief.sh" brief-hands-off alpha --mode no-mistakes >/dev/null 2>&1 \
+    || fail "ship brief without the remote-hands lane should scaffold"
+  brief="$home/data/brief-hands-off/brief.md"
+  assert_no_grep "fm-remote-hands.sh" "$brief" \
+    "an off home's brief must not teach the remote-hands lane"
+
+  FM_REMOTE_HANDS=1 FM_HOME="$home" "$ROOT/bin/fm-brief.sh" brief-hands-env alpha --mode no-mistakes >/dev/null 2>&1 \
+    || fail "ship brief with the lane enabled should scaffold"
+  brief="$home/data/brief-hands-env/brief.md"
+  assert_grep "'$ROOT/bin/fm-remote-hands.sh' route --class <suite|sweep|other>" "$brief" \
+    "brief on an enabled home must name the router command by absolute path"
+  assert_grep "follow its sandbox decision instead of waiting on the slot" "$brief" \
+    "brief must teach following the router's decision over waiting"
+  assert_grep "# Local resources" "$brief" \
+    "the remote-hands line must extend the local-resource section, not a new one"
+
+  printf '%s\n' "FM_REMOTE_HANDS=on" > "$home/.env"
+  FM_REMOTE_HANDS="" FM_HOME="$home" "$ROOT/bin/fm-brief.sh" brief-hands-envfile alpha --scout >/dev/null 2>&1 \
+    || fail "scout brief with the lane enabled via .env should scaffold"
+  assert_grep "fm-remote-hands.sh" "$home/data/brief-hands-envfile/brief.md" \
+    "a home .env enabling the lane must reach the scout scaffold too"
+
+  pass "fm-brief.sh: the remote-hands routing line follows the lane state"
+}
+
 test_script_parses
 test_no_heredoc_in_command_substitution
 test_help_includes_entire_header
@@ -1562,3 +1597,4 @@ test_branch_prefix_value_is_validated
 test_branch_prefix_command_is_shell_safe
 test_crewmate_scaffolds_forbid_pool_administration
 test_local_resource_rule_emitted_for_crewmates
+test_remote_hands_line_follows_lane_state
