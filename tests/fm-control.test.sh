@@ -127,6 +127,10 @@ case "${1:-}" in
     payload=${1:-}
     if [ "$literal" = 1 ]; then
       printf '%s\n' "$payload" >> "$D/literal"
+      if [ "$payload" = /exit ] && [ -f "$D/exit-send-fail" ]; then
+        [ ! -f "$D/after-failed-send" ] || cp "$D/after-failed-send" "$D/pane"
+        exit 1
+      fi
       if [ -z "${FM_FAKE_NEVER_DIES:-}" ] \
          && { [ "$payload" = /exit ] || [ "$payload" = /quit ]; }; then
         printf 'zsh' > "$D/command"
@@ -137,6 +141,16 @@ case "${1:-}" in
     else
       printf '%s\n' "$payload" >> "$D/keys"
       printf '%s %s\n' "$(perl -MTime::HiRes=time -e 'printf "%.3f", time')" "$payload" >> "$D/key-times"
+      if [ "$payload" = C-d ]; then
+        count=$(grep -c '^C-d$' "$D/keys")
+        if [ -f "$D/first-exit-key-stops" ] || [ "$count" -eq 2 ]; then
+          printf 'zsh' > "$D/command"
+        elif [ -f "$D/after-exit-key" ]; then
+          cp "$D/after-exit-key" "$D/pane"
+        elif [ ! -f "$D/no-exit-arm" ]; then
+          printf '────\n❯\n────\n  Press Ctrl-D again to exit\n' > "$D/pane"
+        fi
+      fi
       if [ "$payload" = Escape ] && [ -f "$D/devin" ]; then
         case "$(cat "$D/devin")" in
           running) printf armed > "$D/devin" ;;
@@ -519,7 +533,88 @@ test_backend_key_capability_matrix() {
     && fail "orca's terminal API has no composer clear and must not claim one"
   fm_control_backend_supports_key orca C-c || fail "orca should deliver C-c"
   fm_control_backend_supports_key orca Enter || fail "orca should deliver Enter"
+  for backend in tmux herdr; do
+    fm_control_backend_supports_key "$backend" C-d || fail "$backend should deliver C-d"
+  done
+  for backend in zellij cmux orca; do
+    fm_control_backend_supports_key "$backend" C-d && fail "$backend has no verified exit fallback"
+  done
   pass "fm-control-lib: the backend key matrix matches each adapter's real send-key surface"
+}
+
+test_claude_failed_exit_uses_native_keys() {
+  local dir out rc
+  dir=$(new_case exit-native-fallback)
+  add_task "$dir" t1 claude
+  alive_as "$dir" claude
+  : > "$dir/fake/exit-send-fail"
+  out=$(run_control "$dir" t1 exit); rc=$?
+  expect_code 0 "$rc" "Claude's failed text exit should use its native key"$'\n'"$out"
+  [ "$(keys_sent "$dir")" = $'C-d\nC-d' ] || fail "the fallback should arm and confirm exit"
+  assert_contains "$out" "stopped t1 harness=claude" "the fallback must prove the agent stopped"
+  pass "fm-control exit: a failed Claude text submission exits through its verified native key"
+}
+
+test_exit_fallback_refuses_changed_or_unproven_composer() {
+  local dir out rc shape
+  for shape in pending unknown; do
+    dir=$(new_case "fallback-$shape")
+    add_task "$dir" t1 claude
+    alive_as "$dir" claude
+    : > "$dir/fake/exit-send-fail"
+    case "$shape" in
+      pending) printf '────\n❯ preserve this draft\n────\n' > "$dir/fake/after-failed-send" ;;
+      unknown) printf 'unrecognised screen\n' > "$dir/fake/after-failed-send" ;;
+    esac
+    out=$(run_control "$dir" t1 exit); rc=$?
+    expect_code 1 "$rc" "the fallback must recheck a $shape composer"$'\n'"$out"
+    assert_contains "$out" "refusing the claude exit fallback" "the refusal should identify the fallback"
+    [ ! -s "$dir/fake/keys" ] || fail "a $shape composer must receive no fallback key"
+  done
+  pass "fm-control exit: the native fallback requires a fresh empty-composer proof"
+}
+
+test_exit_fallback_confirms_only_a_live_empty_armed_composer() {
+  local dir out rc shape
+  for shape in stopped no-arm quoted-arm pending picker; do
+    dir=$(new_case "fallback-confirm-$shape")
+    add_task "$dir" t1 claude
+    alive_as "$dir" claude
+    : > "$dir/fake/exit-send-fail"
+    case "$shape" in
+      stopped) : > "$dir/fake/first-exit-key-stops" ;;
+      no-arm) : > "$dir/fake/no-exit-arm" ;;
+      quoted-arm) printf 'Press Ctrl-D again to exit\n────\n❯\n────\nordinary footer\n' > "$dir/fake/after-exit-key" ;;
+      pending) printf '────\n❯ new draft\n────\n  Press Ctrl-D again to exit\n' > "$dir/fake/after-exit-key" ;;
+      picker) exit_picker_screen > "$dir/fake/after-exit-key" ;;
+    esac
+    out=$(run_control "$dir" t1 exit); rc=$?
+    if [ "$shape" = stopped ]; then
+      expect_code 0 "$rc" "the first key may already exit Claude"$'\n'"$out"
+    else
+      expect_code 1 "$rc" "the fallback must refuse confirmation on $shape"$'\n'"$out"
+    fi
+    [ "$(keys_sent "$dir")" = C-d ] || fail "the $shape case must send no confirming key"
+    if [ "$shape" = picker ]; then
+      assert_contains "$out" "blocked on a prompt: Claude background-task exit picker" "the opened dialog must be named"
+    fi
+    if [ "$shape" = no-arm ]; then
+      assert_contains "$out" "exit-command=send-failed exit-key=delivered" "an unconfirmed fallback must report which input actually reached the agent"
+    fi
+  done
+  pass "fm-control exit: native confirmation never reaches a shell, an unarmed agent, a draft, or a picker"
+}
+
+test_other_harness_has_no_native_exit_fallback() {
+  local dir out rc
+  dir=$(new_case exit-no-fallback)
+  add_task "$dir" t1 opencode
+  alive_as "$dir" opencode
+  : > "$dir/fake/exit-send-fail"
+  out=$(run_control "$dir" t1 exit); rc=$?
+  expect_code 1 "$rc" "a different harness must not receive Claude's exit key"$'\n'"$out"
+  [ ! -s "$dir/fake/keys" ] || fail "an unverified fallback must send no keys"
+  pass "fm-control exit: Claude's native fallback is never used for another harness"
 }
 
 # A verified adapter is not automatically verified for every task kind, and the
@@ -1208,6 +1303,10 @@ test_exit_drops_meta_busy_gen_with_the_sidecar
 test_exit_refuses_an_open_background_picker
 test_exit_refuses_the_confirming_enter
 test_exit_names_a_picker_that_renders_after_the_submit
+test_claude_failed_exit_uses_native_keys
+test_exit_fallback_refuses_changed_or_unproven_composer
+test_exit_fallback_confirms_only_a_live_empty_armed_composer
+test_other_harness_has_no_native_exit_fallback
 test_interrupt_without_acknowledgement_preserves_busy_state
 test_muse_interrupt_confirms_adapter_acknowledgement
 test_interrupt_revalidates_agent_after_acknowledgement_wait

@@ -448,7 +448,7 @@ claude --help | grep -A 5 'workspace trust dialog'
 ```
 
 `--dangerously-skip-permissions` is a permission control and is absent from that bypass, so an interactive worker in a fresh worktree still reaches the dialog.
-Firstmate cannot answer it either, because its key plane carries only Enter, Escape, and C-c with no arrow navigation.
+Firstmate cannot answer it either, because its key plane carries no arrow navigation.
 Suppression itself was then observed directly on the same date and version, with a control arm and a treatment arm.
 
 The control arm launched a fresh linked worktree with no pre-registration, the way `bin/fm-spawn.sh` launches one.
@@ -1354,6 +1354,28 @@ FM_HERDR_SUBMIT_CONFIRM_LIVE=1 tests/fm-herdr-submit-confirm-live-e2e.test.sh
 
 ```text
 ok - live Herdr submit confirm: Claude Code (2.1.283 (Claude Code)) on herdr 0.9.0 proves and submits a typed /exit behind its command popup
+```
+
+### Claude native exit fallback
+
+Verified 2026-10-12 on Linux with Claude Code 2.1.296 and Herdr 0.8.2, protocol 20, in a named isolated lab through `bin/fm-herdr-lab.sh`.
+The token-free guard launches Claude in safe mode to isolate native keys from user and project hooks.
+It preserves a real pending draft, proves ordinary `/exit` stops the agent, then deliberately hides the typed `/exit` from the payload-proof capture.
+That controlled capture failure exercises the native-key fallback against a real Claude process; it does not establish the cause of a platform-specific vendor regression.
+The fallback sends exactly two native exit keys, proves the agent stopped, and proves the pane still holds its shell.
+Portable regressions in `tests/fm-control.test.sh` additionally require fresh empty-composer proof and refuse confirmation on a stopped agent, a missing or quoted hint, a new draft, or a background-task picker.
+
+Refresh the live proof with:
+
+```sh
+FM_CONTROL_CLAUDE_LIVE_E2E=1 bin/fm-test-run.sh tests/fm-control-claude-live-e2e.test.sh
+```
+
+Observed output:
+
+```text
+ok - live Claude exit (2.1.296 (Claude Code); Herdr 0.8.2): preserves a draft and exits normally
+ok - live Claude exit (2.1.296 (Claude Code); Herdr 0.8.2): failed payload proof exits with native keys and preserves the shell
 ```
 
 ### Claude background-task exit picker
