@@ -161,6 +161,16 @@ fm_backend_herdr_cli() {
     "pane get")
       printf '{"result":{"pane":{"pane_id":"%s","tab_id":"%s","workspace_id":"%s"}}}\n' "$PANE" "$TAB" "$WS"
       ;;
+    "pane process-info")
+      # The pane classifier pairs every agent_not_found verdict with the exact
+      # pane's process view before it will call the pane agent-free, so the
+      # fixture's shell-only pane answers it here: the foreground is a lone
+      # shell whose pid is this suite's own shell, alive for every ps walk the
+      # cleanup can trigger. A mismatched or unreadable body still reads
+      # unknown and refuses, exactly as the adapter requires.
+      printf '{"result":{"type":"pane_process_info","process_info":{"pane_id":"%s","shell_pid":%s,"foreground_process_group_id":%s,"foreground_processes":[{"pid":%s,"name":"zsh","argv0":"zsh","argv":["-zsh"]}]}}}\n' \
+        "$PANE" "$$" "$$" "$$"
+      ;;
     "agent get")
       case "$(cat "$FIXTURE_DIR/agent")" in
         absent) printf '%s\n' '{"error":{"code":"agent_not_found"}}' >&2; return 1 ;;

@@ -634,6 +634,18 @@ case "\$cmd \$sub" in
       exit 0
     fi
     ;;
+  "pane process-info")
+    # The pane classifier pairs every agent_not_found verdict with the exact
+    # pane's process view before it will call the pane agent-free, so the
+    # pre-respawn husk answers it here: a lone shell whose pid is the
+    # installing suite's own shell (interpolated when this fake is written),
+    # alive for every ps walk the recovery can trigger. Any other pane keeps
+    # no usable body and still reads unknown.
+    if [ "\${4:-}" = "${stale#*:}" ]; then
+      printf '{"result":{"type":"pane_process_info","process_info":{"pane_id":"%s","shell_pid":%s,"foreground_process_group_id":%s,"foreground_processes":[{"pid":%s,"name":"zsh","argv0":"zsh","argv":["-zsh"]}]}}}\n' \
+        "${stale#*:}" "$$" "$$" "$$"
+    fi
+    ;;
   "agent get")
     if [ "\$arg" = "${stale#*:}" ]; then
       printf '{"error":{"code":"agent_not_found","message":"gone"}}\n' >&2

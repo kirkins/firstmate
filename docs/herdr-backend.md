@@ -367,7 +367,7 @@ That presentation lock lives in a namespace private to the OS account, so anothe
 A namespace at this account's name that another account owns, or that is not mode 700, is still refused and is never adopted, chowned, or removed.
 
 A same-identity version 2 binding may replace one exact agent-free restart husk in place.
-A husk is a restored same-labeled tab with a missing pane or no registered agent, as [Restart and liveness behavior](#restart-and-liveness-behavior) describes.
+What counts as a husk is owned by [Restart and liveness behavior](#restart-and-liveness-behavior); a missing registration alone never qualifies one.
 The replacement is allowed only when all of these agree:
 
 - The physical home.
@@ -671,7 +671,8 @@ No Herdr-specific copy of that protocol exists.
 
 Stopping and restarting a named Herdr server preserves workspace, tab, pane, and label ids.
 The underlying harness processes and live agent registrations do not survive.
-A restored same-labeled tab with a missing pane or no registered agent is a husk.
+A restored same-labeled tab with a missing pane or a confirmed shell-only pane with no registration is a husk.
+A missing registration alone does not prove that a live harness is absent from the pane.
 
 Create replaces only a confidently dead or no-agent husk, creates the replacement before closing the old tab, and refuses live or unknown states.
 This prevents closing the workspace's last tab before a replacement exists.
@@ -692,6 +693,10 @@ It uses the shared harness-process classifier in `bin/fm-agent-process-lib.sh`, 
 | A foreground that is nothing but shells, with no harness descendant | A `stale-agent` pane: agent-free, with that explicit reason. |
 | A foreground holding anything else | The registration stays live, but only after the same bounded settle window the idle-shell proof uses. |
 | An unreadable process view | The pane is `unknown`, trusting neither the registration nor its absence. |
+
+The classifier applies the same exact-pane process proof when `agent get` returns `agent_not_found`.
+A recognized harness process reads `live`, a confirmed shell-only pane reads `no-agent`, and any other or unreadable process view reads `unknown`.
+This keeps a running harness recoverable through ordinary supervision after its registration disappears, while the destructive husk check still refuses unknown evidence.
 
 The settle window exists because an idle shell transiently hosts prompt helpers such as starship in its foreground group.
 The first agent or shell sample in that window decides.
@@ -714,8 +719,8 @@ The generic Herdr agent-liveness probe reuses that pane classifier, then applies
 | Pane read | Probe verdict |
 | --- | --- |
 | A structurally gone pane, or a pane read from a session positively reported as having no running server | `missing` |
-| A restored agent-less shell, or a stale registration over a shell-only pane | `dead` |
-| A registered agent with a live process | `alive` |
+| A confirmed shell-only pane with no registration, or a stale registration over a shell-only pane | `dead` |
+| A registered agent with a live process, or an unregistered recognized harness in the exact pane | `alive` |
 | Every other unexpected read | `unreadable` |
 
 Neither the stopped-server exception nor the stale-registration verdict widens husk detection or any close authority.

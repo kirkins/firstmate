@@ -1654,6 +1654,34 @@ test_legacy_record_teardown_refuses_an_ambiguous_endpoint() {
   pass "an endpoint that cannot be confidently read as dead refuses --legacy-record teardown"
 }
 
+test_legacy_record_teardown_refuses_live_unregistered_herdr_harness() {
+  local case_dir rc before log closed
+  case_dir=$(make_case legacy-live-herdr)
+  write_legacy_meta "$case_dir" no-mistakes ship
+  configure_flat_herdr_teardown_case "$case_dir"
+  seed_backlog_in_flight "$case_dir"
+  wt_commit "$case_dir" "landed legacy work"
+  add_fork_with_pushed_branch "$case_dir"
+  log="$case_dir/herdr.log"; closed="$case_dir/closed"; : > "$log"
+  before=$(cksum "$case_dir/state/task-x1.meta" | awk '{print $1, $2}')
+
+  set +e
+  FM_FAKE_HERDR_PROCESS=codex FM_FAKE_HERDR_LOG="$log" FM_FAKE_HERDR_CLOSED="$closed" \
+    run_teardown "$case_dir" --legacy-record > "$case_dir/stdout" 2> "$case_dir/stderr"
+  rc=$?
+  set -e
+
+  expect_code 1 "$rc" "legacy-live-herdr: a known harness in the exact pane must refuse teardown"
+  grep -q "not confidently dead or agent-less" "$case_dir/stderr" \
+    || fail "legacy-live-herdr: teardown did not name its live endpoint refusal"
+  [ "$(cksum "$case_dir/state/task-x1.meta" | awk '{print $1, $2}')" = "$before" ] \
+    || fail "legacy-live-herdr: live endpoint refusal modified the task record"
+  [ "$(backlog_row_state "$case_dir")" = in_flight ] \
+    || fail "legacy-live-herdr: live endpoint refusal closed the backlog item"
+  [ ! -e "$closed" ] || fail "legacy-live-herdr: teardown closed the live pane"
+  pass "teardown refuses a landed legacy record while an unregistered Codex process occupies its exact Herdr pane"
+}
+
 test_legacy_record_rolls_the_stamp_back_when_the_marker_write_fails() {
   local case_dir rc before
   case_dir=$(make_case legacy-stamp-rollback)
@@ -2377,6 +2405,13 @@ case "\${1:-} \${2:-}" in
   "pane close")
     : > "\${FM_FAKE_HERDR_CLOSED:?}"
     ;;
+  "pane process-info")
+    if [ "\${FM_FAKE_HERDR_PROCESS:-shell}" = codex ]; then
+      printf '%s\n' "{\"result\":{\"type\":\"pane_process_info\",\"process_info\":{\"pane_id\":\"\${4:-}\",\"shell_pid\":\$PPID,\"foreground_process_group_id\":\$PPID,\"foreground_processes\":[{\"pid\":\$PPID,\"name\":\"codex\",\"argv0\":\"codex\",\"argv\":[\"codex\"]}]}}}"
+    else
+      printf '%s\n' "{\"result\":{\"type\":\"pane_process_info\",\"process_info\":{\"pane_id\":\"\${4:-}\",\"shell_pid\":\$PPID,\"foreground_process_group_id\":\$PPID,\"foreground_processes\":[{\"pid\":\$PPID,\"name\":\"zsh\",\"argv0\":\"zsh\",\"argv\":[\"-zsh\"]}]}}}"
+    fi
+    ;;
   "pane get")
     if [ "\${FM_FAKE_HERDR_PANE_GET_GARBAGE:-0}" = 1 ]; then
       printf '%s\n' 'not-json'
@@ -3019,6 +3054,9 @@ case "${1:-} ${2:-}" in
       exit 1
     fi
     : > "${FM_FAKE_HERDR_CLOSED:?}"
+    ;;
+  "pane process-info")
+    printf '%s\n' "{\"result\":{\"type\":\"pane_process_info\",\"process_info\":{\"pane_id\":\"${4:-}\",\"shell_pid\":$PPID,\"foreground_process_group_id\":$PPID,\"foreground_processes\":[{\"pid\":$PPID,\"name\":\"zsh\",\"argv0\":\"zsh\",\"argv\":[\"-zsh\"]}]}}}"
     ;;
   "pane get")
     if [ -e "${FM_FAKE_HERDR_CLOSED:?}" ]; then
@@ -4700,6 +4738,7 @@ test_windowless_leftover_retries_its_retained_legacy_stamp_without_the_flag
 test_legacy_record_teardown_completes_when_landed_and_endpoint_dead
 test_legacy_record_teardown_refuses_unlanded_work
 test_legacy_record_teardown_refuses_an_ambiguous_endpoint
+test_legacy_record_teardown_refuses_live_unregistered_herdr_harness
 test_legacy_record_rolls_the_stamp_back_when_the_marker_write_fails
 test_retained_legacy_stamp_still_faces_the_endpoint_gate
 test_legacy_record_never_accepts_a_corrupt_spawn_gen
