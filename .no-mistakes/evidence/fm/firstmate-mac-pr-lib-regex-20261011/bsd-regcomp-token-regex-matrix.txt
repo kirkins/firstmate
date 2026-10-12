@@ -1,0 +1,50 @@
+=================== token pattern: OLD (pre-fix) ===================
+--- OLD token regex | bsdregcomp-harness | pattern: ^[A-Za-z0-9_-]{20,256}$
+compile: FAIL rc=10 invalid repetition count(s)
+
+--- OLD token regex | glibc-regcomp-harness | pattern: ^[A-Za-z0-9_-]{20,256}$
+compile: OK
+match len=19 str=AAAAAAAAAAAAAAAAAAA -> nomatch
+match len=20 str=AAAAAAAAAAAAAAAAAAAA -> MATCH
+match len=256 str=<token> -> MATCH
+match len=257 str=<token> -> nomatch
+
+=================== token pattern: NEW (this change) ===================
+--- NEW token regex (fm-pr-lib.sh fm_pr_forgejo_token + fm-forge-mail.sh forge_mail_token) | bsdregcomp-harness | pattern: ^[A-Za-z0-9_-]{20,255}[A-Za-z0-9_-]?$
+compile: OK
+match len=0 str= -> nomatch
+match len=1 str=A -> nomatch
+match len=19 str=AAAAAAAAAAAAAAAAAAA -> nomatch
+match len=20 str=AAAAAAAAAAAAAAAAAAAA -> MATCH
+match len=21 str=AAAAAAAAAAAAAAAAAAAAA -> MATCH
+match len=254 str=<token> -> MATCH
+match len=255 str=<token> -> MATCH
+match len=256 str=<token> -> MATCH
+match len=257 str=<token> -> nomatch
+match len=300 str=<token> -> nomatch
+match len=20 str=AAAAAAAAAAAAAAAAAAA_ -> MATCH
+match len=20 str=AAAAAAAAAAAAAAAAAA__ -> MATCH
+match len=21 str=AAAAAAAAAAAAAAAAAAAA- -> MATCH
+match len=256 str=<token> -> MATCH
+match len=257 str=<token> -> nomatch
+match len=20 str=AAAAAAAAAAAAAAAAAAA+ -> nomatch
+
+--- NEW token regex | glibc-regcomp-harness | pattern: ^[A-Za-z0-9_-]{20,255}[A-Za-z0-9_-]?$
+compile: OK
+match len=0 str= -> nomatch
+match len=19 str=AAAAAAAAAAAAAAAAAAA -> nomatch
+match len=20 str=AAAAAAAAAAAAAAAAAAAA -> MATCH
+match len=255 str=<token> -> MATCH
+match len=256 str=<token> -> MATCH
+match len=257 str=<token> -> nomatch
+match len=20 str=AAAAAAAAAAAAAAAAAAA+ -> nomatch
+
+=================== sibling URL regexes still compile under BSD regcomp ===================
+--- github pattern
+compile: OK
+--- gitlab pattern
+compile: OK
+--- forgejo pattern
+compile: OK
+--- forgejo-commit pattern
+compile: OK

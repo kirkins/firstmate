@@ -1,0 +1,79 @@
+Fresh native-engine re-run 2026-10-12T13:14:27Z at pipeline head 718fa215ae318a38b5a7ee992d03808ad2f7e395 (worktree clean).
+Independent reproduction of this run's accepted BSD-regcomp evidence:
+FreeBSD libc regex sources fetched again this turn from cgit.freebsd.org
+(regcomp.c regerror.c regexec.c regfree.c engine.c regex2.h utils.h
+cname.h + include/regex.h) and built in FreeBSD's own standalone mode
+(-DLIBREGEX; collation hooks replaced by wcscoll per upstream). Shims
+audited: sys/cdefs.h and sys/_types.h are thin include_next pass-throughs
+plus FreeBSD-only annotation macros (__sym_compat, __unused, __off_t);
+wint_t forced signed via -D__WINT_TYPE__=int (FreeBSD's spelling;
+glibc's unsigned wint_t breaks NONCHAR sentinel logic); _CurrentRuneLocale
+is a shim global never dereferenced under LC_ALL=C (MB_CUR_MAX==1),
+matching the product's 'local LC_ALL=C' guards. DUPMAX =
+_POSIX2_RE_DUP_MAX = 255 in utils.h. The original turn's evidence files
+are reused untouched (sha256 below, verified this turn).
+
+299b9a2909347e9de42c2415f6516b793ee5a567954fc38886f867016db4d259  bsd-regcomp-harness-provenance.txt
+5f3c12a92e1796f64252aa11fbf5db009d3795d2ef0fa29fe22588c9c3b12f81  bsd-regcomp-token-regex-matrix.txt
+
+== engine sanity (fresh build) ==
+   match len=1 str=A -> MATCH
+   match len=2 str=AA -> MATCH
+   match len=2 str=a_ -> MATCH
+   match len=2 str=-5 -> MATCH
+   match len=2 str=+5 -> nomatch
+   match len=1 str=a -> MATCH
+   match len=2 str=aa -> MATCH
+   match len=3 str=aaa -> MATCH
+   match len=4 str=aaaa -> nomatch
+
+=================== token pattern: OLD (pre-fix, base 23e22fc5) ===================
+--- OLD token regex (bin/fm-pr-lib.sh:1207 and bin/fm-forge-mail.sh:228 at base) | bsdregcomp-harness | pattern: ^[A-Za-z0-9_-]{20,256}$
+compile: FAIL rc=10 invalid repetition count(s)
+--- OLD token regex | glibc-regcomp-harness (same driver, system regex.h)
+compile: OK
+
+=================== token pattern: NEW (this change, head 718fa215) ===================
+--- NEW token regex (bin/fm-pr-lib.sh:1209 and bin/fm-forge-mail.sh:228 at head) | bsdregcomp-harness | pattern: ^[A-Za-z0-9_-]{20,255}[A-Za-z0-9_-]?$
+compile: OK
+   match len=19 str=<token> -> nomatch
+   match len=20 str=<token> -> MATCH
+   match len=21 str=<token> -> MATCH
+   match len=254 str=<token> -> MATCH
+   match len=255 str=<token> -> MATCH
+   match len=256 str=<token> -> MATCH
+   match len=257 str=<token> -> nomatch
+   match len=300 str=<token> -> nomatch
+   match len=20 str=<token> -> MATCH
+   match len=20 str=<token> -> MATCH
+   match len=20 str=<token> -> MATCH
+   match len=21 str=<token> -> MATCH
+   match len=256 str=<token> -> MATCH
+   match len=257 str=<token> -> nomatch
+   match len=258 str=<token> -> nomatch
+   match len=20 str=<token>+ -> nomatch
+   match len=257 str=<token>+ -> nomatch
+   match len=256 str=<token> -> MATCH
+   match len=257 str=<token> -> nomatch
+   match len=258 str=<token> -> nomatch
+--- NEW token regex | glibc-regcomp-harness
+   match len=19 str=<token> -> nomatch
+   match len=20 str=<token> -> MATCH
+   match len=255 str=<token> -> MATCH
+   match len=256 str=<token> -> MATCH
+   match len=257 str=<token> -> nomatch
+   match len=20 str=<token> -> nomatch
+
+=================== sibling bounded-repetition regexes at head (same-class audit) ===================
+--- github pattern | bsdregcomp-harness
+   compile: OK
+--- gitlab pattern | bsdregcomp-harness
+   compile: OK
+--- forgejo pattern | bsdregcomp-harness
+   compile: OK
+--- gerrit pattern | bsdregcomp-harness
+   compile: OK
+
+== host engine context ==
+   this host (Linux): getconf RE_DUP_MAX = 32767 (glibc accepts {20,256}; why Linux lanes never saw the breakage)
+   FreeBSD/macOS libc: DUPMAX = _POSIX2_RE_DUP_MAX = 255; {20,256} -> REG_BADBR rc=10

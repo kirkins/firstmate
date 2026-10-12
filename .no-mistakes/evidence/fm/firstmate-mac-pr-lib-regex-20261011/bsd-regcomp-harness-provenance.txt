@@ -1,0 +1,36 @@
+BSD regcomp harness provenance (evidence for bsd-regcomp-token-regex-matrix.txt)
+================================================================================
+Purpose: this host is Linux; the reported failure only manifests under BSD
+regcomp (RE_DUP_MAX = 255), which is what macOS libc (FreeBSD-derived) and
+therefore macOS bash [[ =~ ]] use. To drive that engine for real, the
+unmodified FreeBSD libc regex implementation was fetched and compiled
+standalone on 2026-10-12 from:
+  https://cgit.freebsd.org/src/plain/lib/libc/regex/regcomp.c   (2262 lines)
+  .../regerror.c regexec.c regfree.c engine.c regex2.h utils.h cname.h
+  https://cgit.freebsd.org/src/plain/include/regex.h
+built in FreeBSD's own standalone mode (-DLIBREGEX, used by FreeBSD's build
+for exactly this purpose), which replaces only the libc-internal collation
+hooks with plain wcscoll.
+
+Build fidelity notes (all deviations audited against FreeBSD's own headers):
+- sys/cdefs.h / sys/_types.h are thin pass-through shims (include_next to
+  glibc's, plus FreeBSD-only annotation macros); no regex logic touched.
+- wint_t is forced to signed int, matching FreeBSD's sys/sys/_types.h
+  'typedef __ct_rune_t __wint_t' where __ct_rune_t is int. glibc's unsigned
+  wint_t silently breaks FreeBSD's NONCHAR(c) ((c) <= OUT) sentinel logic
+  (every char would compare as a non-character); with FreeBSD's signed
+  wint_t the engine behaves correctly (dot/bracket sanity checks pass).
+- _CurrentRuneLocale is a shim global; under LC_ALL=C (which both product
+  functions set via 'local LC_ALL=C') MB_CUR_MAX == 1, so regcomp's only
+  reference to it (findmust's UTF-8 check) is never dereferenced.
+
+Sanity of the engine build: '^.$' matches A; '^[A-Za-z0-9_-]{1,3}$' matches
+A/AA/a_/-5 and rejects +5; '^a{1,3}$' matches a/aa/aaa and rejects aaaa.
+The mechanism under test is unchanged upstream code: utils.h defines
+DUPMAX = _POSIX2_RE_DUP_MAX (255) and regcomp.c p_count() fails any {m,n}
+bound above DUPMAX with REG_BADBR.
+
+The glibc-regcomp-harness twin (same main.c, system headers) shows the Linux
+side-by-side: glibc accepts {20,256}, which is why Linux lanes never saw the
+breakage. Harness sources were kept in a throwaway mktemp dir and removed
+after the evidence was captured; only these transcripts remain.

@@ -1,0 +1,40 @@
+Live re-run 2026-10-12T13:15:07Z at pipeline head 718fa215ae318a38b5a7ee992d03808ad2f7e395 (worktree clean).
+Engine context: this host's bash [[ =~ ]] uses glibc regcomp
+(getconf RE_DUP_MAX = 32767), so both the old {20,256} and the new
+{20,255}[..]? patterns compile here; the Linux side asserts the
+language-equivalence and product behavior only. The BSD/macOS-side
+rejection and equivalence evidence is the fresh native-engine re-run in
+bsd-regcomp-fresh-rerun-matrix.txt plus the original accepted files
+(hashes verified this turn):
+   299b9a2909347e9de42c2415f6516b793ee5a567954fc38886f867016db4d259  bsd-regcomp-harness-provenance.txt
+   5f3c12a92e1796f64252aa11fbf5db009d3795d2ef0fa29fe22588c9c3b12f81  bsd-regcomp-token-regex-matrix.txt
+   0b56b8b7525d3e8aaae9a7decfff61d27a484813f301a4b66287b7e78259d539  bsd-regcomp-fresh-rerun-matrix.txt
+Driver: repo fixtures from tests/fm-pr-merge.test.sh lines 1-2219 at
+this head (make_case, make_forgejo_case, and run_pr_merge verbatim; no
+test invoked), driving the public interface bin/fm-pr-merge.sh task-x1
+https://git.example.dev/owner/repo/pulls/9 with FM_TEST_FORGEJO_TOKEN
+pinned per case. Companion repo suite at this head in this run:
+bash tests/fm-pr-merge.test.sh (all cases, including
+test_forgejo_token_length_and_alphabet_boundaries: 20/21/255/256 merge,
+19/257/'+' refused before any curl) exited 0.
+
+== fm-pr-merge with token 'len256' (256 chars): exit=0
+   keyring lookups: 7  curl REST calls: 5
+   verified: https://git.example.dev/owner/repo/pulls/9 is open and mergeable, with a successful combined commit status at head 0123456789abcdef0123456789abcdef01234567
+   pr= recorded in task meta: 1  merge POST issued: 1
+== fm-pr-merge with token 'len20' (20 chars): exit=0
+   keyring lookups: 7  curl REST calls: 5
+   verified: https://git.example.dev/owner/repo/pulls/9 is open and mergeable, with a successful combined commit status at head 0123456789abcdef0123456789abcdef01234567
+   pr= recorded in task meta: 1  merge POST issued: 1
+== fm-pr-merge with token 'len257' (257 chars): exit=1
+   keyring lookups: 1  curl REST calls: 0
+   pr= recorded in task meta: 0  merge POST issued: 0
+   error: merging a Forgejo pull request on git.example.dev requires an API token in the Linux keyring under service git.example.dev/forgejo-cli/omarchy
+== fm-pr-merge with token 'len19' (19 chars): exit=1
+   keyring lookups: 1  curl REST calls: 0
+   pr= recorded in task meta: 0  merge POST issued: 0
+   error: merging a Forgejo pull request on git.example.dev requires an API token in the Linux keyring under service git.example.dev/forgejo-cli/omarchy
+== fm-pr-merge with token 'badchar' (20 chars): exit=1
+   keyring lookups: 1  curl REST calls: 0
+   pr= recorded in task meta: 0  merge POST issued: 0
+   error: merging a Forgejo pull request on git.example.dev requires an API token in the Linux keyring under service git.example.dev/forgejo-cli/omarchy

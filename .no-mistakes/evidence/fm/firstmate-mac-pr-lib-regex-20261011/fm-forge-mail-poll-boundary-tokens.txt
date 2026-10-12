@@ -1,0 +1,33 @@
+Live re-run 2026-10-12T13:15:07Z at pipeline head 718fa215ae318a38b5a7ee992d03808ad2f7e395 (worktree clean).
+Engine context: this host's bash [[ =~ ]] uses glibc regcomp
+(getconf RE_DUP_MAX = 32767), so both the old {20,256} and the new
+{20,255}[..]? patterns compile here; the Linux side asserts the
+language-equivalence and product behavior only. The BSD/macOS-side
+rejection and equivalence evidence is the fresh native-engine re-run in
+bsd-regcomp-fresh-rerun-matrix.txt plus the original accepted files
+(hashes verified this turn):
+   299b9a2909347e9de42c2415f6516b793ee5a567954fc38886f867016db4d259  bsd-regcomp-harness-provenance.txt
+   5f3c12a92e1796f64252aa11fbf5db009d3795d2ef0fa29fe22588c9c3b12f81  bsd-regcomp-token-regex-matrix.txt
+   0b56b8b7525d3e8aaae9a7decfff61d27a484813f301a4b66287b7e78259d539  bsd-regcomp-fresh-rerun-matrix.txt
+Driver: repo fixtures from tests/fm-forge-mail.test.sh lines 1-152 at
+this head (the fake forge curl verbatim; the credential stub adds only a
+lookup log and a token pin), driving the public interface
+bin/fm-forge-mail.sh poll with FM_FORGE_MAIL_HOST=git.test.invalid,
+FM_FORGE_MAIL_REPO=own/mailbox, one open mail issue #12. Companion repo
+suite at this head in this run: bash tests/fm-forge-mail.test.sh (all
+cases) exited 0.
+
+== poll with 256-char drain token ('len256'): exit=0
+   keyring lookups: 3  curl REST calls: 2
+   'check' wake rows queued: 1
+== poll with 20-char drain token ('len20'): exit=0
+   keyring lookups: 3  curl REST calls: 2
+   'check' wake rows queued: 1
+== poll with 19-char drain token ('len19'): exit=1
+   keyring lookups: 1  curl REST calls: 0
+   'check' wake rows queued: 0
+   stderr: fm-forge-mail: git.test.invalid requires the dedicated drain token in the Linux keyring under service git.test.invalid/forgejo-mail/drain
+== poll with 257-char drain token ('len257'): exit=1
+   keyring lookups: 1  curl REST calls: 0
+   'check' wake rows queued: 0
+   stderr: fm-forge-mail: git.test.invalid requires the dedicated drain token in the Linux keyring under service git.test.invalid/forgejo-mail/drain
