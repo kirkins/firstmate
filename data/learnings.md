@@ -43,8 +43,9 @@ assuming GitHub tooling applies. <!--a:2026-10-09-->
 
 The Hermes MCP offers `submit_job`, `get_job`, and `stop_job`. Use it for an
 explicitly requested Hermes task, retain the returned signed job ID, and check
-the result before reporting completion. These are asynchronous jobs; the
-existing `hermes_ask` conversation bridge is a separate integration. <!--a:2026-10-06-->
+the result before reporting completion. These are asynchronous jobs; the sync
+`hermes_ask` bridge is retired, not a current surface (2026-10-12 entry
+above). <!--a:2026-10-06-->
 
 GLM-5.3 and GLM-5.3-Flash use `lobbykit-zai` and the cluster gateway at
 http://127.0.0.1:18080/v1. The upstream z.ai key stays in Kubernetes.
