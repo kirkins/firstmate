@@ -1,0 +1,76 @@
+$ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4RSY6XNBW5VEHFJM51BCS1Z log -1 --format='%H %an %s'
+cd16170d0230ee79bdfccdcabbc254c9a6850939 Philip Kirkbride Land restored fleet learnings
+
+$ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4RSY6XNBW5VEHFJM51BCS1Z status --porcelain (empty == clean tree)
+[exit 0 - empty output above means clean]
+
+$ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4RSY6XNBW5VEHFJM51BCS1Z stash list (empty == bytes were never stashed)
+stash@{0}: WIP on (no branch): 844fa8ba no-mistakes(document): Fix stale forge-merge wording in architecture and merge header
+[end stash list]
+
+$ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4RSY6XNBW5VEHFJM51BCS1Z branch --contains cd16170d0230ee79bdfccdcabbc254c9a6850939 | grep fm/firstmate-learnings-convergence-20261012
+refs/heads/fm/firstmate-learnings-convergence-20261012 -> cd16170d0230ee79bdfccdcabbc254c9a6850939
+
+$ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4RSY6XNBW5VEHFJM51BCS1Z diff --stat c3ce0ab6be154cc7e1f5be7b397c06260c4a8ccc cd16170d0230ee79bdfccdcabbc254c9a6850939
+ data/learnings.md | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
+
+$ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4RSY6XNBW5VEHFJM51BCS1Z merge-base --is-ancestor c3ce0ab6be154cc7e1f5be7b397c06260c4a8ccc cd16170d0230ee79bdfccdcabbc254c9a6850939; echo $?
+0 (TARGET is a descendant of BASE: fast-forwardable)
+
+$ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4RSY6XNBW5VEHFJM51BCS1Z diff c3ce0ab6be154cc7e1f5be7b397c06260c4a8ccc cd16170d0230ee79bdfccdcabbc254c9a6850939 -- data/learnings.md (the landed bytes)
+diff --git a/data/learnings.md b/data/learnings.md
+index 318e52b9..395e5b83 100644
+--- a/data/learnings.md
++++ b/data/learnings.md
+@@ -20,6 +20,17 @@ single-job runner pods can wedge as idle pollers ("received no task" every 5s
+ indefinitely) - deleting the owning Job cleans them; the per-minute CronJob
+ respawns healthy ones. <!--a:2026-10-10-->
+ 
++# Hermes communication surfaces (2026-10-12)
++
++The synchronous hermes_ask bridge (pi extension lobbykit-hermes.ts -> local
++socket 19910 -> herdr-hermes-a2a-bridge pod) is RETIRED by captain ruling
++2026-10-12 (10 sync calls ever vs 212 async; the mailbox proved the better
++shape). Hermes surfaces now: async Jobs via the hermes-mcp connector
++(submit_job/get_job/stop_job) for asks, and the firstmate/mailbox forge repo
++for durable messages both directions. The bridge's cluster objects and the
++workstation socket/extension are removed; hermes-agent-lobbykit removes the
++deploy surface. Do not recreate the sync path.
++
+ # Fleet service access
+ <!-- memory tiers: see the stow skill -->
+ 
+@@ -48,6 +59,17 @@ keys). Brief-writing rule: any capability-inventory scout must be told to
+ cross-reference existing credentials (cluster secrets, credential store)
+ against provider requirements before recommending anything keyed. <!--a:2026-10-10-->
+ 
++# Firstmate-repo ships deliver to the fork, never upstream
++
++2026-10-11: a firstmate-repo ship opened its PR against upstream
++kunchenguid/firstmate (PR 7094) instead of the captain's fork - the standing
++rule lives in data/captain.md but the worker only reads its brief. Brief-writing
++rule: every firstmate-repo ship brief's Firstmate spec must carry the explicit
++delivery line 'open the PR on the captain's fork kirkins/firstmate (base main);
++NEVER open PRs against upstream kunchenguid/firstmate'. The fork was the
++correct target in the scaffold's project path all along; name the target repo
++anyway because the upstream remote is present in every clone. <!--a:2026-10-11-->
++
+ # Fresh-worktree launch prompts (pi trust picker)
+ 
+ 2026-10-10: fresh pi spawns in never-used treehouse paths stall at a launch
+@@ -55,8 +77,12 @@ picker (trust/theme) until dismissed; the fix that works is pre-trust the new
+ worktree path in ~/.pi/agent/trust.json immediately after spawn, then
+ fm-control interrupt (clears the picker/composer) followed by fm-send with a
+ begin-the-task line. A bare doorbell alone works only when the composer reads
+-empty. Consider pre-trusting the worktree path before the spawn resolves as a
+-future improvement. <!--a:2026-10-10-->
++empty. Schema correction 2026-10-11: the trust store is a FLAT map of
++"<absolute path>": true - pi rejects any other value shape. Pre-trust by
++setting that key; appending an array key (e.g. "trusted": [...]) corrupts
++the file and every later pi boot in ANY worktree dies with "Invalid trust
++store" until the bogus key is removed. Consider pre-trusting the worktree path
++before the spawn resolves as a future improvement. <!--a:2026-10-10-->
+ 
+ # Codex worker trust dialogs differ from pi
+ 

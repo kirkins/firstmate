@@ -1,0 +1,7 @@
+primary HEAD:      c3ce0ab (main)
+sm-behind HEAD:    8866512 (detached, pre-#16)
+sm-dirty HEAD:     c3ce0ab (detached, at BASE)
+origin/main:       c3ce0ab
+primary status:     M data/learnings.md
+primary diffstat:   1 file changed, 28 insertions(+), 2 deletions(-)
+restored sha256:   2a3f3509287bd388bc7292c8b07bdc33da60258f2f52d784eedfd7f5d840c6f3

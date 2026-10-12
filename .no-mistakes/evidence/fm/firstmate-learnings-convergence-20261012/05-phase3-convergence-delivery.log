@@ -1,0 +1,11 @@
+$ FM_HOME=/tmp/fm-validate-fleet.W8KHFI/home FM_ROOT_OVERRIDE=/tmp/fm-validate-fleet.W8KHFI/primary /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4RSY6XNBW5VEHFJM51BCS1Z/bin/fm-update.sh
+# (learnings landed on origin/main; primary back on clean main at BASE)
+
+WARNING: watcher still down (same stale episode; last beat: 1s ago, grace 300s) - full banner already printed this episode.
+firstmate: updated c3ce0ab..ab6cb27
+no watches registered
+secondmate sm-behind: updated c3ce0ab..ab6cb27
+secondmate sm-dirty: skipped: dirty working tree
+reread-firstmate: no
+restart-secondmates: none
+nudge-secondmates: none

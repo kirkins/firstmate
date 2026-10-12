@@ -1,0 +1,7 @@
+# guard proof (adversarial home sm-dirty across both passes)
+sm-dirty HEAD:  c3ce0ab6be154cc7e1f5be7b397c06260c4a8ccc (expected c3ce0ab6be154cc7e1f5be7b397c06260c4a8ccc)
+learnings sha:  2a3f3509287bd388bc7292c8b07bdc33da60258f2f52d784eedfd7f5d840c6f3
+expected sha:   2a3f3509287bd388bc7292c8b07bdc33da60258f2f52d784eedfd7f5d840c6f3
+stash lists:    primary=[] sm-behind=[] sm-dirty=[]
+sm-dirty reflog (no reset/merge entries expected):
+c3ce0ab HEAD@{0}: 

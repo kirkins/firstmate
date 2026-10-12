@@ -1,0 +1,41 @@
+=== fixture fleet: /tmp/fm-validate-fleet.W8KHFI
+primary HEAD:      c3ce0ab (main)
+sm-behind HEAD:    8866512 (detached, pre-#16)
+sm-dirty HEAD:     c3ce0ab (detached, at BASE)
+origin/main:       c3ce0ab
+primary status:     M data/learnings.md
+primary diffstat:   1 file changed, 28 insertions(+), 2 deletions(-)
+restored sha256:   2a3f3509287bd388bc7292c8b07bdc33da60258f2f52d784eedfd7f5d840c6f3
+PASS: phase0: landed diff is exactly data/learnings.md +28/-2
+PASS: phase0: gate worktree at TARGET is clean (no uncommitted residue)
+PASS: phase0: no stash entry carries data/learnings.md (bytes were never parked in a stash; the one pre-existing gate stash is unrelated PR-tooling WIP)
+PASS: phase0: TARGET is a fast-forward descendant of BASE
+PASS: phase1: convergence refuses the dirty primary (block reproduced)
+PASS: phase1: dirty secondmate home also skipped
+PASS: phase1: clean behind home still converges to main's tip (BASE)
+PASS: phase1: dirty primary HEAD did not move
+PASS: phase1: primary's uncommitted learnings bytes untouched (not stashed/discarded)
+PASS: phase1: no stash created in the primary
+PASS: phase1: sm-behind advanced to BASE (received the #16 fix without the learnings)
+PASS: phase2: after landing, the working tree is clean
+PASS: phase2: landed commit is a single clean child of BASE (linear, ff-able)
+PASS: phase2: landed data/learnings.md bytes are identical to the restored fleet edits (sha 2a3f3509287bd388bc7292c8b07bdc33da60258f2f52d784eedfd7f5d840c6f3)
+PASS: phase2: origin/main advanced to the landed commit (PR merged)
+PASS: phase3: the primary fast-forwards to the landed commit
+PASS: phase3: clean behind home fast-forwards too
+PASS: phase3: adversarial: dirty home still refused, never forced
+PASS: phase3: learnings-only advance leaves instruction surface unchanged (reread-firstmate: no)
+PASS: phase3: primary HEAD == landed commit
+PASS: phase3: sm-behind HEAD == landed commit
+PASS: phase3: primary's data/learnings.md now carries the landed Hermes learning
+PASS: phase3: converged home's data/learnings.md carries the landed learning
+PASS: phase3: converged home received the merged #16 fix bytes (bin/backends/herdr.sh)
+PASS: phase3: converged home received the tracked learnings file in the same pass
+PASS: phase3: primary tree clean after convergence
+PASS: phase3: converged home tree clean after convergence
+PASS: phase3: adversarial: dirty home HEAD never moved
+PASS: phase3: adversarial: dirty home's learnings bytes byte-identical, never discarded
+PASS: phase3: no stash created in any fleet repo
+PASS: phase4: session digest CONTEXT section renders the landed learnings to the worker
+
+=== overall: 0 failing assertion(s)

@@ -1,0 +1,22 @@
+# Landing: branch + commit + push + PR-merge(fast-forward) of origin/main
+$ git -C primary checkout -b fm/firstmate-learnings-convergence-20261012   (carries the uncommitted bytes)
+Switched to a new branch 'fm/firstmate-learnings-convergence-20261012'
+
+$ git -C primary add data/learnings.md && git commit -m 'Land restored fleet learnings'
+landed commit: ab6cb27746fd025ed0e6af9781c0cd45ba256c08
+
+$ git -C primary status --porcelain (empty == tree goes clean)
+[end status]
+
+$ git -C primary show --stat --oneline -s HEAD
+ab6cb27 Land restored fleet learnings
+
+$ git push origin HEAD:refs/heads/fm/firstmate-learnings-convergence-20261012  (the PR branch)
+pushed.
+
+$ origin: fast-forward main to the landed commit (the PR merge)
+origin/main -> ab6cb27
+
+$ git -C primary checkout main   (back to the tracked branch; tree clean)
+primary HEAD: c3ce0ab (main)
+[end status]
