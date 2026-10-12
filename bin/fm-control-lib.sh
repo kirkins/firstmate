@@ -293,7 +293,9 @@ fm_control_relaunch_resume_flag() {  # <harness> <registered-agent>
 # Which named keys a backend adapter can deliver. Every session provider
 # normalizes Enter, Ctrl+C, and the Ctrl+U composer clear; Orca's terminal API
 # exposes only an interrupt and an Enter, so it can deliver neither Escape nor
-# Ctrl+U (bin/backends/orca.sh's fm_backend_orca_send_key).
+# Ctrl+U (bin/backends/orca.sh's fm_backend_orca_send_key). tmux and herdr
+# additionally deliver C-d, the guarded Claude exit fallback key owned by
+# fm_control_exit_fallback_key above.
 fm_control_backend_supports_key() {  # <backend> <key>
   local backend=${1-} key=${2-}
   case "$backend" in

@@ -448,7 +448,7 @@ claude --help | grep -A 5 'workspace trust dialog'
 ```
 
 `--dangerously-skip-permissions` is a permission control and is absent from that bypass, so an interactive worker in a fresh worktree still reaches the dialog.
-Firstmate cannot answer it either, because its key plane carries only Enter, Escape, and C-c with no arrow navigation.
+Firstmate cannot answer it either, because its key plane carries no arrow navigation.
 Suppression itself was then observed directly on the same date and version, with a control arm and a treatment arm.
 
 The control arm launched a fresh linked worktree with no pre-registration, the way `bin/fm-spawn.sh` launches one.
