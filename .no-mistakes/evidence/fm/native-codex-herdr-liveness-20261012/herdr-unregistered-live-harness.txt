@@ -1,0 +1,104 @@
+Live validation of fm/native-codex-herdr-liveness (branch fm/native-codex-herdr-liveness-20261012)
+Target commit 6e504a56 vs base 23e22fc5, run 2026-10-12 on Linux x86_64.
+
+Environment: real Herdr client/server 0.8.2, real harness CLIs on PATH
+(codex-cli 0.162.1, muse 1.4.4->1.4.6, pi). Lab session
+fm-lab-fm-codex-liv-186328-14780 provisioned and torn down through
+bin/fm-herdr-lab.sh (prepare/provision/run/teardown contract); the running
+default Herdr session was recorded as the fleet-state tripwire and verified
+unchanged at teardown. Adapter calls were routed to the lab session with the
+same fakebin `herdr` wrapper shape tests/fm-backend-herdr-agent-exit-shell-e2e.test.sh
+uses. Product-level sends used a marked disposable lab home
+(bin/fm-lab-home.sh create) with env -u NO_MISTAKES_GATE -u FM_*_OVERRIDE, per
+the gate's authorized lab-home allowance; no bypass was exported.
+
+Premise construction (the reported Mac blocker shape):
+  herdr agent start registered codex first; `pane release-agent` cannot drop a
+  screen-detected registration, and a server stop/restart kills the harness
+  processes (both tried, both documented in docs/herdr-backend.md). The state
+  "agent get -> agent_not_found while a recognized harness process runs in the
+  exact pane" was therefore built with a harness herdr 0.8.2 does not integrate
+  (muse; `herdr integration status` lists no muse entry), launched through
+  `pane run` in a lab tab. The classifier path under test is
+  harness-generic (bin/fm-agent-process-lib.sh vocabulary).
+
+--- Pane w1:p5 premise (captured before every step below) ---
+$ bin/fm-herdr-lab.sh run fm-lab-... agent get w1:p5
+{"code":"agent_not_found","agent":null}
+$ bin/fm-herdr-lab.sh run fm-lab-... pane process-info --pane w1:p5
+{"shell_pid":196759,"fg":[{"pid":197078,"name":"muse-bin-1.4.6-"}]}
+
+--- Classifier contrast, same pane, same moment (registration probed unchanged before/after) ---
+[1] before:            {"agent_get":"agent_not_found"}
+[2] CHANGED tree:      pane_state=live recovery=alive husk=refused
+[3] BASE tree:         pane_state=no-agent recovery=dead husk=yes
+[4] after:             {"agent_get":"agent_not_found"}
+
+Same contrast on the first premise pane w1:p4 (muse at its trust dialog):
+  CHANGED: pane_state=live  recovery=alive husk=refused
+  BASE:    pane_state=no-agent recovery=dead husk=yes
+
+Registered-path sanity on a real codex pane (w1:p3, agent get -> codex idle):
+  pane_state=live recovery=alive husk=refused (unchanged behavior).
+
+Restored shell-only pane after a guarded lab server stop (w1:p2, bash shell,
+agent get -> agent_not_found) — the no-false-alive guard, live:
+  pane_state=no-agent recovery=dead husk=yes
+
+--- Standard instruction doorbell (bin/fm-send.sh, real product, lab home) ---
+Task record state/drv-live.meta: window=fm-lab-...:w1:p5 backend=herdr kind=ship.
+
+BASE tree (23e22fc5) send, with agent get probed agent_not_found immediately
+before and after:
+  exit=0 (durable record is the delivery), stderr:
+  fm-send: doorbell not typed because the agent in fm-lab-...:w1:p5 has exited;
+  the steer is durably recorded at .../drv-live.inbox/001.msg for recovery
+  (stuck-crewmate-recovery), and the watcher will not re-ring a dead pane
+  -> the exact reported continuation blocker, reproduced live.
+
+CHANGED tree (6e504a56) send, same pane, agent get probed agent_not_found
+immediately before:
+  exit=0, zero "doorbell not typed" lines on stderr, inbox records
+  001.msg (base send) + 002.msg (changed send) durably written, and the pane
+  capture shows the doorbell typed and submitted into the live driver:
+  ❯ : Firstmate instruction waiting: list "$FM_TASK_INBOX"/*.msg in your 'drv-live.inbox'
+    steering inbox, read and act on each in numeric order, then mv each into its handled/.
+  (muse then attempted the turn; its own "API error 402 Billing verification
+  failed" is muse-side and unrelated to firstmate delivery.)
+
+Same contrast on pane w1:p4/task drv-task: base refused the doorbell; changed
+tree typed the same doorbell line into the pane.
+
+--- Duplicate-worker guard (create_task, changed tree, live lab) ---
+$ fm_backend_herdr_create_task fm-lab-...:w1 fm-drv-task-2 /tmp/fm-codex-proj.afqnf8
+error: herdr tab 'fm-drv-task-2' already exists in workspace w1 (session fm-lab-...)
+rc=1
+After the refusal the lab workspace still had exactly tabs w1:t1..w1:t4 and the
+muse pid 193033 was still running: no replacement tab created, no pane closed,
+no duplicate worker launched.
+
+--- Existing live regression (real Herdr + real Pi), run as-is ---
+$ bash tests/fm-backend-herdr-agent-exit-shell-e2e.test.sh   (exit 0)
+ok - agent get distinguishes leftover-shell (dead/no-agent) from live idle Pi
+ok - pane get agent_status lag cannot keep an exited occupant classified alive
+(/quit and SIGKILL leftover shells read no-agent/dead; the live idle sibling
+stays alive — the shell-only branch of the changed classifier, live.)
+
+--- Targeted unit suites (fake-CLI, changed test files) ---
+tests/fm-backend-herdr.test.sh: 234 ok, 0 failures (includes
+  "herdr agent_not_found: exact-pane known harness stays live, shell-only stays
+  dead, and unknown or unreadable evidence refuses cleanup").
+tests/fm-crew-state.test.sh: 283 ok, 0 failures (includes
+  "a husk pane (agent gone) still reads gone for reclaim").
+tests/fm-control-relaunch.test.sh: 78 ok, 0 failures.
+tests/fm-teardown.test.sh: 105 ok; the new
+  "teardown refuses a landed legacy record while an unregistered Codex process
+  occupies its exact Herdr pane" passes; the single failure
+  "leaked-process-reap: leaked worktree process survived teardown" also fails
+  identically on the BASE commit in this environment (verified by extracting
+  23e22fc5 to a temp tree and running the same suite), so it is pre-existing
+  and unrelated to this change.
+
+--- Teardown ---
+bin/fm-herdr-lab.sh teardown fm-lab-fm-codex-liv-186328-14780 -> rc 0, default
+session tripwire confirmed unchanged; all lab harness pids gone afterward.
