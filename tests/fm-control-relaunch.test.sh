@@ -2080,18 +2080,20 @@ case "${1:-} ${2:-}" in
       # The agent came back with its server. Nothing here is reclaimable.
       printf '{"result":{"agent":{"agent_status":"idle"}}}\n'
     else
-      # A pane that comes back holding no agent is the adoptable state.
+      # The exact-pane process read decides whether an unregistered pane is
+      # still occupied by a harness or is a shell-only restart husk.
       printf '{"error":{"code":"agent_not_found"}}\n'
     fi
     exit 0 ;;
   'pane process-info')
-    # A retained registration with a shell-only pane models an exited agent
-    # whose Herdr status authority still belongs to its previous session.
-    if [ -f "$D/herdr-agent-registration" ]; then
-      printf '{"result":{"type":"pane_process_info","process_info":{"pane_id":"%s","shell_pid":4242,"foreground_processes":[]}}}\n' \
+    # A process-level pane view models the prior agent on the saved endpoint.
+    if [ -f "$D/herdr-agent-live" ] && [ ! -f "$D/herdr-agent-registration" ]; then
+      printf '{"result":{"type":"pane_process_info","process_info":{"pane_id":"%s","shell_pid":4242,"foreground_processes":[{"pid":4243,"name":"claude","argv":["claude"],"cmdline":"claude"}]}}}\n' \
         "$(cat "$D/herdr-pane")"
     else
-      printf '{"result":{"type":"pane_process_info","process_info":{"pane_id":"%s","shell_pid":4242,"foreground_processes":[{"pid":4243,"name":"claude","argv":["claude"],"cmdline":"claude"}]}}}\n' \
+      # The fixture's ps stub owns PID 4242 as the pane shell; keep the
+      # process-info identity paired with that same positive shell evidence.
+      printf '{"result":{"type":"pane_process_info","process_info":{"pane_id":"%s","shell_pid":4242,"foreground_processes":[]}}}\n' \
         "$(cat "$D/herdr-pane")"
     fi
     exit 0 ;;
@@ -2139,15 +2141,11 @@ SH
   chmod +x "$fb/herdr"
   cat > "$fb/ps" <<'SH'
 #!/usr/bin/env bash
-if [ -f "$FM_FAKE_DIR/herdr-agent-registration" ]; then
-  case "$*" in
-    '-axo pid=,ppid=,comm=') printf '4242 1 bash\n' ;;
-    '-p 4242 -o args=') printf 'bash\n' ;;
-    *) exec /bin/ps "$@" ;;
-  esac
-else
-  exec /bin/ps "$@"
-fi
+case "$*" in
+  '-axo pid=,ppid=,comm=') printf '4242 1 bash\n' ;;
+  '-p 4242 -o args=') printf 'bash\n' ;;
+  *) exec /bin/ps "$@" ;;
+esac
 SH
   chmod +x "$fb/ps"
 }

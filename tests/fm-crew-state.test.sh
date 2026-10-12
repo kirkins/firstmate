@@ -250,8 +250,8 @@ case "${1:-}" in
         printf '{"result":{"pane":{"pane_id":"%s"}}}\n' "${3:-}"
         exit 0 ;;
       process-info)
-        # The process-level view a registration is verified against (#4115):
-        # `agent` puts a live claude in the foreground, `shell` a bare zsh whose
+        # The exact-pane process-level view for registered and unregistered
+        # panes: `agent` puts a live claude in the foreground, `shell` a bare zsh whose
         # pid is the test script itself (a real, long-lived process with no
         # harness descendant, so the adapter's real process-table walk finds
         # it), and anything else answers nothing (unreadable).
@@ -2672,8 +2672,9 @@ test_no_run_herdr_stale_working_record_is_never_busy() {
 }
 
 # Decision follow-up (2026-09-05 review): a husk pane (pane present,
-# agent_not_found) is authoritative death evidence - it keeps the gone-class
-# text so the stale sweep may still reclaim it, never unknown/unreachable.
+# agent_not_found plus exact-pane shell-only proof is authoritative death
+# evidence - it keeps the gone-class text so the stale sweep may reclaim it,
+# never unknown/unreachable.
 test_no_run_herdr_husk_dead_still_reads_gone() {
   command -v jq >/dev/null 2>&1 || { pass "herdr husk test skipped without jq"; return; }
   reset_fakes
@@ -2685,10 +2686,11 @@ test_no_run_herdr_husk_dead_still_reads_gone() {
   FM_FAKE_AXI_STATUS=""
   FM_FAKE_RUNS_LIST=""
   FM_FAKE_TMUX_MISSING=1
-  # The pane exists and answers pane get, but no agent is registered in it,
-  # and the scrollback read fails besides.
+  # The pane exists and answers pane get, no agent is registered in it, the
+  # process view proves a shell-only pane, and the scrollback read also fails.
   FM_FAKE_HERDR_READ_FAIL=1
   FM_FAKE_HERDR_HUSK=1
+  FM_FAKE_HERDR_PROCESS=shell
   local out; out=$(run_crew_state "$d" feat-herdr-husk)
   assert_contains "$out" "state: unknown" "a husk pane has no live current state"
   assert_contains "$out" "backend target gone" "a husk pane keeps its gone-class death evidence"

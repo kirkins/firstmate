@@ -205,9 +205,14 @@ The typed pointer (`Read the brief at <path> and follow it exactly.`) was echoed
 
 `fm_backend_agent_state` is the one signal this run disproves rather than confirms: it reported `dead` throughout - at the ready banner, mid-tool-call busy, and idle-with-`PONG` alike - even though rovo was demonstrably alive and responding the whole time.
 The cause is on Herdr's side, not firstmate's: `fm_backend_herdr_pane_agent_state` calls `herdr agent get <pane>`, which returned `{"error":{"code":"agent_not_found","message":"agent target w1:p1 not found"}}` for the live rovo pane, because `herdr integration status` lists no `rovo` entry at all (only `pi`, `omp`, `claude`, `codex`, `copilot`, `devin`, `droid`, `kimi`, `opencode`, `kilo`, `hermes`, `qodercli`, `qwen`, `cursor`, `mastracode`, `antigravity-cli`, and `grok` are known integrations on the installed Herdr build).
-Herdr has not shipped agent detection for rovo, so the classifier that recovery logic depends on (`fm_backend_agent_state`'s `alive`/`dead` distinction, and `fm_backend_herdr_tab_is_husk`'s reuse of it) cannot currently tell a live rovo pane apart from an empty one on the herdr backend; a live rovo worker placed on `backend=herdr` risks being misclassified as an agent-less husk by any recovery path that trusts this classifier.
-This is recorded as a known Herdr-side integration gap rather than a firstmate bug, and is deliberately left unpatched here: no herdr-scoped workaround is safe to add without risking a false-positive `alive` verdict for some unrelated idle shell, so `backend=herdr` remains usable for launching a rovo crewmate/scout but unverified for automatic dead/husk recovery until Herdr ships rovo detection (or `bin/backends/herdr.sh` gains an independent process-based fallback the way `bin/backends/tmux.sh` already has).
-`/exit` returned the pane to an idle shell prompt rather than closing it, unlike tmux which closes the whole window, so `fm_backend_agent_state` reading `dead` after exit is the textually correct verdict for an agent-less-but-present pane; it is only the ready/busy/idle misclassification while rovo was actually running that is the real finding above.
+Herdr has not shipped agent detection for rovo, so this run received `agent_not_found` while Rovo was active.
+The Herdr pane classifier now checks the exact pane's existing process view for that response; the shared process classifier recognizes Rovo, while a shell-only pane remains a husk and unknown evidence still refuses recovery or cleanup.
+This corrects the ready/busy/idle misclassification when Herdr has no registration for a recognized Rovo process, without adding a Herdr Rovo integration or claiming live coverage for other registration shapes.
+`/exit` returned the pane to an idle shell prompt rather than closing it, unlike tmux which closes the whole window, so `fm_backend_agent_state` reading `dead` after exact-pane shell-only proof is the textually correct verdict for an agent-less-but-present pane.
+
+Follow-up on 2026-10-12: the Herdr pane classifier now consults its existing exact-pane process proof when `agent get` returns `agent_not_found`.
+The shared process classifier already recognizes Rovo, so a recognized Rovo process in the recorded pane now reads `alive`, while a shell-only or unreadable pane retains its conservative result.
+This follow-up does not add a Herdr Rovo integration or establish live Rovo coverage for this classifier path.
 
 ## Skill-loading interop gap (documented, not fixed)
 

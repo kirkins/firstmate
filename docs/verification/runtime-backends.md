@@ -1754,7 +1754,7 @@ That command is the guard that refreshes this record; run it after every Herdr u
 For Pi on Herdr 0.9.0, `herdr agent get` reflects whether the agent process remains live; its registration does not persist merely because the pane and parent shell do.
 A Pi launched as a child of the pane shell (not via `exec`) that then `/quit`s or is SIGKILL'd leaves the pane and shell in place, and `agent get` returns `agent_not_found`.
 A sibling live idle Pi stays `agent=pi` with `agent_status=idle`.
-`fm_backend_herdr_pane_agent_state` maps that `agent_not_found` leftover shell to `no-agent` and `fm_backend_herdr_agent_state` maps it to `dead` (relaunch-allowed), while the live idle pane stays `alive`.
+`fm_backend_herdr_pane_agent_state` maps that `agent_not_found` plus shell-only process view to `no-agent` and `fm_backend_herdr_agent_state` maps it to `dead` (relaunch-allowed), while the live idle pane stays `alive`.
 `herdr pane get` `.agent_status` can still read `idle` after the occupant is gone; liveness is `agent get`, never that pane field.
 
 ```sh
@@ -1882,6 +1882,19 @@ ok - real herdr 0.9.0 + pi 0.85.1: the registration left behind by a quit pi rea
 `tests/fm-backend-herdr.test.sh` pins the logic portably with canned `process-info` bodies over real processes, driving the signals apart: the identical shell-only foreground reads `stale-agent` for a childless shell and `live` when an agent-named process is still a descendant of that shell, a `working`, `done`, or `blocked` record over a shell-only pane reads the same as `idle`, an unreadable process view reads `unknown` and refuses husk closing, a transient prompt helper beside the shell settles into `stale-agent` on the next shell-only sample while a foreground that never settles within the bound still reads `live`, and `busy_state` verifies a `working` record before reporting busy.
 `tests/fm-crew-state.test.sh` pins the recovery classifier: a stale registration over a shell-only pane reports agent gone rather than alive or unreachable, and a stale `working` record never reports the pane working.
 A stale-registration pane is never a husk: create, reclaim, presentation recovery, and session cleanup keep refusing it, and only recovery reuses it.
+
+### Missing Herdr agent registration with a live process
+
+The pane classifier applies its existing exact-pane process proof when `agent get` reports `agent_not_found`.
+A recognized harness process in that pane reads `live` and the recovery probe reads `alive`; a shell-only process view reads `no-agent` and `dead`; mismatched pane identity, an unknown foreground process, or unreadable evidence reads `unknown` and refuses recovery or cleanup.
+This preserves ordinary supervision when Herdr has no registration for a running harness without treating CWD, labels, or an unrelated pane process as actor authority.
+
+`tests/fm-backend-herdr.test.sh` pins the live and shell-only branches, and verifies that unknown, wrong-pane, and malformed process evidence refuses destructive cleanup.
+Measured live on 2026-10-12 in an isolated named `fm-lab-` session: Herdr client/server 0.8.2 (protocol 20) started native Codex CLI 0.162.1 as a registered idle agent in exact pane `w1:p1`; `pane process-info` reported PID 3187211 with kernel name `codex`, and `fm_backend_herdr_pane_agent_state` returned `live`.
+One minimal `agent prompt` returned `LAB_OK`, after which Herdr reported the pane idle and the same Codex process remained present.
+Herdr launched Codex with its default `--dangerously-bypass-approvals-and-sandbox` flag; the only prompt was that fixed one-line probe.
+This live check used registered `agent start` and `agent prompt`, not `fm-send`, and did not reproduce `agent_not_found` against a running Codex process; the missing-registration path is covered by the isolated unit fixtures above, and neither the Mac registration loss cause nor Codex interruption behavior is established here.
+The lab session was stopped and deleted through `bin/fm-herdr-lab.sh`, which confirmed the running default session was unchanged.
 
 ### Pane status authority across a relaunch
 
