@@ -1204,7 +1204,9 @@ fm_pr_forgejo_token() {  # <host>
   command -v secret-tool >/dev/null 2>&1 || return 1
   fm_pr_forge_host_valid "$1" || return 1
   token=$(secret-tool lookup service "$1/forgejo-cli/omarchy" 2>/dev/null) || return 1
-  [[ "$token" =~ ^[A-Za-z0-9_-]{20,256}$ ]] || return 1
+  # BSD regcomp rejects bounded repetitions above 255, so the optional final
+  # character preserves the inclusive 256-byte maximum without exceeding it.
+  [[ "$token" =~ ^[A-Za-z0-9_-]{20,255}[A-Za-z0-9_-]?$ ]] || return 1
   printf '%s' "$token"
 }
 

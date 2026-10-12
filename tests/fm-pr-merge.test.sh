@@ -2133,7 +2133,7 @@ printf 'secret-tool %s\n' "$*" >> "${FM_TEST_FORGEJO_ST_LOG:-/dev/null}"
 [ "${FM_TEST_ST_FAIL:-0}" = 0 ] || exit 1
 [ "${1:-} ${2:-}" = 'lookup service' ] || exit 1
 case "$3" in
-  */forgejo-cli/omarchy) printf 'forgejotoken0123456789abcdef0123456789' ;;
+  */forgejo-cli/omarchy) printf '%s' "${FM_TEST_FORGEJO_TOKEN:-forgejotoken0123456789abcdef0123456789}" ;;
   *) exit 1 ;;
 esac
 SH
@@ -2215,6 +2215,56 @@ test_forgejo_dotted_repository_name_merges() {
   assert_grep "verified: $url is open and mergeable" "$case_dir/stderr" \
     "forgejo-dotted-repo: the verified state was not reported"
   pass "fm-pr-merge merges a pull request on a repository whose name contains dots"
+}
+
+test_forgejo_token_length_and_alphabet_boundaries() {
+  local length token case_dir rc
+  for length in 20 21 255 256; do
+    token=$(printf '%*s' "$length" '' | tr ' ' A)
+    case_dir=$(make_forgejo_case "forgejo-token-valid-$length")
+    set +e
+    FM_TEST_FORGEJO_DIR="$case_dir" \
+    FM_TEST_FORGEJO_CURL_LOG="$case_dir/forgejo-curl.log" \
+    FM_TEST_FORGEJO_ST_LOG="$case_dir/forgejo-st.log" \
+    FM_TEST_FORGEJO_TOKEN="$token" \
+      run_pr_merge "$case_dir" task-x1 "$FJ_URL" \
+      > "$case_dir/stdout" 2> "$case_dir/stderr"
+    rc=$?
+    set -e
+    expect_code 0 "$rc" "forgejo-token-valid-$length: an allowed token length should merge"
+  done
+
+  for length in 19 257; do
+    token=$(printf '%*s' "$length" '' | tr ' ' A)
+    case_dir=$(make_forgejo_case "forgejo-token-invalid-length-$length")
+    set +e
+    FM_TEST_FORGEJO_DIR="$case_dir" \
+    FM_TEST_FORGEJO_CURL_LOG="$case_dir/forgejo-curl.log" \
+    FM_TEST_FORGEJO_ST_LOG="$case_dir/forgejo-st.log" \
+    FM_TEST_FORGEJO_TOKEN="$token" \
+      run_pr_merge "$case_dir" task-x1 "$FJ_URL" \
+      > "$case_dir/stdout" 2> "$case_dir/stderr"
+    rc=$?
+    set -e
+    [ "$rc" -ne 0 ] || fail "forgejo-token-invalid-length-$length: an out-of-range token was accepted"
+    [ ! -s "$case_dir/forgejo-curl.log" ] \
+      || fail "forgejo-token-invalid-length-$length: curl ran with an out-of-range token"
+  done
+
+  case_dir=$(make_forgejo_case forgejo-token-invalid-character)
+  set +e
+  FM_TEST_FORGEJO_DIR="$case_dir" \
+  FM_TEST_FORGEJO_CURL_LOG="$case_dir/forgejo-curl.log" \
+  FM_TEST_FORGEJO_ST_LOG="$case_dir/forgejo-st.log" \
+  FM_TEST_FORGEJO_TOKEN='AAAAAAAAAAAAAAAAAAA+' \
+    run_pr_merge "$case_dir" task-x1 "$FJ_URL" \
+    > "$case_dir/stdout" 2> "$case_dir/stderr"
+  rc=$?
+  set -e
+  [ "$rc" -ne 0 ] || fail "forgejo-token-invalid-character: a token with '+' was accepted"
+  [ ! -s "$case_dir/forgejo-curl.log" ] \
+    || fail "forgejo-token-invalid-character: curl ran with an invalid token"
+  pass "fm-pr-merge preserves Forgejo token alphabet and inclusive 20..256 length bounds"
 }
 
 test_forgejo_reports_every_failing_condition() {
@@ -2850,6 +2900,7 @@ test_gitlab_reports_every_failing_condition
 test_gitlab_stale_recorded_head_is_reported
 test_forgejo_url_resolves_and_merges
 test_forgejo_dotted_repository_name_merges
+test_forgejo_token_length_and_alphabet_boundaries
 test_forgejo_reports_every_failing_condition
 test_forgejo_already_merged_refuses
 test_forgejo_no_checks_is_not_green
