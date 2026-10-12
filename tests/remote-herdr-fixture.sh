@@ -17,6 +17,16 @@
 # one turn: the next agent read reports working and the pane settles back to
 # idle, which is the native transition the adapter confirms a submit with.
 #
+# The exit-proof contract (bin/backends/herdr.sh
+# fm_backend_herdr_pane_agent_state) demands the exact pane's process view
+# around every agent verdict, so `pane process-info` follows the same modeled
+# state: a typed pane shows its registered agent in the foreground, and an
+# agent-free pane shows a lone idle shell whose pid is the installing suite's
+# own shell - alive for every ps walk a test can trigger, unlike this fake's
+# per-call $$. A registered status over a shell-only pane, a mismatched pane
+# id, or an unreadable body still reads unknown and refuses, exactly as the
+# adapter's conservative branches require.
+#
 # Usage:
 #   . "$(dirname "${BASH_SOURCE[0]}")/remote-herdr-fixture.sh"
 #   install_remote_herdr_fixture <remote-root> <state-file> <log-file> \
@@ -36,6 +46,7 @@ STATE='$state'
 LOG='$log'
 SEND_FAIL='$send_fail'
 SOCKET='$socket'
+SHELL_PID='$$'
 SH
   cat >> "$script" <<'SH'
 printf '%s\n' "$*" >> "$LOG"
@@ -99,8 +110,14 @@ case "${1:-} ${2:-}" in
     jq_state --arg p "${3:-}" '.typed[$p] = true | .working[$p] = true' | save ;;
   "pane read") printf '\n' ;;
   "pane process-info")
-    printf '{"result":{"type":"pane_process_info","process_info":{"pane_id":"%s","shell_pid":%s,"foreground_process_group_id":%s,"foreground_processes":[{"pid":%s,"name":"codex","argv0":"codex","argv":["codex"],"cmdline":"codex"}]}}}\n' \
-      "$pane" "$$" "$$" "$$" ;;
+    if [ "$(jq_state -r --arg p "$pane" '.typed[$p] // false')" = true ]; then
+      printf '{"result":{"type":"pane_process_info","process_info":{"pane_id":"%s","shell_pid":%s,"foreground_process_group_id":%s,"foreground_processes":[{"pid":%s,"name":"codex","argv0":"codex","argv":["codex"],"cmdline":"codex"}]}}}\n' \
+        "$pane" "$$" "$$" "$$"
+    else
+      printf '{"result":{"type":"pane_process_info","process_info":{"pane_id":"%s","shell_pid":%s,"foreground_process_group_id":%s,"foreground_processes":[{"pid":%s,"name":"zsh","argv0":"zsh","argv":["-zsh"]}]}}}\n' \
+        "$pane" "$SHELL_PID" "$SHELL_PID" "$SHELL_PID"
+    fi
+    ;;
   "agent get")
     pane=${3:-}
     if [ "$(jq_state -r --arg p "$pane" '.working[$p] // false')" = true ]; then

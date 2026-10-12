@@ -420,6 +420,10 @@ set -u
 log=${FM_FAKE_HERDR_LOG:?}
 state=${FM_FAKE_HERDR_STATE:?}
 mate_id=${FM_FAKE_SECOND_MATE_ID:?}
+# The exact-pane process proof names this pid as the husk's shell: the
+# suite's own shell, alive for every ps walk the recovery can trigger,
+# unlike this fake's per-call $PPID.
+shell=${FM_FAKE_HERDR_SHELL_PID:?}
 killed="${state}.killed"
 spawned="${state}.spawned"
 printf '%s\n' "$*" >> "$log"
@@ -471,6 +475,20 @@ case "${1:-} ${2:-}" in
       printf '%s\n' '{"result":{"agent":{"agent_status":"idle"}}}'
     else
       printf '%s\n' '{"error":{"code":"agent_not_found"}}' >&2
+      exit 1
+    fi
+    ;;
+  "pane process-info")
+    # The exit-proof contract (fm_backend_herdr_pane_agent_state) demands the
+    # exact pane's process view around every agent verdict: the pre-relaunch
+    # husk answers agent_not_found and pairs it with a shell-only pane whose
+    # shell pid is alive in the real table, while the relaunched pane carries
+    # its registered idle agent in the foreground.
+    if [ "${4:-}" = p-new ] && [ -e "$spawned" ]; then
+      printf '%s\n' '{"result":{"type":"pane_process_info","process_info":{"pane_id":"p-new","shell_pid":424242,"foreground_processes":[{"pid":424243,"name":"pi","argv0":"pi","argv":["pi"],"cmdline":"pi"}]}}}'
+    elif [ "${4:-}" = p-old ] && [ ! -e "$killed" ]; then
+      printf '%s\n' "{\"result\":{\"type\":\"pane_process_info\",\"process_info\":{\"pane_id\":\"p-old\",\"shell_pid\":$shell,\"foreground_process_group_id\":$shell,\"foreground_processes\":[{\"pid\":$shell,\"name\":\"zsh\",\"argv0\":\"zsh\",\"argv\":[\"-zsh\"]}]}}}"
+    else
       exit 1
     fi
     ;;
@@ -681,9 +699,11 @@ EOF
 
 run_session_start_herdr_secondmate() {
   local root=$1 home=$2 fakebin=$3 mate=$4 log=$5 state=$6
+  # The fakebin's ps fakes per-pid harness identity for the tmux lock walks;
+  # the herdr exit proof reads the whole table, so hand it the real ps.
   FM_BACKEND=herdr FM_FAKE_HERDR_LOG="$log" FM_FAKE_HERDR_STATE="$state" \
     FM_FAKE_SECOND_MATE_ID="$SESSION_START_HERDR_SECOND_MATE_ID" \
-    FM_FAKE_HARNESS_PID=$$ \
+    FM_FAKE_HARNESS_PID=$$ FM_FAKE_HERDR_SHELL_PID=$$ FM_HERDR_PS_BIN=/bin/ps \
     run_session_start "$home" "$root" "$fakebin:$BASE_PATH"
 }
 
