@@ -86,6 +86,7 @@ case "\$method:\$url" in
     printf '{"id":1}\n' > "\$out" ;;
   PATCH:*)
     [ -z "\${FM_FAKE_CURL_BODIES:-}" ] || printf '%s\n' "\$data" >> "\$FM_FAKE_CURL_BODIES"
+    code=\${FM_FAKE_CURL_CLOSE_CODE:-200}
     printf '{"number":%s,"state":"%s","title":"x","body":"b","user":{"login":"bot"}}\n' \
       "\${url##*/issues/}" "\${FM_FAKE_CURL_CLOSE_STATE:-closed}" > "\$out" ;;
   *) code=404; : > "\$out" ;;
@@ -625,6 +626,28 @@ test_ack_aborts_when_the_close_is_unverified() {
   pass "fm-forge-mail: an unverified close fails the ack instead of claiming it"
 }
 
+test_ack_accepts_201_from_comment_and_close() {
+  # Forgejo answers the receipt POST with 201 (Created) and may answer the
+  # close PATCH with 201 too; both are success, not failure.
+  local home out rc=0
+  home=$(make_home ack201)
+  make_fake_tools
+  write_repo 70001
+  set_issues "$(mk_issue 7 chatgpt-bot "Findings" "body")"
+  run_plane "$home" poll >/dev/null 2>&1 || rc=$?
+  expect_code 0 "$rc" "the poll before the ack must succeed"
+  out=$(FM_FAKE_CURL_COMMENT_CODE=201 FM_FAKE_CURL_CLOSE_CODE=201 \
+    FM_FAKE_CURL_BODIES="$FORGE_ROOT/ack201-bodies.log" \
+    run_plane "$home" ack 7 --note "receipt: triaged" 2>&1) || rc=$?
+  expect_code 0 "$rc" "ack must succeed on 201 from both calls"
+  assert_contains "$out" "acked: own/mailbox#7 closed" "ack reports the close"
+  assert_not_contains "$out" "failed with HTTP" "no failure line is printed for a 201"
+  assert_contains "$(cat "$FORGE_ROOT/ack201-bodies.log")" '{"body":"receipt: triaged"}' "the receipt was posted"
+  assert_contains "$(cat "$FORGE_ROOT/ack201-bodies.log")" '{"state":"closed"}' "the close was sent"
+  assert_contains "$(cat "$home/state/.forge-mail-seen")" "7" "ack records the number locally"
+  pass "fm-forge-mail: ack accepts HTTP 201 success from the comment POST and close PATCH"
+}
+
 test_ack_refuses_a_recreated_repo() {
   # The wake named number 12 under generation 70001; the repo was deleted
   # and recreated as 80002 with a new #12 before any post-recreation poll
@@ -720,6 +743,7 @@ test_ack_posts_receipt_then_closes
 test_ack_without_note_only_closes
 test_ack_aborts_when_the_receipt_fails
 test_ack_aborts_when_the_close_is_unverified
+test_ack_accepts_201_from_comment_and_close
 test_ack_refuses_a_recreated_repo
 test_ack_proceeds_without_a_stored_generation
 test_help_and_usage_plumbing
