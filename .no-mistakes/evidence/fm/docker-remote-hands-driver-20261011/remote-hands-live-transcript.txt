@@ -1,0 +1,79 @@
+# fm-remote-hands.sh live validation — 2026-10-12T01:56:07Z
+# machine: real RAM 7540 MB (/proc/meminfo), real bin/fm-heavy-slot.sh, sbx CLI absent from PATH
+
+## 1. Off by default (unconfigured disposable home; env var unset)
+$ enabled
+off
+rc=0
+$ route --class sweep
+local reason=off
+rc=0
+$ create --class suite --name t-live
+error: the remote-hands lane is off; set FM_REMOTE_HANDS (for example FM_REMOTE_HANDS=1) in the environment or /tmp/fm-hands-live.k4AANB/off-home/.env to use this command
+rc=1
+(no state files were created under the off home; it was never even mkdir-ed)
+
+## 2. Activation from the home .env (FM_REMOTE_HANDS=on), environment wins
+$ .env only -> enabled
+on
+rc=0
+$ FM_REMOTE_HANDS=0 env -> enabled
+off
+rc=0
+$ FM_REMOTE_HANDS=YES env -> enabled
+on
+rc=0
+
+## 3. Routing decisions against the real machine (no test seam; real /proc/meminfo)
+$ fm-heavy-slot.sh status (real machine, read-only)
+free
+rc=0
+$ route --class sweep  (peak 6144MB > 70% of 7540MB)
+sandbox shape=large class=sweep reason=oversized peak=6144MB local=7540MB
+rc=0
+$ route --class suite
+local reason=fits class=suite peak=4096MB local=7540MB
+rc=0
+$ scratch XDG_STATE_HOME: fm-heavy-slot.sh acquire proof-task --estimate 4000
+acquire rc=0
+$ fm-heavy-slot.sh status (scratch root)
+held task=proof-task pid=2576602 estimate=4000MB age=0s expires_in=1800s state=live
+rc=0
+$ route --class suite   (slot held by another task)
+sandbox shape=medium class=suite reason=slot-held holder=proof-task peak=4096MB local=7540MB
+rc=0
+$ route --class suite --task proof-task   (the holder itself)
+local reason=fits class=suite peak=4096MB local=7540MB
+rc=0
+$ fm-heavy-slot.sh release proof-task (scratch root)
+released: task=proof-task
+$ route --class suite   (after release)
+local reason=fits class=suite peak=4096MB local=7540MB
+rc=0
+$ route --class bogus
+error: --class must be one of: suite sweep other (got 'bogus')
+rc=2
+
+## 4. Fail-closed with the lane on and the sbx CLI genuinely absent from PATH
+$ command -v sbx
+(absent)
+$ FM_REMOTE_HANDS=1 create --class sweep --name t-live-sweep
+error: the sbx CLI (>= 0.45.0, docs.docker.com/ai/sandboxes/install/) is required but is not on PATH
+rc=1
+(only side effect inside the disposable home: state/remote-hands/sbx-config — the XDG pin, no machine-global config)
+$ adversarial input rejections (all rc=2, before any cloud call):
+$ create --name bad/name
+error: --name requires a sandbox name (got 'bad/name')
+rc=2
+$ create --allow example.test: (empty port)
+error: --allow requires a <host>:<port> value (got 'example.test:')
+rc=2
+$ create --allow :8443 (empty host)
+error: --allow requires a <host>:<port> value (got ':8443')
+rc=2
+$ create --allow example.test:99999 (port > 65535)
+error: --allow requires a <host>:<port> value (got 'example.test:99999')
+rc=2
+$ prepare --repo not-a-url
+error: --repo must be a git URL (got 'not-a-url')
+rc=2
