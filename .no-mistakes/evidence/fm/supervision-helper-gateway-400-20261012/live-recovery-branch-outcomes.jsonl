@@ -1,0 +1,1 @@
+{"seq":1,"epoch":1791804875,"task":"lab-probe-1","wake":"signal: /tmp/fm-live-L/home/state/lab-probe-1.status","verdict":"routine","summary":"Live-validation branch handled the signal wake: drained the queue, verified task state, no captain action needed.","silent":false,"statusEndpoint":123,"statusIdent":"strong:60:1731166:2026-10-12 06:28:21.012111305 -0500"}

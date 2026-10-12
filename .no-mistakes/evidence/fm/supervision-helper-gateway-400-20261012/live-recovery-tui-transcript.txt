@@ -1,0 +1,50 @@
+
+ $ bin/fm-wake-drain.sh --ack-through 2 --recovery-generation 516603.1791804502.WX9jwA
+
+ (no output)
+
+ Took 0.1s
+
+
+ Handled.
+
+ ⛵ Supervision branch paused after repeated provider errors; main will handle wakes while it cools down.
+
+
+ ⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: /tmp/fm-live-L/home/state/lab-probe-1.status
+
+ Run bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.
+
+
+
+ $ bin/fm-wake-drain.sh
+
+ ... (1 earlier lines, ctrl+o to expand)
+ WAKE_ACK_REQUIRED: after handling completes run bin/fm-wake-drain.sh --ack-through 4 --recovery-generation 517783.1791804524.dWzQxz
+ wake annotation: latest wake-EVENT observed at drain, not current state: lab-probe-1.status: done: branch live probe WAKE_L2 latch after second rejection
+ STATUS OUTCOME BACKSTOP (newest captain-facing task event has no covering branch outcome):
+ lab-probe-1 done: branch live probe WAKE_L2 latch after second rejection
+ WARNING: queued wakes pending - drain them with bin/fm-wake-drain.sh before anything else.
+
+ Took 0.5s
+
+
+
+ $ bin/fm-wake-drain.sh --ack-through 4 --recovery-generation 517783.1791804524.dWzQxz
+
+ (no output)
+
+ Took 0.1s
+
+
+ Handled.
+
+ ⛵ lab-probe-1: Live-validation branch handled the signal wake: drained the queue, verified task state, no captain action needed.
+
+ ⛵ Supervision branch recovered after a successful cooldown probe.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+/tmp/fm-live-L/runtree
+↑6 ↓6 0.2%/33k (auto)                                                                                                                                                                 (fm-lab-main) lite
