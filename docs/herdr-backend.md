@@ -367,7 +367,7 @@ That presentation lock lives in a namespace private to the OS account, so anothe
 A namespace at this account's name that another account owns, or that is not mode 700, is still refused and is never adopted, chowned, or removed.
 
 A same-identity version 2 binding may replace one exact agent-free restart husk in place.
-A husk is a restored same-labeled tab with a missing pane or no registered agent, as [Restart and liveness behavior](#restart-and-liveness-behavior) describes.
+What counts as a husk is owned by [Restart and liveness behavior](#restart-and-liveness-behavior); a missing registration alone never qualifies one.
 The replacement is allowed only when all of these agree:
 
 - The physical home.
