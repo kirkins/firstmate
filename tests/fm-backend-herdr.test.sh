@@ -34,6 +34,11 @@ TMP_ROOT=$(fm_test_tmproot fm-backend-herdr-tests)
 mkdir -p "$TMP_ROOT/ambient-home"
 export FM_HOME="$TMP_ROOT/ambient-home"
 export FM_BACKEND_HERDR_SUBMIT_MIN_SLEEP=0
+# The fake's synthesized agent_not_found shell proof names this pid, the
+# suite's own shell: alive for every ps walk a test can trigger, unlike the
+# fake's per-call $PPID fallback. Tests needing their own stand-in process
+# override it per invocation.
+export FM_HERDR_FAKE_SHELL_PID=$$
 
 # make_herdr_fakebin: a `herdr` stub that logs every invocation (one line,
 # unit-separated args, to $FM_HERDR_LOG) and returns the canned response for
