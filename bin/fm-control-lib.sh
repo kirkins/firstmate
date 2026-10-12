@@ -235,6 +235,24 @@ fm_control_exit_command() {  # <harness>
   esac
 }
 
+# Claude's /exit payload proof can refuse before Enter when the rendered
+# command cannot be read back. Ctrl+D avoids text submission, but only on an
+# empty composer: with text it deletes a character. Its first press arms exit,
+# and a second within 800 ms exits. Never send the second press without the
+# live hint and an empty composer; an older version may exit on the first.
+# Verified on Claude Code 2.1.291 and 2.1.296 in an isolated Herdr lab.
+fm_control_exit_fallback_key() {  # <harness>
+  case "${1-}" in
+    claude) printf 'C-d' ;;
+  esac
+}
+
+fm_control_exit_fallback_arm_signal() {  # <harness>
+  case "${1-}" in
+    claude) printf '%s' '^[[:space:]]*Press Ctrl-D again to exit[[:space:]]*$' ;;
+  esac
+}
+
 # The launch argument that makes a RELAUNCH of <harness> RESUME an exact agent
 # session instead of starting a fresh one, printed only when <registered-agent>
 # is the label that session reference belongs to; nothing otherwise.
@@ -278,6 +296,11 @@ fm_control_relaunch_resume_flag() {  # <harness> <registered-agent>
 # Ctrl+U (bin/backends/orca.sh's fm_backend_orca_send_key).
 fm_control_backend_supports_key() {  # <backend> <key>
   local backend=${1-} key=${2-}
+  case "$backend" in
+    tmux|herdr)
+      [ "$key" != C-d ] || return 0
+      ;;
+  esac
   case "$backend" in
     tmux|herdr|zellij|cmux)
       case "$key" in Escape|Enter|C-c|C-u) return 0 ;; esac

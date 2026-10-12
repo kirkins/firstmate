@@ -7,12 +7,15 @@ Busy hooks verified 2026-07-28 on Claude Code 2.1.220.
 | Fact | Value |
 |---|---|
 | Busy | Owned hooks: `UserPromptSubmit` opens while `Stop`, `StopFailure`, and `SessionEnd` close; a secondmate gets no `Stop` busy hook, because its home's tracked Stop guard is its only Stop writer, unless that guard predates `.fm-busy-stop` and the launch keeps the `Stop` idle hook (`../../../docs/turnend-guard.md` owns that); manual interrupt emits no hook, so control reports delivered keys and live endpoint only, publishes no idle event or cancellation claim, and usually leaves `claude-hook` busy. |
-| Exit | `/exit`. |
+| Exit | Owned by `../../../bin/fm-control-lib.sh`, including the guarded native-key fallback when `/exit` cannot be submitted. |
 | Interrupt | Single Escape. |
 | Skill | `/<skill>`, for example `/no-mistakes`. |
-| Model | `--model <model>`; discover through the interactive `/model` picker, with alias or full-name shape documented by `claude --help`. |
+| Model | `--model <model>`; discover through the interactive `/model` picker and `claude --help`, choosing a documented alias such as `opus` or a full provider model ID such as `claude-opus-5-5`, rather than the undocumented shorthand `opus-5.5`. |
 | Effort | `--effort <low\|medium\|high\|xhigh\|max>`, verified on 2.1.196. |
 | Permissions | `--dangerously-skip-permissions` by default, or `--permission-mode auto` when `config/claude-permission-mode` is `auto`; the `auto` shape verified on 2.1.269. See [`Claude permission mode`](../../../../../docs/configuration.md#claude-permission-mode-configclaude-permission-mode) for the launch grant and configuration. |
+
+Model names pass through unchanged so an explicit version pin or a provider deployment ID is preserved.
+Do not shorten a versioned name to a moving alias to recover a rejected dispatch; choose the intended alias or full ID from the selected account's current catalog ([Claude model configuration](https://code.claude.com/docs/en/model-config)).
 
 ## Workspace trust
 

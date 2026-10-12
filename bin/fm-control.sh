@@ -123,6 +123,9 @@
 #     classified state acts.
 #   - A composer that visibly holds pending text refuses before an exit command
 #     is typed, so existing text is preserved instead of being concatenated.
+#   - A failed Claude text submission may use its native exit key only after
+#     a fresh live-agent and empty-composer proof. The second key requires the
+#     rendered exit hint; a prompt is never answered, and death is still proven.
 #
 # Environment knobs (all bounded waits, seconds):
 #   FM_CONTROL_POLL              poll interval for postcondition waits (0.5)
@@ -632,10 +635,59 @@ retire_busy_incarnation() {
   fi
 }
 
+# deliver_exit_fallback: an adapter-owned alternative after a failed text
+# submission, never a way around a pending draft or a dialog. Returns after
+# delivering keys; do_exit still owns the stopped-agent postcondition.
+deliver_exit_fallback() {
+  local key arm state composer_state dialog screen
+  key=$(fm_control_exit_fallback_key "$HARNESS")
+  arm=$(fm_control_exit_fallback_arm_signal "$HARNESS")
+  [ -n "$key" ] && [ -n "$arm" ] \
+    || die "the exit command could not be sent to task $ID on $BACKEND"
+  if ! fm_control_backend_supports_key "$BACKEND" "$key" \
+    || ! fm_backend_visible_capture_supported "$BACKEND"; then
+    die "task $ID's $HARNESS exit fallback requires $key and a verified viewport read on $BACKEND"
+  fi
+  state=$(agent_state)
+  case "$state" in
+    dead) die "the exit command could not be sent to task $ID on $BACKEND; the agent is already stopped, so no fallback key was sent" ;;
+    alive) ;;
+    *) die "task $ID reads '$state' after its failed exit submission; refusing the $HARNESS exit fallback" ;;
+  esac
+  : > "$FM_COMPOSER_DIALOG_SINK"
+  composer_state=$(fm_backend_composer_state "$BACKEND" "$T" "$LABEL" 2>/dev/null) \
+    || composer_state=unknown
+  if [ -s "$FM_COMPOSER_DIALOG_SINK" ]; then
+    refuse_blocking_prompt "$(cat "$FM_COMPOSER_DIALOG_SINK")"
+  fi
+  [ "$composer_state" = empty ] \
+    || die "task $ID's composer is '$composer_state' after its failed exit submission, not proven empty; refusing the $HARNESS exit fallback"
+  fm_backend_send_key "$BACKEND" "$T" "$key" "$LABEL" \
+    || die "the $HARNESS exit fallback key $key could not be sent to task $ID on $BACKEND"
+  # A first press may already stop an older harness. Never press into its shell.
+  [ "$(agent_state)" = alive ] || return 0
+  screen=$(fm_backend_visible_capture "$BACKEND" "$T" "$LABEL" 2>/dev/null) || return 0
+  # The current hint is the footer, not a quotation left in the transcript.
+  printf '%s\n' "$screen" | awk '/[^[:space:]]/ { last=$0 } END { print last }' \
+    | grep -Eq -- "$arm" || return 0
+  : > "$FM_COMPOSER_DIALOG_SINK"
+  composer_state=$(fm_backend_composer_state "$BACKEND" "$T" "$LABEL" 2>/dev/null) \
+    || composer_state=unknown
+  if [ -s "$FM_COMPOSER_DIALOG_SINK" ]; then
+    dialog=$(cat "$FM_COMPOSER_DIALOG_SINK")
+    refuse_blocking_prompt "$dialog"
+  fi
+  [ "$composer_state" = empty ] \
+    || die "task $ID's composer is '$composer_state' after $key, not proven empty; refusing the confirming $HARNESS exit key"
+  fm_backend_send_key "$BACKEND" "$T" "$key" "$LABEL" \
+    || die "the confirming $HARNESS exit key $key could not be sent to task $ID on $BACKEND"
+}
+
 # do_exit: stop the running agent, preserving endpoint and worktree. Prints
 # `already-stopped`, `endpoint-gone`, or `stopped`.
 do_exit() {
   local state cmd hazard verdict composer_state cancel absence interrupt_result=not-needed dialog
+  local exit_delivery='exit-command=delivered'
   require_state_verified_backend exit
   state=$(agent_state)
   case "$state" in
@@ -729,8 +781,10 @@ do_exit() {
   # swallows the first Enter.
   verdict=$(fm_backend_send_text_submit "$BACKEND" "$T" "$cmd" "$EXIT_RETRIES" "$POLL" 1.2 "$LABEL") \
     || die "the exit command could not be sent to task $ID on $BACKEND"
-  [ "$verdict" != send-failed ] \
-    || die "the exit command could not be sent to task $ID on $BACKEND"
+  if [ "$verdict" = send-failed ]; then
+    deliver_exit_fallback
+    exit_delivery='exit-command=send-failed exit-key=delivered'
+  fi
   # The submitting Enter can open the picker. The agent is still alive, and
   # another Enter would confirm the selected row. A dead agent may leave the
   # same text behind; that is not a prompt still waiting.
@@ -749,7 +803,7 @@ do_exit() {
     if [ -s "$FM_COMPOSER_DIALOG_SINK" ]; then
       refuse_blocking_prompt "$(cat "$FM_COMPOSER_DIALOG_SINK")"
     fi
-    die "exit-delivered $ID interrupt=$interrupt_result exit-command=delivered agent-state=$state exit=unconfirmed; the agent did not stop within ${EXIT_WAIT}s"
+    die "exit-delivered $ID interrupt=$interrupt_result $exit_delivery agent-state=$state exit=unconfirmed; the agent did not stop within ${EXIT_WAIT}s"
   }
   # The incarnation is over: retire its busy wiring so no stale record or
   # orphaned generation survives the agent that produced it.
