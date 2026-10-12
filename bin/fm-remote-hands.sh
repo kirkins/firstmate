@@ -239,7 +239,7 @@ remote_hands_valid_endpoint() {
   case "${1:-}" in
     '' | *[!A-Za-z0-9.:-]*) return 1 ;;
     *[!A-Za-z0-9.-]*:*) return 1 ;;
-    *:*[!0-9]* | *: | *:[0-9][0-9][0-9][0-9][0-9][0-9]*) return 1 ;;
+    *:*[!0-9]* | *: | :* | *:[0-9][0-9][0-9][0-9][0-9][0-9]*) return 1 ;;
     *:*) ;;
     *) return 1 ;;
   esac
@@ -647,11 +647,11 @@ if [ "$CMD" = exec ]; then
     CMD_STR="$CMD_STR$(remote_hands_q "$word")"
   done
   # shellcheck disable=SC2016  # $? is captured by the sandbox shell, not here.
-  JOB_SCRIPT='rm -f '"$JOB_LOG"' '"$JOB_EXIT"'
-export LANG=C.UTF-8 LC_ALL=C.UTF-8
+  JOB_SCRIPT='export LANG=C.UTF-8 LC_ALL=C.UTF-8
 ('"$CMD_STR"') > '"$JOB_LOG"' 2>&1
 printf "%s\n" "$?" > '"$JOB_EXIT"
-  LAUNCH='tmux -L '"$SBX_SOCKET"' new-session -d -s '"$SBX_SOCKET"' bash -lc '"$(remote_hands_q "$JOB_SCRIPT")"
+  LAUNCH='rm -f '"$JOB_LOG"' '"$JOB_EXIT"'
+tmux -L '"$SBX_SOCKET"' new-session -d -s '"$SBX_SOCKET"' bash -lc '"$(remote_hands_q "$JOB_SCRIPT")"
   # Same proof-pinned exec shape as remote_hands_run: one single-quoted
   # payload re-evaluated by the joining remote shell.
   remote_hands_pin_sbx_state

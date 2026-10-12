@@ -313,6 +313,8 @@ test_create_sizes_shapes_ttl_and_allowances() {
   expect_code 2 "$HANDS_STATUS" "port zero must be refused"
   hands FM_REMOTE_HANDS=1 -- create --class suite --name t-badport --allow example.test:99999
   expect_code 2 "$HANDS_STATUS" "a port above 65535 must be refused"
+  hands FM_REMOTE_HANDS=1 -- create --class suite --name t-badport --allow :8443
+  expect_code 2 "$HANDS_STATUS" "an empty host must be refused"
   reset_logs
   hands FM_REMOTE_HANDS=1 -- create --class suite --name t-hiport --allow example.test:65535 --expected-mins 60
   create_line=$(grep -F -- '--cloud create' "$SBX_LOG")
@@ -368,14 +370,16 @@ test_exec_pins_the_proof_exec_argv_shape() {
   launch=$(eval "printf '%s' $payload")
   assert_contains "$launch" "tmux -L fm-hands new-session -d -s fm-hands bash -lc" \
     "the payload must unquote to the tmux launch of the job script"
+  case "$launch" in
+    "rm -f /tmp/fm-hands.log /tmp/fm-hands.exit"*) ;;
+    *) fail "the synchronous launch script must clear the previous job's markers before starting tmux" ;;
+  esac
   # Unquote the second layer the same way the joining remote shell would: the
   # launch's bash -lc word is the quoted job script the sandbox receives.
-  quoted_job=$(printf '%s' "$launch" | sed 's/^.*bash -lc //')
+  quoted_job=${launch#*bash -lc }
   job_script=$(eval "printf '%s' $quoted_job")
   assert_contains "$job_script" "'make' 'test' 'X=1 y'" \
     "each command word must stay its own quoted word in the job script"
-  assert_contains "$job_script" "rm -f /tmp/fm-hands.log /tmp/fm-hands.exit" \
-    "the job script must clear the previous job's markers before launching"
   assert_contains "$job_script" 'printf "%s\n" "$?"' \
     "the job script must record its own exit code in the marker"
   pass "fm-remote-hands.sh: exec hands sbx the proof-pinned joined-exec argv shape"
