@@ -225,7 +225,8 @@ forge_mail_token() {  # $1 = host
   command -v secret-tool >/dev/null 2>&1 || return 1
   forge_mail_host_valid "$1" || return 1
   token=$(secret-tool lookup service "$1/forgejo-mail/drain" 2>/dev/null) || return 1
-  [[ "$token" =~ ^[A-Za-z0-9_-]{20,256}$ ]] || return 1
+  # Same regcomp-255-portable split as fm_pr_forgejo_token (bin/fm-pr-lib.sh).
+  [[ "$token" =~ ^[A-Za-z0-9_-]{20,255}[A-Za-z0-9_-]?$ ]] || return 1
   printf '%s' "$token"
 }
 
