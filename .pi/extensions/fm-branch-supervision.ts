@@ -1337,8 +1337,18 @@ export default function (pi: ExtensionAPI) {
               const payload = event.payload;
               // Only providers whose request already carries Pi's default
               // per-session prompt_cache_key get the shared per-home override;
-              // any other provider payload passes through untouched.
-              if (payload && typeof payload === "object" && "prompt_cache_key" in payload) {
+              // any other provider payload passes through untouched. Carrying
+              // the field means a real value: openai-completions leaves an
+              // explicitly undefined prompt_cache_key key on every non-OpenAI
+              // payload, and JSON serialization drops it precisely because no
+              // value is sent - rewriting that key would inject the field into
+              // provider requests, where a fail-closed gateway rejects the
+              // whole request as an unknown field.
+              if (
+                payload &&
+                typeof payload === "object" &&
+                typeof (payload as Record<string, unknown>).prompt_cache_key === "string"
+              ) {
                 return { ...(payload as Record<string, unknown>), prompt_cache_key: branchCacheKey };
               }
             });

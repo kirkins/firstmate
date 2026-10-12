@@ -721,6 +721,16 @@ if (rewriteA.prompt_cache_key !== rewriteB.prompt_cache_key) throw new Error("br
 if (rewriteA.model !== "m") throw new Error("cache-key hook dropped payload fields");
 const untouched = cacheHandler({ type: "before_provider_request", payload: { model: "m" } });
 if (untouched !== undefined) throw new Error("cache-key hook rewrote a provider payload with no prompt_cache_key");
+// Pi's openai-completions API leaves an explicitly undefined prompt_cache_key
+// key on every non-OpenAI provider payload; JSON serialization drops it, so a
+// hook that treats mere key presence as support injects the field into
+// requests that never carried it (rejected by fail-closed gateways).
+const explicitUndefined = { model: "m", prompt_cache_key: undefined };
+if (!("prompt_cache_key" in explicitUndefined)) throw new Error("fixture lost the explicitly undefined key");
+const untouchedUndefined = cacheHandler({ type: "before_provider_request", payload: explicitUndefined });
+if (untouchedUndefined !== undefined) throw new Error("cache-key hook rewrote an explicitly undefined prompt_cache_key");
+const nonString = cacheHandler({ type: "before_provider_request", payload: { model: "m", prompt_cache_key: null } });
+if (nonString !== undefined) throw new Error("cache-key hook rewrote a null prompt_cache_key");
 console.log(`CACHE_KEY=${rewriteA.prompt_cache_key}`);
 
 // 4. Two-stage filter, stage 2: routine while main is idle appends with no
