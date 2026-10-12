@@ -1,0 +1,28 @@
+PASS: keyring serves the drain token again
+===== fixed script (worktree) =====
+--- [wt-200-200] receipt POST -> 200, close PATCH -> 200, script=worktree: rc=0
+acked: root/mailbox#5 closed
+PASS: wt-200-200: ack succeeds (200/200) on worktree
+--- [wt-201-201] receipt POST -> 201, close PATCH -> 201, script=worktree: rc=0
+acked: root/mailbox#5 closed
+PASS: wt-201-201: ack succeeds (201/201) on worktree
+--- [wt-201-200] receipt POST -> 201, close PATCH -> 200, script=worktree: rc=0
+acked: root/mailbox#5 closed
+PASS: wt-201-200: ack succeeds (201/200) on worktree
+--- [wt-200-201] receipt POST -> 200, close PATCH -> 201, script=worktree: rc=0
+acked: root/mailbox#5 closed
+PASS: wt-200-201: ack succeeds (200/201) on worktree
+--- [wt-204-200] receipt POST -> 204, close PATCH -> 200, script=worktree: rc=1
+fm-forge-mail: posting the ack receipt on root/mailbox#5 failed with HTTP 204
+PASS: wt-204-200: ack refused (204/200) on worktree
+===== pre-fix script (base commit 44b454a) =====
+--- [base-201-201] receipt POST -> 201, close PATCH -> 201, script=base: rc=1
+fm-forge-mail: closing root/mailbox#5 failed with HTTP 201
+PASS: base-201-201: ack refused (201/201) on base
+--- [base-200-200] receipt POST -> 200, close PATCH -> 200, script=base: rc=1
+fm-forge-mail: posting the ack receipt on root/mailbox#5 failed with HTTP 200
+PASS: base-200-200: ack refused (200/200) on base
+--- [base-201-200] receipt POST -> 201, close PATCH -> 200, script=base: rc=0
+acked: root/mailbox#5 closed
+PASS: base-201-200: ack succeeds (201/200) on base
+CLIENT-PHASE-2 FAILURES: 0

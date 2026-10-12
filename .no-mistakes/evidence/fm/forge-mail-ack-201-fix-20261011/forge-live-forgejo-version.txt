@@ -1,0 +1,1 @@
+Forgejo version 11.0.1+gitea-1.22.0 (release name 11.0.1) built with GNU Make 4.4.1, go1.24.2 : bindata, timetzdata, sqlite, sqlite_unlock_notify

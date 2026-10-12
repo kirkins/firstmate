@@ -1,0 +1,41 @@
+
+===== keyring: disposable real gnome-keyring holds the drain token =====
+PASS: secret-tool lookup serves the drain token from localhost/forgejo-mail/drain
+
+===== fixture: mailbox repo, mail label, message issue (via real REST, setup token) =====
+repo create  -> HTTP 201
+label create -> HTTP 201
+issue create -> HTTP 201
+PASS: message issue #1 exists
+
+===== S1 poll: the new mail issue surfaces as a check wake =====
+PASS: poll exits 0 (rc=0)
+PASS: wake row queued for the mail issue
+PASS: poll-time stash written
+
+===== S1 read: the message prints from the authenticated principal =====
+PASS: read exits 0 (rc=0)
+PASS: read shows the sender principal
+PASS: read shows the subject
+
+===== S1 ack with --note: Forgejo answers the receipt POST with 201, the close PATCH with 200 =====
+PASS: ack exits 0 against real Forgejo (rc=0)
+PASS: ack reports the close
+PASS: ack prints no HTTP failure line
+PASS: cursor records the acked number
+
+===== S1 forge-side verification (persisted state on the real Forgejo) =====
+PASS: issue is closed on the forge
+PASS: the receipt comment persists on the forge
+
+===== S1 proof: this Forgejo answers an issue-comment POST with HTTP 201 =====
+direct comment POST -> HTTP 201
+
+===== S2 adversarial: a read-only drain token must still fail the ack with the HTTP code =====
+PASS: keyring now serves the read-only token
+PASS: ack with note is refused (rc=1)
+PASS: refusal names the receipt POST and the HTTP code
+PASS: close-only ack is refused (rc=1)
+PASS: refusal names the close PATCH and the HTTP code
+PASS: the refused issue stays open on the forge
+CLIENT-PHASE-1 FAILURES: 0

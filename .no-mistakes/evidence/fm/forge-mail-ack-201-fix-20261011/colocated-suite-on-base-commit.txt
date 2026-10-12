@@ -1,0 +1,28 @@
+# Colocated suite against the PRE-FIX base script (bin/fm-forge-mail.sh @ 44b454a)
+ok - fm-forge-mail: an unconfigured home is a hard no-op, poll and status alike
+ok - fm-forge-mail: either missing key keeps the plane off, and read names the gap
+ok - fm-forge-mail: environment values override the .env file per key
+ok - fm-forge-mail: status reads only local records
+ok - fm-forge-mail: malformed endpoints are rejected before any request
+ok - fm-forge-mail: a missing drain token is a named prerequisite, never a silent skip
+ok - fm-forge-mail: the drain token is read from its dedicated slot only
+ok - fm-forge-mail: the token reaches curl only through the fd-read header
+ok - fm-forge-mail: poll surfaces each new issue once, reads only, and stashes bodies
+ok - fm-forge-mail: the per-poll wake cap bounds the queue without dropping mail
+ok - fm-forge-mail: the wake cap defaults to ten
+ok - fm-forge-mail: a repo recreation resets numbering without suppressing reused numbers
+ok - fm-forge-mail: stale journal evidence is cleared on a generation change
+ok - fm-forge-mail: a journal write failure never cursor-records a suppressed message
+ok - fm-forge-mail: the journal recovers a wake the drain already acknowledged
+ok - fm-forge-mail: a queued wake with no records heals without duplicating
+ok - fm-forge-mail: a fail-closed wake stays queued and heals without a duplicate
+ok - fm-forge-mail: an unreachable forge fails closed and releases the lock
+ok - fm-forge-mail: read prints the principal, subject, and body
+ok - fm-forge-mail: a bare read digests the open mailbox
+ok - fm-forge-mail: offline handling reads the poll-time stash
+ok - fm-forge-mail: ack posts the receipt comment then closes, and cleans up
+ok - fm-forge-mail: ack without a note closes without commenting
+ok - fm-forge-mail: a failed receipt aborts the ack before closing
+ok - fm-forge-mail: an unverified close fails the ack instead of claiming it
+not ok - ack must succeed on 201 from both calls: expected exit 0, got 1
+FM_TEST_SUMMARY total=1 failed=1 skipped_gate=0 duration_ms=5172
