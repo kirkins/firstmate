@@ -1,0 +1,39 @@
+
+ ▐▛███▛█   Claude Code v2.1.296
+▝▜██████▀  opus-5.5 · Claude Pro
+ ▝▝   ▝▝   ~/.no-mistakes/worktrees/c3ea402bfbf7/01M4QT217GB4E8AJ5B1RK717NS
+
+⚠ Safe mode: all customizations are disabled (CLAUDE.md, skills, plugins, hooks, MCP, agents,
+  and more)
+  Restart without --safe-mode to re-enable
+
+❯ Reply with the single word ok
+
+● There's an issue with the selected model (opus-5.5). It may not exist or you may not
+  have access to it. Run /model to pick a different model.
+
+✻ Brewed for 0s · done 5:43 AM
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                            ● high · /effort
+──────────────────────────────────────────────────────────────────────────────────────────────
+❯
+──────────────────────────────────────────────────────────────────────────────────────────────
+  ⏵⏵ bypass permissions on (shift+tab to cycle) · ← for agents
