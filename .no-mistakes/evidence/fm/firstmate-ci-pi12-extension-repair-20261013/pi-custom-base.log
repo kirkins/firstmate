@@ -1,0 +1,99 @@
+not ok - real-SDK idle custom-message start guard failed against pi-coding-agent 1.2.0: node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: custom turns must not produce caught extension errors
++ actual - expected
+
++ [
++   {
++     error: "Cannot read properties of undefined (reading 'trim')",
++     event: 'before_agent_start',
++     extensionPath: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/fm-custom-start.B8xxr1/repo/.pi/extensions/fm-branch-supervision.ts',
++     stack: "TypeError: Cannot read properties of undefined (reading 'trim')\n" +
++       '    at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/fm-custom-start.B8xxr1/repo/.pi/extensions/fm-branch-supervision.ts:1696:28\n' +
++       '    at async ExtensionRunner.emitBeforeAgentStart (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/extensions/runner.js:1141:43)\n' +
++       '    at async AgentSession._prepareRun (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1456:24)\n' +
++       '    at async AgentSession._startRun (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1396:24)\n' +
++       '    at async AgentSession.sendCustomMessage (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1840:13)\n' +
++       '    at async file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/[eval1]:64:5'
++   },
++   {
++     error: "Cannot read properties of undefined (reading 'trim')",
++     event: 'before_agent_start',
++     extensionPath: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/fm-custom-start.B8xxr1/repo/.pi/extensions/fm-branch-supervision.ts',
++     stack: "TypeError: Cannot read properties of undefined (reading 'trim')\n" +
++       '    at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/fm-custom-start.B8xxr1/repo/.pi/extensions/fm-branch-supervision.ts:1696:28\n' +
++       '    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n' +
++       '    at async ExtensionRunner.emitBeforeAgentStart (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/extensions/runner.js:1141:43)\n' +
++       '    at async AgentSession._prepareRun (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1456:24)\n' +
++       '    at async AgentSession._startRun (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1396:24)\n' +
++       '    at async AgentSession.sendCustomMessage (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1840:13)\n' +
++       '    at async file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/[eval1]:64:5'
++   },
++   {
++     error: "Cannot read properties of undefined (reading 'trim')",
++     event: 'before_agent_start',
++     extensionPath: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/fm-custom-start.B8xxr1/repo/.pi/extensions/fm-branch-supervision.ts',
++     stack: "TypeError: Cannot read properties of undefined (reading 'trim')\n" +
++       '    at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/fm-custom-start.B8xxr1/repo/.pi/extensions/fm-branch-supervision.ts:1696:28\n' +
++       '    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n' +
++       '    at async ExtensionRunner.emitBeforeAgentStart (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/extensions/runner.js:1141:43)\n' +
++       '    at async AgentSession._prepareRun (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1456:24)\n' +
++       '    at async AgentSession._startRun (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1396:24)\n' +
++       '    at async AgentSession.sendCustomMessage (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1840:13)\n' +
++       '    at async file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/[eval1]:64:5'
++   }
++ ]
+- []
+
+    at file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/[eval1]:67:10
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [
+    {
+      extensionPath: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/fm-custom-start.B8xxr1/repo/.pi/extensions/fm-branch-supervision.ts',
+      event: 'before_agent_start',
+      error: "Cannot read properties of undefined (reading 'trim')",
+      stack: "TypeError: Cannot read properties of undefined (reading 'trim')\n" +
+        '    at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/fm-custom-start.B8xxr1/repo/.pi/extensions/fm-branch-supervision.ts:1696:28\n' +
+        '    at async ExtensionRunner.emitBeforeAgentStart (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/extensions/runner.js:1141:43)\n' +
+        '    at async AgentSession._prepareRun (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1456:24)\n' +
+        '    at async AgentSession._startRun (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1396:24)\n' +
+        '    at async AgentSession.sendCustomMessage (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1840:13)\n' +
+        '    at async file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/[eval1]:64:5'
+    },
+    {
+      extensionPath: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/fm-custom-start.B8xxr1/repo/.pi/extensions/fm-branch-supervision.ts',
+      event: 'before_agent_start',
+      error: "Cannot read properties of undefined (reading 'trim')",
+      stack: "TypeError: Cannot read properties of undefined (reading 'trim')\n" +
+        '    at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/fm-custom-start.B8xxr1/repo/.pi/extensions/fm-branch-supervision.ts:1696:28\n' +
+        '    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n' +
+        '    at async ExtensionRunner.emitBeforeAgentStart (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/extensions/runner.js:1141:43)\n' +
+        '    at async AgentSession._prepareRun (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1456:24)\n' +
+        '    at async AgentSession._startRun (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1396:24)\n' +
+        '    at async AgentSession.sendCustomMessage (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1840:13)\n' +
+        '    at async file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/[eval1]:64:5'
+    },
+    {
+      extensionPath: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/fm-custom-start.B8xxr1/repo/.pi/extensions/fm-branch-supervision.ts',
+      event: 'before_agent_start',
+      error: "Cannot read properties of undefined (reading 'trim')",
+      stack: "TypeError: Cannot read properties of undefined (reading 'trim')\n" +
+        '    at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/fm-custom-start.B8xxr1/repo/.pi/extensions/fm-branch-supervision.ts:1696:28\n' +
+        '    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n' +
+        '    at async ExtensionRunner.emitBeforeAgentStart (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/extensions/runner.js:1141:43)\n' +
+        '    at async AgentSession._prepareRun (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1456:24)\n' +
+        '    at async AgentSession._startRun (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1396:24)\n' +
+        '    at async AgentSession.sendCustomMessage (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/pi-sdk/node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js:1840:13)\n' +
+        '    at async file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/[eval1]:64:5'
+    }
+  ],
+  expected: [],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.10.0

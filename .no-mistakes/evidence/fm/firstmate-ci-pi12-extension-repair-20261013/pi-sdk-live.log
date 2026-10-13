@@ -1,0 +1,9 @@
+not ok - real-SDK Pi branch guard failed against pi-coding-agent 1.2.0: file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/[eval1]:83
+  throw new Error(`timeout waiting for ${label}`);
+        ^
+
+Error: timeout waiting for pinned watcher-owned main delivery
+    at waitFor (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/[eval1]:83:9)
+    at async file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/[eval1]:142:1
+
+Node.js v26.10.0

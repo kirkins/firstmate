@@ -1,0 +1,42 @@
+[
+  {
+    "window": "fm-lab-fm-herdr-present-2373495-12633:wW:p2",
+    "endpoint_task_id": "resume-wave-primary",
+    "worktree": "/home/kirkins/.treehouse/recovery-project-36466b/1/recovery-project",
+    "project": "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/fm-herdr-presentation.56ZeEi/recovery-project",
+    "harness": "sh",
+    "kind": "ship",
+    "mode": "no-mistakes",
+    "yolo": "off",
+    "branch": "fm/resume-wave-primary",
+    "tasktmp": "/tmp/fm-resume-wave-primary",
+    "model": "default",
+    "effort": "default",
+    "spawn_gen": "s1791887179.2615345.9478",
+    "backend": "herdr",
+    "herdr_session": "fm-lab-fm-herdr-present-2373495-12633",
+    "herdr_workspace_id": "wW",
+    "herdr_tab_id": "wW:t2",
+    "herdr_pane_id": "wW:p2"
+  },
+  {
+    "window": "fm-lab-fm-herdr-present-2373495-12633:wX:p2",
+    "endpoint_task_id": "resume-wave-bravo",
+    "worktree": "/home/kirkins/.treehouse/recovery-project-36466b/2/recovery-project",
+    "project": "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.test-phase/fm-herdr-presentation.56ZeEi/recovery-project",
+    "harness": "sh",
+    "kind": "ship",
+    "mode": "no-mistakes",
+    "yolo": "off",
+    "branch": "fm/resume-wave-bravo",
+    "tasktmp": "/tmp/fm-resume-wave-bravo",
+    "model": "default",
+    "effort": "default",
+    "spawn_gen": "s1791887185.2623179.16321",
+    "backend": "herdr",
+    "herdr_session": "fm-lab-fm-herdr-present-2373495-12633",
+    "herdr_workspace_id": "wX",
+    "herdr_tab_id": "wX:t2",
+    "herdr_pane_id": "wX:p2"
+  }
+]
