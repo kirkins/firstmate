@@ -944,6 +944,7 @@ const loader = new DefaultResourceLoader({
       });
     },
   }],
+  noExtensions: true,
   noSkills: true,
   noPromptTemplates: true,
   noThemes: true,
@@ -984,6 +985,9 @@ const waitFor = async (predicate, label) => {
   throw new Error(`timeout waiting for ${label}; events=${JSON.stringify(events)}`);
 };
 
+// Bind the real session_start lifecycle so the watcher has main's context
+// before its first delivery, as it does in Pi's interactive and print modes.
+await session.bindExtensions({});
 const armTool = session.getToolDefinition("fm_watch_arm_pi");
 if (!armTool) throw new Error("the real tool registry did not expose fm_watch_arm_pi");
 const armed = await armTool.execute("live-stream-arm", {}, undefined, undefined, {});
