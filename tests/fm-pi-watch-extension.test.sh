@@ -3667,6 +3667,151 @@ EOF
   pass "Pi streaming-time wake delivery bounds routine invitations and preserves successors and unconsumed replay"
 }
 
+test_pi_fresh_recovery_alarm_survives_settlement() {
+  local mode=$1 repo home plugin log trigger out status
+  repo="$TMP_ROOT/pi-fresh-alarm-$mode-root"
+  home="$TMP_ROOT/pi-fresh-alarm-$mode-home"
+  log="$TMP_ROOT/pi-fresh-alarm-$mode.log"
+  trigger="$TMP_ROOT/pi-fresh-alarm-$mode.trigger"
+  mkdir -p "$repo/bin" "$home/state" "$home/config"
+  install_pi_watch_extension_fixture "$repo"
+  plugin="$repo/.pi/extensions/fm-primary-pi-watch.ts"
+  cat > "$repo/bin/fm-watch-arm.sh" <<'SH'
+#!/usr/bin/env bash
+if [ "${1:-}" = --handling-delivered ]; then
+  [ "$2" != fresh-alarm-3 ] || [ ! -e "$FM_TRIGGER_FILE.hold-retire" ] || exit 2
+  exit 0
+fi
+printf 'arm=%s\n' "$$" >> "${FM_ARM_LOG:?}"
+count=$(grep -c '^arm=' "$FM_ARM_LOG")
+trap 'printf "retired=%s\n" "$count" >> "$FM_ARM_LOG"; if [ "$count" -eq 3 ] && [ -e "$FM_TRIGGER_FILE.hold-retire" ]; then while [ ! -e "$FM_TRIGGER_FILE.release-retire" ]; do sleep 0.02; done; fi; exit 0' TERM INT
+if [ "$count" -ge 3 ] && [ -e "$FM_TRIGGER_FILE.unready" ]; then
+  printf 'blocked=%s\n' "$count" >> "$FM_ARM_LOG"
+  while :; do sleep 0.02; done
+fi
+watcher_pid=$$
+if [ "$count" -eq 3 ] && [ -e "$FM_TRIGGER_FILE.hold-retire" ]; then watcher_pid=99999999; fi
+printf 'watcher: started pid=%s (beacon fresh) recovery-generation=fresh-alarm-%s\n' "$watcher_pid" "$count"
+while [ ! -e "$FM_TRIGGER_FILE.$count" ]; do sleep 0.02; done
+if [ "$count" -eq 2 ] && [ "$FM_ALARM_MODE" = consumed-exhaustion ]; then
+  printf 'watcher: FAILED - forced successor outage\n' >&2
+  exit 2
+fi
+printf '%s\t%s\tsignal\tfresh-alarm-%s.status\tsignal: fresh alarm wake %s\n' \
+  "$count" "$count" "$count" "$count" >> "$FM_HOME/state/.wake-queue"
+printf 'signal: fresh alarm wake %s\n' "$count"
+SH
+  chmod +x "$repo/bin/fm-watch-arm.sh"
+  out=$(PLUGIN="$plugin" FM_HOME="$home" FM_ROOT_OVERRIDE="$repo" FM_ARM_LOG="$log" FM_TRIGGER_FILE="$trigger" FM_ALARM_MODE="$mode" FM_PI_ARM_READY_TIMEOUT_MS="$ARM_READY_TIMEOUT_MS" FM_WATCH_ARM_RETIRE_TIMEOUT_MS=3000 FM_WATCH_REARM_RETRY_BASE_MS=5 FM_WATCH_REARM_RETRY_MAX_MS=10 FM_WATCH_REARM_RETRY_LIMIT=1 FM_WATCH_EXTENSION_LOG_KEEP_LINES=100 node --input-type=module 2>&1 <<'EOF'
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
+
+const handlers = new Map();
+const prompts = [];
+const pi = {
+  on(event, handler) { handlers.set(event, handler); },
+  registerCommand() {},
+  registerTool() {},
+  sendUserMessage: async (message) => { prompts.push(message); },
+  events: { on() {}, emit() {} },
+};
+const mode = process.env.FM_ALARM_MODE;
+const exhausted = mode.endsWith("exhaustion");
+const consumed = mode.startsWith("consumed");
+const logRows = () => existsSync(process.env.FM_ARM_LOG)
+  ? readFileSync(process.env.FM_ARM_LOG, "utf8").trim().split("\n") : [];
+const armRows = () => logRows().filter((row) => row.startsWith("arm="));
+const touch = (suffix) => writeFileSync(`${process.env.FM_TRIGGER_FILE}.${suffix}`, "trigger\n");
+const settle = (aborted) => handlers.get("agent_settled")?.({ aborted }, { hasPendingMessages: () => false });
+const consume = (text) => handlers.get("message_start")?.({ message: { role: "user", content: [{ type: "text", text }] } }, {});
+const queue = () => readFileSync(`${process.env.FM_HOME}/state/.wake-queue`, "utf8");
+const pause = () => new Promise((resolve) => setTimeout(resolve, 150));
+async function waitFor(pred, label) {
+  for (let i = 0; i < 1500; i += 1) {
+    if (pred()) return;
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+  throw new Error(`timeout waiting for ${label}: ${logRows().join(" | ")}; prompts=${prompts.join(" | ")}`);
+}
+writeFileSync(`${process.env.FM_HOME}/state/.lock`, `${process.pid}\n`);
+const mod = await import(pathToFileURL(process.env.PLUGIN).href);
+mod.default(pi);
+await handlers.get("session_start")?.({ reason: "startup" }, {});
+await waitFor(() => armRows().length === 1, "initial arm");
+touch(1);
+await waitFor(() => prompts.length === 1 && armRows().length === 2, "original invitation");
+const anchor = prompts[0];
+if (anchor.includes("watcher: FAILED")) throw new Error("original invitation was already an alarm");
+if (exhausted) touch("unready"); else touch("hold-retire");
+if (mode !== "consumed-exhaustion") settle(true);
+touch(2);
+await waitFor(() => logRows().includes(exhausted ? "blocked=3" : "retired=3"), "delayed recovery");
+if (mode === "consumed-exhaustion") settle(false);
+consume("A separate human instruction during recovery");
+if (consumed) consume(anchor); else settle(true);
+const expectedAlarm = exhausted
+  ? "watcher: FAILED - Pi extension could not restore watcher continuity after 1 retries"
+  : "watcher: FAILED - handling delivery confirmation was rejected";
+if (exhausted) {
+  const extensionLog = `${process.env.FM_HOME}/state/.watch-extension.log`;
+  await waitFor(() => existsSync(extensionLog) && readFileSync(extensionLog, "utf8").includes("restore exhausted attempts=2 outcome=hand-to-main"), "exhausted restoration");
+  await waitFor(() => logRows().includes("retired=3") && logRows().includes("retired=4"), "both unready successors retired");
+  for (const row of armRows().slice(2)) {
+    const pid = Number(row.slice("arm=".length));
+    let alive = true;
+    try { process.kill(pid, 0); } catch { alive = false; }
+    if (alive) throw new Error(`exhausted recovery left arm ${pid} running`);
+  }
+} else {
+  touch("release-retire");
+}
+const beforeReplacement = consumed ? (exhausted ? 2 : 3) : 1;
+if (consumed) await waitFor(() => prompts.length === beforeReplacement, "fresh alarm despite old invitation consumption");
+await pause();
+if (prompts.length !== beforeReplacement) throw new Error(`recovery duplicated an invitation or undid abort: ${prompts.join(" | ")}`);
+if (consumed && !prompts[1].includes(expectedAlarm)) throw new Error(`consumption suppressed the fresh failure: ${prompts.join(" | ")}`);
+if (prompts.filter((message) => message === anchor).length !== 1) throw new Error("recovery duplicated the consumed routine invitation");
+if (exhausted && armRows().length !== 4) throw new Error(`recovery exceeded its retry bound: ${logRows().join(" | ")}`);
+const durableQueue = queue();
+if (durableQueue.trim().split("\n").length !== (mode === "consumed-exhaustion" ? 1 : 2)) throw new Error("recovery changed durable events");
+
+await handlers.get("session_shutdown")?.({ reason: "new" }, {});
+const handoffPath = `${process.env.FM_HOME}/state/extensions/pi-primary-watch/session-replacement-actionable.json`;
+const handoff = JSON.parse(readFileSync(handoffPath, "utf8"));
+const retainedAlarm = handoff.pending.find((item) => item.message.includes(expectedAlarm));
+if (!retainedAlarm || retainedAlarm.delivered) throw new Error(`fresh failure absent from replacement handoff: ${JSON.stringify(handoff)}`);
+if (exhausted && !retainedAlarm.message.includes("could not verify a ready successor watcher")) throw new Error("readiness failure details were lost");
+if (exhausted) unlinkSync(`${process.env.FM_TRIGGER_FILE}.unready`);
+else unlinkSync(`${process.env.FM_TRIGGER_FILE}.hold-retire`);
+const replacementArm = armRows().length + 1;
+mod.default(pi);
+await handlers.get("session_start")?.({ reason: "new" }, {});
+const afterReplacement = beforeReplacement + handoff.pending.length;
+await waitFor(() => armRows().length === replacementArm && prompts.length === afterReplacement, "successful replacement restoration");
+await pause();
+const replacementMessages = prompts.slice(beforeReplacement);
+if (prompts.length !== afterReplacement || replacementMessages.filter((message) => message.includes(retainedAlarm.message)).length !== 1) {
+  throw new Error(`successful replacement lost or duplicated alarm details: ${prompts.join(" | ")}`);
+}
+consume(anchor);
+if (!existsSync(handoffPath)) throw new Error("old invitation consumed the fresh alarm");
+for (const message of replacementMessages) consume(message);
+await waitFor(() => !existsSync(handoffPath), "fresh alarm consumption clears its own handoff");
+settle(false);
+await pause();
+if (prompts.length !== afterReplacement || queue() !== durableQueue) throw new Error("settlement replayed consumed alarms or changed durable events");
+touch(replacementArm);
+await waitFor(() => armRows().length === replacementArm + 1 && prompts.length === afterReplacement + 1, "new routine invitation after alarm consumption");
+if (prompts.at(-1).includes("watcher: FAILED")) throw new Error("recovery did not resume ordinary notification delivery");
+process.exit(0);
+EOF
+)
+  status=$?
+  expect_code 0 "$status" "Pi $mode must retain fresh recovery alarms: $out"
+  [ -z "$out" ] || fail "Pi $mode fresh recovery alarm test printed output: $out"
+  pass "Pi $mode retains fresh alarms through consumption, deferral, and replacement"
+}
+
 test_pi_dequeued_replay_respects_abort_during_readiness() {
   local mode=$1 repo home plugin log trigger out status
   repo="$TMP_ROOT/pi-replay-readiness-$mode-root"
@@ -5430,6 +5575,10 @@ test_pi_streaming_followup_is_replayed_after_replacement
 test_pi_streaming_time_delivery_keeps_the_successor_chain
 test_pi_dequeued_replay_respects_abort_during_readiness routine
 test_pi_dequeued_replay_respects_abort_during_readiness alarm
+test_pi_fresh_recovery_alarm_survives_settlement aborted-exhaustion
+test_pi_fresh_recovery_alarm_survives_settlement consumed-exhaustion
+test_pi_fresh_recovery_alarm_survives_settlement aborted-confirmation
+test_pi_fresh_recovery_alarm_survives_settlement consumed-confirmation
 test_pi_successor_failure_during_delivery_is_retried_after_delivery
 test_pi_late_retiring_actionable_reaches_replacement
 test_pi_replacement_tokens_are_process_unique

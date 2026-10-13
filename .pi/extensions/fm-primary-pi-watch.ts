@@ -631,18 +631,31 @@ export default function (pi: ExtensionAPI) {
     !calmPresentation.stockExportRendering &&
     !calmTranscriptClassIsVisible(itemClass);
 
+  function retainActionableAlarm(
+    owner: SessionGeneration,
+    pending: PendingActionableClose,
+    message: string,
+  ): void {
+    if (!message.includes("watcher: FAILED") || pending.message === message) return;
+    pending.message = message;
+    delete pending.delivered;
+    const wake = owner.unconsumedWakes.get(pending.token);
+    if (wake) wake.routine = false;
+    if (!owner.pendingActionables.some((item) => item.token === pending.token)) owner.pendingActionables.push(pending);
+  }
+
   async function sendWake(
     owner: SessionGeneration,
     message: string,
     pending?: PendingActionableClose,
   ): Promise<boolean> {
     if (!generationIsLive(owner)) return false;
+    if (pending) retainActionableAlarm(owner, pending, message);
     if (pending?.delivered) return true;
     const routine = pending !== undefined && !message.includes("watcher: FAILED");
     // A restoration or confirmation alarm is part of the unconsumed notice,
     // so replacement and dequeue recovery must retain it even if repair later
     // succeeds. It must not become a routine invitation on replay.
-    if (pending && !routine) pending.message = message;
     if (pending && owner.unconsumedWakes.get(pending.token)?.dequeued && owner.dequeuedReplayDeferred) return false;
     if (routine) {
       const queued = [...owner.unconsumedWakes.values()].find(
@@ -676,6 +689,7 @@ export default function (pi: ExtensionAPI) {
   function consumeWake(owner: SessionGeneration, text: string): void {
     for (const [token, wake] of owner.unconsumedWakes) {
       if (wake.content !== text) continue;
+      if (!text.includes(wake.pending.message)) return;
       owner.unconsumedWakes.delete(token);
       wake.pending.delivered = true;
       try {
@@ -752,6 +766,7 @@ export default function (pi: ExtensionAPI) {
     recovery?: { generation: string; watcherPid: string },
   ): Promise<boolean> {
     if (!generationIsLive(owner)) return false;
+    retainActionableAlarm(owner, pending, message);
     if (pending.delivered) return true;
     if (owner.unconsumedWakes.get(pending.token)?.dequeued && owner.dequeuedReplayDeferred) return false;
     if (recovery) {
@@ -763,6 +778,8 @@ export default function (pi: ExtensionAPI) {
       // routes like a confirmed delivery below, with no failure appended, and
       // retires nothing.
       if (!confirmed.ok && !confirmed.superseded) {
+        const alarm = `${message}\n\n${confirmed.detail}`;
+        retainActionableAlarm(owner, pending, alarm);
         const failedPid = recovery.watcherPid;
         const current = owner.child;
         const currentRecovery = current ? armRecovery.get(current) : undefined;
@@ -775,7 +792,7 @@ export default function (pi: ExtensionAPI) {
           appendExtensionLog(`retire pid=${failedPid} reason=confirm-failure`);
           await retireArm(current);
         }
-        return await sendWake(owner, `${message}\n\n${confirmed.detail}`, pending);
+        return await sendWake(owner, alarm, pending);
       }
     }
     if (!repairFailed && !message.includes("watcher: FAILED")) {
