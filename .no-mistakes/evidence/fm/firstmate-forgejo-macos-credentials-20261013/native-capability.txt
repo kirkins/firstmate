@@ -1,2 +1,3 @@
 platform=Linux
-security=not-on-PATH
+security_on_PATH=false
+No native machine or credential store was accessed in this run.

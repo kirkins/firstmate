@@ -1,0 +1,154 @@
+{
+  "candidate": "b8337df656a76bc1e8098ccabc214168b9d1e9ae",
+  "live": false,
+  "product_observations": [
+    {
+      "case": "native-keychain-empty-token",
+      "dependency_mode": "synthetic platform, credential and HTTP dependencies; real Firstmate CLI",
+      "fixture_merge_called": false,
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: watching a Forgejo pull request on git.example.dev requires an API token in the macOS Keychain under service git.example.dev/forgejo-cli\n",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=<fixture>/wt\nproject=<fixture>/project\nkind=ship\nmode=no-mistakes\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\n",
+        "forgejo-curl.log": ""
+      }
+    },
+    {
+      "case": "native-keychain-forge.other.example",
+      "dependency_mode": "synthetic platform, credential and HTTP dependencies; real Firstmate CLI",
+      "fixture_merge_called": false,
+      "outputs": {
+        "stdout": "armed: state/task-a.check.sh\n",
+        "stderr": "",
+        "trace.out": "200\n",
+        "poll-trace.out": "merged\n",
+        "api-response": "{\"state\":\"open\",\"draft\":false,\"merged\":false,\"mergeable\":true,\"head\":{\"sha\":\"0123456789abcdef0123456789abcdef01234567\"}}",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=<fixture>/wt\nproject=<fixture>/project\nkind=ship\nmode=no-mistakes\npr=https://forge.other.example/owner/repo/pulls/9\npr_head=0123456789abcdef0123456789abcdef01234567\n",
+        "home/state/task-a.pr-poll": "forgejo\nhttps://forge.other.example/owner/repo/pulls/9\nforge.other.example\nowner/repo\n9\n",
+        "forgejo-st.log": "security find-generic-password -s forge.other.example/forgejo-cli -w\nselected-account another-operator\nsecurity find-generic-password -s forge.other.example/forgejo-cli -w\nselected-account another-operator\nsecurity find-generic-password -s forge.other.example/forgejo-cli -w\nselected-account another-operator\nsecurity find-generic-password -s forge.other.example/forgejo-cli -w\nselected-account another-operator\nsecurity find-generic-password -s forge.other.example/forgejo-cli -w\nselected-account another-operator\nsecurity find-generic-password -s forge.other.example/forgejo-cli -w\nselected-account another-operator\nsecurity find-generic-password -s forge.other.example/forgejo-cli -w\nselected-account another-operator\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o <worktree>/.test-forgejo-recovery/tmp/fm-pr-forgejo-pull.QDyjNH -w %{http_code} -X GET -H @/dev/fd/3 https://forge.other.example/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://forge.other.example/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://forge.other.example/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://forge.other.example/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o <fixture>/api-response -w %{http_code} -X GET -H @/dev/fd/3 https://forge.other.example/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://forge.other.example/api/v1/repos/owner/repo/pulls/9\n"
+      }
+    },
+    {
+      "case": "native-keychain-git.example.dev",
+      "dependency_mode": "synthetic platform, credential and HTTP dependencies; real Firstmate CLI",
+      "fixture_merge_called": false,
+      "outputs": {
+        "stdout": "armed: state/task-a.check.sh\n",
+        "stderr": "",
+        "trace.out": "200\n",
+        "poll-trace.out": "merged\n",
+        "api-response": "{\"state\":\"open\",\"draft\":false,\"merged\":false,\"mergeable\":true,\"head\":{\"sha\":\"0123456789abcdef0123456789abcdef01234567\"}}",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=<fixture>/wt\nproject=<fixture>/project\nkind=ship\nmode=no-mistakes\npr=https://git.example.dev/owner/repo/pulls/9\npr_head=0123456789abcdef0123456789abcdef01234567\n",
+        "home/state/task-a.pr-poll": "forgejo\nhttps://git.example.dev/owner/repo/pulls/9\ngit.example.dev\nowner/repo\n9\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account mac-operator\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account mac-operator\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account mac-operator\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account mac-operator\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account mac-operator\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account mac-operator\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account mac-operator\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o <worktree>/.test-forgejo-recovery/tmp/fm-pr-forgejo-pull.CiXZNq -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o <fixture>/api-response -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n"
+      }
+    },
+    {
+      "case": "native-keychain-malformed-token",
+      "dependency_mode": "synthetic platform, credential and HTTP dependencies; real Firstmate CLI",
+      "fixture_merge_called": false,
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: watching a Forgejo pull request on git.example.dev requires an API token in the macOS Keychain under service git.example.dev/forgejo-cli\n",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=<fixture>/wt\nproject=<fixture>/project\nkind=ship\nmode=no-mistakes\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\n",
+        "forgejo-curl.log": ""
+      }
+    },
+    {
+      "case": "native-keychain-missing-token",
+      "dependency_mode": "synthetic platform, credential and HTTP dependencies; real Firstmate CLI",
+      "fixture_merge_called": false,
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: watching a Forgejo pull request on git.example.dev requires an API token in the macOS Keychain under service git.example.dev/forgejo-cli\n",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=<fixture>/wt\nproject=<fixture>/project\nkind=ship\nmode=no-mistakes\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\n",
+        "forgejo-curl.log": ""
+      }
+    },
+    {
+      "case": "native-keychain-missing-tool",
+      "dependency_mode": "synthetic platform, credential and HTTP dependencies; real Firstmate CLI",
+      "fixture_merge_called": false,
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: watching a Forgejo pull request requires security on PATH\n",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=<fixture>/wt\nproject=<fixture>/project\nkind=ship\nmode=no-mistakes\n",
+        "forgejo-st.log": "",
+        "forgejo-curl.log": ""
+      }
+    },
+    {
+      "case": "native-keychain-platform-failed",
+      "dependency_mode": "synthetic platform, credential and HTTP dependencies; real Firstmate CLI",
+      "fixture_merge_called": false,
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: watching a Forgejo pull request requires a readable supported credential platform (Linux or macOS)\n",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=<fixture>/wt\nproject=<fixture>/project\nkind=ship\nmode=no-mistakes\n",
+        "forgejo-st.log": "",
+        "forgejo-curl.log": ""
+      }
+    },
+    {
+      "case": "native-keychain-platform-unknown",
+      "dependency_mode": "synthetic platform, credential and HTTP dependencies; real Firstmate CLI",
+      "fixture_merge_called": false,
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: watching a Forgejo pull request requires a readable supported credential platform (Linux or macOS)\n",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=<fixture>/wt\nproject=<fixture>/project\nkind=ship\nmode=no-mistakes\n",
+        "forgejo-st.log": "",
+        "forgejo-curl.log": ""
+      }
+    },
+    {
+      "case": "forgejo-arming",
+      "dependency_mode": "synthetic platform, credential and HTTP dependencies; real Firstmate CLI",
+      "fixture_merge_called": false,
+      "outputs": {
+        "stdout": "armed: state/task-fj.check.sh\n",
+        "stderr": "",
+        "forgejo-st.log": "secret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o <worktree>/.test-forgejo-recovery/tmp/fm-pr-forgejo-pull.yPu4B3 -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n"
+      }
+    },
+    {
+      "case": "forgejo-draft",
+      "dependency_mode": "synthetic platform, credential and HTTP dependencies; real Firstmate CLI",
+      "fixture_merge_called": false,
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: https://git.example.dev/owner/repo/pulls/9 is a draft pull request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate\n",
+        "forgejo-st.log": "secret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o <worktree>/.test-forgejo-recovery/tmp/fm-pr-forgejo-pull.K7QeCk -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n"
+      }
+    },
+    {
+      "case": "forgejo-wrong-host",
+      "dependency_mode": "synthetic platform, credential and HTTP dependencies; real Firstmate CLI",
+      "fixture_merge_called": false,
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: refusing to record https://git.example.dev/owner/repo/pulls/9 for task task-fj: the project at <fixture>/project is bound to https://other.example/owner/repo.git, whose host is other.example, not git.example.dev\n",
+        "forgejo-st.log": "secret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o <worktree>/.test-forgejo-recovery/tmp/fm-pr-forgejo-pull.pB327U -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n"
+      }
+    },
+    {
+      "case": "forgejo-wrong-repo",
+      "dependency_mode": "synthetic platform, credential and HTTP dependencies; real Firstmate CLI",
+      "fixture_merge_called": false,
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: refusing to record https://git.example.dev/owner/repo/pulls/9 for task task-fj: the project at <fixture>/project is bound to https://git.example.dev/owner/other.git, whose repository is owner/other, not owner/repo\n",
+        "forgejo-st.log": "secret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o <worktree>/.test-forgejo-recovery/tmp/fm-pr-forgejo-pull.b4rZ7U -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n"
+      }
+    }
+  ]
+}

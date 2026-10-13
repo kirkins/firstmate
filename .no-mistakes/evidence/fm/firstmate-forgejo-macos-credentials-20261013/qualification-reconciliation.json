@@ -1,0 +1,30 @@
+{
+  "current_candidate": "b8337df656a76bc1e8098ccabc214168b9d1e9ae",
+  "historical_candidate": "4f3638e911afa47c30bf6160e1a99ab0474cd2bc",
+  "source_identity": [
+    {
+      "path": "bin/fm-pr-lib.sh",
+      "historical_sha256": "6f7692b0b3d49037ec673fb1133be23d35674096f32b502865d3dae8d305570c",
+      "current_sha256": "f3d7b44e139ebd36d6dd2832fea8f1a15595b07fafd5205b51604a4d300f99c1"
+    },
+    {
+      "path": "bin/fm-pr-poll.sh",
+      "historical_sha256": "660358636785ffe1fb596109789587b61b3083da5b8661610751bbc6a402eca6",
+      "current_sha256": "49ef9fc4f5fb0501c23e17871823c1643a30592676b615a190d3d3d507063913"
+    }
+  ],
+  "custody": "Authorized supplied report records native archive/member verification. Historical source hashes and Git blob identities were reconciled against repository objects. The archive was not re-executed here; supplied native proof is historical, not a fresh run of the current head.",
+  "native_read_proof": "Supplied native report records service-only credential selection matching the existing account in memory and a successful authenticated read using the candidate accessor. Canonical open-request polling was silent; silence alone does not independently prove authenticated poll success.",
+  "current_source_delta": "Credential accessor: lint suppression comment only. Poll: local counter renames in GitLab and Gerrit branches; Forgejo credential/poll executable behavior unchanged from historical candidate.",
+  "remaining_native_gaps": [
+    "fresh current-candidate native read",
+    "native guarded registration",
+    "copied poll and positive merged poll",
+    "native missing-tool/credential/platform failures",
+    "native required-check and revision verification",
+    "native guarded write/merge and outcome recording"
+  ],
+  "authority": "Recorded limited source-review Test exception accepts supplied native read proof plus fresh capped portable synthetic integration proof, retaining native gaps. It does not authorize a fresh native attempt, production registration/merge, credential mutation, installation, or required-check waiver.",
+  "historical_deviations": "Earlier disposable credential-store writes and unproven initial Test resource compliance remain historical deviations. Current capped verification neither retroactively authorizes those writes nor proves earlier cap compliance.",
+  "other_phases": "Lint, publication, PR, CI, merge and guarded installation remain with the outer executor; this Test phase does not claim their completion."
+}

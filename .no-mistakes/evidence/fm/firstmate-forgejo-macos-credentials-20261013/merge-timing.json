@@ -2,16 +2,16 @@
   "families": [
     {
       "count": 1,
-      "duration_ms": 404307,
+      "duration_ms": 413676,
       "failed": 0,
       "name": "pr-forge"
     }
   ],
-  "finished_at": "2026-10-13T05:17:00Z",
-  "run_id": "fm-test-run-1791868216465-1874039",
+  "finished_at": "2026-10-13T22:52:17Z",
+  "run_id": "fm-test-run-1791931523930-901679",
   "scripts": [
     {
-      "duration_ms": 404307,
+      "duration_ms": 413676,
       "exit": 0,
       "expected_gate_skip": "none",
       "family": "pr-forge",
@@ -21,9 +21,9 @@
     }
   ],
   "selection": "scripts;jobs=1",
-  "started_at": "2026-10-13T05:10:16Z",
+  "started_at": "2026-10-13T22:45:23Z",
   "summary": {
-    "duration_ms": 404381,
+    "duration_ms": 413763,
     "failed": 0,
     "skipped_gate": 0,
     "total": 1

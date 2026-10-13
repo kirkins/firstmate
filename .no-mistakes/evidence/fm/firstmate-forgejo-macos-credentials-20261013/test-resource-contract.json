@@ -1,0 +1,36 @@
+{
+  "candidate": "b8337df656a76bc1e8098ccabc214168b9d1e9ae",
+  "execution": "sequential synthetic integration suites; kernel cap checked before each runner starts",
+  "jobs": [
+    {
+      "suite": "tests/fm-pr-check-security.test.sh",
+      "started_at": "2026-10-13T22:35:30Z",
+      "finished_at": "2026-10-13T22:45:08Z",
+      "canonical_slot_acquired": true,
+      "estimate_MB": 768,
+      "printed_wrapper": "systemd-run --user --scope -p MemoryMax=768M -- <command>",
+      "kernel_memory_max": 805306368,
+      "FM_LINT_JOBS": 1,
+      "runner_jobs": 1,
+      "exit": 0,
+      "gate_skip": false,
+      "slot_released_immediately_after_command": true
+    },
+    {
+      "suite": "tests/fm-pr-merge.test.sh",
+      "started_at": "2026-10-13T22:45:23Z",
+      "finished_at": "2026-10-13T22:52:17Z",
+      "canonical_slot_acquired": true,
+      "estimate_MB": 768,
+      "printed_wrapper": "systemd-run --user --scope -p MemoryMax=768M -- <command>",
+      "kernel_memory_max": 805306368,
+      "FM_LINT_JOBS": 1,
+      "runner_jobs": 1,
+      "exit": 0,
+      "gate_skip": false,
+      "slot_released_immediately_after_command": true
+    }
+  ],
+  "historical_compliance": "These observations prove this execution only; initial Test resource compliance remains unproven.",
+  "lint_phase": "No lint entrypoint was invoked. Automatic Lint evidence is owned by the outer executor."
+}
