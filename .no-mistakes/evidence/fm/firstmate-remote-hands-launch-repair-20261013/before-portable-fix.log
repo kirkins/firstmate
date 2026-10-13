@@ -1,0 +1,10 @@
+Running as unit: run-p1650228-i1656139.scope; invocation ID: 391b29b67a1a4a63aaab27d90c49cff4
+FM_TEST_BEGIN 2026-10-13T23:17:32Z .test-phase-verification/before-portable-fix.test.sh family=unclassified expected_gate_skip=none
+before-fix portable child: sha256sum absent; shasum=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/shasum-host-bin/shasum
+kernel memory.max=1073741824
+.test-phase-verification/before-portable-fix.test.sh: line 492: sha256sum: command not found
+not ok - could not checksum synthetic Node archives
+FM_TEST_END 2026-10-13T23:17:32Z .test-phase-verification/before-portable-fix.test.sh exit=1 duration_ms=166 gate_skip=false
+FM_TEST_SUMMARY total=1 failed=1 skipped_gate=0 duration_ms=214
+FM_TEST_SUMMARY_FAMILY family=unclassified count=1 duration_ms=166 failed=1
+FM_TEST_SLOWEST rank=1 script=.test-phase-verification/before-portable-fix.test.sh duration_ms=166

@@ -1,0 +1,47 @@
+default disabled
+$ FM_HOME=<disposable worktree home> FM_REMOTE_HANDS=0 bash bin/fm-remote-hands.sh enabled
+off
+
+process_exit=0
+disabled routing
+$ FM_HOME=<disposable worktree home> FM_REMOTE_HANDS=0 bash bin/fm-remote-hands.sh route --class suite
+local reason=off
+
+process_exit=0
+disabled prepare
+$ FM_HOME=<disposable worktree home> FM_REMOTE_HANDS=0 bash bin/fm-remote-hands.sh prepare --name fm-lab-denied --repo file:///unopened-fixture
+
+error: the remote-hands lane is off; set FM_REMOTE_HANDS (for example FM_REMOTE_HANDS=1) in the environment or /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.remote-hands-cli-zj5fc15l/home/.env to use this command
+process_exit=1
+disabled exec
+$ FM_HOME=<disposable worktree home> FM_REMOTE_HANDS=0 bash bin/fm-remote-hands.sh exec --name fm-lab-denied -- true
+
+error: the remote-hands lane is off; set FM_REMOTE_HANDS (for example FM_REMOTE_HANDS=1) in the environment or /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.remote-hands-cli-zj5fc15l/home/.env to use this command
+process_exit=1
+disabled wait
+$ FM_HOME=<disposable worktree home> FM_REMOTE_HANDS=0 bash bin/fm-remote-hands.sh wait --name fm-lab-denied --interval 1 --max-secs 1
+
+error: the remote-hands lane is off; set FM_REMOTE_HANDS (for example FM_REMOTE_HANDS=1) in the environment or /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.remote-hands-cli-zj5fc15l/home/.env to use this command
+process_exit=1
+enabled switch
+$ FM_HOME=<disposable worktree home> FM_REMOTE_HANDS=1 bash bin/fm-remote-hands.sh enabled
+on
+
+process_exit=0
+unsafe sandbox name
+$ FM_HOME=<disposable worktree home> FM_REMOTE_HANDS=1 bash bin/fm-remote-hands.sh exec --name bad/name -- true
+
+error: --name requires a sandbox name (got 'bad/name')
+process_exit=2
+invalid preparation URL
+$ FM_HOME=<disposable worktree home> FM_REMOTE_HANDS=1 bash bin/fm-remote-hands.sh prepare --name fm-lab-denied --repo not-a-url
+
+error: --repo must be a git URL (got 'not-a-url')
+process_exit=2
+invalid requested Node major
+$ FM_HOME=<disposable worktree home> FM_REMOTE_HANDS=1 bash bin/fm-remote-hands.sh prepare --name fm-lab-denied --repo file:///unopened-fixture --node-major not-a-major
+
+error: --node-major requires a positive integer major version (got 'not-a-major')
+process_exit=2
+Disposable home has no state directory after all calls. No sandbox lifecycle or authentication command was invoked.
+Candidate: 46c1240eb539dd6b30c0bd3e0b1499085a898126

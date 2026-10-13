@@ -1,0 +1,355 @@
+Current helper: 46c1240eb539dd6b30c0bd3e0b1499085a898126. LOCAL FIXTURE EVIDENCE ONLY.
+sbx, kubectl, apt, download/index, architecture and Node executables are nonsensitive synthetic dependencies.
+Digests use real shasum -a 256; archives are extracted; clone/unshallow use real git.
+tmux is synchronous in this fixture; detached Docker survival is NOT established.
+Operation journals apply only to the immediately preceding t-node-prepare call.
+
+$ fm-remote-hands.sh prepare --name t-prep-execute --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/repo\ \'航海 --branch fm/fixture --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/clone\ \'航海 --node-major 26 
+status=0
+stdout:
+149654fdb91138505e69513c8d0044b837df51bd
+prepare: name=t-prep-execute repo=file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/repo '航海 dest=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/clone '航海
+stderr:
+prepare: sandbox node 26.10.0 already matches local major 26
+Cloning into '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/clone '航海'...
+
+$ fm-remote-hands.sh prepare --name t-prep-fail --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/repo\ \'航海 --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/never-cloned --node-major 26 
+status=23
+stdout:
+
+stderr:
+prepare: sandbox node 26.10.0 already matches local major 26
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-aarch64 --node-major 22 
+status=0
+stdout:
+node-v22.10.0-linux-arm64.tar.xz: OK
+v22.10.0
+34236e08b0bc6dfbf0ed61a970ac545e7024fbc4
+prepare: name=t-node-prepare repo=file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source dest=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-aarch64
+stderr:
+prepare: sandbox node '20.0.0' -> local major 22; installing from nodejs.org
+Cloning into '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-aarch64'...
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+index -fsSL https://nodejs.org/dist/latest-v22.x/
+download -fsSL -o /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-arm64.tar.xz https://nodejs.org/dist/latest-v22.x/node-v22.10.0-linux-arm64.tar.xz
+checksum-download -fsSL https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt
+extract tar -xJf /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-arm64.tar.xz -C /usr/local --strip-components=1
+node
+git clone file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-aarch64
+git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-aarch64 rev-parse HEAD
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-x86_64 --node-major 22 
+status=0
+stdout:
+node-v22.10.0-linux-x64.tar.xz: OK
+v22.10.0
+34236e08b0bc6dfbf0ed61a970ac545e7024fbc4
+prepare: name=t-node-prepare repo=file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source dest=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-x86_64
+stderr:
+prepare: sandbox node '20.0.0' -> local major 22; installing from nodejs.org
+Cloning into '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-x86_64'...
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+index -fsSL https://nodejs.org/dist/latest-v22.x/
+download -fsSL -o /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-x64.tar.xz https://nodejs.org/dist/latest-v22.x/node-v22.10.0-linux-x64.tar.xz
+checksum-download -fsSL https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt
+extract tar -xJf /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-x64.tar.xz -C /usr/local --strip-components=1
+node
+git clone file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-x86_64
+git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-x86_64 rev-parse HEAD
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-arm64 --node-major 22 
+status=0
+stdout:
+node-v22.10.0-linux-arm64.tar.xz: OK
+v22.10.0
+34236e08b0bc6dfbf0ed61a970ac545e7024fbc4
+prepare: name=t-node-prepare repo=file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source dest=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-arm64
+stderr:
+prepare: sandbox node '20.0.0' -> local major 22; installing from nodejs.org
+Cloning into '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-arm64'...
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+index -fsSL https://nodejs.org/dist/latest-v22.x/
+download -fsSL -o /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-arm64.tar.xz https://nodejs.org/dist/latest-v22.x/node-v22.10.0-linux-arm64.tar.xz
+checksum-download -fsSL https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt
+extract tar -xJf /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-arm64.tar.xz -C /usr/local --strip-components=1
+node
+git clone file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-arm64
+git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-arm64 rev-parse HEAD
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-x64 --node-major 22 
+status=0
+stdout:
+node-v22.10.0-linux-x64.tar.xz: OK
+v22.10.0
+34236e08b0bc6dfbf0ed61a970ac545e7024fbc4
+prepare: name=t-node-prepare repo=file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source dest=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-x64
+stderr:
+prepare: sandbox node '20.0.0' -> local major 22; installing from nodejs.org
+Cloning into '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-x64'...
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+index -fsSL https://nodejs.org/dist/latest-v22.x/
+download -fsSL -o /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-x64.tar.xz https://nodejs.org/dist/latest-v22.x/node-v22.10.0-linux-x64.tar.xz
+checksum-download -fsSL https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt
+extract tar -xJf /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-x64.tar.xz -C /usr/local --strip-components=1
+node
+git clone file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-x64
+git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-x64 rev-parse HEAD
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/failed-update --node-major 22 
+status=31
+stdout:
+
+stderr:
+prepare: sandbox node '20.0.0' -> local major 22; installing from nodejs.org
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/failed-install --node-major 22 
+status=31
+stdout:
+
+stderr:
+prepare: sandbox node '20.0.0' -> local major 22; installing from nodejs.org
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/failed-index --node-major 22 
+status=31
+stdout:
+
+stderr:
+prepare: sandbox node '20.0.0' -> local major 22; installing from nodejs.org
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+index -fsSL https://nodejs.org/dist/latest-v22.x/
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/failed-download --node-major 22 
+status=31
+stdout:
+
+stderr:
+prepare: sandbox node '20.0.0' -> local major 22; installing from nodejs.org
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+index -fsSL https://nodejs.org/dist/latest-v22.x/
+download -fsSL -o /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-arm64.tar.xz https://nodejs.org/dist/latest-v22.x/node-v22.10.0-linux-arm64.tar.xz
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/failed-checksum-download --node-major 22 
+status=31
+stdout:
+node-v22.10.0-linux-arm64.tar.xz: OK
+stderr:
+prepare: sandbox node '20.0.0' -> local major 22; installing from nodejs.org
+node tarball checksum verification failed
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+index -fsSL https://nodejs.org/dist/latest-v22.x/
+download -fsSL -o /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-arm64.tar.xz https://nodejs.org/dist/latest-v22.x/node-v22.10.0-linux-arm64.tar.xz
+checksum-download -fsSL https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/failed-checksum --node-major 22 
+status=1
+stdout:
+node-v22.10.0-linux-arm64.tar.xz: FAILED
+stderr:
+prepare: sandbox node '20.0.0' -> local major 22; installing from nodejs.org
+shasum: WARNING: 1 computed checksum did NOT match
+node tarball checksum verification failed
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+index -fsSL https://nodejs.org/dist/latest-v22.x/
+download -fsSL -o /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-arm64.tar.xz https://nodejs.org/dist/latest-v22.x/node-v22.10.0-linux-arm64.tar.xz
+checksum-download -fsSL https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/failed-extract --node-major 22 
+status=31
+stdout:
+node-v22.10.0-linux-arm64.tar.xz: OK
+stderr:
+prepare: sandbox node '20.0.0' -> local major 22; installing from nodejs.org
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+index -fsSL https://nodejs.org/dist/latest-v22.x/
+download -fsSL -o /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-arm64.tar.xz https://nodejs.org/dist/latest-v22.x/node-v22.10.0-linux-arm64.tar.xz
+checksum-download -fsSL https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt
+extract tar -xJf /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-arm64.tar.xz -C /usr/local --strip-components=1
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/failed-node --node-major 22 
+status=31
+stdout:
+node-v22.10.0-linux-arm64.tar.xz: OK
+stderr:
+prepare: sandbox node '20.0.0' -> local major 22; installing from nodejs.org
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+index -fsSL https://nodejs.org/dist/latest-v22.x/
+download -fsSL -o /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-arm64.tar.xz https://nodejs.org/dist/latest-v22.x/node-v22.10.0-linux-arm64.tar.xz
+checksum-download -fsSL https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt
+extract tar -xJf /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-arm64.tar.xz -C /usr/local --strip-components=1
+node
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/failed-clone --node-major 22 
+status=31
+stdout:
+node-v22.10.0-linux-x64.tar.xz: OK
+v22.10.0
+stderr:
+prepare: sandbox node '20.0.0' -> local major 22; installing from nodejs.org
+Cloning into '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/failed-clone'...
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+index -fsSL https://nodejs.org/dist/latest-v22.x/
+download -fsSL -o /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-x64.tar.xz https://nodejs.org/dist/latest-v22.x/node-v22.10.0-linux-x64.tar.xz
+checksum-download -fsSL https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt
+extract tar -xJf /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/remote/node-v22.10.0-linux-x64.tar.xz -C /usr/local --strip-components=1
+node
+git clone file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/failed-clone
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-shallow --node-major 22 
+status=31
+stdout:
+
+stderr:
+prepare: sandbox node 22.10.0 already matches local major 22
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-shallow fetch --unshallow
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-shallow --node-major 22 
+status=0
+stdout:
+34236e08b0bc6dfbf0ed61a970ac545e7024fbc4
+prepare: name=t-node-prepare repo=file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source dest=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-shallow
+stderr:
+prepare: sandbox node 22.10.0 already matches local major 22
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-shallow fetch --unshallow
+git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-shallow rev-parse HEAD
+
+$ fm-remote-hands.sh prepare --name t-node-prepare --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-shallow --node-major 22 
+status=0
+stdout:
+34236e08b0bc6dfbf0ed61a970ac545e7024fbc4
+prepare: name=t-node-prepare repo=file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-source dest=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-shallow
+stderr:
+prepare: sandbox node 22.10.0 already matches local major 22
+dependency operation journal (synthetic fixtures):
+update apt-get update -qq
+install apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time
+git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/fm-remote-hands.or8bBJ/prep-shallow rev-parse HEAD
+
+$ fm-remote-hands.sh exec --name t-argv -- bash -c $'test "$LANG/$LC_ALL" = C.UTF-8/C.UTF-8 || exit 88\nprintf "%s\\0" "$@"\nexit 7' argv-fixture '' X=1\ y one\'quote \"double\" \$HOME\ \$\(exit\ 89\)\ \`exit\ 90\`\ \;\ \* $'line one\nline two' 航海\ café --flag 
+status=0
+stdout:
+launched: name=t-argv socket=fm-hands log=/tmp/fm-hands.log exit=/tmp/fm-hands.exit
+stderr:
+
+job output bytes (base64):
+AFg9MSB5AG9uZSdxdW90ZQAiZG91YmxlIgAkSE9NRSAkKGV4aXQgODkpIGBleGl0IDkwYCA7ICoA
+bGluZSBvbmUKbGluZSB0d28A6Iiq5rW3IGNhZsOpAC0tZmxhZwA=
+
+$ fm-remote-hands.sh wait --name t-argv --interval 1 --max-secs 2 
+status=7
+stdout:
+exit=7
+stderr:
+
+
+$ fm-remote-hands.sh exec --name t-argv -- true 
+status=0
+stdout:
+launched: name=t-argv socket=fm-hands log=/tmp/fm-hands.log exit=/tmp/fm-hands.exit
+stderr:
+
+job output bytes (base64):
+
+$ fm-remote-hands.sh wait --name t-argv --interval 1 --max-secs 2 
+status=0
+stdout:
+exit=0
+stderr:
+
+
+$ fm-remote-hands.sh wait --name t-wait --interval 1 --max-secs 30 
+status=7
+stdout:
+exit=7
+stderr:
+
+
+$ fm-remote-hands.sh wait --name t-gone --interval 1 --max-secs 30 
+status=1
+stdout:
+
+stderr:
+error: sandbox 't-gone' unreachable across 3 consecutive polls; run 'sbx --cloud ls' to see whether the TTL deleted it
+
+$ fm-remote-hands.sh wait --name t-slow --interval 1 --max-secs 1 
+status=1
+stdout:
+
+stderr:
+error: wait timed out after 1s without an exit marker; the job may still be running under the fm-hands tmux socket
+
+$ fm-remote-hands.sh wait --name t-live --interval 1 --max-secs 2 
+status=1
+stdout:
+
+stderr:
+error: wait timed out after 2s without an exit marker; the job may still be running under the fm-hands tmux socket
+
+$ fm-remote-hands.sh prepare --name t-checksum --repo https://github.com/kirkins/firstmate --node-major 20 
+status=0
+stdout:
+node-v20.10.0-linux-x64.tar.xz: OK
+26.10.0
+fake-head
+prepare: name=t-checksum repo=https://github.com/kirkins/firstmate dest=/home/agent/workspace/firstmate
+stderr:
+prepare: sandbox node '26.10.0' -> local major 20; installing from nodejs.org
+
+$ fm-remote-hands.sh prepare --name t-checksum --repo https://github.com/kirkins/firstmate --node-major 20 
+status=1
+stdout:
+
+stderr:
+prepare: sandbox node '26.10.0' -> local major 20; installing from nodejs.org
+shasum: standard input: no properly formatted SHA checksum lines found
+node tarball checksum verification failed
+
+$ fm-remote-hands.sh prepare --name t-checksum --repo https://github.com/kirkins/firstmate --node-major 20 
+status=1
+stdout:
+node-v20.10.0-linux-x64.tar.xz: FAILED
+stderr:
+prepare: sandbox node '26.10.0' -> local major 20; installing from nodejs.org
+shasum: WARNING: 1 computed checksum did NOT match
+node tarball checksum verification failed
+
+$ fm-remote-hands.sh prepare --name t-checksum --repo https://github.com/kirkins/firstmate --node-major 20 
+status=9
+stdout:
+
+stderr:
+prepare: sandbox node '26.10.0' -> local major 20; installing from nodejs.org
+node tarball checksum verification failed

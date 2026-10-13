@@ -1,0 +1,26 @@
+Unconfigured lane reports off
+$ bin/fm-remote-hands.sh enabled
+exit=0
+off
+
+Off lane refuses allocation
+$ bin/fm-remote-hands.sh create --name fm-test-disabled --class suite
+exit=1
+error: the remote-hands lane is off; set FM_REMOTE_HANDS (for example FM_REMOTE_HANDS=1) in the environment or /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/guard-home/.env to use this command
+
+Unsafe object name rejected
+$ bin/fm-remote-hands.sh create --name bad/name --class suite
+exit=2
+error: --name requires a sandbox name (got 'bad/name')
+
+Missing job command rejected
+$ bin/fm-remote-hands.sh exec --name fm-test-invalid
+exit=2
+error: exec requires a command after --
+
+Invalid clone URL rejected
+$ bin/fm-remote-hands.sh prepare --name fm-test-invalid --repo not-a-url
+exit=2
+error: --repo must be a git URL (got 'not-a-url')
+
+Isolated home has no state directory after every refused command. Neither sbx nor kubectl is available on this child PATH.

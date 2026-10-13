@@ -1,0 +1,26 @@
+Head: 46c1240eb539dd6b30c0bd3e0b1499085a898126
+
+Canonical focused suite passed under the printed wrapper:
+systemd-run --user --scope -p MemoryMax=1024M -- env FM_LINT_JOBS=1 bash bin/fm-test-run.sh --jobs 1 tests/fm-remote-hands.test.sh
+See focused-regression.log.
+
+A disposable copy of existing tests added only transcript recording and used a curated host PATH with shasum and no sha256sum. Product source was unchanged. Selected preparation, architecture/failure, literal argv/exit, wait and checksum cases passed:
+systemd-run --user --scope -p MemoryMax=1024M -- env FM_LINT_JOBS=1 FM_TEST_SKIP_ORPHAN_REAP=1 TMPDIR="$PWD/.test-phase-verification" PATH="$PWD/.test-phase-verification/shasum-host-bin" FM_PHASE_TRANSCRIPT=/home/kirkins/.no-mistakes/evidence/01M4VPKJ1T1Y76FFG9D6GNMH2C/shasum-product-transcript.log bash bin/fm-test-run.sh --jobs 1 .test-phase-verification/current.test.sh
+The child observed kernel memory.max=1073741824. See shasum-regression.log and shasum-product-transcript.log.
+
+The same PATH executed the predecessor preparation case from b4135c90, obtained with git show b4135c90:tests/fm-remote-hands.test.sh. Only the helper-source path and transcript recording were adjusted. The predecessor failed as expected with sha256sum: command not found during archive generation. This is not a candidate failure. See before-portable-fix.log.
+Its capped command used the same child environment above with .test-phase-verification/before-portable-fix.test.sh as the runner selector.
+
+Every job acquired the canonical task slot with /home/kirkins/Documents/firstmate/bin/fm-heavy-slot.sh acquire firstmate-remote-hands-launch-repair-20261013 --estimate 1024, used the printed wrapper and immediately released with the printed release command. One intervening acquire found another lint holder; execution waited until normal acquisition succeeded. No holder was disturbed.
+
+Direct real-product checks: python3 .test-phase-verification/direct-guards.py. An empty worktree-local FM_HOME reported off, refused disabled allocation, and rejected unsafe names, empty exec payloads and invalid clone URLs. Child PATH had neither sbx nor kubectl and used no mocked tool. No state directory was created. See direct-guards.log.
+
+No source change, linter, full suite, cloud call, authentication action, original Cosmic/ZNC workload or gate-control command was performed. Scratch drivers and fixture homes are removed before final return.
+
+Hosted scenarios remain untested because the sole authorized Docker object is deleted and its allowance consumed. Permitted local dependency fixtures were executed but cannot establish current Docker behavior. Additional allocation/execution authority is required; Cosmic/ZNC checks also require qualified original-worker custody/handoff. These limitations are already declined findings and are not raised again.
+
+Historical hosted smoke is identified in supplied metadata only for dcfa6bf33e05757d1ab47e5004ef2c255f2686a4, helper SHA256 6025e75dd666aa6f6475d16fc717670ace0faa6a90b740dbafbe10e6aada16a5. It does not qualify current preparation, Node26, current transport or commissioned workloads. No prior Test exception is assumed.
+
+Current digests:
+bin/fm-remote-hands.sh: 0739cf68c31155f1b5ebf4dc5cb0a19e5a36b9ade33cfb3d07dd8840f9efe577
+tests/fm-remote-hands.test.sh: 0b06b7d3190f4fca379b1eb8f78f39a0e07ff1b4206f0590220d12ac9615f0b0

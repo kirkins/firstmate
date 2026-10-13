@@ -1,0 +1,16 @@
+Running as unit: run-p1635199-i1632803.scope; invocation ID: 2b10c802ddf340718a864c7ce99a728d
+FM_TEST_BEGIN 2026-10-13T23:16:59Z .test-phase-verification/current.test.sh family=unclassified expected_gate_skip=none
+portable child: sha256sum absent; shasum=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/shasum-host-bin/shasum
+selected checksum=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4VPKJ1T1Y76FFG9D6GNMH2C/.test-phase-verification/shasum-host-bin/shasum args=-a 256
+0::/user.slice/user-1000.slice/user@1000.service/app.slice/run-p1635199-i1632803.scope
+kernel memory.max=1073741824
+ok - fm-remote-hands.sh: prepare executes tmux bootstrap, node probe, and literal clone argv
+ok - fm-remote-hands.sh: Node architecture mapping and every preparation failure execute correctly
+ok - fm-remote-hands.sh: preserved argv executes literal arguments and records real job exits
+ok - fm-remote-hands.sh: wait polls the marker and propagates or aborts
+ok - fm-remote-hands.sh: wait keeps polling a reachable sandbox with no marker yet
+ok - fm-remote-hands.sh: prepare verifies the downloaded Node archive before extraction
+FM_TEST_END 2026-10-13T23:17:10Z .test-phase-verification/current.test.sh exit=0 duration_ms=10530 gate_skip=false
+FM_TEST_SUMMARY total=1 failed=0 skipped_gate=0 duration_ms=10585
+FM_TEST_SUMMARY_FAMILY family=unclassified count=1 duration_ms=10530 failed=0
+FM_TEST_SLOWEST rank=1 script=.test-phase-verification/current.test.sh duration_ms=10530
