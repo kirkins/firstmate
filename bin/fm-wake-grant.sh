@@ -60,6 +60,9 @@ case "${1:-}" in
     fm_lock_acquire_wait "$FM_WAKE_QUEUE_LOCK"
     LOCK_HELD=true
     owner_matches '' "$generation" || exit 1
+    if [ -e "$MAIN_ROWS" ] || [ -L "$MAIN_ROWS" ]; then
+      [ -f "$MAIN_ROWS" ] && [ ! -L "$MAIN_ROWS" ] && rows_valid "$MAIN_ROWS" || exit 1
+    fi
     replace=1
     if [ -e "$BRANCH_ROWS" ] || [ -L "$BRANCH_ROWS" ]; then
       rows_valid "$BRANCH_ROWS" && cmp -s "$TMP" "$BRANCH_ROWS" || exit 1

@@ -2451,6 +2451,36 @@ It proved that a follow-up the extension sends while main is streaming raises no
 The portable regression drives the same shape with a fake main that never raises `before_agent_start` while streaming, then proves a replacement replays only the follow-up Pi had not consumed and that an exhausted restoration delivers its typed failure without launching a further arm.
 A second regression holds a branch settlement open while the verified successor exits with a failure, and proves that failure takes the ordinary bounded retry once the delivery settles rather than leaving the generation with no watcher and no retry.
 
+### 2026-10-13 bounded watcher invitations and independent ownership
+
+Verified on macOS 26.6.2 arm64, Node v24.12.0, against the importable npm `@earendil-works/pi-coding-agent` 1.1.0 SDK and its 1.1.0 companion packages.
+The SDK guard uses a private agent directory, placeholder credentials, and an intercepted local provider; no provider traffic leaves the process and no live fleet home is changed.
+Select that SDK with `FM_PI_PACKAGE_DIR` and put TypeScript on `PATH` before running these entry points:
+
+```sh
+bin/fm-test-run.sh tests/fm-pi-watch-extension.test.sh
+bin/fm-test-run.sh tests/fm-pi-branch-extension.test.sh tests/fm-wake-queue.test.sh
+bin/fm-test-run.sh tests/fm-pi-primary-types.test.sh
+FM_PI_BRANCH_LIVE_E2E=1 bin/fm-test-run.sh tests/fm-pi-branch-live-e2e.test.sh
+bin/fm-test-run.sh tests/fm-supervision-host.test.sh
+```
+
+```text
+ok - Pi streaming-time wake delivery bounds routine invitations and preserves successors and unconsumed replay
+ok - Pi and the host CLI leave fresh rows eligible behind existing main claims across postures, with corruption and decision precedence enforced
+ok - a main claim racing publication leaves fresh work branch-owned, with one bounded retry and scoped acknowledgement
+ok - tracked Pi extensions pass strict no-emit typecheck against Pi 1.1.0
+ok - real Pi SDK 1.1.0 bounds routine follow-ups, retains durable rows and human input, respects Escape, and recovers on a fresh wake
+```
+
+The real AgentSession probe holds a model stream while three routine watcher closes arrive, observes one pending routine follow-up and every unchanged durable row, then proves separate human input reaches its own model turn.
+Its `clearQueue` and `abort` calls exercise Pi's interruption API without automatically restarting the model; a subsequent watcher close recovers the retained invitation.
+The portable watcher suite also holds acceptance across an aborted settlement and proves actual `message_start` releases the bound.
+Its delayed-readiness cases abort during replay restoration, while its fresh-alarm cases exhaust restoration or reject confirmation after either another abort or exact consumption of the old invitation, then prove failure details survive successful recovery and session replacement.
+The ownership suites execute real grant and drain scripts, proving that one bounded Pi publication retry cannot steal main's old claim and that branch acknowledgement removes only its fresh rows.
+The shared eligibility selector also serves the non-Pi supervision host; its existing atomic publication fallback remains unchanged.
+Other harness-native watcher adapters and runtime backend lifecycle paths are unchanged.
+
 ### 2026-09-04 off-thread supervision outcome delivery
 
 The real-TUI responsiveness guard, focused extension suite, store suite, and strict typecheck were run on macOS 26.5.0 arm64, Node v24.13.1, tmux 3.6a, against the signed Pi launcher 0.82.0 for the TUI arms and the npm `@earendil-works/pi-coding-agent` 0.81.1 package for the typecheck.
