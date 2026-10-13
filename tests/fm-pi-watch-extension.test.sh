@@ -396,6 +396,7 @@ const pi = {
 writeFileSync(`${process.env.FM_HOME}/state/.lock`, `${process.pid}\n`);
 const mod = await import(pathToFileURL(process.env.PLUGIN).href);
 mod.default(pi);
+await handlers.get("session_start")?.({ reason: "startup" }, { isIdle: () => false });
 await tool.execute("tool-call-continuity", {}, undefined, undefined, {});
 for (let i = 0; i < 250; i += 1) {
   const rows = existsSync(process.env.FM_ARM_LOG)
@@ -3573,7 +3574,7 @@ const wakes = (text) => prompts.filter((message) => message.includes(text)).leng
 writeFileSync(`${process.env.FM_HOME}/state/.lock`, `${process.pid}\n`);
 const mod = await import(pathToFileURL(process.env.PLUGIN).href);
 mod.default(pi);
-await handlers.get("session_start")?.({ type: "session_start", reason: "startup" }, {});
+await handlers.get("session_start")?.({ type: "session_start", reason: "startup" }, { isIdle: () => !streaming });
 await waitFor(() => arms() === 1, "first arm");
 streaming = true;
 writeFileSync(`${process.env.FM_TRIGGER_FILE}.1`, "close\n");
@@ -3625,7 +3626,7 @@ if (handoff.pending.length !== 1 || handoff.pending[0].delivered || !handoff.pen
 streaming = false;
 const replacementMod = await import(`${pathToFileURL(process.env.PLUGIN).href}?replacement=streaming-chain`);
 replacementMod.default(pi);
-await handlers.get("session_start")?.({ type: "session_start", reason: "new" }, {});
+await handlers.get("session_start")?.({ type: "session_start", reason: "new" }, { isIdle: () => !streaming });
 await waitFor(() => prompts.length === 3, "replacement replay of the unconsumed wake");
 if (wakes("signal: streaming chain wake 1") !== 3 || wakes("signal: streaming chain wake 2") !== 0) {
   throw new Error(`replacement replayed the wrong wakes: ${prompts.join(" | ")}`);
@@ -3736,7 +3737,7 @@ async function waitFor(pred, label) {
 writeFileSync(`${process.env.FM_HOME}/state/.lock`, `${process.pid}\n`);
 const mod = await import(pathToFileURL(process.env.PLUGIN).href);
 mod.default(pi);
-await handlers.get("session_start")?.({ reason: "startup" }, {});
+await handlers.get("session_start")?.({ reason: "startup" }, { isIdle: () => false });
 await waitFor(() => armRows().length === 1, "initial arm");
 touch(1);
 await waitFor(() => prompts.length === 1 && armRows().length === 2, "original invitation");
@@ -3775,7 +3776,7 @@ if (exhausted && armRows().length !== 4) throw new Error(`recovery exceeded its 
 const durableQueue = queue();
 if (durableQueue.trim().split("\n").length !== (mode === "consumed-exhaustion" ? 1 : 2)) throw new Error("recovery changed durable events");
 
-await handlers.get("session_shutdown")?.({ reason: "new" }, {});
+await handlers.get("session_shutdown")?.({ reason: "new" }, { isIdle: () => false });
 const handoffPath = `${process.env.FM_HOME}/state/extensions/pi-primary-watch/session-replacement-actionable.json`;
 const handoff = JSON.parse(readFileSync(handoffPath, "utf8"));
 const retainedAlarm = handoff.pending.find((item) => item.message.includes(expectedAlarm));
@@ -3785,7 +3786,7 @@ if (exhausted) unlinkSync(`${process.env.FM_TRIGGER_FILE}.unready`);
 else unlinkSync(`${process.env.FM_TRIGGER_FILE}.hold-retire`);
 const replacementArm = armRows().length + 1;
 mod.default(pi);
-await handlers.get("session_start")?.({ reason: "new" }, {});
+await handlers.get("session_start")?.({ reason: "new" }, { isIdle: () => false });
 const afterReplacement = beforeReplacement + handoff.pending.length;
 await waitFor(() => armRows().length === replacementArm && prompts.length === afterReplacement, "successful replacement restoration");
 await pause();
@@ -3907,6 +3908,10 @@ authenticated = true;
 close(6);
 await waitFor(() => prompts.length === 3 && arms() === 7, "fresh close restores credential-rejected invitation");
 if (!prompts[2].includes("check: manual wake 5")) throw new Error("credential recovery lost the rejected wake");
+handlers.get("agent_settled")?.({ aborted: false }, { hasPendingMessages: () => false });
+await pause();
+if (prompts.length !== 3) throw new Error("settlement replayed an idle invitation outside its queue");
+handlers.get("agent_settled")?.({ aborted: true }, { hasPendingMessages: () => false });
 close(7);
 await waitFor(() => arms() === 8, "successor during idle invitation construction");
 await pause();
@@ -3990,7 +3995,7 @@ const rejectPath = `${process.env.FM_TRIGGER_FILE}.reject-confirm`;
 writeFileSync(`${process.env.FM_HOME}/state/.lock`, `${process.pid}\n`);
 const mod = await import(pathToFileURL(process.env.PLUGIN).href);
 mod.default(pi);
-await handlers.get("session_start")?.({ reason: "startup" }, {});
+await handlers.get("session_start")?.({ reason: "startup" }, { isIdle: () => false });
 await waitFor(() => arms() === 1, "initial arm");
 if (alarm) writeFileSync(rejectPath, "reject\n");
 close(1);
@@ -4021,12 +4026,12 @@ if (prompts.length !== resumedCount || prompts.filter((message) => message === a
 }
 if (durableRows().length !== 3) throw new Error("resumed replay removed durable rows");
 
-await handlers.get("session_shutdown")?.({ reason: "new" }, {});
+await handlers.get("session_shutdown")?.({ reason: "new" }, { isIdle: () => false });
 const handoffPath = `${process.env.FM_HOME}/state/extensions/pi-primary-watch/session-replacement-actionable.json`;
 const handoff = JSON.parse(readFileSync(handoffPath, "utf8"));
 if (handoff.pending.length !== resumedCount - 1) throw new Error(`wrong replacement handoff: ${JSON.stringify(handoff)}`);
 mod.default(pi);
-await handlers.get("session_start")?.({ reason: "new" }, {});
+await handlers.get("session_start")?.({ reason: "new" }, { isIdle: () => false });
 const replacementCount = resumedCount * 2 - 1;
 await waitFor(() => arms() === 5 && prompts.length === replacementCount, "replacement replay");
 await pause();

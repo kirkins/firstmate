@@ -97,6 +97,7 @@ type UnconsumedWake = {
   content: string;
   pending: PendingActionableClose;
   routine: boolean;
+  duringRun: boolean;
   dequeued?: true;
 };
 
@@ -692,7 +693,7 @@ export default function (pi: ExtensionAPI) {
       "watcher",
       `FIRSTMATE WATCHER WAKE: ${message}\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.`,
     );
-    if (pending) owner.unconsumedWakes.set(pending.token, { content, pending, routine });
+    if (pending) owner.unconsumedWakes.set(pending.token, { content, pending, routine, duringRun: ctx?.isIdle?.() === false });
     try {
       await pi.sendUserMessage(content, { deliverAs: "followUp" });
     } catch (error) {
@@ -1267,6 +1268,13 @@ export default function (pi: ExtensionAPI) {
     return result;
   }
 
+  pi.on?.("before_agent_start", (event, ctx) => {
+    if (!generationIsLive(generation) || !ctx.isIdle?.()) return;
+    generation.context = ctx;
+    for (const wake of generation.unconsumedWakes.values()) {
+      if (wake.content === event.prompt) wake.duringRun = false;
+    }
+  });
   pi.on?.("message_start", (event) => {
     if (event.message.role !== "user") return;
     consumeWake(generation, userMessageText(event.message.content));
@@ -1290,7 +1298,9 @@ export default function (pi: ExtensionAPI) {
   });
   pi.on?.("agent_settled", (event, ctx) => {
     if (!generationIsLive(generation) || typeof ctx.hasPendingMessages !== "function" || ctx.hasPendingMessages()) return;
-    for (const wake of generation.unconsumedWakes.values()) wake.dequeued = true;
+    for (const wake of generation.unconsumedWakes.values()) {
+      if (wake.duringRun) wake.dequeued = true;
+    }
     generation.dequeuedReplayDeferred = event.aborted === true;
     // A delivery still in flight keeps its consumption record and notices
     // the dequeue on its next loop; an idle pipeline can replay immediately.

@@ -1249,8 +1249,10 @@ let releaseCompact,releaseCompletion,releaseResponse;
 const completionHeld=new Promise(r=>releaseCompletion=r);
 let probePi;
 let releaseConstruction;
-const constructionHeld=new Promise(r=>releaseConstruction=r);
+let constructionHeld=new Promise(r=>releaseConstruction=r);
 let holdConstruction=false;
+let holdSettlement=false,releaseSettlement;
+const settlementHeld=new Promise(r=>releaseSettlement=r);
 const compactHeld=new Promise(r=>releaseCompact=r);
 const responseHeld=new Promise(r=>releaseResponse=r);
 let completions=0;
@@ -1266,7 +1268,9 @@ writeFileSync(`${agentDir}/settings.json`,JSON.stringify({compaction:{enabled:fa
 const settings=SettingsManager.create(process.env.FM_ROOT_OVERRIDE,agentDir);
 const watcher=(await import(pathToFileURL(`${process.env.FM_ROOT_OVERRIDE}/.pi/extensions/fm-primary-pi-watch.ts`).href)).default;
 const loader=new DefaultResourceLoader({cwd:process.env.FM_ROOT_OVERRIDE,agentDir,settingsManager:settings,
-  extensionFactories:[{name:'watcher-under-proof',factory:(pi)=>{
+  extensionFactories:[{name:'settlement-hold-proof',factory:(pi)=>{
+    pi.on('agent_settled',async e=>{if(holdSettlement){events.push({type:'held_settlement',aborted:e.aborted});await settlementHeld;}});
+  }},{name:'watcher-under-proof',factory:(pi)=>{
     const nativeSend=pi.sendUserMessage.bind(pi);
     pi.sendUserMessage=(content,options)=>{const value=nativeSend(content,options);sends.push({text:content,returnType:typeof value});return value;};
     watcher(pi);
@@ -1356,12 +1360,32 @@ writeFileSync(`${home}/state/.wake-queue`,consumedQueue);
 writeFileSync(process.env.FM_PROOF_TRIGGER,'check: credential notification D after consumption\n');
 await waitFor(()=>armCount()===8&&events.some(e=>e.type==='user_message_start'&&e.text.includes('credential notification D'))&&session.isIdle,'new delivery after exact consumption');
 if(sends.length!==rejectedSends+2||session.pendingMessageCount!==0||readFileSync(`${home}/state/.wake-queue`,'utf8')!==consumedQueue)throw Error('Credential recovery lost bounded delivery or durable events');
-session.dispose();console.log("MANUAL_COMPACT_AND_CREDENTIAL_OK");process.exit(0);
+holdSettlement=true;
+const settling=session.prompt('Ordinary human turn before held settlement.');
+await waitFor(()=>events.some(e=>e.type==='held_settlement'),'asynchronous settlement before watcher handler');
+const settlementSends=sends.length;
+const settlementQueue=consumedQueue+'1\t8\tcheck\tsettlement-A\tsettlement notification A\n';
+writeFileSync(`${home}/state/.wake-queue`,settlementQueue);
+writeFileSync(process.env.FM_PROOF_TRIGGER,'check: settlement notification A\n');
+await waitFor(()=>armCount()===9&&sends.length===settlementSends+1,'main-only A offered during held settlement');
+await pause(100);
+if(!session.isIdle||session.pendingMessageCount!==0||events.some(e=>e.type==='before_agent_start'&&e.text.includes('settlement notification A'))||events.some(e=>e.type==='user_message_start'&&e.text.includes('settlement notification A')))throw Error('Settlement did not defer A outside the public queue');
+constructionHeld=new Promise(r=>releaseConstruction=r);
+holdConstruction=true;
+holdSettlement=false;releaseSettlement();
+await waitFor(()=>events.some(e=>e.type==='before_agent_start'&&e.text.includes('settlement notification A')),'original deferred A constructing');
+await pause(200);
+if(sends.length!==settlementSends+1||session.pendingMessageCount!==0)throw Error(`Settlement replay duplicated an in-flight invitation: ${JSON.stringify({sends,events})}`);
+holdConstruction=false;releaseConstruction();await settling;
+await waitFor(()=>session.isIdle&&events.some(e=>e.type==='user_message_start'&&e.text.includes('settlement notification A')),'original settlement invitation consumed');
+if(sends.length!==settlementSends+1||events.filter(e=>e.type==='user_message_start'&&e.text.includes('settlement notification A')).length!==1||readFileSync(`${home}/state/.wake-queue`,'utf8')!==settlementQueue)throw Error('Settlement delivered A more than once or changed durable work');
+session.dispose();console.log("MANUAL_COMPACT_CREDENTIAL_AND_SETTLEMENT_OK");process.exit(0);
 JS
 status=$?
 out=$(cat "$TMP_ROOT/manual-compaction-output")
-if [ "$status" -ne 0 ] || [ "$out" != "MANUAL_COMPACT_AND_CREDENTIAL_OK" ]; then
-  fail "real-SDK compaction and credential delivery guard failed against pi-coding-agent $PI_VERSION: $out"
+if [ "$status" -ne 0 ] || [ "$out" != "MANUAL_COMPACT_CREDENTIAL_AND_SETTLEMENT_OK" ]; then
+  fail "real-SDK compaction, credential, and settlement delivery guard failed against pi-coding-agent $PI_VERSION: $out"
 fi
 pass "real Pi SDK $PI_VERSION defers manual-compaction wakes through completion and restores one durable invitation on a fresh close"
 pass "real Pi SDK $PI_VERSION keeps logged-out wakes retryable, restores delivery after login, and coalesces idle construction until exact consumption"
+pass "real Pi SDK $PI_VERSION delivers a settlement-deferred notification exactly once without replaying its idle construction"
