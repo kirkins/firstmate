@@ -3812,6 +3812,91 @@ EOF
   pass "Pi $mode retains fresh alarms through consumption, deferral, and replacement"
 }
 
+# Manual compaction does not settle an agent run. Its successful completion
+# callback still runs while Pi rejects prompts, so only a later idle read or
+# actual agent_start may release deferred main delivery.
+test_pi_manual_compaction_keeps_unaccepted_wakes_retryable() {
+  local mode=$1 repo compact_home log trigger out status
+  repo="$TMP_ROOT/pi-manual-compaction-$mode-root"
+  compact_home="$TMP_ROOT/pi-manual-compaction-$mode-home"
+  log="$TMP_ROOT/pi-manual-compaction-$mode.log"
+  trigger="$TMP_ROOT/pi-manual-compaction-$mode.trigger"
+  mkdir -p "$repo/bin" "$compact_home/state" "$compact_home/config"
+  install_pi_watch_extension_fixture "$repo"
+  cat > "$repo/bin/fm-watch-arm.sh" <<'SH'
+#!/usr/bin/env bash
+if [ "${1:-}" = --handling-delivered ]; then exit 0; fi
+printf 'arm=%s\n' "$$" >> "$FM_ARM_LOG"
+count=$(grep -c '^arm=' "$FM_ARM_LOG")
+trap 'exit 0' TERM INT
+printf 'watcher: started pid=%s recovery-generation=manual-%s\n' "$$" "$count"
+while [ ! -e "$FM_TRIGGER_FILE.$count" ]; do sleep 0.02; done
+printf '%s\t%s\tcheck\tmanual-%s\tmanual wake %s\n' \
+  "$count" "$count" "$count" "$count" >> "$FM_HOME/state/.wake-queue"
+printf 'check: manual wake %s\n' "$count"
+SH
+  chmod +x "$repo/bin/fm-watch-arm.sh"
+  out=$(PLUGIN="$repo/.pi/extensions/fm-primary-pi-watch.ts" FM_HOME="$compact_home" FM_ROOT_OVERRIDE="$repo" \
+    FM_ARM_LOG="$log" FM_TRIGGER_FILE="$trigger" FM_COMPACT_MODE="$mode" node --input-type=module 2>&1 <<'EOF'
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
+const handlers = new Map(), prompts = [];
+let idle = false;
+const pi = {
+  on(event, handler) { handlers.set(event, handler); },
+  registerCommand() {}, registerTool() {},
+  sendUserMessage: (text) => { prompts.push(text); },
+  events: { on() {}, emit() {} },
+};
+const arms = () => existsSync(process.env.FM_ARM_LOG)
+  ? readFileSync(process.env.FM_ARM_LOG, "utf8").split("\n").filter(row => row.startsWith("arm=")).length : 0;
+const close = (count) => writeFileSync(`${process.env.FM_TRIGGER_FILE}.${count}`, "close\n");
+const pause = () => new Promise(resolve => setTimeout(resolve, 100));
+async function waitFor(predicate, label) {
+  for (let i = 0; i < 500; i += 1) {
+    if (predicate()) return;
+    await new Promise(resolve => setTimeout(resolve, 10));
+  }
+  throw new Error(`timeout waiting for ${label}`);
+}
+writeFileSync(`${process.env.FM_HOME}/state/.lock`, `${process.pid}\n`);
+(await import(pathToFileURL(process.env.PLUGIN).href)).default(pi);
+await handlers.get("session_start")?.({ reason: "startup" }, {});
+await waitFor(() => arms() === 1, "initial arm");
+handlers.get("session_before_compact")?.({ reason: "manual" }, { isIdle: () => idle });
+close(1);
+await waitFor(() => arms() === 2, "successor during manual compaction");
+await pause();
+if (prompts.length !== 0) throw new Error("manual compaction created an unaccepted invitation");
+const completion = process.env.FM_COMPACT_MODE === "success" ? "session_compact" : "session_compact_failed";
+handlers.get(completion)?.({ reason: "manual", aborted: process.env.FM_COMPACT_MODE === "cancel" }, {});
+close(2);
+await waitFor(() => arms() === 3, "successor during compaction completion callback");
+await pause();
+if (prompts.length !== 0) throw new Error("compaction callback released delivery before Pi became idle");
+if (process.env.FM_COMPACT_MODE === "success") idle = true;
+else handlers.get("agent_start")?.({}, {});
+close(3);
+await waitFor(() => arms() === 4 && prompts.length === 1, "fresh close restores one real invitation");
+await pause();
+if (prompts.length !== 1 || !prompts[0].includes("check: manual wake 1")) throw new Error("deferred compaction wakes were lost or piled up");
+const durable = readFileSync(`${process.env.FM_HOME}/state/.wake-queue`, "utf8");
+if (durable.trim().split("\n").length !== 3) throw new Error("compaction delivery changed durable rows");
+handlers.get("message_start")?.({ message: { role: "user", content: [{ type: "text", text: prompts[0] }] } }, {});
+close(4);
+await waitFor(() => prompts.length === 2 && arms() === 5, "new invitation after actual consumption");
+if (!prompts[1].includes("check: manual wake 4")) throw new Error("compaction recovery retained a consumed invitation");
+if (readFileSync(`${process.env.FM_HOME}/state/.wake-queue`, "utf8").trim().split("\n").length !== 4) throw new Error("actual consumption acknowledged durable work");
+await handlers.get("session_shutdown")?.({ reason: "quit" }, {});
+process.exit(0);
+EOF
+)
+  status=$?
+  expect_code 0 "$status" "Pi manual compaction ($mode) must defer unaccepted wakes through the true completion boundary"
+  [ -z "$out" ] || fail "Pi manual compaction test printed output: $out"
+  pass "Pi manual compaction ($mode) preserves retryable wakes and resumes one invitation after completion"
+}
+
 test_pi_dequeued_replay_respects_abort_during_readiness() {
   local mode=$1 repo home plugin log trigger out status
   repo="$TMP_ROOT/pi-replay-readiness-$mode-root"
@@ -5573,6 +5658,9 @@ test_pi_session_transition_generation_owner
 test_pi_session_replacement_carries_inflight_actionable_close
 test_pi_streaming_followup_is_replayed_after_replacement
 test_pi_streaming_time_delivery_keeps_the_successor_chain
+test_pi_manual_compaction_keeps_unaccepted_wakes_retryable success
+test_pi_manual_compaction_keeps_unaccepted_wakes_retryable failure
+test_pi_manual_compaction_keeps_unaccepted_wakes_retryable cancel
 test_pi_dequeued_replay_respects_abort_during_readiness routine
 test_pi_dequeued_replay_respects_abort_during_readiness alarm
 test_pi_fresh_recovery_alarm_survives_settlement aborted-exhaustion

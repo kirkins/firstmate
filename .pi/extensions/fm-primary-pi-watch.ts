@@ -25,6 +25,10 @@
 // handoff. After Pi settles with no queued messages, a dequeued follow-up is
 // offered again. An aborted run defers that replay until a new watcher close
 // or a later non-aborted settlement so Escape remains an actual stop.
+// Manual compaction rejects extension prompts without observable acceptance.
+// Its lifecycle holds pending deliveries until its completion and an idle
+// context or agent_start prove Pi can accept them; no phantom invitation is
+// recorded, and the next close retries the still-pending durable work.
 // Replay retains its tracking across successor readiness and checks the live
 // generation and latest abort deferral before delivery. Fresh restoration or
 // confirmation failures are retained before deferral, even if main consumed
@@ -114,6 +118,7 @@ type SessionGeneration = {
   // branch-handled one (finished).
   unconsumedWakes: Map<string, UnconsumedWake>;
   dequeuedReplayDeferred: boolean;
+  manualCompaction: { finishing: boolean; isIdle: (() => boolean) | null } | null;
   // A verified successor's failure close that arrived while the pipeline was
   // still delivering the wake it was started for; its bounded retry runs once
   // that delivery settles instead of being skipped by the single-flight guard.
@@ -526,6 +531,7 @@ function createGeneration(): SessionGeneration {
     cleanupFailure: "",
     unconsumedWakes: new Map(),
     dequeuedReplayDeferred: false,
+    manualCompaction: null,
     deferredClose: null,
   };
 }
@@ -649,6 +655,13 @@ export default function (pi: ExtensionAPI) {
     if (!generationIsLive(owner)) return false;
     if (pending) retainActionableAlarm(owner, pending, message);
     if (pending?.delivered) return true;
+    if (pending && owner.manualCompaction) {
+      const compaction = owner.manualCompaction;
+      // session_compact runs before Pi clears its compaction controller.
+      // A later idle read, or agent_start below, proves that boundary passed.
+      if (!compaction.finishing || !compaction.isIdle?.()) return false;
+      owner.manualCompaction = null;
+    }
     const routine = pending !== undefined && !message.includes("watcher: FAILED");
     // A restoration or confirmation alarm is part of the unconsumed notice,
     // so replacement and dequeue recovery must retain it even if repair later
@@ -1246,6 +1259,23 @@ export default function (pi: ExtensionAPI) {
   pi.on?.("message_start", (event) => {
     if (event.message.role !== "user") return;
     consumeWake(generation, userMessageText(event.message.content));
+  });
+  pi.on?.("session_before_compact", (event, ctx) => {
+    if (event.reason !== "manual" || !generationIsLive(generation)) return;
+    generation.manualCompaction = {
+      finishing: false,
+      isIdle: typeof ctx.isIdle === "function" ? () => ctx.isIdle() : null,
+    };
+  });
+  const finishManualCompaction = (reason: string): void => {
+    if (reason === "manual" && generationIsLive(generation) && generation.manualCompaction) {
+      generation.manualCompaction.finishing = true;
+    }
+  };
+  pi.on?.("session_compact", (event) => finishManualCompaction(event.reason));
+  pi.on?.("session_compact_failed", (event) => finishManualCompaction(event.reason));
+  pi.on?.("agent_start", () => {
+    if (generationIsLive(generation)) generation.manualCompaction = null;
   });
   pi.on?.("agent_settled", (event, ctx) => {
     if (!generationIsLive(generation) || typeof ctx.hasPendingMessages !== "function" || ctx.hasPendingMessages()) return;
