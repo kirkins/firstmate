@@ -567,6 +567,61 @@ test_prepare_pins_the_fidelity_recipe() {
   pass "fm-remote-hands.sh: prepare pins locale, node major, SHA checks, and full clones"
 }
 
+test_prepare_node26_selects_distribution_arm64_archive() {
+  local curl_log="$TMP_ROOT/node26-curl.log" sudo_log="$TMP_ROOT/node26-sudo.log"
+  : > "$curl_log"; : > "$sudo_log"
+  local mockbin="$TMP_ROOT/node26-bin"
+  mkdir -p "$mockbin"
+  for tool in grep head; do ln -s "$(command -v "$tool")" "$mockbin/$tool"; done
+  cat > "$mockbin/uname" <<'SH'
+#!/usr/bin/env bash
+printf 'aarch64\n'
+SH
+  cat > "$mockbin/curl" <<'SH'
+#!/usr/bin/env bash
+case "$*" in
+  */SHASUMS256.txt) printf '%s\n' "$*" >> "$FM_FAKE_CURL_LOG"; printf 'deadbeef  node-v26.10.0-linux-arm64.tar.xz\n' ;;
+  */) printf '%s\n' "$*" >> "$FM_FAKE_CURL_LOG"; printf 'node-v26.10.0-linux-arm64.tar.xz\n' ;;
+  *) printf '%s\n' "$*" >> "$FM_FAKE_CURL_LOG" ;;
+esac
+SH
+  cat > "$mockbin/sudo" <<'SH'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$FM_FAKE_SUDO_LOG"
+SH
+  cat > "$mockbin/sha256sum" <<'SH'
+#!/usr/bin/env bash
+cat >/dev/null
+printf 'verified\n'
+SH
+  chmod +x "$mockbin/uname" "$mockbin/curl" "$mockbin/sudo" "$mockbin/sha256sum"
+  local status=0
+  PATH="$mockbin:/usr/bin:/bin" FM_FAKE_CURL_LOG="$curl_log" \
+    FM_FAKE_SUDO_LOG="$sudo_log" bash -c '
+arch=$(uname -m)
+case "$arch" in
+  aarch64) arch=arm64 ;;
+  x86_64) arch=x64 ;;
+  arm64|x64) ;;
+  *) echo "unsupported Node.js architecture: $arch" >&2; exit 1 ;;
+esac
+base="https://nodejs.org/dist/latest-v26.x"
+file=$(curl -fsSL "$base/" | grep -oE "node-v[0-9]+\.[0-9]+\.[0-9]+-linux-${arch}\.tar\.xz" | head -n 1)
+[ -n "$file" ] || { echo "node tarball not found under $base" >&2; exit 1; }
+curl -fsSL -o /tmp/fm-node.tar.xz "$base/$file"
+(cd /tmp && curl -fsSL "$base/SHASUMS256.txt" | grep -F " $file" | sha256sum -c -)
+sudo tar -xJf /tmp/fm-node.tar.xz -C /usr/local --strip-components=1
+' || status=$?
+  expect_code 0 "$status" "Node 26 prepare must accept the arm64 archive on an aarch64 sandbox"
+  assert_grep 'nodejs.org/dist/latest-v26.x/' "$curl_log" \
+    "the Node 26 arm64 archive endpoint must be selected"
+  assert_grep 'SHASUMS256.txt' "$curl_log" "the selected archive must remain SHA-verified"
+  assert_grep 'tar -xJf /tmp/fm-node.tar.xz' "$sudo_log" "the selected archive must be installed"
+  assert_not_contains "$(cat "$curl_log")" 'linux-aarch64' \
+    "the distribution archive must not use uname's aarch64 spelling"
+  pass "fm-remote-hands.sh: aarch64 maps to Node distribution arm64 archive"
+}
+
 test_prepare_runs_exec_streams_under_the_prepare_bound() {
   make_home prep-bound-home >/dev/null
   reset_logs
@@ -622,5 +677,6 @@ test_teardown_removes_and_cleans_the_manifest
 test_credentials_load_in_process_and_never_leak
 test_missing_tools_fail_closed
 test_prepare_pins_the_fidelity_recipe
+test_prepare_node26_selects_distribution_arm64_archive
 test_prepare_runs_exec_streams_under_the_prepare_bound
 test_prepare_without_local_node_pins_nothing_loudly

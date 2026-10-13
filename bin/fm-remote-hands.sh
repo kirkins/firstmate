@@ -607,6 +607,12 @@ sudo apt-get update -qq && sudo apt-get install -y -qq xz-utils tmux libatomic1 
     # shellcheck disable=SC2016  # $-expansions in the appended script run in the sandbox shell.
     APT_AND_NODE_SCRIPT="$APT_AND_NODE_SCRIPT"'
 arch=$(uname -m)
+case "$arch" in
+  aarch64) arch=arm64 ;;
+  x86_64) arch=x64 ;;
+  arm64|x64) ;;
+  *) echo "unsupported Node.js architecture: $arch" >&2; exit 1 ;;
+esac
 base="https://nodejs.org/dist/latest-v'"$LOCAL_NODE_MAJOR"'.x"
 file=$(curl -fsSL "$base/" | grep -oE "node-v[0-9]+\.[0-9]+\.[0-9]+-linux-${arch}\.tar\.xz" | head -n 1)
 [ -n "$file" ] || { echo "node tarball not found under $base" >&2; exit 1; }
