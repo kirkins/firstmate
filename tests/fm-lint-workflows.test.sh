@@ -14,6 +14,9 @@ LINT_WF="$ROOT/bin/fm-lint-workflows.sh"
 LINT="$ROOT/bin/fm-lint.sh"
 INSTALLER="$ROOT/bin/fm-install-actionlint.sh"
 REQUIRED=$("$LINT_WF" --required-version)
+# Portable workflow fixtures do not inherit a machine operator's lint opt-in.
+WORKFLOW_CONFIG_TMP=$(fm_test_tmproot fm-lint-workflow-config)
+export XDG_CONFIG_HOME="$WORKFLOW_CONFIG_TMP/unconfigured"
 
 # Official sha256 values from actionlint_1.7.12_checksums.txt on the v1.7.12
 # release (https://github.com/rhysd/actionlint/releases/tag/v1.7.12). Tests

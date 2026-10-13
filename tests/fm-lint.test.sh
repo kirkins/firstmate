@@ -20,6 +20,10 @@ LINT="$ROOT/bin/fm-lint.sh"
 INSTALLER="$ROOT/bin/fm-install-shellcheck.sh"
 # The pinned version, read from the single source (the one owner itself).
 REQUIRED=$("$LINT" --required-version)
+# Existing portability cases exercise an ordinary caller without the host's
+# private opt-in. Resource cases have their own focused suite.
+BINDING_TMP=$(fm_test_tmproot fm-lint-binding)
+export XDG_CONFIG_HOME="$BINDING_TMP/unconfigured"
 
 # Official GitHub release asset sha256 values for shellcheck v0.11.0 .tar.xz
 # archives (https://github.com/koalaman/shellcheck/releases/tag/v0.11.0). Tests
