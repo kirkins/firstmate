@@ -567,6 +567,94 @@ test_prepare_pins_the_fidelity_recipe() {
   pass "fm-remote-hands.sh: prepare pins locale, node major, SHA checks, and full clones"
 }
 
+test_prepare_node26_selects_distribution_arm64_archive() {
+  make_home node26-home >/dev/null
+  reset_logs
+  local cloudbin="$TMP_ROOT/node26-cloudbin" mockbin="$TMP_ROOT/node26-bin"
+  local curl_log="$TMP_ROOT/node26-curl.log" sudo_log="$TMP_ROOT/node26-sudo.log"
+  local node_state="$TMP_ROOT/node26-version" sha_log="$TMP_ROOT/node26-sha.log"
+  local git_log="$TMP_ROOT/node26-git.log"
+  mkdir -p "$cloudbin" "$mockbin"
+  printf '22.22.1\n' > "$node_state"
+  : > "$curl_log"; : > "$sudo_log"; : > "$sha_log"; : > "$git_log"
+  cat > "$cloudbin/sbx" <<'SH'
+#!/usr/bin/env bash
+if [ "$1" = login ]; then cat >/dev/null; exit 0; fi
+[ "$1 $2" = '--cloud exec' ] || exit 2
+shift 4
+eval "set -- $*"
+[ "$#" -eq 3 ] && [ "$1 $2" = 'bash -lc' ] || exit 2
+PATH="$FM_FAKE_SANDBOX_PATH" exec bash --noprofile --norc -c "$3"
+SH
+  cat > "$mockbin/uname" <<'SH'
+#!/usr/bin/env bash
+printf 'aarch64\n'
+SH
+  cat > "$mockbin/node" <<'SH'
+#!/usr/bin/env bash
+if [ "$1" = --version ]; then printf v; fi
+cat "$FM_FAKE_NODE_STATE"
+SH
+  cat > "$mockbin/curl" <<'SH'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$FM_FAKE_CURL_LOG"
+case "$*" in
+  '-fsSL https://nodejs.org/dist/latest-v26.x/')
+    printf 'node-v26.10.0-linux-arm64.tar.xz\n' ;;
+  '-fsSL -o /tmp/fm-node.tar.xz https://nodejs.org/dist/latest-v26.x/node-v26.10.0-linux-arm64.tar.xz')
+    exit 0 ;;
+  '-fsSL https://nodejs.org/dist/latest-v26.x/SHASUMS256.txt')
+    printf 'deadbeef  node-v26.10.0-linux-arm64.tar.xz\n' ;;
+  *) exit 1 ;;
+esac
+SH
+  cat > "$mockbin/sudo" <<'SH'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$FM_FAKE_SUDO_LOG"
+case "$*" in
+  'apt-get update -qq'|'apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time') ;;
+  'tar -xJf /tmp/fm-node.tar.xz -C /usr/local --strip-components=1')
+    printf '26.10.0\n' > "$FM_FAKE_NODE_STATE" ;;
+  *) exit 1 ;;
+esac
+SH
+  cat > "$mockbin/sha256sum" <<'SH'
+#!/usr/bin/env bash
+[ "$*" = '-c -' ] || exit 1
+cat > "$FM_FAKE_SHA_LOG"
+[ "$(cat "$FM_FAKE_SHA_LOG")" = 'deadbeef  node-v26.10.0-linux-arm64.tar.xz' ] || exit 1
+printf 'verified\n'
+SH
+  cat > "$mockbin/git" <<'SH'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$FM_FAKE_GIT_LOG"
+case "$1" in
+  clone) exit 0 ;;
+  -C) [ "$3 $4" = 'rev-parse HEAD' ] || exit 1; printf 'fake-head\n' ;;
+  *) exit 1 ;;
+esac
+SH
+  chmod +x "$cloudbin/sbx" "$mockbin/"*
+  local ACTIVE_PATH="$cloudbin:$FAKEBIN:$COREBIN"
+  hands FM_REMOTE_HANDS=1 FM_FAKE_LOCAL_NODE=26.10.0 \
+    FM_FAKE_SANDBOX_PATH="$mockbin:$COREBIN" FM_FAKE_NODE_STATE="$node_state" \
+    FM_FAKE_CURL_LOG="$curl_log" FM_FAKE_SUDO_LOG="$sudo_log" \
+    FM_FAKE_SHA_LOG="$sha_log" FM_FAKE_GIT_LOG="$git_log" -- \
+    prepare --name t-node26 --repo https://github.com/kirkins/firstmate \
+    --dest "$TMP_ROOT/node26-repo"
+  expect_code 0 "$HANDS_STATUS" "production prepare must install Node 26 on an aarch64 sandbox: $HANDS_STDERR"
+  assert_grep '-fsSL -o /tmp/fm-node.tar.xz https://nodejs.org/dist/latest-v26.x/node-v26.10.0-linux-arm64.tar.xz' \
+    "$curl_log" "production prepare must download the Node 26 arm64 archive"
+  assert_grep 'deadbeef  node-v26.10.0-linux-arm64.tar.xz' "$sha_log" \
+    "production prepare must verify the selected archive's checksum"
+  assert_grep 'tar -xJf /tmp/fm-node.tar.xz' "$sudo_log" "the selected archive must be installed"
+  [ "$(cat "$node_state")" = 26.10.0 ] || fail "the sandbox must retain the required Node 26 major"
+  assert_contains "$HANDS_STDOUT" 'v26.10.0' "prepare must report the installed Node 26 version"
+  assert_grep "clone https://github.com/kirkins/firstmate $TMP_ROOT/node26-repo" "$git_log" \
+    "prepare must continue to the requested clone after installation"
+  pass "fm-remote-hands.sh: production prepare maps aarch64 to the Node 26 arm64 archive"
+}
+
 test_prepare_runs_exec_streams_under_the_prepare_bound() {
   make_home prep-bound-home >/dev/null
   reset_logs
@@ -622,5 +710,6 @@ test_teardown_removes_and_cleans_the_manifest
 test_credentials_load_in_process_and_never_leak
 test_missing_tools_fail_closed
 test_prepare_pins_the_fidelity_recipe
+test_prepare_node26_selects_distribution_arm64_archive
 test_prepare_runs_exec_streams_under_the_prepare_bound
 test_prepare_without_local_node_pins_nothing_loudly
