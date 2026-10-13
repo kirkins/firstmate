@@ -58,7 +58,8 @@ case "\$1 \$2" in
     if [ "\${FM_FAKE_SBX_EXEC_RC:-0}" != 0 ]; then exit "\${FM_FAKE_SBX_EXEC_RC}"; fi
     if [ "\${FM_FAKE_SBX_EVAL:-0}" = 1 ]; then
       shift 4
-      exec bash -c "\$*"
+      eval "set -- \$*"
+      exec "\$1" "\$2" "export PATH=\$(printf '%q' "\$PATH"); \$3"
     fi
     seq_file="\${FM_FAKE_SBX_EXEC_SEQ:?}"
     calls_file="\${FM_FAKE_SBX_EXEC_CALLS:?}"
@@ -607,6 +608,28 @@ test_prepare_without_local_node_pins_nothing_loudly() {
   pass "fm-remote-hands.sh: prepare skips the node pin loudly when it cannot name one"
 }
 
+test_fake_exec_restores_fixture_path_after_login() {
+  local real_bash out status
+  real_bash=$(command -v bash)
+  cat > "$TMP_ROOT/login-shell" <<SH
+#!/usr/bin/env bash
+export PATH="$COREBIN"
+exec "$real_bash" -c "\$2"
+SH
+  cat > "$FAKEBIN/fixture-command" <<'SH'
+#!/usr/bin/env bash
+printf '%s|%s\n' "$PATH" "$1"
+SH
+  chmod +x "$TMP_ROOT/login-shell" "$FAKEBIN/fixture-command"
+  out=$(env PATH="$ACTIVE_PATH" FM_FAKE_SBX_EVAL=1 "$FAKEBIN/sbx" \
+    --cloud exec t-login -- "$(printf '%q' "$TMP_ROOT/login-shell")" -lc \
+    "'fixture-command \"argument with spaces\"'" 2>"$TMP_ROOT/stderr"); status=$?
+  expect_code 0 "$status" "fake exec must restore fixture commands after login changes PATH"
+  [ "$out" = "$ACTIVE_PATH|argument with spaces" ] \
+    || fail "fake exec must restore the complete fixture PATH and preserve payload quoting"
+  pass "fm-remote-hands.sh: fake exec restores fixture PATH after login initialization"
+}
+
 test_prepare_verifies_downloaded_archive_before_extraction() {
   make_home prep-checksum-home >/dev/null
   local real_sha sha_args=() mode expected
@@ -706,4 +729,5 @@ test_missing_tools_fail_closed
 test_prepare_pins_the_fidelity_recipe
 test_prepare_runs_exec_streams_under_the_prepare_bound
 test_prepare_without_local_node_pins_nothing_loudly
+test_fake_exec_restores_fixture_path_after_login
 test_prepare_verifies_downloaded_archive_before_extraction
