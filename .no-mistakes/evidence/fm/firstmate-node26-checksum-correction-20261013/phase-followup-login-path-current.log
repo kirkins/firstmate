@@ -1,0 +1,52 @@
+{
+  "name": "login-path-current",
+  "head": "418ad36401d5dec117254d5d201eb8a635a7c126",
+  "production_installer": "current",
+  "native_execution": true,
+  "exit_code": 0,
+  "sha_backend": "/usr/bin/core_perl/shasum",
+  "sha256sum_absent_initially": true,
+  "login_reordering": true,
+  "sentinel_before": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+  "sentinel_after": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+  "fixture_temp_remaining": [],
+  "network": "private namespace; no external connectivity",
+  "cloud": "disabled; test-owned sbx fixture executes production payloads locally",
+  "node_host": "v26.10.0; no installation",
+  "memory_cap": [
+    4294967296,
+    4294967296
+  ],
+  "FM_LINT_JOBS": "1"
+}
+Command:
+/usr/bin/bwrap --ro-bind /usr /usr --symlink usr/bin /bin --symlink usr/lib /lib --proc /proc --dev /dev --dir /etc --ro-bind /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/profile /etc/profile --ro-bind /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR --bind /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current --bind /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/tmp /tmp --unshare-net --die-with-parent --setenv HOME /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/home --setenv PATH /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/tools --setenv TMPDIR /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp --setenv FM_STATE_OVERRIDE /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/state --setenv XDG_STATE_HOME /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/xdg --setenv FM_LINT_JOBS 1 --setenv GIT_CONFIG_GLOBAL /dev/null --setenv GIT_CONFIG_NOSYSTEM 1 --chdir /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR --ro-bind /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/focused-regression.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/tests/fm-remote-hands.test.sh -- /usr/bin/bash -c 'if command -v sha256sum; then exit 99; fi; printf "GNU sha256sum absent from initial test PATH; shasum=%s\n" "$(command -v shasum)"; exec bash tests/fm-remote-hands.test.sh'
+STDOUT:
+GNU sha256sum absent from initial test PATH; shasum=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/tools/shasum
+ok - fm-remote-hands.sh: fake exec restores fixture PATH after login initialization
+ok - fm-remote-hands.sh: prepare verifies the downloaded Node archive before extraction
+
+STDERR:
+
+Real SHA backend invocation records:
+backend=/usr/bin/core_perl/shasum cwd=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR argv=-a 256 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/node-archive 
+backend=/usr/bin/core_perl/shasum cwd=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/download argv=-a 256 -c - 
+backend=/usr/bin/core_perl/shasum cwd=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/download argv=-a 256 -c - 
+backend=/usr/bin/core_perl/shasum cwd=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/download argv=-a 256 -c - 
+
+Actual archive copy invocation records:
+/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/node-archive /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/download/fm-node.tar.xz 
+/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/node-archive /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/download/fm-node.tar.xz 
+/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/node-archive /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/download/fm-node.tar.xz 
+/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/node-archive /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/download/fm-node.tar.xz 
+
+Actual login initialization records:
+login pid=1319378 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/tools
+login pid=1319397 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/tools
+login pid=1319417 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/tools
+login pid=1319461 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/tools
+login pid=1319480 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/tools
+login pid=1319570 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/tools
+login pid=1319589 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/tools
+login pid=1319647 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/tools
+login pid=1319666 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/fixture-tmp/fm-remote-hands.CH0iVr/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/followup/login-path-current/tools

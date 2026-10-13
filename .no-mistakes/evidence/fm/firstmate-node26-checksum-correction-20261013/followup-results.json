@@ -1,0 +1,68 @@
+[
+  {
+    "name": "portable-shasum",
+    "head": "418ad36401d5dec117254d5d201eb8a635a7c126",
+    "production_installer": "current",
+    "native_execution": true,
+    "exit_code": 0,
+    "sha_backend": "/usr/bin/core_perl/shasum",
+    "sha256sum_absent_initially": true,
+    "login_reordering": false,
+    "sentinel_before": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+    "sentinel_after": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+    "fixture_temp_remaining": [],
+    "network": "private namespace; no external connectivity",
+    "cloud": "disabled; test-owned sbx fixture executes production payloads locally",
+    "node_host": "v26.10.0; no installation",
+    "memory_cap": [
+      4294967296,
+      4294967296
+    ],
+    "FM_LINT_JOBS": "1",
+    "result": "pass"
+  },
+  {
+    "name": "login-path-current",
+    "head": "418ad36401d5dec117254d5d201eb8a635a7c126",
+    "production_installer": "current",
+    "native_execution": true,
+    "exit_code": 0,
+    "sha_backend": "/usr/bin/core_perl/shasum",
+    "sha256sum_absent_initially": true,
+    "login_reordering": true,
+    "sentinel_before": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+    "sentinel_after": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+    "fixture_temp_remaining": [],
+    "network": "private namespace; no external connectivity",
+    "cloud": "disabled; test-owned sbx fixture executes production payloads locally",
+    "node_host": "v26.10.0; no installation",
+    "memory_cap": [
+      4294967296,
+      4294967296
+    ],
+    "FM_LINT_JOBS": "1",
+    "result": "pass"
+  },
+  {
+    "name": "login-path-old-installer",
+    "head": "418ad36401d5dec117254d5d201eb8a635a7c126",
+    "production_installer": "base",
+    "native_execution": true,
+    "exit_code": 1,
+    "sha_backend": "/usr/bin/core_perl/shasum",
+    "sha256sum_absent_initially": true,
+    "login_reordering": true,
+    "sentinel_before": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+    "sentinel_after": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+    "fixture_temp_remaining": [],
+    "network": "private namespace; no external connectivity",
+    "cloud": "disabled; test-owned sbx fixture executes production payloads locally",
+    "node_host": "v26.10.0; no installation",
+    "memory_cap": [
+      4294967296,
+      4294967296
+    ],
+    "FM_LINT_JOBS": "1",
+    "result": "pass"
+  }
+]

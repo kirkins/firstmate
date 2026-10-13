@@ -1,0 +1,56 @@
+[
+  {
+    "version": "target",
+    "mode": "good",
+    "exit": 0,
+    "extracted": true,
+    "cloned": true,
+    "node_version": "v26.10.0",
+    "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"
+  },
+  {
+    "version": "target",
+    "mode": "wrong",
+    "exit": 1,
+    "extracted": false,
+    "cloned": false,
+    "node_version": null,
+    "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"
+  },
+  {
+    "version": "target",
+    "mode": "missing",
+    "exit": 1,
+    "extracted": false,
+    "cloned": false,
+    "node_version": null,
+    "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"
+  },
+  {
+    "version": "target",
+    "mode": "verifier-error",
+    "exit": 1,
+    "extracted": false,
+    "cloned": false,
+    "node_version": null,
+    "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"
+  },
+  {
+    "version": "base",
+    "mode": "good",
+    "exit": 0,
+    "extracted": true,
+    "cloned": true,
+    "node_version": "v26.10.0",
+    "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"
+  },
+  {
+    "version": "base",
+    "mode": "wrong",
+    "exit": 0,
+    "extracted": true,
+    "cloned": true,
+    "node_version": "v26.10.0",
+    "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"
+  }
+]

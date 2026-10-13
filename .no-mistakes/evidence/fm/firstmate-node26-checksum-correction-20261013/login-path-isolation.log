@@ -1,0 +1,27 @@
+{
+  "exit": 0,
+  "login_profile": "prepends /usr/bin ahead of fixture PATH",
+  "sentinel_unchanged": true,
+  "fixture_temp_remaining": []
+}
+STDOUT:
+ok - fm-remote-hands.sh: help, closed subcommand set, and argument validation
+ok - fm-remote-hands.sh: off by default with a silent route and loud create refusal
+ok - fm-remote-hands.sh: .env activation with the env-wins contract
+ok - fm-remote-hands.sh: routing follows the class peak against local RAM
+ok - fm-remote-hands.sh: routing integrates the heavy slot's public status
+ok - fm-remote-hands.sh: create sizes shape, TTL, allowances, and manifest per class
+ok - fm-remote-hands.sh: exec survives exec-stream teardown via the hosted socket
+ok - fm-remote-hands.sh: exec hands sbx the proof-pinned joined-exec argv shape
+ok - fm-remote-hands.sh: wait polls the marker and propagates or aborts
+ok - fm-remote-hands.sh: wait keeps polling a reachable sandbox with no marker yet
+ok - fm-remote-hands.sh: copy-in, copy-out, and log drive the artifact paths
+ok - fm-remote-hands.sh: teardown removes the sandbox and its record, even while off
+ok - fm-remote-hands.sh: credentials cross stdin only and never surface
+ok - fm-remote-hands.sh: missing tooling fails closed with named prerequisites
+ok - fm-remote-hands.sh: prepare pins locale, node major, SHA checks, and full clones
+ok - fm-remote-hands.sh: prepare exec streams run under their own bound
+ok - fm-remote-hands.sh: prepare skips the node pin loudly when it cannot name one
+ok - fm-remote-hands.sh: fake exec restores fixture PATH after login initialization
+ok - fm-remote-hands.sh: prepare verifies the downloaded Node archive before extraction
+STDERR:

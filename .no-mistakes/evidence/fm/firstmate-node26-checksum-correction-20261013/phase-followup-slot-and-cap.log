@@ -1,0 +1,7 @@
+head=418ad36401d5dec117254d5d201eb8a635a7c126
+RLIMIT_AS soft=4294967296 hard=4294967296
+4GiB anonymous address-space allocation refused: ENOMEM
+FM_LINT_JOBS=1
+Sequential scenario execution; isolated worktree slot
+held task=checksum-followup pid=1318142 estimate=4096MB age=1s expires_in=1799s state=live
+error: heavy slot held by task 'checksum-followup' (pid 1318142, estimate 4096MB, held 2s, expires in 1798s); declare a wait and retry acquire later, never run the job uncapped

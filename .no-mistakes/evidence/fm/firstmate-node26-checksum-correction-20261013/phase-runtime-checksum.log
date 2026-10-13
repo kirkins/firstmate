@@ -1,0 +1,74 @@
+Real Firstmate prepare executable; private bwrap filesystem and network namespace; local distribution fixture via real curl file://; real SHA-256, tar, git, and existing Node26. Transport/credential adapters replace cloud dependencies; apt is disabled. No public downloads, package installation, credentials, or cloud workloads. FM_LINT_JOBS=1; parent address-space limit=4GiB.
+
+{"version": "target", "mode": "good", "exit": 0, "extracted": true, "cloned": true, "node_version": "v26.10.0", "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"}
+$ /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/bin/fm-remote-hands.sh prepare --name private-checksum-lab --repo file:///repo --node-major 26 --dest /workspace/checkout
+STDOUT:
+fm-node.tar.xz: OK
+v26.10.0
+428387a8ce02eddeef3afa427bb16ca2949c23d7
+prepare: name=private-checksum-lab repo=file:///repo dest=/workspace/checkout
+STDERR:
+prepare: sandbox node '' -> local major 26; installing from nodejs.org
+package installation disabled in disposable verification
+package installation disabled in disposable verification
+Cloning into '/workspace/checkout'...
+
+{"version": "target", "mode": "wrong", "exit": 1, "extracted": false, "cloned": false, "node_version": null, "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"}
+$ /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/bin/fm-remote-hands.sh prepare --name private-checksum-lab --repo file:///repo --node-major 26 --dest /workspace/checkout
+STDOUT:
+fm-node.tar.xz: FAILED
+STDERR:
+prepare: sandbox node '' -> local major 26; installing from nodejs.org
+package installation disabled in disposable verification
+package installation disabled in disposable verification
+sha256sum: WARNING: 1 computed checksum did NOT match
+node tarball checksum verification failed
+
+{"version": "target", "mode": "missing", "exit": 1, "extracted": false, "cloned": false, "node_version": null, "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"}
+$ /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/bin/fm-remote-hands.sh prepare --name private-checksum-lab --repo file:///repo --node-major 26 --dest /workspace/checkout
+STDOUT:
+STDERR:
+prepare: sandbox node '' -> local major 26; installing from nodejs.org
+package installation disabled in disposable verification
+package installation disabled in disposable verification
+sha256sum: 'standard input': no properly formatted checksum lines found
+node tarball checksum verification failed
+
+{"version": "target", "mode": "verifier-error", "exit": 1, "extracted": false, "cloned": false, "node_version": null, "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"}
+$ /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/bin/fm-remote-hands.sh prepare --name private-checksum-lab --repo file:///repo --node-major 26 --dest /workspace/checkout
+STDOUT:
+STDERR:
+prepare: sandbox node '' -> local major 26; installing from nodejs.org
+package installation disabled in disposable verification
+package installation disabled in disposable verification
+node tarball checksum verification failed
+
+{"version": "base", "mode": "good", "exit": 0, "extracted": true, "cloned": true, "node_version": "v26.10.0", "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"}
+$ /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/runtime/base-bin/fm-remote-hands.sh prepare --name private-checksum-lab --repo file:///repo --node-major 26 --dest /workspace/checkout
+STDOUT:
+node-v26.10.0-linux-aarch64.tar.xz: FAILED open or read
+v26.10.0
+428387a8ce02eddeef3afa427bb16ca2949c23d7
+prepare: name=private-checksum-lab repo=file:///repo dest=/workspace/checkout
+STDERR:
+prepare: sandbox node '' -> local major 26; installing from nodejs.org
+package installation disabled in disposable verification
+package installation disabled in disposable verification
+sha256sum: node-v26.10.0-linux-aarch64.tar.xz: No such file or directory
+sha256sum: WARNING: 1 listed file could not be read
+Cloning into '/workspace/checkout'...
+
+{"version": "base", "mode": "wrong", "exit": 0, "extracted": true, "cloned": true, "node_version": "v26.10.0", "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"}
+$ /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-phase/runtime/base-bin/fm-remote-hands.sh prepare --name private-checksum-lab --repo file:///repo --node-major 26 --dest /workspace/checkout
+STDOUT:
+node-v26.10.0-linux-aarch64.tar.xz: FAILED open or read
+v26.10.0
+428387a8ce02eddeef3afa427bb16ca2949c23d7
+prepare: name=private-checksum-lab repo=file:///repo dest=/workspace/checkout
+STDERR:
+prepare: sandbox node '' -> local major 26; installing from nodejs.org
+package installation disabled in disposable verification
+package installation disabled in disposable verification
+sha256sum: node-v26.10.0-linux-aarch64.tar.xz: No such file or directory
+sha256sum: WARNING: 1 listed file could not be read
+Cloning into '/workspace/checkout'...

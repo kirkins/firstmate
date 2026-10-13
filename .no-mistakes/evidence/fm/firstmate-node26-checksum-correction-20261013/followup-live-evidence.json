@@ -1,0 +1,109 @@
+{
+  "tested_head_sha": "418ad36401d5dec117254d5d201eb8a635a7c126",
+  "finding_addressed": "test-1",
+  "verdict": "pass",
+  "scope": "Only the two previously outstanding requested local regression scenarios; this does not assert CI readiness.",
+  "diagnosis": "Current code and tests already contain the selected fixes. The outstanding failure was missing native execution evidence, not a product defect requiring new edits. The old installer was rejected by the current checksum regression as expected.",
+  "tested": [
+    "env FM_LINT_JOBS=1 prlimit --as=4294967296:4294967296 -- python3 .test-checksum-followup/drive.py"
+  ],
+  "scenarios": [
+    {
+      "name": "Run the focused regression without GNU sha256sum: the real shasum backend passes.",
+      "result": "pass",
+      "live": true,
+      "live_interface": "Native execution of tests/fm-remote-hands.test.sh and the current production prepare executable; real /usr/bin/core_perl/shasum computes the digest and checks the checksum stream.",
+      "evidence": "followup-portable-shasum.log",
+      "observed": "Exit 0; initial test PATH lacks sha256sum; actual backend invocation records show -a 256 for digest computation and -a 256 -c - for verification from the private download directory."
+    },
+    {
+      "name": "Run regressions after login PATH reordering and against the old installer: fixtures remain private, preserve the archive sentinel, and clean up after assertion failure.",
+      "result": "pass",
+      "live": true,
+      "live_interface": "Real Bash -lc initialization reads the namespace-local /etc/profile and prepends system paths; the current regression executes unchanged current and pre-fix production preparation scripts.",
+      "evidence": [
+        "followup-login-path-current.log",
+        "followup-login-path-old-installer.log"
+      ],
+      "observed": "Current installer exit 0; old installer exit 1 with missing checksum must fail prepare. Actual copy records stay under fixture-tmp, SHA records verify from the private download directory, sentinel hashes remain identical, and fixture-tmp is empty after both success and assertion failure."
+    }
+  ],
+  "environment": {
+    "platform": "Linux; equivalent macOS login PATH reordering driven through actual Bash initialization",
+    "node": "v26.10.0 retained",
+    "FM_LINT_JOBS": "1",
+    "cap": "RLIMIT_AS soft=hard=4294967296; 4GiB allocation refused with ENOMEM",
+    "heavy_slot": "isolated worktree-local XDG_STATE_HOME; competing acquire refused with exit 6; released to free"
+  },
+  "boundaries": "Native local test execution is live for the requested regression interfaces. Cloud sbx, credentials, package installation and extraction use the existing test-owned fixtures; no claim of live cloud execution or a physical macOS run. External networking is disabled by bubblewrap. The archive sentinel is a real worktree file mounted as /tmp/fm-node.tar.xz inside the private namespace.",
+  "source_changes": [],
+  "results": [
+    {
+      "name": "portable-shasum",
+      "head": "418ad36401d5dec117254d5d201eb8a635a7c126",
+      "production_installer": "current",
+      "native_execution": true,
+      "exit_code": 0,
+      "sha_backend": "/usr/bin/core_perl/shasum",
+      "sha256sum_absent_initially": true,
+      "login_reordering": false,
+      "sentinel_before": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+      "sentinel_after": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+      "fixture_temp_remaining": [],
+      "network": "private namespace; no external connectivity",
+      "cloud": "disabled; test-owned sbx fixture executes production payloads locally",
+      "node_host": "v26.10.0; no installation",
+      "memory_cap": [
+        4294967296,
+        4294967296
+      ],
+      "FM_LINT_JOBS": "1",
+      "result": "pass"
+    },
+    {
+      "name": "login-path-current",
+      "head": "418ad36401d5dec117254d5d201eb8a635a7c126",
+      "production_installer": "current",
+      "native_execution": true,
+      "exit_code": 0,
+      "sha_backend": "/usr/bin/core_perl/shasum",
+      "sha256sum_absent_initially": true,
+      "login_reordering": true,
+      "sentinel_before": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+      "sentinel_after": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+      "fixture_temp_remaining": [],
+      "network": "private namespace; no external connectivity",
+      "cloud": "disabled; test-owned sbx fixture executes production payloads locally",
+      "node_host": "v26.10.0; no installation",
+      "memory_cap": [
+        4294967296,
+        4294967296
+      ],
+      "FM_LINT_JOBS": "1",
+      "result": "pass"
+    },
+    {
+      "name": "login-path-old-installer",
+      "head": "418ad36401d5dec117254d5d201eb8a635a7c126",
+      "production_installer": "base",
+      "native_execution": true,
+      "exit_code": 1,
+      "sha_backend": "/usr/bin/core_perl/shasum",
+      "sha256sum_absent_initially": true,
+      "login_reordering": true,
+      "sentinel_before": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+      "sentinel_after": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+      "fixture_temp_remaining": [],
+      "network": "private namespace; no external connectivity",
+      "cloud": "disabled; test-owned sbx fixture executes production payloads locally",
+      "node_host": "v26.10.0; no installation",
+      "memory_cap": [
+        4294967296,
+        4294967296
+      ],
+      "FM_LINT_JOBS": "1",
+      "result": "pass"
+    }
+  ],
+  "cleanup": "Temporary driver, tool wrappers, old installer overlay, namespace backing directories, sentinels, and isolated heavy-slot state removed; git status --short is empty."
+}

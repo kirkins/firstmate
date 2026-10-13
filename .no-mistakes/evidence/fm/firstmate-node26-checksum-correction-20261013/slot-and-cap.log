@@ -1,0 +1,26 @@
+$ bin/fm-heavy-slot.sh acquire checksum-check --estimate 4096
+acquired: task=checksum-check estimate=4096MB pid=774436 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=4096M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/bin/fm-heavy-slot.sh' release checksum-check
+exit=0
+
+$ bin/fm-heavy-slot.sh acquire competing-check --estimate 4096
+error: heavy slot held by task 'checksum-check' (pid 774436, estimate 4096MB, held 0s, expires in 1800s); declare a wait and retry acquire later, never run the job uncapped
+exit=6
+
+$ bin/fm-heavy-slot.sh status
+held task=checksum-check pid=774436 estimate=4096MB age=0s expires_in=1800s state=live
+exit=0
+
+$ bin/fm-heavy-slot.sh release checksum-check
+released: task=checksum-check
+exit=0
+
+$ bin/fm-heavy-slot.sh status
+free
+exit=0
+
+RLIMIT_AS=(4294967296, 4294967296)
+FM_LINT_JOBS=1

@@ -1,0 +1,66 @@
+{
+  "name": "login-path-old-installer",
+  "head": "418ad36401d5dec117254d5d201eb8a635a7c126",
+  "production_installer": "base",
+  "native_execution": true,
+  "exit_code": 1,
+  "sha_backend": "/usr/bin/core_perl/shasum",
+  "sha256sum_absent_initially": true,
+  "login_reordering": true,
+  "sentinel_before": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+  "sentinel_after": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef",
+  "fixture_temp_remaining": [],
+  "network": "private namespace; no external connectivity",
+  "cloud": "disabled; test-owned sbx fixture executes production payloads locally",
+  "node_host": "v26.10.0; no installation",
+  "memory_cap": [
+    4294967296,
+    4294967296
+  ],
+  "FM_LINT_JOBS": "1"
+}
+Command:
+/usr/bin/bwrap --ro-bind /usr /usr --symlink usr/bin /bin --symlink usr/lib /lib --proc /proc --dev /dev --dir /etc --ro-bind /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/profile /etc/profile --ro-bind /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR --bind /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer --bind /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/tmp /tmp --unshare-net --die-with-parent --setenv HOME /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/home --setenv PATH /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/tools --setenv TMPDIR /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp --setenv FM_STATE_OVERRIDE /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/state --setenv XDG_STATE_HOME /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/xdg --setenv FM_LINT_JOBS 1 --setenv GIT_CONFIG_GLOBAL /dev/null --setenv GIT_CONFIG_NOSYSTEM 1 --chdir /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR --ro-bind /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/old-installer.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/bin/fm-remote-hands.sh -- /usr/bin/bash -c 'if command -v sha256sum; then exit 99; fi; printf "GNU sha256sum absent from initial test PATH; shasum=%s\n" "$(command -v shasum)"; exec bash tests/fm-remote-hands.test.sh'
+STDOUT:
+GNU sha256sum absent from initial test PATH; shasum=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/tools/shasum
+ok - fm-remote-hands.sh: help, closed subcommand set, and argument validation
+ok - fm-remote-hands.sh: off by default with a silent route and loud create refusal
+ok - fm-remote-hands.sh: .env activation with the env-wins contract
+ok - fm-remote-hands.sh: routing follows the class peak against local RAM
+ok - fm-remote-hands.sh: routing integrates the heavy slot's public status
+ok - fm-remote-hands.sh: create sizes shape, TTL, allowances, and manifest per class
+ok - fm-remote-hands.sh: exec survives exec-stream teardown via the hosted socket
+ok - fm-remote-hands.sh: exec hands sbx the proof-pinned joined-exec argv shape
+ok - fm-remote-hands.sh: wait polls the marker and propagates or aborts
+ok - fm-remote-hands.sh: wait keeps polling a reachable sandbox with no marker yet
+ok - fm-remote-hands.sh: copy-in, copy-out, and log drive the artifact paths
+ok - fm-remote-hands.sh: teardown removes the sandbox and its record, even while off
+ok - fm-remote-hands.sh: credentials cross stdin only and never surface
+ok - fm-remote-hands.sh: missing tooling fails closed with named prerequisites
+ok - fm-remote-hands.sh: prepare pins locale, node major, SHA checks, and full clones
+ok - fm-remote-hands.sh: prepare exec streams run under their own bound
+ok - fm-remote-hands.sh: prepare skips the node pin loudly when it cannot name one
+ok - fm-remote-hands.sh: fake exec restores fixture PATH after login initialization
+
+STDERR:
+not ok - missing checksum must fail prepare
+
+Real SHA backend invocation records:
+backend=/usr/bin/core_perl/shasum cwd=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR argv=-a 256 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/node-archive 
+backend=/usr/bin/core_perl/shasum cwd=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/download argv=-a 256 -c - 
+backend=/usr/bin/core_perl/shasum cwd=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/download argv=-a 256 -c - 
+
+Actual archive copy invocation records:
+/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/node-archive /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/download/fm-node.tar.xz 
+/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/node-archive /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/download/fm-node.tar.xz 
+
+Actual login initialization records:
+login pid=1287830 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/tools
+login pid=1287945 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/tools
+login pid=1287995 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/tools
+login pid=1289123 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/tools
+login pid=1289156 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/tools
+login pid=1289180 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/tools
+login pid=1289224 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/tools
+login pid=1289243 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/tools
+login pid=1289265 PATH=/usr/bin:/usr/bin/core_perl:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/fixture-tmp/fm-remote-hands.6MTu04/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/.test-checksum-followup/login-path-old-installer/tools

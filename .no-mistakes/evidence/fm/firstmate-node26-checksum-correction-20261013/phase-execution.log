@@ -1,0 +1,82 @@
+Sequential checks; FM_LINT_JOBS=1; 4GiB hard/soft process address-space cap; worktree-local isolated heavy slot.
+$ /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/bin/fm-heavy-slot.sh acquire checksum-followup --estimate 4096
+acquired: task=checksum-followup estimate=4096MB pid=1318142 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=4096M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/bin/fm-heavy-slot.sh' release checksum-followup
+exit=0
+$ prlimit --as=4294967296:4294967296 -- python3 /home/kirkins/.no-mistakes/evidence/01M4T32YT3CJB011SDSCDP8QGR/phase-drive-checksum.py
+[
+  {
+    "version": "target",
+    "mode": "good",
+    "exit": 0,
+    "extracted": true,
+    "cloned": true,
+    "node_version": "v26.10.0",
+    "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"
+  },
+  {
+    "version": "target",
+    "mode": "wrong",
+    "exit": 1,
+    "extracted": false,
+    "cloned": false,
+    "node_version": null,
+    "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"
+  },
+  {
+    "version": "target",
+    "mode": "missing",
+    "exit": 1,
+    "extracted": false,
+    "cloned": false,
+    "node_version": null,
+    "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"
+  },
+  {
+    "version": "target",
+    "mode": "verifier-error",
+    "exit": 1,
+    "extracted": false,
+    "cloned": false,
+    "node_version": null,
+    "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"
+  },
+  {
+    "version": "base",
+    "mode": "good",
+    "exit": 0,
+    "extracted": true,
+    "cloned": true,
+    "node_version": "v26.10.0",
+    "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"
+  },
+  {
+    "version": "base",
+    "mode": "wrong",
+    "exit": 0,
+    "extracted": true,
+    "cloned": true,
+    "node_version": "v26.10.0",
+    "archive_sha256": "65437a888ab9e73f532ce745acac8a9d594d6019ee3afd0bb7872e40e2a0d2c0"
+  }
+]
+exit=0
+$ prlimit --as=4294967296:4294967296 -- python3 /home/kirkins/.no-mistakes/evidence/01M4T32YT3CJB011SDSCDP8QGR/phase-drive-followup.py
+RLIMIT_AS soft=4294967296 hard=4294967296; allocation refused; FM_LINT_JOBS=1
+{"name": "portable-shasum", "head": "418ad36401d5dec117254d5d201eb8a635a7c126", "production_installer": "current", "native_execution": true, "exit_code": 0, "sha_backend": "/usr/bin/core_perl/shasum", "sha256sum_absent_initially": true, "login_reordering": false, "sentinel_before": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef", "sentinel_after": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef", "fixture_temp_remaining": [], "network": "private namespace; no external connectivity", "cloud": "disabled; test-owned sbx fixture executes production payloads locally", "node_host": "v26.10.0; no installation", "memory_cap": [4294967296, 4294967296], "FM_LINT_JOBS": "1"}
+{"name": "login-path-current", "head": "418ad36401d5dec117254d5d201eb8a635a7c126", "production_installer": "current", "native_execution": true, "exit_code": 0, "sha_backend": "/usr/bin/core_perl/shasum", "sha256sum_absent_initially": true, "login_reordering": true, "sentinel_before": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef", "sentinel_after": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef", "fixture_temp_remaining": [], "network": "private namespace; no external connectivity", "cloud": "disabled; test-owned sbx fixture executes production payloads locally", "node_host": "v26.10.0; no installation", "memory_cap": [4294967296, 4294967296], "FM_LINT_JOBS": "1"}
+{"name": "login-path-old-installer", "head": "418ad36401d5dec117254d5d201eb8a635a7c126", "production_installer": "base", "native_execution": true, "exit_code": 1, "sha_backend": "/usr/bin/core_perl/shasum", "sha256sum_absent_initially": true, "login_reordering": true, "sentinel_before": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef", "sentinel_after": "c269f518583f1c250e67fd5fcc549bdb8d9fb51765d0316719b14ff151e2a9ef", "fixture_temp_remaining": [], "network": "private namespace; no external connectivity", "cloud": "disabled; test-owned sbx fixture executes production payloads locally", "node_host": "v26.10.0; no installation", "memory_cap": [4294967296, 4294967296], "FM_LINT_JOBS": "1"}
+PASS: portable SHA fallback, login PATH isolation, old-installer reproduction, sentinel preservation, EXIT cleanup
+exit=0
+$ node --version
+v26.10.0
+exit=0
+$ /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/bin/fm-heavy-slot.sh release checksum-followup
+released: task=checksum-followup
+exit=0
+$ /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4T32YT3CJB011SDSCDP8QGR/bin/fm-heavy-slot.sh status
+free
+exit=0
