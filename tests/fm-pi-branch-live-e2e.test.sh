@@ -64,10 +64,21 @@ if [ "${1:-}" = --handling-delivered ]; then
   printf 'confirmed generation=%s watcher=%s\n' "$2" "$4" >> "${FM_LIVE_WATCH_LOG:?}"
   exit 0
 fi
+trap 'exit 0' TERM INT
+# The real --restart owner retires the predecessor before watching for work.
+# Leaving it alive lets the old generation steal the replacement's trigger.
+if [ -n "${FM_WATCH_PREDECESSOR_ARM_PID:-}" ]; then
+  kill -TERM "$FM_WATCH_PREDECESSOR_ARM_PID" 2>/dev/null || true
+  for _ in $(seq 1 100); do
+    kill -0 "$FM_WATCH_PREDECESSOR_ARM_PID" 2>/dev/null || break
+    sleep 0.02
+  done
+fi
 printf 'arm pid=%s\n' "$$" >> "${FM_LIVE_WATCH_LOG:?}"
 printf 'watcher: started pid=%s (beacon fresh) recovery-generation=live-sdk-generation\n' "$$"
-trap 'exit 0' TERM INT
+printf 'ready pid=%s\n' "$$" >> "${FM_LIVE_WATCH_LOG:?}"
 while :; do
+  [ -d "${FM_HOME:?}/state" ] || exit 0
   if [ -e "$FM_LIVE_WATCH_TRIGGER" ]; then
     reason=$(cat "$FM_LIVE_WATCH_TRIGGER")
     rm -f "$FM_LIVE_WATCH_TRIGGER"
@@ -172,7 +183,7 @@ const waitFor = async (predicate, label) => {
     if (predicate()) return;
     await new Promise((resolve) => setTimeout(resolve, 50));
   }
-  throw new Error(`timeout waiting for ${label}`);
+  throw new Error(`timeout waiting for ${label}; main=${JSON.stringify(mainUserMessages)}; offers=${offers.length}`);
 };
 const armCount = () => existsSync(process.env.FM_LIVE_WATCH_LOG)
   ? readFileSync(process.env.FM_LIVE_WATCH_LOG, "utf8").split(/\n/).filter((line) => line.startsWith("arm ")).length
@@ -221,6 +232,15 @@ if (!existsSync(`${home}/state/branch-session`)) {
 // A model pin the branch's REAL runtime cannot resolve must refuse the build
 // and reject the offer back to watcher-owned main delivery rather than
 // silently running the branch on whatever model main would have used.
+const armPids = () => readFileSync(process.env.FM_LIVE_WATCH_LOG, "utf8")
+  .split(/\n/).map((line) => line.match(/^arm pid=([0-9]+)$/)?.[1]).filter(Boolean).map(Number);
+const retainedPredecessor = armPids().at(-1);
+const pidAlive = (pid) => {
+  try { process.kill(pid, 0); return true; } catch (error) {
+    if (error.code === "ESRCH") return false;
+    throw error;
+  }
+};
 writeFileSync(`${home}/config/supervision-branch-model`, "openai/no-such-live-model\n");
 for (const handler of piHandlers.get("session_shutdown") ?? []) {
   await handler({ type: "session_shutdown", reason: "new" }, sessionCtx);
@@ -229,6 +249,14 @@ for (const handler of piHandlers.get("session_start") ?? []) {
   await handler({ type: "session_start", reason: "new" }, sessionCtx);
 }
 await waitFor(() => armCount() >= 3, "replacement watcher arm");
+const replacementArm = armPids().at(-1);
+await waitFor(() => readFileSync(process.env.FM_LIVE_WATCH_LOG, "utf8").split(/\n/)
+  .includes(`ready pid=${replacementArm}`), "replacement watcher readiness");
+// This fake arm omits --restart retirement; retire only its captured predecessor
+// once the replacement is ready before injecting the independent model-pin probe.
+if (!retainedPredecessor || retainedPredecessor === replacementArm) throw new Error("missing retained predecessor fixture");
+if (pidAlive(retainedPredecessor)) process.kill(retainedPredecessor, "SIGTERM");
+await waitFor(() => !pidAlive(retainedPredecessor), "retained mock watcher retirement");
 writeFileSync(`${home}/state/.wake-queue`, "1\t2\tsignal\tlive-probe.status\tsignal: live pin probe\n");
 writeFileSync(process.env.FM_LIVE_WATCH_TRIGGER, "signal: live pin probe\n");
 await waitFor(() => mainUserMessages.length === 2, "pinned watcher-owned main delivery");
@@ -482,6 +510,18 @@ const created = await createAgentSession({ cwd, sessionManager: creating, modelR
 if (created.session.model?.id !== "fm-live-a") {
   throw new Error(`a pinned model was not applied on create: ${created.session.model?.id}`);
 }
+// Pi flushes a session only after assistant output exists; persist the
+// recorded-model fixture through its real writer before trying to reopen it.
+creating.appendMessage({
+  role: "assistant",
+  content: [{ type: "text", text: "recorded" }],
+  api: "openai-completions",
+  provider: "fm-live-fake",
+  model: "fm-live-a",
+  usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 } },
+  stopReason: "stop",
+  timestamp: Date.now(),
+});
 const sessionFile = creating.getSessionFile();
 
 // Reopen the SAME session with a different pin: the explicit model must win
@@ -841,6 +881,11 @@ let releaseStream = () => {};
 const streamHeld = new Promise((release) => {
   releaseStream = release;
 });
+let holdNextCompletion = false;
+let releaseEscapeStream = () => {};
+const escapeStreamHeld = new Promise((release) => {
+  releaseEscapeStream = release;
+});
 const chunk = (delta, finish) => `data: ${JSON.stringify({
   id: "fm-live-stream",
   object: "chat.completion.chunk",
@@ -855,7 +900,8 @@ globalThis.fetch = async (input) => {
     throw new Error(`unexpected network request in provider-free guard: ${url}`);
   }
   completions += 1;
-  const hold = completions === 1 ? streamHeld : Promise.resolve();
+  const hold = completions === 1 ? streamHeld : holdNextCompletion ? escapeStreamHeld : Promise.resolve();
+  holdNextCompletion = false;
   const encoder = new TextEncoder();
   const body = new ReadableStream({
     async start(controller) {
@@ -898,6 +944,7 @@ const loader = new DefaultResourceLoader({
       });
     },
   }],
+  noExtensions: true,
   noSkills: true,
   noPromptTemplates: true,
   noThemes: true,
@@ -938,18 +985,23 @@ const waitFor = async (predicate, label) => {
   throw new Error(`timeout waiting for ${label}; events=${JSON.stringify(events)}`);
 };
 
+// Bind the real session_start lifecycle so the watcher has main's context
+// before its first delivery, as it does in Pi's interactive and print modes.
+await session.bindExtensions({});
 const armTool = session.getToolDefinition("fm_watch_arm_pi");
 if (!armTool) throw new Error("the real tool registry did not expose fm_watch_arm_pi");
 const armed = await armTool.execute("live-stream-arm", {}, undefined, undefined, {});
 if (!armed.details?.ok) throw new Error(`watcher did not arm: ${JSON.stringify(armed.details)}`);
 await waitFor(() => armRows("arm ") === 1, "initial watcher arm");
 
-// Turn 1: main streams against the held provider stream; the watcher closes
-// mid-turn and the extension delivers its wake while main is busy.
+// Turn 1: main streams against the held provider stream. A burst of watcher
+// closes keeps every durable row but delivers one unconsumed routine doorbell.
 session.prompt("Reply with exactly the word OK.").catch((error) => {
   events.push({ type: "prompt_error", text: error instanceof Error ? error.message : String(error) });
 });
 await waitFor(() => completions === 1 && session.isStreaming, "main streaming on the held completion");
+const durableRows = "1\t1\tcheck\tstream-one\tfirst durable event\n";
+writeFileSync(`${home}/state/.wake-queue`, durableRows);
 writeFileSync(process.env.FM_LIVE_WATCH_TRIGGER, "signal: live streaming probe\n");
 await waitFor(
   () => events.some((event) => event.type === "input" && event.source === "extension" && event.streamingBehavior === "followUp" && event.text.includes("signal: live streaming probe")),
@@ -959,6 +1011,30 @@ await waitFor(() => armRows("arm ") === 2, "successor started while main streams
 if (has("before_agent_start", "signal: live streaming probe")) {
   throw new Error("Pi raised before_agent_start for a follow-up queued while streaming; the extension must never wait for that");
 }
+let expectedRows = durableRows;
+for (const sequence of [2, 3]) {
+  expectedRows += `1\t${sequence}\tcheck\tstream-${sequence}\tdurable burst event ${sequence}\n`;
+  writeFileSync(`${home}/state/.wake-queue`, expectedRows);
+  writeFileSync(process.env.FM_LIVE_WATCH_TRIGGER, `signal: live burst probe ${sequence}\n`);
+  await waitFor(() => armRows("arm ") === sequence + 1 && armRows("confirmed ") === sequence,
+    `successor and confirmation for burst ${sequence}`);
+}
+const routineInputs = () => events.filter((event) => event.type === "input" &&
+  event.source === "extension" && event.streamingBehavior === "followUp" &&
+  event.text.includes("FIRSTMATE WATCHER WAKE"));
+if (routineInputs().length !== 1 || session.getFollowUpMessages().length !== 1) {
+  throw new Error(`a busy real Pi session received more than one routine watcher doorbell: ${JSON.stringify(routineInputs())}`);
+}
+if (readFileSync(`${home}/state/.wake-queue`, "utf8") !== expectedRows) {
+  throw new Error("coalescing a follow-up consumed or changed durable wake rows");
+}
+// Human input uses the vendor queue normally and is never replaced or folded
+// into the operational notification.
+await session.followUp("Human follow-up retained by the live guard.");
+if (session.getFollowUpMessages().length !== 2 ||
+    !session.getFollowUpMessages().includes("Human follow-up retained by the live guard.")) {
+  throw new Error("routine watcher coalescing changed a human follow-up");
+}
 releaseStream();
 await waitFor(() => settledRuns() === 1, "the first run to settle");
 if (!has("user_message_start", "signal: live streaming probe")) {
@@ -967,19 +1043,54 @@ if (!has("user_message_start", "signal: live streaming probe")) {
 if (has("before_agent_start", "signal: live streaming probe")) {
   throw new Error("Pi raised before_agent_start for a queued follow-up when the run reached it");
 }
-if (completions !== 2) throw new Error(`the queued follow-up did not open its own model turn: ${completions} completions`);
+if (completions !== 3) throw new Error(`the routine invitation and human follow-up did not each open their model turn: ${completions} completions`);
+if (!has("user_message_start", "Human follow-up retained by the live guard.")) {
+  throw new Error("the real Pi run never consumed the retained human follow-up");
+}
+if (routineInputs().length !== 1) throw new Error("the burst generated extra routine model inputs after consumption");
 
 // Idle: the successor closes while main is idle, so the next wake starts a run
 // and Pi raises before_agent_start with the exact text, then the user message.
 writeFileSync(process.env.FM_LIVE_WATCH_TRIGGER, "signal: live idle probe\n");
 await waitFor(() => has("before_agent_start", "signal: live idle probe"), "the idle follow-up to raise before_agent_start");
-await waitFor(() => armRows("arm ") === 3, "successor after the idle delivery");
+await waitFor(() => armRows("arm ") === 5, "successor after the idle delivery");
 await waitFor(() => settledRuns() === 2, "the idle run to settle");
 if (!has("user_message_start", "signal: live idle probe")) {
   throw new Error(`the idle follow-up never reached the run as a user message: ${JSON.stringify(events)}`);
 }
-if (armRows("confirmed ") !== 2) {
-  throw new Error(`the watcher did not confirm both successor deliveries: ${readFileSync(armLog, "utf8")}`);
+if (armRows("confirmed ") !== 4) {
+  throw new Error(`the watcher did not confirm every burst and idle successor: ${readFileSync(armLog, "utf8")}`);
+}
+// Stock Pi restores the cleared queue to its editor before Escape aborts.
+// Retain that returned text and all durable rows, without immediately starting
+// another model run. A later genuine watcher close can recover the invitation.
+holdNextCompletion = true;
+session.prompt("Hold this isolated interruption probe.").catch((error) => {
+  events.push({ type: "prompt_error", text: error instanceof Error ? error.message : String(error) });
+});
+await waitFor(() => completions === 5 && session.isStreaming, "the interruption probe to stream");
+writeFileSync(process.env.FM_LIVE_WATCH_TRIGGER, "signal: live Escape probe\n");
+await waitFor(() => session.getFollowUpMessages().some((text) => text.includes("signal: live Escape probe")),
+  "the interruption invitation to queue");
+const restored = session.clearQueue();
+if (restored.followUp.length !== 1 || !restored.followUp[0].includes("signal: live Escape probe")) {
+  throw new Error(`Escape lost the pending invitation returned for editor restoration: ${JSON.stringify(restored)}`);
+}
+const stopped = session.abort();
+releaseEscapeStream();
+await stopped;
+await waitFor(() => settledRuns() === 3, "the interrupted run to settle");
+if (completions !== 5 || session.pendingMessageCount !== 0 || !session.isIdle) {
+  throw new Error(`Escape restarted the model without fresh input: completions=${completions}, pending=${session.pendingMessageCount}`);
+}
+if (readFileSync(`${home}/state/.wake-queue`, "utf8") !== expectedRows) {
+  throw new Error("Escape changed the retained durable events");
+}
+writeFileSync(process.env.FM_LIVE_WATCH_TRIGGER, "signal: live recovery after Escape\n");
+await waitFor(() => has("user_message_start", "signal: live Escape probe"), "a fresh watcher close to recover the interrupted invitation");
+await session.waitForIdle();
+if (readFileSync(`${home}/state/.wake-queue`, "utf8") !== expectedRows) {
+  throw new Error("interruption recovery acknowledged the model's durable work");
 }
 session.dispose();
 console.log("STREAM_OK");
@@ -990,7 +1101,7 @@ out=$(cat "$TMP_ROOT/stream-output")
 if [ "$status" -ne 0 ] || [ "$out" != "STREAM_OK" ]; then
   fail "real-SDK streaming-time watcher delivery guard failed against pi-coding-agent $PI_VERSION: $out"
 fi
-pass "real Pi SDK $PI_VERSION queues a streaming-time watcher wake without before_agent_start, keeps the successor chain, and surfaces consumption of both follow-ups"
+pass "real Pi SDK $PI_VERSION bounds routine follow-ups, retains durable rows and human input, respects Escape, and recovers on a fresh wake"
 
 # The first processing presentation keeps its visible response, while the
 # hidden retry drops only empty or exact-repeat finals through the real event
@@ -1100,3 +1211,300 @@ if [ "$status" -ne 0 ] || [ "$out" != "RETRY_OK" ]; then
 fi
 done
 pass "real Pi SDK $PI_VERSION suppresses only empty or exact-repeat retry finals, retains first and differing replies after reopen, buffers retry streaming, and keeps outcomes retryable"
+
+# Pi 1.2 starts idle custom-message runs with a different before_agent_start
+# variant. Load both tracked consumers through the real extension runner and
+# use a disposable HTTP provider to prove custom turns and later user turns
+# complete without swallowed extension errors or lost persisted messages.
+customhome="$TMP_ROOT/custom-home"
+customdir="$TMP_ROOT/custom-agent-dir"
+mkdir -p "$customhome/state" "$customhome/config" "$customdir"
+BRANCH_PLUGIN="$repo/.pi/extensions/fm-branch-supervision.ts" \
+  WATCH_PLUGIN="$repo/.pi/extensions/fm-primary-pi-watch.ts" \
+  FM_HOME="$customhome" FM_ROOT_OVERRIDE="$ROOT" \
+  PI_CODING_AGENT_DIR="$customdir" PI_PACKAGE_DIR="$PI_PACKAGE_DIR" \
+  node --input-type=module > "$TMP_ROOT/custom-output" 2>&1 <<'EOF'
+import assert from "node:assert/strict";
+import { writeFileSync } from "node:fs";
+import { createServer } from "node:http";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const requests = [];
+const server = createServer(async (req, res) => {
+  let body = "";
+  for await (const chunk of req) body += chunk;
+  requests.push(JSON.parse(body));
+  res.writeHead(200, { "content-type": "text/event-stream" });
+  const chunk = (delta, finish_reason) => `data: ${JSON.stringify({
+    id: "custom-start-probe", object: "chat.completion.chunk", created: 1,
+    model: "custom-start", choices: [{ index: 0, delta, finish_reason }],
+  })}\n\n`;
+  res.end(chunk({ role: "assistant", content: "CUSTOM_START_OK" }, null)
+    + chunk({}, "stop") + "data: [DONE]\n\n");
+});
+await new Promise((ready) => server.listen(0, "127.0.0.1", ready));
+const agentDir = resolve(process.env.PI_CODING_AGENT_DIR);
+writeFileSync(`${agentDir}/models.json`, JSON.stringify({ providers: {
+  "fm-custom-start": {
+    baseUrl: `http://127.0.0.1:${server.address().port}/v1`,
+    api: "openai-completions", apiKey: "disposable-local-provider",
+    models: [{ id: "custom-start", name: "Custom start probe", contextWindow: 8192, maxTokens: 128 }],
+  },
+} }));
+writeFileSync(`${process.env.FM_HOME}/state/.lock`, `${process.pid}\n`);
+const { DefaultResourceLoader, ModelRuntime, ModelRegistry, SessionManager, SettingsManager, createAgentSession } =
+  await import(pathToFileURL(`${process.env.PI_PACKAGE_DIR}/dist/index.js`).href);
+const events = [];
+const errors = [];
+const settings = SettingsManager.create(process.cwd(), agentDir);
+const loader = new DefaultResourceLoader({
+  cwd: process.cwd(), agentDir, settingsManager: settings,
+  additionalExtensionPaths: [process.env.BRANCH_PLUGIN, process.env.WATCH_PLUGIN],
+  noExtensions: true, noSkills: true, noPromptTemplates: true, noThemes: true, noContextFiles: true,
+  extensionFactories: [{ name: "custom-start-observer", factory(pi) {
+    pi.on("before_agent_start", (event) => {
+      events.push({ messageType: event.messageType, hasPrompt: "prompt" in event });
+    });
+  } }],
+});
+await loader.reload();
+const runtime = await ModelRuntime.create({ authPath: `${agentDir}/auth.json`, modelsPath: `${agentDir}/models.json` });
+const registry = new ModelRegistry(runtime);
+await registry.refresh();
+const manager = SessionManager.create(process.cwd(), `${process.env.FM_HOME}/sessions`);
+let session;
+try {
+  const created = await createAgentSession({
+    cwd: process.cwd(), sessionManager: manager, settingsManager: settings,
+    resourceLoader: loader, modelRuntime: runtime,
+    model: registry.find("fm-custom-start", "custom-start"), noTools: "builtin",
+  });
+  session = created.session;
+  assert.deepEqual(created.extensionsResult.errors, [], "both tracked extensions must load");
+  assert.ok(session.getToolDefinition("fm_branch_processed"), "the branch extension must be registered");
+  assert.ok(session.getToolDefinition("fm_watch_arm_pi"), "the watcher extension must be registered");
+  await session.bindExtensions({ onError: (error) => errors.push(error) });
+  await session.prompt("User request before custom turns");
+  for (let index = 1; index <= 3; index++) {
+    await session.sendCustomMessage({ customType: "fm-live-custom-probe", content: `Custom turn ${index}`, display: true }, { triggerTurn: true });
+  }
+  await session.prompt("User request after custom turns");
+  assert.deepEqual(errors, [], "custom turns must not produce caught extension errors");
+  assert.deepEqual(events, [
+    { messageType: "user", hasPrompt: true },
+    ...Array.from({ length: 3 }, () => ({ messageType: "custom", hasPrompt: false })),
+    { messageType: "user", hasPrompt: true },
+  ]);
+  assert.equal(requests.length, 5, "each turn must reach the real provider transport");
+  const reopened = SessionManager.open(manager.getSessionFile());
+  const entries = reopened.getEntries();
+  const messages = entries.filter((entry) => entry.type === "message").map((entry) => entry.message);
+  assert.equal(messages.filter((message) => message.role === "user").length, 2);
+  assert.equal(entries.filter((entry) => entry.type === "custom_message" && entry.customType === "fm-live-custom-probe").length, 3);
+  assert.equal(messages.filter((message) => message.role === "assistant" && message.stopReason === "stop").length, 5);
+  console.log("CUSTOM_START_OK");
+} finally {
+  session?.dispose();
+  server.closeAllConnections();
+  await new Promise((done) => server.close(done));
+}
+process.exit(0);
+EOF
+status=$?
+out=$(cat "$TMP_ROOT/custom-output")
+if [ "$status" -ne 0 ] || [ "$out" != "CUSTOM_START_OK" ]; then
+  fail "real-SDK idle custom-message start guard failed against pi-coding-agent $PI_VERSION: $out"
+fi
+pass "real Pi SDK $PI_VERSION runs three prompt-less custom turns between user prompts with both extensions loaded, no extension errors, and persisted replies"
+
+# Manual compaction has no agent settlement and rejects extension prompts.
+# Hold both its preparation and success hooks through the real runtime, then
+# prove a fresh close restores exactly one actual queued invitation.
+proof_root=$ROOT
+pi_pkg=$PI_PACKAGE_DIR
+fixture="$TMP_ROOT/manual-compaction"
+repo="$fixture/repo"
+compact_home="$fixture/home"
+agent_dir="$fixture/agent"
+mkdir -p "$repo/.pi/extensions/lib" "$repo/bin" "$repo/node_modules/@earendil-works" "$compact_home/state" "$compact_home/config" "$agent_dir" "$fixture/sessions"
+cp "$proof_root/.pi/extensions/fm-primary-pi-watch.ts" "$repo/.pi/extensions/fm-primary-pi-watch.ts"
+cp "$proof_root/.pi/extensions/lib/"*.ts "$repo/.pi/extensions/lib/"
+cp "$proof_root/bin/fm-operational-input.sh" "$repo/bin/"
+ln -s "$pi_pkg" "$repo/node_modules/@earendil-works/pi-coding-agent"
+ln -s "$pi_pkg/node_modules/@earendil-works/pi-tui" "$repo/node_modules/@earendil-works/pi-tui"
+ln -s "$pi_pkg/node_modules/typebox" "$repo/node_modules/typebox"
+cat > "$repo/bin/fm-watch-arm.sh" <<'SH'
+#!/usr/bin/env bash
+if [ "${1:-}" = --handling-delivered ]; then
+  printf 'confirmed=%s\n' "$2" >> "$FM_PROOF_ARM_LOG"
+  exit 0
+fi
+printf 'arm=%s\n' "$$" >> "$FM_PROOF_ARM_LOG"
+trap 'exit 0' TERM INT
+printf 'watcher: started pid=%s recovery-generation=compact-proof\n' "$$"
+while [ ! -e "$FM_PROOF_TRIGGER" ]; do sleep 0.02; done
+reason=$(cat "$FM_PROOF_TRIGGER")
+rm -f "$FM_PROOF_TRIGGER"
+printf '%s\n' "$reason"
+SH
+chmod +x "$repo/bin/"*.sh
+cat > "$agent_dir/models.json" <<'JSON'
+{"providers":{"fm-compact-proof":{"baseUrl":"https://fm-compact-proof.invalid/v1","api":"openai-completions","models":[{"id":"local-model","name":"Local proof","contextWindow":8192,"maxTokens":512}]}}}
+JSON
+cat > "$agent_dir/auth.json" <<'JSON'
+{"fm-compact-proof":{"type":"api_key","key":"placeholder-for-intercepted-local-proof"}}
+JSON
+FM_HOME="$compact_home" FM_ROOT_OVERRIDE="$repo" PI_CODING_AGENT_DIR="$agent_dir" FM_PI_PACKAGE_DIR="$pi_pkg" FM_PROOF_SESSIONS="$fixture/sessions" FM_PROOF_ARM_LOG="$fixture/arm.log" FM_PROOF_TRIGGER="$fixture/trigger" FM_WATCH_EXTENSION_LOG_KEEP_LINES=100 NODE_NO_WARNINGS=1 node --input-type=module > "$TMP_ROOT/manual-compaction-output" 2>&1 <<'JS'
+import {existsSync, readFileSync, writeFileSync} from 'node:fs';
+import {resolve} from 'node:path';
+import {pathToFileURL} from 'node:url';
+const home=resolve(process.env.FM_HOME), agentDir=resolve(process.env.PI_CODING_AGENT_DIR);
+writeFileSync(`${home}/state/.lock`,`${process.pid}\n`);
+const {DefaultResourceLoader,ModelRegistry,ModelRuntime,SessionManager,SettingsManager,createAgentSession}=
+  await import(pathToFileURL(`${process.env.FM_PI_PACKAGE_DIR}/dist/index.js`).href);
+const events=[], sends=[], errors=[];
+let releaseCompact,releaseCompletion,releaseResponse;
+const completionHeld=new Promise(r=>releaseCompletion=r);
+let probePi;
+let releaseConstruction;
+let constructionHeld=new Promise(r=>releaseConstruction=r);
+let holdConstruction=false;
+let holdSettlement=false,releaseSettlement;
+const settlementHeld=new Promise(r=>releaseSettlement=r);
+const compactHeld=new Promise(r=>releaseCompact=r);
+const responseHeld=new Promise(r=>releaseResponse=r);
+let completions=0;
+const chunk=(delta,finish)=>`data: ${JSON.stringify({id:'local',object:'chat.completion.chunk',created:1,model:'local-model',choices:[{index:0,delta,finish_reason:finish}],...(finish?{usage:{prompt_tokens:1,completion_tokens:1,total_tokens:2}}:{})})}\n\n`;
+globalThis.fetch=async(input)=>{
+  const url=typeof input==='string'?input:input instanceof URL?input.href:input.url;
+  if(!url.startsWith('https://fm-compact-proof.invalid/'))throw Error(`External traffic refused: ${url}`);
+  completions++;
+  const body=new ReadableStream({async start(c){const e=new TextEncoder();c.enqueue(e.encode(chunk({role:'assistant',content:'OK'},null)));if(completions===1)await responseHeld;c.enqueue(e.encode(chunk({},'stop')));c.enqueue(e.encode('data: [DONE]\n\n'));c.close();}});
+  return new Response(body,{status:200,headers:{'content-type':'text/event-stream'}});
+};
+writeFileSync(`${agentDir}/settings.json`,JSON.stringify({compaction:{enabled:false,keepRecentTokens:1,reserveTokens:32},retry:{enabled:false}}));
+const settings=SettingsManager.create(process.env.FM_ROOT_OVERRIDE,agentDir);
+const watcher=(await import(pathToFileURL(`${process.env.FM_ROOT_OVERRIDE}/.pi/extensions/fm-primary-pi-watch.ts`).href)).default;
+const loader=new DefaultResourceLoader({cwd:process.env.FM_ROOT_OVERRIDE,agentDir,settingsManager:settings,
+  extensionFactories:[{name:'settlement-hold-proof',factory:(pi)=>{
+    pi.on('agent_settled',async e=>{if(holdSettlement){events.push({type:'held_settlement',aborted:e.aborted});await settlementHeld;}});
+  }},{name:'watcher-under-proof',factory:(pi)=>{
+    const nativeSend=pi.sendUserMessage.bind(pi);
+    pi.sendUserMessage=(content,options)=>{const value=nativeSend(content,options);sends.push({text:content,returnType:typeof value});return value;};
+    watcher(pi);
+  }},{name:'manual-compaction-proof',factory:(pi)=>{
+    probePi=pi;
+    pi.on('session_before_compact',async(e)=>{events.push({type:'manual_compaction_held',reason:e.reason});await compactHeld;return {compaction:{summary:'Local manual compaction proof summary',firstKeptEntryId:e.preparation.firstKeptEntryId,tokensBefore:e.preparation.tokensBefore}};});
+    pi.on('session_compact',async e=>{events.push({type:'session_compact',reason:e.reason});await completionHeld;});
+    pi.on('input',e=>events.push({type:'input',source:e.source,text:e.text}));
+    pi.on('before_agent_start',async e=>{events.push({type:'before_agent_start',text:e.prompt});if(holdConstruction)await constructionHeld;});
+    pi.on('message_start',e=>{if(e.message.role==='user')events.push({type:'user_message_start',text:e.message.content.filter(x=>x.type==='text').map(x=>x.text).join('\n')});});
+    pi.on('agent_settled',e=>events.push({type:'agent_settled',aborted:e.aborted}));
+  }}],noExtensions:true,noSkills:true,noPromptTemplates:true,noThemes:true,noContextFiles:true});
+await loader.reload();
+const runtime=await ModelRuntime.create({authPath:`${agentDir}/auth.json`,modelsPath:`${agentDir}/models.json`});
+const registry=new ModelRegistry(runtime);await registry.refresh();
+const model=registry.find('fm-compact-proof','local-model');if(!model)throw Error('Local fake model unresolved');
+const manager=SessionManager.create(process.env.FM_ROOT_OVERRIDE,process.env.FM_PROOF_SESSIONS);
+for(let n=0;n<4;n++){
+  manager.appendMessage({role:'user',content:[{type:'text',text:`Seeded user turn ${n} `.repeat(100)}],timestamp:Date.now()});
+  manager.appendMessage({role:'assistant',content:[{type:'text',text:`Seeded assistant reply ${n} `.repeat(100)}],api:'openai-completions',provider:model.provider,model:model.id,usage:{input:1,output:1,cacheRead:0,cacheWrite:0,cost:{input:0,output:0,cacheRead:0,cacheWrite:0,total:0}},stopReason:'stop',timestamp:Date.now()});
+}
+const {session}=await createAgentSession({cwd:process.env.FM_ROOT_OVERRIDE,sessionManager:manager,settingsManager:settings,resourceLoader:loader,modelRuntime:runtime,model,noTools:'builtin'});
+await session.bindExtensions({onError:e=>errors.push({event:e.event,error:e.error})});
+const pause=ms=>new Promise(r=>setTimeout(r,ms));
+async function waitFor(fn,label){for(let n=0;n<250;n++){if(fn())return;await pause(20);}throw Error(`Timeout ${label}; events=${JSON.stringify(events)}; sends=${JSON.stringify(sends)}; errors=${JSON.stringify(errors)}`);}
+const armCount=()=>existsSync(process.env.FM_PROOF_ARM_LOG)?readFileSync(process.env.FM_PROOF_ARM_LOG,'utf8').split('\n').filter(x=>x.startsWith('arm=')).length:0;
+await waitFor(()=>armCount()===1,'initial watcher');
+const compacting=session.compact();
+await waitFor(()=>events.some(e=>e.type==='manual_compaction_held')&&session.isCompacting,'manual compaction held');
+const queue='1\t1\tcheck\tA\tmanual-compaction notification A\n';
+writeFileSync(`${home}/state/.wake-queue`,queue);
+writeFileSync(process.env.FM_PROOF_TRIGGER,'check: notification A during manual compaction\n');
+await waitFor(()=>armCount()===2,'A successor during manual compaction');
+await pause(100);
+const nativeReturn=probePi.sendUserMessage('Direct local SDK preflight rejection probe.');
+await waitFor(()=>errors.some(e=>e.event==='send_user_message'&&e.error.includes('compaction')),'direct vendor rejection during manual compaction');
+const atRejection={sends:sends.length,returnType:typeof nativeReturn,pending:session.pendingMessageCount,userStarts:events.filter(e=>e.type==='user_message_start').length,agentSettlements:events.filter(e=>e.type==='agent_settled').length};
+releaseCompact();
+await waitFor(()=>events.some(e=>e.type==='session_compact')&&session.isCompacting,'held successful completion boundary');
+const callbackQueue=queue+'1\t2\tcheck\tcompletion\tcompletion-boundary notification\n';
+writeFileSync(`${home}/state/.wake-queue`,callbackQueue);
+writeFileSync(process.env.FM_PROOF_TRIGGER,'check: notification inside manual compaction completion hook\n');
+await waitFor(()=>armCount()===3,'completion-hook successor');await pause(100);
+const duringCompletion={sends:sends.length,pending:session.pendingMessageCount,isCompacting:session.isCompacting};
+releaseCompletion();await compacting;
+const afterManualCompact={pending:session.pendingMessageCount,userStarts:events.filter(e=>e.type==='user_message_start').length,agentSettlements:events.filter(e=>e.type==='agent_settled').length,isCompacting:session.isCompacting};
+const human=session.prompt('Hold one ordinary human turn for the fresh-notification proof.');
+await waitFor(()=>completions===1&&session.isStreaming,'local human turn streaming');
+const fullQueue=callbackQueue+'1\t3\tcheck\tB\tfresh notification B\n';
+writeFileSync(`${home}/state/.wake-queue`,fullQueue);
+writeFileSync(process.env.FM_PROOF_TRIGGER,'check: fresh notification B after manual compaction\n');
+await waitFor(()=>armCount()===4,'B successor');await pause(300);
+const afterFreshB={pending:session.pendingMessageCount,routineQueued:session.getFollowUpMessages().filter(t=>t.includes('FIRSTMATE WATCHER WAKE')).length,sendAttempts:sends.length,hasFreshDelivery:sends.some(s=>s.text.includes('notification B')),durableUnchanged:readFileSync(`${home}/state/.wake-queue`,'utf8')===fullQueue};
+const result={sdk:'1.1.0',fixtureHome:home,atRejection,duringCompletion,afterManualCompact,afterFreshB,errors,sends,events};
+if(atRejection.sends!==0 || atRejection.pending!==0 || duringCompletion.sends!==0 || !duringCompletion.isCompacting || afterManualCompact.userStarts!==0 || afterManualCompact.agentSettlements!==0 || afterFreshB.routineQueued!==1 || !afterFreshB.durableUnchanged)throw Error(`manual-compaction delivery regression: ${JSON.stringify(result)}`);
+releaseResponse();await human;
+await waitFor(()=>session.isIdle&&session.pendingMessageCount===0,'manual-compaction invitation consumed');
+const baseline={sends:sends.length,userStarts:events.filter(e=>e.type==='user_message_start').length,settlements:events.filter(e=>e.type==='agent_settled').length,completions};
+await runtime.logout(model.provider);
+if(registry.hasConfiguredAuth(model)||await runtime.checkAuth(model.provider))throw Error('Logout retained local placeholder credentials');
+const credentialQueue=fullQueue+'1\t4\tcheck\tcredential-A\tcredential notification A\n';
+writeFileSync(`${home}/state/.wake-queue`,credentialQueue);
+writeFileSync(process.env.FM_PROOF_TRIGGER,'check: credential notification A while logged out\n');
+await waitFor(()=>armCount()===5,'logged-out A successor');await pause(200);
+const credentialReturn=probePi.sendUserMessage('Direct local SDK credential rejection probe.');
+await waitFor(()=>errors.some(e=>e.event==='send_user_message'&&e.error.includes('No API key')),'direct vendor credential rejection');
+if(typeof credentialReturn!=='undefined'||session.pendingMessageCount!==0||events.filter(e=>e.type==='user_message_start').length!==baseline.userStarts||events.filter(e=>e.type==='agent_settled').length!==baseline.settlements||completions!==baseline.completions)throw Error(`Credential rejection unexpectedly queued or started a run: ${JSON.stringify({sends,events,errors})}`);
+const rejectedSends=sends.length;
+await runtime.login(model.provider,'api_key',{prompt:async()=> 'placeholder-for-intercepted-local-proof',notify() {}});
+if(!registry.hasConfiguredAuth(model))throw Error('Login failed to restore local placeholder credentials');
+if(events.filter(e=>e.type==='user_message_start').length!==baseline.userStarts||events.filter(e=>e.type==='agent_settled').length!==baseline.settlements)throw Error('Credential recovery unexpectedly started or settled a run');
+holdConstruction=true;
+const freshQueue=credentialQueue+'1\t5\tcheck\tcredential-B\tfresh credential notification B\n';
+writeFileSync(`${home}/state/.wake-queue`,freshQueue);
+writeFileSync(process.env.FM_PROOF_TRIGGER,'check: fresh credential notification B after login\n');
+await waitFor(()=>armCount()===6&&events.some(e=>e.type==='before_agent_start'&&e.text.includes('credential notification A')),'fresh close restoring idle A construction');
+if(session.pendingMessageCount!==0||sends.length!==rejectedSends+1)throw Error('Recovered idle invitation was not constructing outside the pending queue');
+const constructionQueue=freshQueue+'1\t6\tcheck\tcredential-C\tcredential construction notification C\n';
+writeFileSync(`${home}/state/.wake-queue`,constructionQueue);
+writeFileSync(process.env.FM_PROOF_TRIGGER,'check: credential notification C during idle construction\n');
+await waitFor(()=>armCount()===7,'successor during idle construction');await pause(200);
+if(sends.length!==rejectedSends+1||session.pendingMessageCount!==0||events.filter(e=>e.type==='user_message_start').length!==baseline.userStarts||readFileSync(`${home}/state/.wake-queue`,'utf8')!==constructionQueue)throw Error('Empty pending queue released an in-flight idle invitation or changed durable rows');
+holdConstruction=false;releaseConstruction();
+await waitFor(()=>events.some(e=>e.type==='user_message_start'&&e.text.includes('credential notification A'))&&session.isIdle,'exact recovered A consumption');
+const consumedQueue=constructionQueue+'1\t7\tcheck\tcredential-D\tcredential notification D\n';
+writeFileSync(`${home}/state/.wake-queue`,consumedQueue);
+writeFileSync(process.env.FM_PROOF_TRIGGER,'check: credential notification D after consumption\n');
+await waitFor(()=>armCount()===8&&events.some(e=>e.type==='user_message_start'&&e.text.includes('credential notification D'))&&session.isIdle,'new delivery after exact consumption');
+if(sends.length!==rejectedSends+2||session.pendingMessageCount!==0||readFileSync(`${home}/state/.wake-queue`,'utf8')!==consumedQueue)throw Error('Credential recovery lost bounded delivery or durable events');
+holdSettlement=true;
+const settling=session.prompt('Ordinary human turn before held settlement.');
+await waitFor(()=>events.some(e=>e.type==='held_settlement'),'asynchronous settlement before watcher handler');
+const settlementSends=sends.length;
+const settlementQueue=consumedQueue+'1\t8\tcheck\tsettlement-A\tsettlement notification A\n';
+writeFileSync(`${home}/state/.wake-queue`,settlementQueue);
+writeFileSync(process.env.FM_PROOF_TRIGGER,'check: settlement notification A\n');
+await waitFor(()=>armCount()===9&&sends.length===settlementSends+1,'main-only A offered during held settlement');
+await pause(100);
+if(!session.isIdle||session.pendingMessageCount!==0||events.some(e=>e.type==='before_agent_start'&&e.text.includes('settlement notification A'))||events.some(e=>e.type==='user_message_start'&&e.text.includes('settlement notification A')))throw Error('Settlement did not defer A outside the public queue');
+constructionHeld=new Promise(r=>releaseConstruction=r);
+holdConstruction=true;
+holdSettlement=false;releaseSettlement();
+await waitFor(()=>events.some(e=>e.type==='before_agent_start'&&e.text.includes('settlement notification A')),'original deferred A constructing');
+await pause(200);
+if(sends.length!==settlementSends+1||session.pendingMessageCount!==0)throw Error(`Settlement replay duplicated an in-flight invitation: ${JSON.stringify({sends,events})}`);
+holdConstruction=false;releaseConstruction();await settling;
+await waitFor(()=>session.isIdle&&events.some(e=>e.type==='user_message_start'&&e.text.includes('settlement notification A')),'original settlement invitation consumed');
+if(sends.length!==settlementSends+1||events.filter(e=>e.type==='user_message_start'&&e.text.includes('settlement notification A')).length!==1||readFileSync(`${home}/state/.wake-queue`,'utf8')!==settlementQueue)throw Error('Settlement delivered A more than once or changed durable work');
+session.dispose();console.log("MANUAL_COMPACT_CREDENTIAL_AND_SETTLEMENT_OK");process.exit(0);
+JS
+status=$?
+out=$(cat "$TMP_ROOT/manual-compaction-output")
+if [ "$status" -ne 0 ] || [ "$out" != "MANUAL_COMPACT_CREDENTIAL_AND_SETTLEMENT_OK" ]; then
+  fail "real-SDK compaction, credential, and settlement delivery guard failed against pi-coding-agent $PI_VERSION: $out"
+fi
+pass "real Pi SDK $PI_VERSION defers manual-compaction wakes through completion and restores one durable invitation on a fresh close"
+pass "real Pi SDK $PI_VERSION keeps logged-out wakes retryable, restores delivery after login, and coalesces idle construction until exact consumption"
+pass "real Pi SDK $PI_VERSION delivers a settlement-deferred notification exactly once without replaying its idle construction"
