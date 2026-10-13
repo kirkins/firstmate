@@ -609,9 +609,6 @@ sudo apt-get update -qq && sudo apt-get install -y -qq xz-utils tmux libatomic1 
 arch=$(uname -m)
 case "$arch" in
   aarch64) arch=arm64 ;;
-  x86_64) arch=x64 ;;
-  arm64|x64) ;;
-  *) echo "unsupported Node.js architecture: $arch" >&2; exit 1 ;;
 esac
 base="https://nodejs.org/dist/latest-v'"$LOCAL_NODE_MAJOR"'.x"
 file=$(curl -fsSL "$base/" | grep -oE "node-v[0-9]+\.[0-9]+\.[0-9]+-linux-${arch}\.tar\.xz" | head -n 1)
