@@ -63,13 +63,7 @@ A state-scoped replacement handoff carries every actionable close whose delivery
 A handoff marker never satisfies the extension-ownership tolerance.
 So a running Pi process whose replacement did not load this extension is reported as missing, rather than borrowing stale load evidence from its predecessor.
 
-A main follow-up counts as delivered once Pi accepts it, never once the model reads it.
-The reason is that a follow-up queued while main is streaming joins the running run without a `before_agent_start`.
-The extension header owns actual-consumption tracking, bounded routine delivery, and replacement replay.
-Pi retains one unconsumed routine watcher follow-up as an invitation to drain durable work; further routine closes re-arm normally and accumulate in the durable queue.
-Watcher-failure alarms bypass this bound, and human messages retain Pi's ordinary delivery.
-Actual consumption releases the invitation, while an accepted invitation removed from an empty Pi queue is retried at a non-aborted settled run boundary.
-Escape retains the invitation for a later genuine watcher close or non-aborted boundary instead of immediately starting another model run.
+The delivery-versus-consumption contract in `.pi/extensions/fm-primary-pi-watch.ts` owns Pi's bounded routine invitations, alarm retention, human-input preservation, and replay after Escape or session replacement.
 
 ### omp session replacement
 
@@ -139,13 +133,13 @@ After an actionable Pi, omp, or OpenCode child close, the adapter:
 1. Waits for the predecessor process to close.
 2. Starts and verifies one singleton successor.
 3. Confirms the handling handoff before scheduling the follow-up: Pi confirms against the restoration's own recovery token, while omp and OpenCode confirm against the current successor.
-4. Delivers the original wake.
+4. Routes the original wake through the adapter's delivery contract.
 
 A complete Pi reason line can be observed while the predecessor is still finishing durable cleanup.
 That line is retained for replacement handoff, but the adapter never treats that already-ready predecessor as its own successor.
 
 If the handoff confirmation fails, the adapter retries it once: Pi against that same token, omp and OpenCode against the current generation and successor.
-A failed confirmation is a restoration failure: the adapter classifies the error and surfaces exactly one typed message.
+A failed confirmation is a restoration failure: the adapter classifies the error and retains a typed message for delivery.
 Pi retires the current successor only when the failed token names its exact watcher pid and generation and that pid is no longer alive, while omp and OpenCode retire the current successor whenever the restoration's watcher pid is no longer alive.
 On Pi a generation mismatch means a newer pipeline superseded this delivery mid-restore, so the wake routes like a confirmed delivery, with no failure appendix, and nothing is retired.
 An already-acknowledged episode confirms as a no-op when the confirmation names its generation, because the drain acknowledged it after the successor started but before the confirmation ran.
@@ -158,13 +152,13 @@ A failed confirmation is never swallowed.
 The adapter waits at most one readiness timeout per attempt.
 If the successor is not ready in that time, the adapter sends TERM and waits a bounded retirement confirmation before the next lock-verified exponential retry.
 
-If the unready arm does not retire within that bound, the adapter keeps ownership, starts no overlapping retry, and delivers the typed fallback immediately.
+If the unready arm does not retire within that bound, the adapter keeps ownership, starts no overlapping retry, and retains the typed fallback for delivery.
 When that retained arm later closes, its actual close is classified as a new supervised event without replaying the earlier fallback.
-After the configured retry bound is exhausted, the adapter delivers the original wake with a typed continuity-restoration failure, even if every successor arm hung without reporting readiness.
+After the configured retry bound is exhausted, the adapter retains the original wake with a typed continuity-restoration failure for delivery, even if every successor arm hung without reporting readiness.
 
 This is deliberate Option B ordering.
 Whenever restoration succeeds, the fleet is protected before the model handles the wake.
-When restoration does not succeed, the model is never left blind.
+When restoration does not succeed, the typed failure remains available for delivery under the adapter's contract, including Pi's Escape deferral.
 
 ### Claude handling successor
 
@@ -269,6 +263,7 @@ Every presented row is claimed to exactly one actor under the durable queue lock
 - A branch grant is published through `bin/fm-wake-grant.sh` under that same lock in `state/.branch-eligible-rows`.
   The grant is bound to the live branch process and extension generation recorded in `state/.branch-eligible-owner`.
   Publication is refused if main already claimed any requested row.
+  Publication also fails closed when an existing main claim fails the shared grant-row validation in `bin/fm-wake-lib.sh` or is unreadable or symlinked.
 - A main drain validates that owner evidence under the queue lock and reclaims the grant when its process is gone or its identity no longer matches.
 - A main drain claims every currently unclaimed row and excludes an active branch grant from both presentation and acknowledgement.
 
@@ -326,16 +321,11 @@ Such an acknowledgement is reported as having acknowledged nothing, together wit
 The presented set is read before any re-claim, so a row that arrived after presentation is never named for unseen acknowledgement.
 
 [`pi-supervision-branch.md`](pi-supervision-branch.md#pre-drain-recheck) owns the bounded retry when main wins the branch grant's claim race.
-If no safe grant remains, the watcher retains the actionable close until Pi accepts its main follow-up or an existing unconsumed routine invitation covers the durable work.
+A rejected grant returns delivery to the watcher's delivery-versus-consumption contract in `.pi/extensions/fm-primary-pi-watch.ts`.
 
 ### Branch eligibility and check rows
 
 [`pi-supervision-branch.md`](pi-supervision-branch.md#components-and-their-owners) owns branch eligibility, mixed-queue dispatch, the pre-drain recheck, and heartbeat's all-or-nothing rule.
-
-While attended, a check-kind row is main-owned, including a heartbeat review.
-So it is never part of a branch claim and never defers one.
-Main is woken for it on that check's own triggering close.
-Under the away-posture record the exclusion lifts and a check row is offered to and claimed by the branch like every other actionable row.
 
 `fm-wake-drain.sh` never reclassifies a row itself.
 It filters the queue to the current actor's opaque claim before same-key deduplication, then presents and acknowledges only that actor-local view.

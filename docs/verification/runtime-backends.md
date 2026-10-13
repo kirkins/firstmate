@@ -2475,7 +2475,8 @@ ok - real Pi SDK 1.1.0 bounds routine follow-ups, retains durable rows and human
 
 The real AgentSession probe holds a model stream while three routine watcher closes arrive, observes one pending routine follow-up and every unchanged durable row, then proves separate human input reaches its own model turn.
 Its `clearQueue` and `abort` calls exercise Pi's interruption API without automatically restarting the model; a subsequent watcher close recovers the retained invitation.
-The portable watcher suite also holds acceptance across an aborted settlement, proves actual `message_start` releases the bound, and preserves urgent failure details through dequeue and session replacement.
+The portable watcher suite also holds acceptance across an aborted settlement and proves actual `message_start` releases the bound.
+Its delayed-readiness cases abort during replay restoration, while its fresh-alarm cases exhaust restoration or reject confirmation after either another abort or exact consumption of the old invitation, then prove failure details survive successful recovery and session replacement.
 The ownership suites execute real grant and drain scripts, proving that one bounded Pi publication retry cannot steal main's old claim and that branch acknowledgement removes only its fresh rows.
 The shared eligibility selector also serves the non-Pi supervision host; its existing atomic publication fallback remains unchanged.
 Other harness-native watcher adapters and runtime backend lifecycle paths are unchanged.

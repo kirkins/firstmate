@@ -449,7 +449,7 @@ export function scopeForUnreadWake(state: string, heartbeat: boolean, afk = fals
     const key = fields[3];
     if (kind === "heartbeat") {
       // Attended, a heartbeat row is claimed only by a heartbeat review; away,
-      // no main drain will ever take it, so any wake claims it.
+      // any wake can claim it, while existing main ownership still excludes it.
       if ((heartbeat || afk) && !mainRows.has(seq)) {
         eligibleSeqs.push(seq);
         heartbeatSeqs.push(seq);
@@ -459,8 +459,8 @@ export function scopeForUnreadWake(state: string, heartbeat: boolean, afk = fals
     if (kind === "check") {
       // Main-owned while attended: excluded from what the branch may claim,
       // never a reason to reject the rest of the queue and never a reason to
-      // send an otherwise-eligible heartbeat review to main. Away, the branch
-      // is the only actor, so the row is claimed unscoped.
+      // send an otherwise-eligible heartbeat review to main. Away, an unclaimed
+      // check row is eligible without task scope.
       if (afk && !mainRows.has(seq)) {
         eligibleSeqs.push(seq);
         checkSeqs.push(seq);
@@ -623,9 +623,8 @@ export interface BranchOfferVerdict {
 // row: until that row is read, a later signal or stale trigger for the same
 // task stays on main. Other tasks and heartbeat handling remain independent.
 //
-// The away posture collapses that partition: every actionable row is
-// branch-eligible and the trigger class no longer forces anything to main
-// (scopeForUnreadWake owns the per-row rule).
+// The away posture lifts trigger-class exclusions without transferring main's
+// existing claims (scopeForUnreadWake owns the per-row rule).
 export function branchOfferForWake(state: string, message: string, afk: boolean, attendedHost = false): BranchOfferVerdict {
   const heartbeat = /^heartbeat($|:)/.test(message);
   const isCheckTrigger = /^check:/.test(message);

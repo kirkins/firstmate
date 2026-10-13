@@ -20,20 +20,17 @@
 // pipeline and branch offers continue independently, and watcher failures
 // bypass this bound. Only the user message_start carrying the exact wake text
 // consumes a follow-up. before_agent_start precedes message construction and
-// cannot prove consumption. An unconsumed follow-up rides a replacement
+// cannot prove consumption. Unrelated human input keeps Pi's ordinary delivery
+// and cannot release the invitation. An unconsumed follow-up rides a replacement
 // handoff. After Pi settles with no queued messages, a dequeued follow-up is
 // offered again. An aborted run defers that replay until a new watcher close
 // or a later non-aborted settlement so Escape remains an actual stop.
+// Replay retains its tracking across successor readiness and checks the live
+// generation and latest abort deferral before delivery. Fresh restoration or
+// confirmation failures are retained before deferral, even if main consumed
+// the old invitation; only consumption of the updated alarm retires it.
 //
-// Postures (stated once here; docs/pi-supervision-branch.md "Postures"):
-// the away-posture record state/.afk-contract is read as a file at every
-// routing decision, never inferred from chat. While it exists every
-// actionable row is offered to the branch as eligible and main is offered
-// nothing the branch can take; a wake the branch declines or cannot take
-// (a broken branch, an unresolvable or corrupt queue) and every
-// watcher-failure alarm still reach main exactly as attended, because only
-// main can repair supervision itself. Nothing else about delivery or
-// consumption changes.
+// docs/pi-supervision-branch.md "Postures" owns posture-dependent routing.
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
@@ -883,8 +880,8 @@ export default function (pi: ExtensionAPI) {
             surfaceCleanupFailure(owner, error);
           }
         }
-        // A record Pi has accepted but not consumed is neither redelivered
-        // nor finished here: consumption finishes it, replacement replays it.
+        // Keep accepted records until consumption, but allow replay when Pi
+        // dequeued them and the latest abort deferral has cleared.
         const pending = owner.pendingActionables.find(
           (item) => !item.delivered &&
             (!owner.unconsumedWakes.has(item.token) ||
@@ -965,8 +962,8 @@ export default function (pi: ExtensionAPI) {
         owner.restoring = false;
         if (owner.pendingActionables.some((pending) => pending.delivered)) schedulePendingCleanup(owner);
         // No bare arm is launched here. A generation without a child at this
-        // point has either delivered a typed restoration failure after its
-        // bounded retries, which hands repair to main through fm_watch_arm_pi
+        // point has either retained a typed restoration failure after its
+        // bounded retries for main to repair through fm_watch_arm_pi
         // (one more silent launch past the bound could hold a hung child that
         // the repair call would then report as "unchanged"), or lost a
         // verified successor during the delivery, which takes the ordinary
