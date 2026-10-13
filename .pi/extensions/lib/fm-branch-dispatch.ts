@@ -309,6 +309,23 @@ function nonBlankLines(text: string): string[] {
   return text.split(/\r?\n/).filter((line) => /\S/.test(line));
 }
 
+// The main claim uses the same non-empty, distinct sequence-list shape as the
+// branch grant (bin/fm-wake-lib.sh's fm_wake_grant_rows_valid). Missing means
+// unclaimed; a malformed or unreadable record is never treated as unclaimed.
+function mainClaimedRows(state: string): Set<string> | null {
+  const path = `${state}/.main-eligible-rows`;
+  try {
+    if (!lstatSync(path).isFile()) return null;
+    const rows = readFileSync(path, "utf8").split("\n");
+    if (rows.at(-1) === "") rows.pop();
+    if (rows.length === 0 || rows.some((row) => !/^[0-9]+$/.test(row))) return null;
+    const claimed = new Set(rows);
+    return claimed.size === rows.length ? claimed : null;
+  } catch (error) {
+    return (error as NodeJS.ErrnoException).code === "ENOENT" ? new Set() : null;
+  }
+}
+
 // bin/fm-classify-lib.sh's _fm_open_decisions_file_ident, which stamps each
 // row of state/.status-presentation-cursor. Any failure throws, and the caller
 // then reads the whole log.
@@ -379,6 +396,8 @@ export function scopeForUnreadWake(state: string, heartbeat: boolean, afk = fals
 
   const rows = queue.split(/\r?\n/).filter((line) => line.length > 0);
   if (rows.length === 0) return EMPTY_SCOPE;
+  const mainRows = mainClaimedRows(state);
+  if (!mainRows) return UNSAFE_SCOPE;
 
   const projects = new Set<string>();
   const metadata = new Map<string, string>();
@@ -431,7 +450,7 @@ export function scopeForUnreadWake(state: string, heartbeat: boolean, afk = fals
     if (kind === "heartbeat") {
       // Attended, a heartbeat row is claimed only by a heartbeat review; away,
       // no main drain will ever take it, so any wake claims it.
-      if (heartbeat || afk) {
+      if ((heartbeat || afk) && !mainRows.has(seq)) {
         eligibleSeqs.push(seq);
         heartbeatSeqs.push(seq);
       }
@@ -442,7 +461,7 @@ export function scopeForUnreadWake(state: string, heartbeat: boolean, afk = fals
       // never a reason to reject the rest of the queue and never a reason to
       // send an otherwise-eligible heartbeat review to main. Away, the branch
       // is the only actor, so the row is claimed unscoped.
-      if (afk) {
+      if (afk && !mainRows.has(seq)) {
         eligibleSeqs.push(seq);
         checkSeqs.push(seq);
       }
@@ -542,6 +561,10 @@ export function scopeForUnreadWake(state: string, heartbeat: boolean, afk = fals
       }
     }
     if (!project || !task) return UNSAFE_SCOPE;
+    // Validate and classify even a claimed row above: main's ownership cannot
+    // hide corruption or erase the trigger's decision precedence. It excludes
+    // only that sequence from a new grant, so fresh rows remain claimable.
+    if (mainRows.has(seq)) continue;
     projects.add(project);
     eligibleTasks.add(task);
     eligibleSeqs.push(seq);

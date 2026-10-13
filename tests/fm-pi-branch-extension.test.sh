@@ -3049,7 +3049,7 @@ EOF
   pass "selection changes preserve in-flight transcript ownership and reset provider-error streaks"
 }
 
-test_main_owned_grant_result_falls_back_to_main() {
+test_branch_predrain_noops_rows_already_claimed_by_main() {
   local repo home out status
   repo="$TMP_ROOT/main-owned-fallback-root"
   home="$TMP_ROOT/main-owned-fallback-home"
@@ -3070,9 +3070,7 @@ const failure = await offer.settlement.then(
   () => null,
   (error) => error,
 );
-if (!(failure instanceof Error) || !failure.message.includes("already claimed by main")) {
-  throw new Error(`main-owned claim did not reject branch settlement: ${String(failure)}`);
-}
+if (failure !== null) throw new Error(`an already-owned wake was not a quiet no-op: ${String(failure)}`);
 if ((globalThis.__fmPrompts ?? []).length !== 0) {
   throw new Error("branch prompted for a row already claimed by main");
 }
@@ -3083,8 +3081,100 @@ process.exit(0);
 EOF
   status=$?
   out=$(cat "$TMP_ROOT/node-output")
-  expect_code 0 "$status" "a main-owned grant result must reject to watcher delivery: $out"
-  pass "a stale main claim returns the durable wake to watcher delivery"
+  expect_code 0 "$status" "an already-owned wake must not open another processing turn: $out"
+  pass "an accepted wake claimed by main before the recheck becomes a quiet no-op"
+}
+
+test_branch_grant_retries_only_unclaimed_rows_after_main_races_the_scan() {
+  local repo home out status mode
+  for mode in partial repeat; do
+    repo="$TMP_ROOT/main-claim-race-$mode-root"
+    home="$TMP_ROOT/main-claim-race-$mode-home"
+    mkdir -p "$home/state" "$home/config"
+    install_pi_branch_extension_fixture "$repo"
+    cp "$ROOT"/bin/*.sh "$repo/bin/"
+    ln -s "$ROOT/.agents" "$repo/.agents"
+    cat > "$repo/bin/fm-wake-grant.sh" <<'SH'
+#!/usr/bin/env bash
+if [ "$1" = publish ]; then
+  count=$(cat "$FM_HOME/state/publish-attempts" 2>/dev/null || echo 0)
+  count=$((count + 1))
+  printf '%s\n' "$count" > "$FM_HOME/state/publish-attempts"
+  if [ "$count" -eq 1 ]; then
+    printf '1\n' > "$FM_HOME/state/.main-eligible-rows"
+  elif [ "$FM_TEST_CLAIM_RACE" = repeat ]; then
+    printf '1\n2\n' > "$FM_HOME/state/.main-eligible-rows"
+  fi
+fi
+exec bash "$FM_TEST_REAL_GRANT" "$@"
+SH
+    PLUGIN="$repo/.pi/extensions/fm-branch-supervision.ts" FM_HOME="$home" FM_ROOT_OVERRIDE="$repo" \
+      FM_TEST_REAL_GRANT="$ROOT/bin/fm-wake-grant.sh" FM_TEST_CLAIM_RACE="$mode" \
+      DRIVER_PRELUDE="$DRIVER_PRELUDE" node --input-type=module > "$TMP_ROOT/node-output" 2>&1 <<'EOF'
+const prelude = process.env.DRIVER_PRELUDE;
+await eval(`(async () => { ${prelude}; globalThis.__t = { bus, fire, home, makeOffer, approvedProject, mainUserMessages, defaultSessionCtx }; })()`);
+const { bus, fire, home, makeOffer, approvedProject, mainUserMessages, defaultSessionCtx } = globalThis.__t;
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+
+await fire("session_start", {}, defaultSessionCtx);
+writeFileSync(`${home}/state/fresh-task.meta`, `project=${approvedProject}\nwindow=fm-fresh\n`);
+const originalQueue = "1\t1\tsignal\tbranch-driver.status\tsignal: old notification\n2\t2\tsignal\tfresh-task.status\tsignal: fresh-task.status\n";
+writeFileSync(`${home}/state/.wake-queue`, originalQueue);
+let snapshot;
+globalThis.__fmOnBranchPrompt = async ({ session }) => {
+  snapshot = readFileSync(`${home}/state/.branch-eligible-rows`, "utf8").trim();
+  if (snapshot !== "2") throw new Error(`the raced grant took rows ${snapshot}, not just the fresh row`);
+  const report = session.options.customTools.find((tool) => tool.name === "fm_branch_report");
+  const wrongTask = await report.execute("old-report", { task: "branch-driver", verdict: "routine", summary: "main-owned work" });
+  if (!wrongTask.isError) throw new Error("the retried grant retained the old task's report scope");
+  const fresh = await report.execute("fresh-report", { task: "fresh-task", verdict: "routine", summary: "fresh work handled" });
+  if (fresh.isError) throw new Error(`the fresh task was not reportable: ${JSON.stringify(fresh)}`);
+};
+const offer = makeOffer("signal: fresh-task.status", [approvedProject], false, true);
+bus.emit("fm-branch-supervision:dispatch", offer);
+if (!offer.accepted) throw new Error("the eligible offer was not accepted");
+const failure = await offer.settlement.then(() => null, (error) => error);
+if (!existsSync(`${home}/state/publish-attempts`)) throw new Error(`publication was never attempted: ${String(failure)}`);
+const attempts = Number(readFileSync(`${home}/state/publish-attempts`, "utf8"));
+if (attempts !== 2) throw new Error(`grant retry was not bounded to two attempts: ${attempts}`);
+if (process.env.FM_TEST_CLAIM_RACE === "repeat") {
+  if (!(failure instanceof Error) || !failure.message.includes("already claimed by main")) {
+    throw new Error(`a second ownership race did not fall back safely: ${String(failure)}`);
+  }
+  if ((globalThis.__fmPrompts ?? []).length !== 0 || existsSync(`${home}/state/.branch-eligible-rows`)) {
+    throw new Error("a repeatedly raced grant prompted or published a claim");
+  }
+} else {
+  if (failure !== null || snapshot !== "2" || (globalThis.__fmPrompts ?? []).length !== 1) {
+    throw new Error(`fresh work never reached the branch: ${String(failure)} snapshot=${snapshot}`);
+  }
+  // Publication and reports never consume either actor's rows.
+  if (readFileSync(`${home}/state/.wake-queue`, "utf8") !== originalQueue) {
+    throw new Error("a grant or report silently consumed wake rows");
+  }
+  // The settled grant is released. Re-publish only the fresh row and use the
+  // real drain to prove branch acknowledgement still cannot consume main's row.
+  const env = { ...process.env, FM_STATE_OVERRIDE: `${home}/state`, FM_SUPERVISION_ACTOR: "branch" };
+  const grant = spawnSync("bash", [process.env.FM_TEST_REAL_GRANT, "publish", "1", "2"], { env, encoding: "utf8" });
+  if (grant.status !== 0) throw new Error(`fresh grant could not be restored for acknowledgement: ${grant.stderr}`);
+  const drain = spawnSync("bash", [`${process.env.FM_ROOT_OVERRIDE}/bin/fm-wake-drain.sh`], { env, encoding: "utf8" });
+  const ack = drain.stderr.match(/WAKE_ACK_REQUIRED:.*--ack-through ([0-9]+) --recovery-generation ([A-Za-z0-9._-]+)/);
+  if (drain.status !== 0 || !ack || ack[1] !== "2") throw new Error(`branch drain lost the fresh row: ${drain.stdout}\n${drain.stderr}`);
+  const acknowledged = spawnSync("bash", [`${process.env.FM_ROOT_OVERRIDE}/bin/fm-wake-drain.sh`, "--ack-through", ack[1], "--recovery-generation", ack[2]], { env, encoding: "utf8" });
+  if (acknowledged.status !== 0) throw new Error(`branch acknowledgement failed: ${acknowledged.stderr}`);
+  const remaining = readFileSync(`${home}/state/.wake-queue`, "utf8");
+  if (remaining !== originalQueue.split("\n")[0] + "\n") throw new Error(`branch acknowledgement touched main's row: ${remaining}`);
+  if (readFileSync(`${home}/state/.main-eligible-rows`, "utf8") !== "1\n") throw new Error("branch acknowledgement changed main's claim");
+}
+if (mainUserMessages.length !== 0) throw new Error("the branch bypassed watcher-owned fallback");
+process.exit(0);
+EOF
+    status=$?
+    out=$(cat "$TMP_ROOT/node-output")
+    expect_code 0 "$status" "branch grant ownership race ($mode) must preserve claims and bounded retry: $out"
+  done
+  pass "a main claim racing publication leaves fresh work branch-owned, with one bounded retry and scoped acknowledgement"
 }
 
 test_branch_predrain_recheck_noops_already_drained_wake() {
@@ -4636,6 +4726,111 @@ EOF
 # a mixed queue keeps its task-local rows eligible without those main-only
 # rows vetoing the scan, and the eligible-row snapshot writer names exactly
 # the eligible set.
+test_branch_dispatch_excludes_existing_main_claims_without_hiding_corruption() {
+  local repo home out status
+  repo="$TMP_ROOT/dispatch-main-claims-root"
+  home="$TMP_ROOT/dispatch-main-claims-home"
+  mkdir -p "$repo/.pi/extensions/lib" "$home/state"
+  cp "$ROOT/.pi/extensions/lib/fm-branch-dispatch.ts" "$repo/.pi/extensions/lib/fm-branch-dispatch.ts"
+  cp "$ROOT/.pi/extensions/lib/fm-async-exec.ts" "$repo/.pi/extensions/lib/fm-async-exec.ts"
+  LIB="$repo/.pi/extensions/lib/fm-branch-dispatch.ts" CLI="$ROOT/bin/fm-branch-dispatch.mjs" FM_HOME="$home" \
+    node --input-type=module > "$TMP_ROOT/node-output" 2>&1 <<'EOF'
+import { pathToFileURL } from "node:url";
+import { writeFileSync, unlinkSync, symlinkSync, mkdirSync, rmdirSync, readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+const { scopeForUnreadWake, branchOfferForWake } = await import(pathToFileURL(process.env.LIB).href);
+const state = `${process.env.FM_HOME}/state`;
+const claim = `${state}/.main-eligible-rows`;
+writeFileSync(`${state}/task-a.meta`, "project=/approved\nwindow=fm-a\n");
+writeFileSync(`${state}/task-b.meta`, "project=/fresh\nwindow=fm-b\n");
+const queue = "1\t1\tsignal\ttask-a.status\tsignal: old row\n2\t2\tsignal\ttask-b.status\tsignal: fresh row\n3\t3\theartbeat\theartbeat\theartbeat\n";
+writeFileSync(`${state}/.wake-queue`, queue);
+writeFileSync(claim, "1\n");
+for (const afk of [false, true]) {
+  for (const heartbeat of [false, true]) {
+    const expected = heartbeat || afk ? "2,3" : "2";
+    for (const attendedHost of [false, true]) {
+      const scope = scopeForUnreadWake(state, heartbeat, afk, attendedHost);
+      if (scope.corrupted || !scope.eligible || scope.eligibleSeqs.join(",") !== expected) {
+        throw new Error(`old main ownership blocked fresh rows: ${JSON.stringify({ afk, heartbeat, attendedHost, scope })}`);
+      }
+      if (scope.eligibleTasks.join(",") !== "task-b" || scope.projects.join(",") !== "/fresh") {
+        throw new Error(`an excluded main claim remained in report scope: ${JSON.stringify(scope)}`);
+      }
+    }
+  }
+}
+
+// The non-Pi supervision host consumes the actual CLI, not just the exported
+// classifier. Both entry points must exclude old ownership identically.
+function cli(command, flags = [], input = "") {
+  const result = spawnSync(process.execPath, [process.env.CLI, command, ...flags], {
+    encoding: "utf8", input, env: { ...process.env, FM_STATE_OVERRIDE: state },
+  });
+  if (result.status !== 0) throw new Error(`dispatch CLI ${command} failed: ${result.stderr}`);
+  return Object.fromEntries(result.stdout.trim().split("\n").map((line) => {
+    const separator = line.indexOf("=");
+    return [line.slice(0, separator), line.slice(separator + 1)];
+  }));
+}
+for (const afk of [false, true]) {
+  const flags = afk ? ["--afk"] : [];
+  const offered = cli("offer", flags, "signal: task-b.status\n");
+  const expected = afk ? "2 3" : "2";
+  if (offered.eligible !== "1" || offered.corrupted !== "0" || offered.rows !== expected || offered.tasks !== "task-b") {
+    throw new Error(`the host offer CLI included old main ownership: ${JSON.stringify({ afk, offered })}`);
+  }
+  for (const heartbeat of [false, true]) {
+    const scope = cli("scope", [...flags, ...(heartbeat ? ["--heartbeat"] : [])]);
+    if (scope.status !== "safe" || scope.corrupted !== "0" || scope.rows !== (heartbeat || afk ? "2 3" : "2") || scope.tasks !== "task-b") {
+      throw new Error(`the host scope CLI included old main ownership: ${JSON.stringify({ afk, heartbeat, scope })}`);
+    }
+  }
+}
+writeFileSync(claim, "1\n2\n3\n");
+const owned = scopeForUnreadWake(state, true, true);
+if (owned.corrupted || owned.eligible || owned.eligibleSeqs.length !== 0) {
+  throw new Error(`a fully main-owned queue was offered or treated as corruption: ${JSON.stringify(owned)}`);
+}
+
+for (const contents of ["", "1\n1\n", "not-a-sequence\n", "1\n\n", "1\r\n"]) {
+  writeFileSync(claim, contents);
+  const bad = scopeForUnreadWake(state, false);
+  if (!bad.corrupted || bad.eligible || bad.eligibleSeqs.length !== 0) {
+    throw new Error(`malformed main claim was ignored: ${JSON.stringify({ contents, bad })}`);
+  }
+}
+unlinkSync(claim);
+writeFileSync(`${state}/claim-target`, "1\n");
+symlinkSync(`${state}/claim-target`, claim);
+if (!scopeForUnreadWake(state, false).corrupted) throw new Error("a symlinked main claim influenced ownership");
+unlinkSync(claim);
+mkdirSync(claim);
+if (!scopeForUnreadWake(state, false).corrupted) throw new Error("a non-file main claim was ignored");
+rmdirSync(claim);
+
+// Even a main-owned row must still validate and retain decision precedence.
+writeFileSync(claim, "1\n");
+writeFileSync(`${state}/.wake-queue`, "1\t1\tsignal\tmissing-task.status\tsignal: malformed task\n2\t2\tsignal\ttask-b.status\tsignal: fresh row\n");
+if (!scopeForUnreadWake(state, false).corrupted) throw new Error("main ownership hid an unresolvable queue row");
+writeFileSync(`${state}/.wake-queue`, "1\t1\tinvented\ttask-a.status\tunknown kind\n2\t2\tsignal\ttask-b.status\tsignal: fresh row\n");
+if (!scopeForUnreadWake(state, false).corrupted) throw new Error("main ownership hid an invalid queue kind");
+writeFileSync(`${state}/.wake-queue`, "1\t1\tsignal\ttask-a.status\tneeds-decision: task-a.status\n2\t2\tsignal\ttask-b.status\tsignal: fresh row\n");
+const decision = branchOfferForWake(state, "signal: task-a.status task-b.status", false);
+if (decision.eligible || decision.scope.corrupted || decision.scope.eligibleSeqs.join(",") !== "2") {
+  throw new Error(`main ownership erased the decision trigger's precedence: ${JSON.stringify(decision)}`);
+}
+const fresh = branchOfferForWake(state, "signal: task-b.status", false);
+if (!fresh.eligible) throw new Error("an unrelated old decision blocked a fresh trigger");
+if (readFileSync(claim, "utf8") !== "1\n") throw new Error("classification mutated main's ownership");
+process.exit(0);
+EOF
+  status=$?
+  out=$(cat "$TMP_ROOT/node-output")
+  expect_code 0 "$status" "existing main claims must exclude only owned sequences and keep invalid state visible: $out"
+  pass "Pi and the host CLI leave fresh rows eligible behind existing main claims across postures, with corruption and decision precedence enforced"
+}
+
 test_branch_dispatch_classifies_main_only_rows_and_writes_the_eligible_snapshot() {
   local repo home out status
   repo="$TMP_ROOT/dispatch-classify-root"
@@ -4884,6 +5079,7 @@ writeFileSync(`${state}/.main-eligible-rows`, "2\n");
 if ((await writeEligibleRowsSnapshot(state, ["2"], process.env.GRANT, "fixture")) !== "main-owned") {
   throw new Error("a row already claimed by main was not reported as main-owned");
 }
+unlinkSync(`${state}/.main-eligible-rows`);
 
 // A heartbeat is not vetoed or ridden into main by a co-present check row.
 // The check row is permanently main-owned in every mode, so it is excluded
@@ -5969,6 +6165,7 @@ test_captain_outcome_processing_turn_is_sequence_keyed_and_re_presented
 test_abbreviated_processing_request_points_to_full_outcome
 test_large_unprocessed_backlog_replays_in_batches
 test_undated_unprocessed_outcome_surfaces_and_stays_unprocessed
+test_branch_dispatch_excludes_existing_main_claims_without_hiding_corruption
 test_branch_dispatch_classifies_main_only_rows_and_writes_the_eligible_snapshot
 test_branch_dispatch_routes_secondmate_signal_by_new_span
 test_branch_cache_key_is_per_home_stable
@@ -5984,7 +6181,8 @@ test_branch_predrain_needs_decision_keeps_routine_row_branch_eligible
 test_settled_branch_prompt_releases_unacknowledged_grant
 test_post_construction_provider_error_falls_back_latches_and_recovers_on_cooldown
 test_selection_change_does_not_corrupt_inflight_provider_state
-test_main_owned_grant_result_falls_back_to_main
+test_branch_predrain_noops_rows_already_claimed_by_main
+test_branch_grant_retries_only_unclaimed_rows_after_main_races_the_scan
 test_branch_predrain_recheck_noops_already_drained_wake
 test_branch_mirror_filters_order_and_cursor
 test_branch_mirror_reanchors_for_the_new_session_branch_conversation

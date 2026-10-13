@@ -1520,8 +1520,8 @@ ${context.command}
         // partition paragraph): the record is validated then may be archived
         // mid-operation; every relocated action revalidates at its own gate;
         // rows are store-first and the durable queue keeps them.
-        const afk = afkPostureRecordPresent(state);
-        const scope = scopeForUnreadWake(state, heartbeat, afk);
+        let afk = afkPostureRecordPresent(state);
+        let scope = scopeForUnreadWake(state, heartbeat, afk);
         // A newly-arrived main-owned (check-kind) row never bounces this
         // whole recheck back to main - scopeForUnreadWake excludes it from
         // eligibleSeqs rather than vetoing the scan, in a heartbeat review as
@@ -1533,23 +1533,32 @@ ${context.command}
         // scopeForUnreadWake itself marks corrupted (the queue or its
         // metadata could not be read safely, or an unresolvable task-local
         // row) still falls back to main.
-        if (scope.status === "empty" || (!scope.corrupted && scope.eligibleSeqs.length === 0)) {
-          if (acceptedAwayOnly) {
-            throw new Error("accepted away-only wake is no longer branch-eligible");
+        for (let attempt = 0; ; attempt += 1) {
+          if (scope.status === "empty" || (!scope.corrupted && scope.eligibleSeqs.length === 0)) {
+            if (acceptedAwayOnly) {
+              throw new Error("accepted away-only wake is no longer branch-eligible");
+            }
+            return;
           }
-          return;
+          if (scope.corrupted) {
+            throw new Error("the unread wake queue could not be read safely");
+          }
+          const grant = await writeEligibleRowsSnapshot(
+            state,
+            scope.eligibleSeqs,
+            wakeGrantScript,
+            String(acceptedGeneration),
+          );
+          if (grant === "published") break;
+          if (grant !== "main-owned") throw new Error("could not record the branch's eligible row snapshot");
+          if (attempt > 0) throw new Error("the wake rows are already claimed by main");
+          // Main may have claimed part of the set after the read-only scan.
+          // One fresh scan gives the remaining rows a chance without weakening
+          // the grant's atomic ownership check or spinning on a busy main.
+          if (!(await actingAsOwner(acceptedGeneration))) throw new Error("supervision session no longer owns the fleet lock");
+          afk = afkPostureRecordPresent(state);
+          scope = scopeForUnreadWake(state, heartbeat, afk);
         }
-        if (scope.corrupted) {
-          throw new Error("the unread wake queue could not be read safely");
-        }
-        const grant = await writeEligibleRowsSnapshot(
-          state,
-          scope.eligibleSeqs,
-          wakeGrantScript,
-          String(acceptedGeneration),
-        );
-        if (grant === "main-owned") throw new Error("the wake rows are already claimed by main");
-        if (grant !== "published") throw new Error("could not record the branch's eligible row snapshot");
         // A row can still arrive between this re-check and the model starting
         // the drain; that residual is accepted by the confused-agent-grade boundary.
         const reportRevisionBeforePrompt = durableReportRevision;

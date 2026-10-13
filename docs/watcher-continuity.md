@@ -65,7 +65,11 @@ So a running Pi process whose replacement did not load this extension is reporte
 
 A main follow-up counts as delivered once Pi accepts it, never once the model reads it.
 The reason is that a follow-up queued while main is streaming joins the running run without a `before_agent_start`.
-The extension header owns how consumption is observed and why it only decides what a replacement replays.
+The extension header owns actual-consumption tracking, bounded routine delivery, and replacement replay.
+Pi retains one unconsumed routine watcher follow-up as an invitation to drain durable work; further routine closes re-arm normally and accumulate in the durable queue.
+Watcher-failure alarms bypass this bound, and human messages retain Pi's ordinary delivery.
+Actual consumption releases the invitation, while an accepted invitation removed from an empty Pi queue is retried at a non-aborted settled run boundary.
+Escape retains the invitation for a later genuine watcher close or non-aborted boundary instead of immediately starting another model run.
 
 ### omp session replacement
 
@@ -321,7 +325,8 @@ An acknowledgement can remove none of the actor's rows while a presented row abo
 Such an acknowledgement is reported as having acknowledged nothing, together with the exact `--ack-through` and `--recovery-generation` command for that presented row.
 The presented set is read before any re-claim, so a row that arrived after presentation is never named for unseen acknowledgement.
 
-If a branch offer loses the claim race to main, it rejects its settlement so the watcher retains the actionable close until Pi accepts its main follow-up.
+[`pi-supervision-branch.md`](pi-supervision-branch.md#pre-drain-recheck) owns the bounded retry when main wins the branch grant's claim race.
+If no safe grant remains, the watcher retains the actionable close until Pi accepts its main follow-up or an existing unconsumed routine invitation covers the durable work.
 
 ### Branch eligibility and check rows
 

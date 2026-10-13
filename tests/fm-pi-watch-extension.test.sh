@@ -359,6 +359,10 @@ fi
 printf 'watcher: started pid=%s (beacon fresh) recovery-generation=fixture-generation\n' "$$"
 trap 'exit 0' TERM INT
 while [ ! -e "$FM_STOP_FILE" ]; do sleep 0.02; done
+if [ "$count" -eq 2 ]; then
+  rm -f "$FM_STOP_FILE"
+  printf 'signal: fresh close after aborted delivery\n'
+fi
 SH
   chmod +x "$repo/bin/fm-watch-arm.sh"
   out=$(PLUGIN="$plugin" FM_HOME="$home" FM_ROOT_OVERRIDE="$repo" FM_ARM_LOG="$log" FM_STOP_FILE="$stop" node --input-type=module 2>&1 <<'EOF'
@@ -367,18 +371,21 @@ import { pathToFileURL } from "node:url";
 
 let tool = null;
 let deliveryStarted = false;
+let deliveryCalls = 0;
+const handlers = new Map();
 let rowsAtDelivery = 0;
 let releaseDelivery = () => {};
 const deliveryBlocked = new Promise((resolve) => {
   releaseDelivery = resolve;
 });
 const pi = {
-  on() {},
+  on(event, handler) { handlers.set(event, handler); },
   registerCommand() {},
   registerTool(candidate) {
     if (candidate.name === "fm_watch_arm_pi") tool = candidate;
   },
   sendUserMessage: async () => {
+    deliveryCalls += 1;
     rowsAtDelivery = existsSync(process.env.FM_ARM_LOG)
       ? readFileSync(process.env.FM_ARM_LOG, "utf8").trim().split("\n").filter((row) => row.startsWith("arm=")).length
       : 0;
@@ -414,8 +421,19 @@ if (stableRows.filter((row) => row.startsWith("arm=")).length !== 2) {
 if (stableRows.filter((row) => row.startsWith("confirmed ")).length !== 1) {
   throw new Error(`successful prompt delivery was not confirmed exactly once: ${stableRows.join(" | ")}`);
 }
+// Escape can finish while Pi acceptance is still in flight. Its settlement
+// must survive that acceptance continuation without automatically prompting
+// again; only a subsequent real close may replay the dequeued invitation.
+handlers.get("agent_settled")?.({ aborted: true }, { hasPendingMessages: () => false });
 releaseDelivery();
+await new Promise((resolve) => setTimeout(resolve, 100));
+if (deliveryCalls !== 1) throw new Error(`in-flight acceptance undid Escape with ${deliveryCalls} sends`);
 writeFileSync(process.env.FM_STOP_FILE, "stop\n");
+for (let i = 0; i < 250 && deliveryCalls < 2; i += 1) {
+  await new Promise((resolve) => setTimeout(resolve, 10));
+}
+await new Promise((resolve) => setTimeout(resolve, 100));
+if (deliveryCalls !== 2) throw new Error(`fresh close did not replay exactly one aborted invitation: ${deliveryCalls}`);
 process.exit(0);
 EOF
   )
@@ -3470,7 +3488,7 @@ await waitFor(
 if (finalSession.prompts.filter((message) => message.includes("signal: streaming queued actionable outcome")).length !== 1) {
   throw new Error(`second replacement did not replay the idle queued follow-up exactly once: ${finalSession.prompts.join(" | ")}`);
 }
-finalSession.handlers.get("before_agent_start")?.({ prompt: finalSession.prompts[0] }, {});
+finalSession.handlers.get("message_start")?.({ message: { role: "user", content: [{ type: "text", text: finalSession.prompts[0] }] } }, {});
 await new Promise((resolve) => setTimeout(resolve, 20));
 process.exit(0);
 EOF
@@ -3481,10 +3499,10 @@ EOF
   pass "Pi replacement replays a streaming follow-up before consumption"
 }
 
-# The 2026-09-02 incident: a wake delivered while main was mid-turn never raised
-# before_agent_start, the extension waited for it, and every later actionable
-# close was dropped. Continuity must settle on Pi accepting the follow-up, while
-# consumption still decides what a replacement replays.
+# Streaming-time follow-ups do not raise before_agent_start. Successors keep
+# running, but routine closes share one pending drain invitation until its
+# actual message_start. Durable rows, failure alarms, dequeued invitations,
+# and replacement replay all survive that bound.
 test_pi_streaming_time_delivery_keeps_the_successor_chain() {
   local repo home plugin log trigger out status
   repo="$TMP_ROOT/pi-streaming-chain-root"
@@ -3498,6 +3516,7 @@ test_pi_streaming_time_delivery_keeps_the_successor_chain() {
 #!/usr/bin/env bash
 if [ "${1:-}" = --handling-delivered ]; then
   printf 'confirmed=%s\n' "$2" >> "${FM_ARM_LOG:?}"
+  [ ! -e "$FM_TRIGGER_FILE.reject-confirm" ] || exit 2
   exit 0
 fi
 printf 'arm=%s\n' "$$" >> "${FM_ARM_LOG:?}"
@@ -3505,12 +3524,14 @@ count=$(grep -c '^arm=' "$FM_ARM_LOG")
 printf 'watcher: started pid=%s (beacon fresh) recovery-generation=chain-%s\n' "$$" "$count"
 trap 'exit 0' TERM INT
 while [ ! -e "$FM_TRIGGER_FILE.$count" ]; do sleep 0.02; done
+printf '%s\t%s\tsignal\tchain-%s.status\tsignal: streaming chain wake %s\n' \
+  "$count" "$count" "$count" "$count" >> "$FM_HOME/state/.wake-queue"
 printf 'signal: streaming chain wake %s\n' "$count"
 exit 0
 SH
   chmod +x "$repo/bin/fm-watch-arm.sh"
   out=$(PLUGIN="$plugin" FM_HOME="$home" FM_ROOT_OVERRIDE="$repo" FM_ARM_LOG="$log" FM_TRIGGER_FILE="$trigger" node --input-type=module 2>&1 <<'EOF'
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 
 const handlers = new Map();
@@ -3523,14 +3544,14 @@ const pi = {
   },
   registerCommand() {},
   registerTool() {},
-  // The real Pi prompt path: a follow-up sent while the agent is streaming is
-  // queued for the running run and raises no before_agent_start; only a send
-  // to an idle agent starts a run and raises it with the exact text.
+  // Idle prompts raise before_agent_start before constructing their user
+  // message. Streaming follow-ups reach only their later message_start.
   sendUserMessage: async (message) => {
     prompts.push(message);
     if (streaming) return;
     beforeAgentStarts += 1;
     handlers.get("before_agent_start")?.({ prompt: message }, {});
+    handlers.get("message_start")?.({ message: { role: "user", content: [{ type: "text", text: message }] } }, {});
   },
   events: { on() {}, emit() {} },
 };
@@ -3560,18 +3581,45 @@ await waitFor(() => prompts.length === 1, "first wake delivered while main strea
 if (wakes("signal: streaming chain wake 1") !== 1) throw new Error(`wrong first wake: ${prompts.join(" | ")}`);
 await waitFor(() => arms() === 2, "successor after the streaming-time delivery");
 writeFileSync(`${process.env.FM_TRIGGER_FILE}.2`, "close\n");
-await waitFor(() => prompts.length === 2, "second wake delivered while main still streams");
-if (wakes("signal: streaming chain wake 2") !== 1) throw new Error(`wrong second wake: ${prompts.join(" | ")}`);
 await waitFor(() => arms() === 3, "successor after the second streaming-time delivery");
+await new Promise((resolve) => setTimeout(resolve, 100));
+if (prompts.length !== 1) throw new Error(`routine closes piled up before consumption: ${prompts.join(" | ")}`);
 if (beforeAgentStarts !== 0) throw new Error(`streaming follow-ups raised before_agent_start ${beforeAgentStarts} times`);
 
-// The run reaches the first queued follow-up; the second is still queued when
-// the captain replaces the session, so only the second rides the handoff.
-consumeQueued(prompts[0]);
+// Even the exact pre-start prompt and an unrelated human message cannot
+// release the latch before the actual user message joins the running run.
+handlers.get("before_agent_start")?.({ prompt: prompts[0] }, {});
+consumeQueued("A separate human instruction");
+writeFileSync(`${process.env.FM_TRIGGER_FILE}.3`, "close\n");
+await waitFor(() => arms() === 4, "successor after the third streaming-time delivery");
+await new Promise((resolve) => setTimeout(resolve, 100));
+if (prompts.length !== 1) throw new Error(`unrelated input or pre-start hook released the latch: ${prompts.join(" | ")}`);
+const durableRows = () => readFileSync(`${process.env.FM_HOME}/state/.wake-queue`, "utf8").trim().split("\n");
+if (durableRows().length !== 3) throw new Error("coalescing removed or acknowledged durable wake rows");
+
+// Model Escape removing the unconsumed follow-up. It must remain a stop,
+// while the next genuine watcher event can renew the invitation. An older
+// context lacking the queue API must not guess that Pi dropped it.
+handlers.get("agent_settled")?.({ aborted: true }, {});
+await new Promise((resolve) => setTimeout(resolve, 50));
+if (prompts.length !== 1) throw new Error("a missing queue API triggered a guessed replay");
+handlers.get("agent_settled")?.({ aborted: true }, { hasPendingMessages: () => true });
+await new Promise((resolve) => setTimeout(resolve, 50));
+if (prompts.length !== 1) throw new Error("a queued follow-up was duplicated at settlement");
+handlers.get("agent_settled")?.({ aborted: true }, { hasPendingMessages: () => false });
+await new Promise((resolve) => setTimeout(resolve, 100));
+if (prompts.length !== 1) throw new Error("Escape was undone by an immediate automatic prompt");
+writeFileSync(`${process.env.FM_TRIGGER_FILE}.4`, "close\n");
+await waitFor(() => prompts.length === 2, "Escape-dequeued invitation replay");
+await waitFor(() => arms() === 5, "successor after the post-Escape watcher event");
+if (wakes("signal: streaming chain wake 1") !== 2) throw new Error(`Escape replay lost the anchor: ${prompts.join(" | ")}`);
+
+// Both the anchor and all later coalesced rows still require a drain. The
+// replacement carries one invitation, never one prompt per durable event.
 await handlers.get("session_shutdown")?.({ type: "session_shutdown", reason: "new" }, {});
 const handoffPath = `${process.env.FM_HOME}/state/extensions/pi-primary-watch/session-replacement-actionable.json`;
 const handoff = JSON.parse(readFileSync(handoffPath, "utf8"));
-if (handoff.pending.length !== 1 || handoff.pending[0].delivered || !handoff.pending[0].message.includes("signal: streaming chain wake 2")) {
+if (handoff.pending.length !== 1 || handoff.pending[0].delivered || !handoff.pending[0].message.includes("signal: streaming chain wake 1")) {
   throw new Error(`replacement handoff did not carry exactly the unconsumed wake: ${JSON.stringify(handoff)}`);
 }
 streaming = false;
@@ -3579,19 +3627,44 @@ const replacementMod = await import(`${pathToFileURL(process.env.PLUGIN).href}?r
 replacementMod.default(pi);
 await handlers.get("session_start")?.({ type: "session_start", reason: "new" }, {});
 await waitFor(() => prompts.length === 3, "replacement replay of the unconsumed wake");
-if (wakes("signal: streaming chain wake 2") !== 2 || wakes("signal: streaming chain wake 1") !== 1) {
+if (wakes("signal: streaming chain wake 1") !== 3 || wakes("signal: streaming chain wake 2") !== 0) {
   throw new Error(`replacement replayed the wrong wakes: ${prompts.join(" | ")}`);
 }
 if (beforeAgentStarts !== 1) throw new Error(`idle replay raised before_agent_start ${beforeAgentStarts} times`);
-await waitFor(() => arms() === 4, "replacement arm");
+await waitFor(() => arms() === 6, "replacement arm");
 await waitFor(() => !existsSync(handoffPath), "consumed replay clears its handoff record");
+if (durableRows().length !== 4) throw new Error("replacement replay removed durable wake rows");
+
+// Actual consumption released the latch for new events, and an urgent
+// confirmation failure bypasses an already pending routine invitation.
+streaming = true;
+writeFileSync(`${process.env.FM_TRIGGER_FILE}.6`, "close\n");
+await waitFor(() => prompts.length === 4 && arms() === 7, "fresh invitation after actual consumption");
+if (wakes("signal: streaming chain wake 6") !== 1) throw new Error(`consumption did not release the latch: ${prompts.join(" | ")}`);
+writeFileSync(`${process.env.FM_TRIGGER_FILE}.reject-confirm`, "reject\n");
+writeFileSync(`${process.env.FM_TRIGGER_FILE}.7`, "close\n");
+await waitFor(() => prompts.length === 5 && arms() === 8, "failure alarm bypasses pending routine invitation");
+if (!prompts[4].includes("watcher: FAILED - handling delivery confirmation was rejected")) {
+  throw new Error(`pending routine invitation hid a failure alarm: ${prompts.join(" | ")}`);
+}
+unlinkSync(`${process.env.FM_TRIGGER_FILE}.reject-confirm`);
+if (durableRows().length !== 6) throw new Error("routine or failure delivery changed the durable queue");
+handlers.get("agent_settled")?.({ aborted: true }, { hasPendingMessages: () => false });
+await new Promise((resolve) => setTimeout(resolve, 100));
+if (prompts.length !== 5) throw new Error("Escape with an urgent alarm immediately restarted the agent");
+handlers.get("agent_settled")?.({ aborted: false }, { hasPendingMessages: () => false });
+await waitFor(() => prompts.length === 7, "Escape replay preserves both the routine invitation and failure alarm");
+if (!prompts[6].includes("watcher: FAILED - handling delivery confirmation was rejected")) {
+  throw new Error(`successful recovery lost the unconsumed failure alarm: ${prompts.join(" | ")}`);
+}
+if (durableRows().length !== 6) throw new Error("failure alarm replay changed the durable queue");
 process.exit(0);
 EOF
 )
   status=$?
-  expect_code 0 "$status" "Pi streaming-time wake delivery must keep the successor chain and replay only unconsumed wakes"
+  expect_code 0 "$status" "Pi streaming-time wake delivery must bound routine invitations while preserving successors and unconsumed replay"
   [ -z "$out" ] || fail "Pi streaming-time delivery chain test printed output: $out"
-  pass "Pi streaming-time wake delivery keeps the successor chain and replays only unconsumed wakes"
+  pass "Pi streaming-time wake delivery bounds routine invitations and preserves successors and unconsumed replay"
 }
 
 # A verified successor can die while the wake it was started for is still
@@ -3844,7 +3917,9 @@ function makePi() {
     registerTool(candidate) {
       if (candidate.name === "fm_watch_arm_pi") tool = candidate;
     },
-    sendUserMessage: async () => {},
+    // Hold acceptance so both distinct retiring-generation records remain
+    // observable before routine delivery can coalesce their invitations.
+    sendUserMessage: async () => { await new Promise(() => {}); },
     events: { on() {}, emit() {} },
   };
   return { pi, handlers, getTool: () => tool };
@@ -3991,7 +4066,7 @@ if (!prompts[1].includes("signal: persistence failure actionable outcome")) {
 if (!prompts[1].includes("could not persist a replacement-session actionable wake")) {
   throw new Error(`replacement did not surface the persistence failure: ${prompts[1]}`);
 }
-handlers.get("before_agent_start")?.({ prompt: prompts[1] }, {});
+handlers.get("message_start")?.({ message: { role: "user", content: [{ type: "text", text: prompts[1] }] } }, {});
 process.exit(0);
 EOF
 )

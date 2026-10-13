@@ -269,6 +269,10 @@ Every other fleet-wide or unresolvable wake, and every watcher-failure alarm, st
 
 The branch recomputes eligibility immediately before prompting the branch to drain.
 It publishes the exact eligible row set to `state/.branch-eligible-rows` through `writeEligibleRowsSnapshot`.
+The selector validates the whole unread queue and main's claim record, then excludes sequences already claimed by main from the new grant.
+An old main-owned routine row therefore cannot block a fresh unclaimed routine row.
+Unread decisions retain their trigger precedence even when main has already claimed their rows.
+An unreadable, malformed, or symlinked main claim fails the selection closed.
 
 After an independently eligible wake has already been offered, a newly-arrived main-owned row observed at that pre-drain recheck does not revoke the offer.
 Instead, that row is excluded from the eligible set.
@@ -278,6 +282,8 @@ Whatever else is currently eligible still reaches the branch, and the main-owned
 Heartbeat keeps its own all-or-nothing recheck over the rows it can claim: it takes every branch-ownable unread row or none of them.
 An unresolvable task-local row still defers the whole review to main.
 
+A main claim racing Pi grant publication triggers one fresh eligibility scan and one retry for the remaining unclaimed rows.
+The atomic grant still refuses any overlapping ownership; a second race falls back to main.
 A producer can still append a row in the instant between that final check and drain startup.
 This accepted residual follows the confused-agent-grade boundary above rather than claiming adversarial queue isolation.
 

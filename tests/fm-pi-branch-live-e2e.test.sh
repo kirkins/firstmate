@@ -68,6 +68,7 @@ printf 'arm pid=%s\n' "$$" >> "${FM_LIVE_WATCH_LOG:?}"
 printf 'watcher: started pid=%s (beacon fresh) recovery-generation=live-sdk-generation\n' "$$"
 trap 'exit 0' TERM INT
 while :; do
+  [ -d "${FM_HOME:?}/state" ] || exit 0
   if [ -e "$FM_LIVE_WATCH_TRIGGER" ]; then
     reason=$(cat "$FM_LIVE_WATCH_TRIGGER")
     rm -f "$FM_LIVE_WATCH_TRIGGER"
@@ -172,7 +173,7 @@ const waitFor = async (predicate, label) => {
     if (predicate()) return;
     await new Promise((resolve) => setTimeout(resolve, 50));
   }
-  throw new Error(`timeout waiting for ${label}`);
+  throw new Error(`timeout waiting for ${label}; main=${JSON.stringify(mainUserMessages)}; offers=${offers.length}`);
 };
 const armCount = () => existsSync(process.env.FM_LIVE_WATCH_LOG)
   ? readFileSync(process.env.FM_LIVE_WATCH_LOG, "utf8").split(/\n/).filter((line) => line.startsWith("arm ")).length
@@ -482,6 +483,18 @@ const created = await createAgentSession({ cwd, sessionManager: creating, modelR
 if (created.session.model?.id !== "fm-live-a") {
   throw new Error(`a pinned model was not applied on create: ${created.session.model?.id}`);
 }
+// Pi flushes a session only after assistant output exists; persist the
+// recorded-model fixture through its real writer before trying to reopen it.
+creating.appendMessage({
+  role: "assistant",
+  content: [{ type: "text", text: "recorded" }],
+  api: "openai-completions",
+  provider: "fm-live-fake",
+  model: "fm-live-a",
+  usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 } },
+  stopReason: "stop",
+  timestamp: Date.now(),
+});
 const sessionFile = creating.getSessionFile();
 
 // Reopen the SAME session with a different pin: the explicit model must win
@@ -841,6 +854,11 @@ let releaseStream = () => {};
 const streamHeld = new Promise((release) => {
   releaseStream = release;
 });
+let holdNextCompletion = false;
+let releaseEscapeStream = () => {};
+const escapeStreamHeld = new Promise((release) => {
+  releaseEscapeStream = release;
+});
 const chunk = (delta, finish) => `data: ${JSON.stringify({
   id: "fm-live-stream",
   object: "chat.completion.chunk",
@@ -855,7 +873,8 @@ globalThis.fetch = async (input) => {
     throw new Error(`unexpected network request in provider-free guard: ${url}`);
   }
   completions += 1;
-  const hold = completions === 1 ? streamHeld : Promise.resolve();
+  const hold = completions === 1 ? streamHeld : holdNextCompletion ? escapeStreamHeld : Promise.resolve();
+  holdNextCompletion = false;
   const encoder = new TextEncoder();
   const body = new ReadableStream({
     async start(controller) {
@@ -944,12 +963,14 @@ const armed = await armTool.execute("live-stream-arm", {}, undefined, undefined,
 if (!armed.details?.ok) throw new Error(`watcher did not arm: ${JSON.stringify(armed.details)}`);
 await waitFor(() => armRows("arm ") === 1, "initial watcher arm");
 
-// Turn 1: main streams against the held provider stream; the watcher closes
-// mid-turn and the extension delivers its wake while main is busy.
+// Turn 1: main streams against the held provider stream. A burst of watcher
+// closes keeps every durable row but delivers one unconsumed routine doorbell.
 session.prompt("Reply with exactly the word OK.").catch((error) => {
   events.push({ type: "prompt_error", text: error instanceof Error ? error.message : String(error) });
 });
 await waitFor(() => completions === 1 && session.isStreaming, "main streaming on the held completion");
+const durableRows = "1\t1\tcheck\tstream-one\tfirst durable event\n";
+writeFileSync(`${home}/state/.wake-queue`, durableRows);
 writeFileSync(process.env.FM_LIVE_WATCH_TRIGGER, "signal: live streaming probe\n");
 await waitFor(
   () => events.some((event) => event.type === "input" && event.source === "extension" && event.streamingBehavior === "followUp" && event.text.includes("signal: live streaming probe")),
@@ -959,6 +980,30 @@ await waitFor(() => armRows("arm ") === 2, "successor started while main streams
 if (has("before_agent_start", "signal: live streaming probe")) {
   throw new Error("Pi raised before_agent_start for a follow-up queued while streaming; the extension must never wait for that");
 }
+let expectedRows = durableRows;
+for (const sequence of [2, 3]) {
+  expectedRows += `1\t${sequence}\tcheck\tstream-${sequence}\tdurable burst event ${sequence}\n`;
+  writeFileSync(`${home}/state/.wake-queue`, expectedRows);
+  writeFileSync(process.env.FM_LIVE_WATCH_TRIGGER, `signal: live burst probe ${sequence}\n`);
+  await waitFor(() => armRows("arm ") === sequence + 1 && armRows("confirmed ") === sequence,
+    `successor and confirmation for burst ${sequence}`);
+}
+const routineInputs = () => events.filter((event) => event.type === "input" &&
+  event.source === "extension" && event.streamingBehavior === "followUp" &&
+  event.text.includes("FIRSTMATE WATCHER WAKE"));
+if (routineInputs().length !== 1 || session.getFollowUpMessages().length !== 1) {
+  throw new Error(`a busy real Pi session received more than one routine watcher doorbell: ${JSON.stringify(routineInputs())}`);
+}
+if (readFileSync(`${home}/state/.wake-queue`, "utf8") !== expectedRows) {
+  throw new Error("coalescing a follow-up consumed or changed durable wake rows");
+}
+// Human input uses the vendor queue normally and is never replaced or folded
+// into the operational notification.
+await session.followUp("Human follow-up retained by the live guard.");
+if (session.getFollowUpMessages().length !== 2 ||
+    !session.getFollowUpMessages().includes("Human follow-up retained by the live guard.")) {
+  throw new Error("routine watcher coalescing changed a human follow-up");
+}
 releaseStream();
 await waitFor(() => settledRuns() === 1, "the first run to settle");
 if (!has("user_message_start", "signal: live streaming probe")) {
@@ -967,19 +1012,54 @@ if (!has("user_message_start", "signal: live streaming probe")) {
 if (has("before_agent_start", "signal: live streaming probe")) {
   throw new Error("Pi raised before_agent_start for a queued follow-up when the run reached it");
 }
-if (completions !== 2) throw new Error(`the queued follow-up did not open its own model turn: ${completions} completions`);
+if (completions !== 3) throw new Error(`the routine invitation and human follow-up did not each open their model turn: ${completions} completions`);
+if (!has("user_message_start", "Human follow-up retained by the live guard.")) {
+  throw new Error("the real Pi run never consumed the retained human follow-up");
+}
+if (routineInputs().length !== 1) throw new Error("the burst generated extra routine model inputs after consumption");
 
 // Idle: the successor closes while main is idle, so the next wake starts a run
 // and Pi raises before_agent_start with the exact text, then the user message.
 writeFileSync(process.env.FM_LIVE_WATCH_TRIGGER, "signal: live idle probe\n");
 await waitFor(() => has("before_agent_start", "signal: live idle probe"), "the idle follow-up to raise before_agent_start");
-await waitFor(() => armRows("arm ") === 3, "successor after the idle delivery");
+await waitFor(() => armRows("arm ") === 5, "successor after the idle delivery");
 await waitFor(() => settledRuns() === 2, "the idle run to settle");
 if (!has("user_message_start", "signal: live idle probe")) {
   throw new Error(`the idle follow-up never reached the run as a user message: ${JSON.stringify(events)}`);
 }
-if (armRows("confirmed ") !== 2) {
-  throw new Error(`the watcher did not confirm both successor deliveries: ${readFileSync(armLog, "utf8")}`);
+if (armRows("confirmed ") !== 4) {
+  throw new Error(`the watcher did not confirm every burst and idle successor: ${readFileSync(armLog, "utf8")}`);
+}
+// Stock Pi restores the cleared queue to its editor before Escape aborts.
+// Retain that returned text and all durable rows, without immediately starting
+// another model run. A later genuine watcher close can recover the invitation.
+holdNextCompletion = true;
+session.prompt("Hold this isolated interruption probe.").catch((error) => {
+  events.push({ type: "prompt_error", text: error instanceof Error ? error.message : String(error) });
+});
+await waitFor(() => completions === 5 && session.isStreaming, "the interruption probe to stream");
+writeFileSync(process.env.FM_LIVE_WATCH_TRIGGER, "signal: live Escape probe\n");
+await waitFor(() => session.getFollowUpMessages().some((text) => text.includes("signal: live Escape probe")),
+  "the interruption invitation to queue");
+const restored = session.clearQueue();
+if (restored.followUp.length !== 1 || !restored.followUp[0].includes("signal: live Escape probe")) {
+  throw new Error(`Escape lost the pending invitation returned for editor restoration: ${JSON.stringify(restored)}`);
+}
+const stopped = session.abort();
+releaseEscapeStream();
+await stopped;
+await waitFor(() => settledRuns() === 3, "the interrupted run to settle");
+if (completions !== 5 || session.pendingMessageCount !== 0 || !session.isIdle) {
+  throw new Error(`Escape restarted the model without fresh input: completions=${completions}, pending=${session.pendingMessageCount}`);
+}
+if (readFileSync(`${home}/state/.wake-queue`, "utf8") !== expectedRows) {
+  throw new Error("Escape changed the retained durable events");
+}
+writeFileSync(process.env.FM_LIVE_WATCH_TRIGGER, "signal: live recovery after Escape\n");
+await waitFor(() => has("user_message_start", "signal: live Escape probe"), "a fresh watcher close to recover the interrupted invitation");
+await session.waitForIdle();
+if (readFileSync(`${home}/state/.wake-queue`, "utf8") !== expectedRows) {
+  throw new Error("interruption recovery acknowledged the model's durable work");
 }
 session.dispose();
 console.log("STREAM_OK");
@@ -990,7 +1070,7 @@ out=$(cat "$TMP_ROOT/stream-output")
 if [ "$status" -ne 0 ] || [ "$out" != "STREAM_OK" ]; then
   fail "real-SDK streaming-time watcher delivery guard failed against pi-coding-agent $PI_VERSION: $out"
 fi
-pass "real Pi SDK $PI_VERSION queues a streaming-time watcher wake without before_agent_start, keeps the successor chain, and surfaces consumption of both follow-ups"
+pass "real Pi SDK $PI_VERSION bounds routine follow-ups, retains durable rows and human input, respects Escape, and recovers on a fresh wake"
 
 # The first processing presentation keeps its visible response, while the
 # hidden retry drops only empty or exact-repeat finals through the real event

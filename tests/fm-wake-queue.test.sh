@@ -1716,7 +1716,7 @@ test_unconsumable_rows_are_retired_instead_of_wedging_the_queue() {
 }
 
 test_branch_grant_refuses_rows_already_claimed_by_main() {
-  local dir state rc
+  local dir state rc invalid original_queue
   dir=$(make_case branch-refuses-main-claim)
   state="$dir/state"
 
@@ -1731,7 +1731,39 @@ test_branch_grant_refuses_rows_already_claimed_by_main() {
   grep -Fq "$(printf '\tsignal\ttask-a.status\t')" "$dir/main.out" \
     || fail "the main owner did not present its claimed row"
 
-  pass "branch grant cannot take a row already claimed by main"
+  append_wake "$state" signal "task-b.status" "signal: task-b" || fail "fresh signal append failed"
+  original_queue=$(cat "$state/.wake-queue")
+  FM_STATE_OVERRIDE="$state" "$GRANT" publish branch-refuses 2 || fail "main's old claim blocked a fresh grant"
+  [ "$(cat "$state/.branch-eligible-rows")" = 2 ] || fail "fresh grant included main's old row"
+  [ "$(cat "$state/.main-eligible-rows")" = 1 ] || fail "fresh grant changed main ownership"
+  [ "$(cat "$state/.wake-queue")" = "$original_queue" ] || fail "grant publication consumed wake rows"
+  FM_STATE_OVERRIDE="$state" "$GRANT" release branch-refuses || fail "fresh grant release failed"
+  for invalid in empty malformed duplicate; do
+    case "$invalid" in
+      empty) : > "$state/.main-eligible-rows" ;;
+      malformed) printf 'invalid\n' > "$state/.main-eligible-rows" ;;
+      duplicate) printf '1\n1\n' > "$state/.main-eligible-rows" ;;
+    esac
+    rc=0
+    FM_STATE_OVERRIDE="$state" "$GRANT" publish branch-refuses 2 || rc=$?
+    [ "$rc" -eq 1 ] || fail "invalid main ownership ($invalid) did not refuse publication: rc=$rc"
+    [ ! -e "$state/.branch-eligible-rows" ] || fail "invalid main ownership published a branch grant"
+  done
+  rm "$state/.main-eligible-rows"
+  printf '1\n' > "$dir/main-claim-target"
+  ln -s "$dir/main-claim-target" "$state/.main-eligible-rows"
+  rc=0
+  FM_STATE_OVERRIDE="$state" "$GRANT" publish branch-refuses 2 || rc=$?
+  [ "$rc" -eq 1 ] || fail "symlinked main ownership did not refuse publication: rc=$rc"
+  [ ! -e "$state/.branch-eligible-rows" ] || fail "symlinked main ownership published a branch grant"
+  rm "$state/.main-eligible-rows"
+  printf '1\n' > "$state/.main-eligible-rows"
+  rc=0
+  FM_STATE_OVERRIDE="$state" "$GRANT" publish wrong-generation 2 || rc=$?
+  [ "$rc" -eq 1 ] || fail "a wrong generation acquired the fresh row: rc=$rc"
+  [ ! -e "$state/.branch-eligible-rows" ] || fail "a wrong generation published a branch grant"
+
+  pass "branch grants preserve main ownership, admit fresh rows, and refuse malformed claims or the wrong generation"
 }
 
 # A wake that lands between main's drain and its acknowledgement was never
