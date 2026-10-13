@@ -1,0 +1,7 @@
+Command: ['bash', 'bin/fm-remote-hands.sh', 'prepare', '--name', 'fm-lab-node26', '--repo', 'file:///mnt/fixture', '--dest', '/mnt/clone']
+exit: 0
+70b3249aea1b4d1bbb560c400f1560785f0c2d90
+prepare: name=fm-lab-node26 repo=file:///mnt/fixture dest=/mnt/clone
+prepare: sandbox node 26.11.1 already matches local major 26
+preprovisioned package request: update -qq
+preprovisioned package request: install -y -qq xz-utils tmux libatomic1 ruby gcc time

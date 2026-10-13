@@ -1,0 +1,17 @@
+Live local filesystem sandbox; real uname, Node distribution, curl, sha256sum, tar and git.
+Cloud transport and credentials replaced with local adapters; package requests preprovisioned.
+Command: bash bin/fm-remote-hands.sh prepare --name fm-lab-node26 --repo file:///mnt/fixture --dest /mnt/clone
+exit: 0
+node-v26.11.1-linux-arm64.tar.xz: FAILED open or read
+v26.11.1
+70b3249aea1b4d1bbb560c400f1560785f0c2d90
+prepare: name=fm-lab-node26 repo=file:///mnt/fixture dest=/mnt/clone
+prepare: sandbox node '' -> local major 26; installing from nodejs.org
+preprovisioned package request: update -qq
+preprovisioned package request: install -y -qq xz-utils tmux libatomic1 ruby gcc time
+real curl: -fsSL https://nodejs.org/dist/latest-v26.x/
+real curl: -fsSL -o /tmp/fm-node.tar.xz https://nodejs.org/dist/latest-v26.x/node-v26.11.1-linux-arm64.tar.xz
+real curl: -fsSL https://nodejs.org/dist/latest-v26.x/SHASUMS256.txt
+sha256sum: node-v26.11.1-linux-arm64.tar.xz: No such file or directory
+sha256sum: WARNING: 1 listed file could not be read
+Cloning into '/mnt/clone'...

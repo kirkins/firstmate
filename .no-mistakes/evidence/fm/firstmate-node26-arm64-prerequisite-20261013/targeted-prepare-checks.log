@@ -1,0 +1,3 @@
+ok - fm-remote-hands.sh: prepare pins locale, node major, SHA checks, and full clones
+ok - fm-remote-hands.sh: prepare exec streams run under their own bound
+ok - fm-remote-hands.sh: prepare skips the node pin loudly when it cannot name one

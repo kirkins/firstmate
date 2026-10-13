@@ -1,0 +1,14 @@
+ok - fm-remote-hands.sh: production prepare maps aarch64 to the Node 26 arm64 archive
+prepare stdout:
+verified
+v26.10.0
+fake-head
+prepare: name=t-node26 repo=https://github.com/kirkins/firstmate dest=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SY6F33MYQ2TY37P26GRS8K/.phase-test/tmp/fm-remote-hands.4pLjcw/node26-repo
+prepare stderr:
+prepare: sandbox node '22.22.1' -> local major 26; installing from nodejs.org
+-fsSL https://nodejs.org/dist/latest-v26.x/
+-fsSL -o /tmp/fm-node.tar.xz https://nodejs.org/dist/latest-v26.x/node-v26.10.0-linux-arm64.tar.xz
+-fsSL https://nodejs.org/dist/latest-v26.x/SHASUMS256.txt
+deadbeef  node-v26.10.0-linux-arm64.tar.xz
+clone https://github.com/kirkins/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SY6F33MYQ2TY37P26GRS8K/.phase-test/tmp/fm-remote-hands.4pLjcw/node26-repo
+-C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SY6F33MYQ2TY37P26GRS8K/.phase-test/tmp/fm-remote-hands.4pLjcw/node26-repo rev-parse HEAD

@@ -1,0 +1,3 @@
+Mutation: node22-downgrade
+exit: 1
+not ok - production prepare must download the Node 26 arm64 archive

@@ -1,0 +1,4 @@
+Command: ['sbx', '--cloud', 'exec', 'fm-lab-node26', '--', 'bash', '-lc', "'node /mnt/clone/check.js; uname -m'"]
+exit: 0
+required Node 26: v26.11.1
+aarch64

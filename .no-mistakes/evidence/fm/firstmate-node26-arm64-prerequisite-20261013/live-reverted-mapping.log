@@ -1,0 +1,7 @@
+Command: ['bash', 'bin/.phase-live-mutant.sh', 'prepare', '--name', 'fm-lab-node26', '--repo', 'file:///mnt/fixture', '--dest', '/mnt/clone']
+exit: 1
+prepare: sandbox node '' -> local major 26; installing from nodejs.org
+preprovisioned package request: update -qq
+preprovisioned package request: install -y -qq xz-utils tmux libatomic1 ruby gcc time
+real curl: -fsSL https://nodejs.org/dist/latest-v26.x/
+node tarball not found under https://nodejs.org/dist/latest-v26.x

@@ -1,0 +1,4 @@
+Mutation: reverted-mapping
+exit: 1
+not ok - production prepare must install Node 26 on an aarch64 sandbox: prepare: sandbox node '22.22.1' -> local major 26; installing from nodejs.org
+node tarball not found under https://nodejs.org/dist/latest-v26.x: expected exit 0, got 1
