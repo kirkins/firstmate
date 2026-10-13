@@ -1,0 +1,37 @@
+{
+  "sdk": "1.1.0",
+  "attempts": 2,
+  "publicationsAtProvider": [
+    "2\n3\n"
+  ],
+  "events": [
+    {
+      "type": "branch_offer",
+      "accepted": true
+    },
+    {
+      "type": "input",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: fresh.status\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "source": "extension"
+    },
+    {
+      "type": "branch_failure",
+      "text": "Error: supervision branch prompt settled but produced no durable outcome for its claimed wake rows"
+    },
+    {
+      "type": "before_agent_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: fresh.status\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: fresh.status\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": false
+    }
+  ],
+  "queue": "1\t1\tsignal\told.status\tsignal: old notification\n2\t2\tsignal\tfresh.status\tsignal: fresh notification\n3\t3\tsignal\tfresh.status\tsignal: another fresh notification\n",
+  "mainClaim": "1\n",
+  "armLog": "arm pid=27256\nready=1\narm pid=28041\nready=2\nconfirmed generation=alarm-2 watcher=28041\n"
+}

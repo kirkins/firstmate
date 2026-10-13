@@ -1,0 +1,179 @@
+{
+  "sdk": "1.1.0",
+  "head": "b373018765f1b3cd3fda45259b5dba3f3d91db08",
+  "atRejection": {
+    "sends": 0,
+    "returnType": "undefined",
+    "pending": 0,
+    "userStarts": 0,
+    "agentSettlements": 0
+  },
+  "duringCompletion": {
+    "sends": 0,
+    "pending": 0,
+    "isCompacting": true
+  },
+  "afterManualCompact": {
+    "pending": 0,
+    "userStarts": 0,
+    "agentSettlements": 0,
+    "isCompacting": false
+  },
+  "afterFreshB": {
+    "pending": 1,
+    "routineQueued": 1,
+    "sendAttempts": 1,
+    "hasFreshDelivery": false,
+    "durableUnchanged": true
+  },
+  "credentialRecovery": {
+    "rejectedSends": 1,
+    "recoveredSends": 2
+  },
+  "settlement": {
+    "offers": 1,
+    "userStarts": 1
+  },
+  "durableQueue": "1\t1\tcheck\tA\tmanual-compaction notification A\n1\t2\tcheck\tcompletion\tcompletion-boundary notification\n1\t3\tcheck\tB\tfresh notification B\n1\t4\tcheck\tcredential-A\tcredential notification A\n1\t5\tcheck\tcredential-B\tfresh credential notification B\n1\t6\tcheck\tcredential-C\tcredential construction notification C\n1\t7\tcheck\tcredential-D\tcredential notification D\n1\t8\tcheck\tsettlement-A\tsettlement notification A\n",
+  "events": [
+    {
+      "type": "manual_compaction_held",
+      "reason": "manual"
+    },
+    {
+      "type": "session_compact",
+      "reason": "manual"
+    },
+    {
+      "type": "input",
+      "source": "interactive",
+      "text": "Hold one ordinary human turn for the fresh-notification proof."
+    },
+    {
+      "type": "before_agent_start",
+      "text": "Hold one ordinary human turn for the fresh-notification proof."
+    },
+    {
+      "type": "user_message_start",
+      "text": "Hold one ordinary human turn for the fresh-notification proof."
+    },
+    {
+      "type": "input",
+      "source": "extension",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: notification A during manual compaction\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: notification A during manual compaction\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": false
+    },
+    {
+      "type": "input",
+      "source": "extension",
+      "text": "Direct local SDK credential rejection probe."
+    },
+    {
+      "type": "input",
+      "source": "extension",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: credential notification A while logged out\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "before_agent_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: credential notification A while logged out\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: credential notification A while logged out\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": false
+    },
+    {
+      "type": "input",
+      "source": "extension",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: credential notification D after consumption\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "before_agent_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: credential notification D after consumption\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: credential notification D after consumption\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": false
+    },
+    {
+      "type": "input",
+      "source": "interactive",
+      "text": "Ordinary human turn before held settlement."
+    },
+    {
+      "type": "before_agent_start",
+      "text": "Ordinary human turn before held settlement."
+    },
+    {
+      "type": "user_message_start",
+      "text": "Ordinary human turn before held settlement."
+    },
+    {
+      "type": "held_settlement",
+      "aborted": false
+    },
+    {
+      "type": "agent_settled",
+      "aborted": false
+    },
+    {
+      "type": "input",
+      "source": "extension",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: settlement notification A\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "before_agent_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: settlement notification A\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: settlement notification A\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": false
+    }
+  ],
+  "sends": [
+    {
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: notification A during manual compaction\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "returnType": "undefined"
+    },
+    {
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: credential notification A while logged out\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "returnType": "undefined"
+    },
+    {
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: credential notification D after consumption\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "returnType": "undefined"
+    },
+    {
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: settlement notification A\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "returnType": "undefined"
+    }
+  ],
+  "errors": [
+    {
+      "event": "send_user_message",
+      "error": "Cannot submit a prompt while compaction is in progress. Wait for compaction to finish and retry."
+    },
+    {
+      "event": "send_user_message",
+      "error": "No API key found for fm-compact-proof.\n\nUse /login to log into a provider via OAuth or API key. See:\n  /private/tmp/firstmate-notification-sdk-20261013/node_modules/@earendil-works/pi-coding-agent/docs/providers.md\n  /private/tmp/firstmate-notification-sdk-20261013/node_modules/@earendil-works/pi-coding-agent/docs/models.md"
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "mode": "aborted-exhaustion",
+  "sdk": "1.1.0",
+  "checkpoints": [
+    {
+      "stage": "second Escape during delayed readiness",
+      "completions": 2,
+      "pending": 0,
+      "inputCount": 1,
+      "armLog": [
+        "arm pid=59316",
+        "ready=1",
+        "arm pid=59433",
+        "ready=2",
+        "confirmed generation=alarm-2 watcher=59433",
+        "arm pid=59624",
+        "blocked=3"
+      ]
+    },
+    {
+      "stage": "exhausted alarm deferred after Escape",
+      "completions": 2,
+      "pending": 0,
+      "inputCount": 1,
+      "arms": [
+        "arm pid=59316",
+        "ready=1",
+        "arm pid=59433",
+        "ready=2",
+        "confirmed generation=alarm-2 watcher=59433",
+        "arm pid=59624",
+        "blocked=3",
+        "retired=3",
+        "arm pid=61074",
+        "blocked=4",
+        "retired=4"
+      ]
+    },
+    {
+      "stage": "real extension reload recovery",
+      "messages": [
+        {
+          "type": "user_message_start",
+          "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: retained alarm invitation\n\nwatcher: FAILED - Pi extension could not verify a ready successor watcher\nwatcher: FAILED - Pi extension could not restore watcher continuity after 1 retries\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+        },
+        {
+          "type": "user_message_start",
+          "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: fresh event starts replay restoration\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+        }
+      ],
+      "armLog": [
+        "arm pid=59316",
+        "ready=1",
+        "arm pid=59433",
+        "ready=2",
+        "confirmed generation=alarm-2 watcher=59433",
+        "arm pid=59624",
+        "blocked=3",
+        "retired=3",
+        "arm pid=61074",
+        "blocked=4",
+        "retired=4",
+        "arm pid=64767",
+        "ready=5",
+        "confirmed generation=alarm-5 watcher=64767",
+        "confirmed generation=alarm-5 watcher=64767"
+      ]
+    }
+  ],
+  "events": [
+    {
+      "type": "input",
+      "text": "Human input before the first interruption.",
+      "source": "interactive"
+    },
+    {
+      "type": "before_agent_start",
+      "text": "Human input before the first interruption."
+    },
+    {
+      "type": "user_message_start",
+      "text": "Human input before the first interruption."
+    },
+    {
+      "type": "input",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: retained alarm invitation\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "source": "extension",
+      "streamingBehavior": "followUp"
+    },
+    {
+      "type": "agent_settled",
+      "aborted": true
+    },
+    {
+      "type": "input",
+      "text": "Human input during delayed replay restoration.",
+      "source": "interactive"
+    },
+    {
+      "type": "before_agent_start",
+      "text": "Human input during delayed replay restoration."
+    },
+    {
+      "type": "user_message_start",
+      "text": "Human input during delayed replay restoration."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": true
+    },
+    {
+      "type": "input",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: retained alarm invitation\n\nwatcher: FAILED - Pi extension could not verify a ready successor watcher\nwatcher: FAILED - Pi extension could not restore watcher continuity after 1 retries\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "source": "extension"
+    },
+    {
+      "type": "before_agent_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: retained alarm invitation\n\nwatcher: FAILED - Pi extension could not verify a ready successor watcher\nwatcher: FAILED - Pi extension could not restore watcher continuity after 1 retries\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "input",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: fresh event starts replay restoration\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "source": "extension"
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: retained alarm invitation\n\nwatcher: FAILED - Pi extension could not verify a ready successor watcher\nwatcher: FAILED - Pi extension could not restore watcher continuity after 1 retries\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: fresh event starts replay restoration\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": false
+    }
+  ],
+  "armLog": [
+    "arm pid=59316",
+    "ready=1",
+    "arm pid=59433",
+    "ready=2",
+    "confirmed generation=alarm-2 watcher=59433",
+    "arm pid=59624",
+    "blocked=3",
+    "retired=3",
+    "arm pid=61074",
+    "blocked=4",
+    "retired=4",
+    "arm pid=64767",
+    "ready=5",
+    "confirmed generation=alarm-5 watcher=64767",
+    "confirmed generation=alarm-5 watcher=64767"
+  ],
+  "durableQueue": "1\t1\tcheck\talarm-one\tfirst durable event\n2\t2\tcheck\talarm-two\tsecond durable event\n"
+}

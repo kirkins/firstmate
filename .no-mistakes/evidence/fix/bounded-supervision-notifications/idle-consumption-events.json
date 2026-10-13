@@ -1,0 +1,70 @@
+{
+  "sdk": "1.1.0",
+  "checkpoint": [
+    {
+      "stage": "before_agent_start does not consume",
+      "inputs": [
+        {
+          "type": "input",
+          "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: delayed idle invitation\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+          "source": "extension"
+        }
+      ],
+      "arms": 4,
+      "durableQueue": "1\t1\tcheck\tidle-one\tfirst durable event\n1\t2\tcheck\tidle-2\tadditional durable event\n1\t3\tcheck\tidle-3\tadditional durable event\n"
+    },
+    {
+      "stage": "actual consumption releases the bound",
+      "inputs": [
+        {
+          "type": "input",
+          "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: delayed idle invitation\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+          "source": "extension"
+        },
+        {
+          "type": "input",
+          "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: new invitation after exact consumption\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+          "source": "extension"
+        }
+      ],
+      "durableQueue": "1\t1\tcheck\tidle-one\tfirst durable event\n1\t2\tcheck\tidle-2\tadditional durable event\n1\t3\tcheck\tidle-3\tadditional durable event\n"
+    }
+  ],
+  "events": [
+    {
+      "type": "input",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: delayed idle invitation\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "source": "extension"
+    },
+    {
+      "type": "before_agent_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: delayed idle invitation\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: delayed idle invitation\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": false
+    },
+    {
+      "type": "input",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: new invitation after exact consumption\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "source": "extension"
+    },
+    {
+      "type": "before_agent_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: new invitation after exact consumption\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: new invitation after exact consumption\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": false
+    }
+  ],
+  "armLog": "arm pid=55217\nready=1\narm pid=55472\nready=2\nconfirmed generation=alarm-2 watcher=55472\narm pid=55851\nready=3\nconfirmed generation=alarm-3 watcher=55851\narm pid=56005\nready=4\nconfirmed generation=alarm-4 watcher=56005\narm pid=56030\nready=5\nconfirmed generation=alarm-5 watcher=56030\n"
+}

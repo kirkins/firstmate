@@ -1,0 +1,77 @@
+{
+  "mode": "failure",
+  "atRejection": {
+    "sends": 0,
+    "returnType": "undefined",
+    "pending": 0,
+    "userStarts": 0,
+    "agentSettlements": 0
+  },
+  "afterManualCompact": {
+    "pending": 0,
+    "userStarts": 0,
+    "agentSettlements": 0,
+    "isCompacting": false
+  },
+  "afterFreshB": {
+    "pending": 1,
+    "routineQueued": 1,
+    "sendAttempts": 1,
+    "hasFreshDelivery": false,
+    "durableUnchanged": true
+  },
+  "compactFailure": {
+    "error": "Summarization failed: Connection error."
+  },
+  "sends": [
+    {
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: notification A during manual compaction\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "returnType": "undefined"
+    }
+  ],
+  "events": [
+    {
+      "type": "manual_compaction_held",
+      "reason": "manual"
+    },
+    {
+      "type": "session_compact_failed",
+      "reason": "manual",
+      "aborted": false,
+      "errorMessage": "Compaction failed: Summarization failed: Connection error."
+    },
+    {
+      "type": "input",
+      "source": "interactive",
+      "text": "Hold one ordinary human turn for the fresh-notification proof."
+    },
+    {
+      "type": "before_agent_start",
+      "text": "Hold one ordinary human turn for the fresh-notification proof."
+    },
+    {
+      "type": "user_message_start",
+      "text": "Hold one ordinary human turn for the fresh-notification proof."
+    },
+    {
+      "type": "input",
+      "source": "extension",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: notification A during manual compaction\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: check: notification A during manual compaction\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": false
+    }
+  ],
+  "errors": [
+    {
+      "event": "send_user_message",
+      "error": "Cannot submit a prompt while compaction is in progress. Wait for compaction to finish and retry."
+    }
+  ],
+  "durableQueue": "1\t1\tcheck\tA\tmanual-compaction notification A\n1\t3\tcheck\tB\tfresh notification B\n"
+}

@@ -1,0 +1,6 @@
+2026-10-13T09:43:40.271Z pid=52475 restore attempt=0 predecessor=53022 start=ok pid=53335
+2026-10-13T09:43:40.303Z pid=52475 confirm generation=alarm-2 watcherPid=53335 result=confirmed
+2026-10-13T09:43:40.546Z pid=52475 restore attempt=0 predecessor=53335 start=ok pid=53700
+2026-10-13T09:43:40.571Z pid=52475 confirm generation=alarm-3 watcherPid=53700 result=rejected
+2026-10-13T09:43:40.684Z pid=52475 restore attempt=0 predecessor=53700 start=ok pid=53858
+2026-10-13T09:43:40.701Z pid=52475 confirm generation=alarm-4 watcherPid=53858 result=confirmed

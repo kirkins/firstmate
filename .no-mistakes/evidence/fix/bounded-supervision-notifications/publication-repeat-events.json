@@ -1,0 +1,35 @@
+{
+  "sdk": "1.1.0",
+  "attempts": 2,
+  "publicationsAtProvider": [],
+  "events": [
+    {
+      "type": "branch_offer",
+      "accepted": true
+    },
+    {
+      "type": "input",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: fresh.status\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "source": "extension"
+    },
+    {
+      "type": "branch_failure",
+      "text": "Error: the wake rows are already claimed by main"
+    },
+    {
+      "type": "before_agent_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: fresh.status\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: fresh.status\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": false
+    }
+  ],
+  "queue": "1\t1\tsignal\told.status\tsignal: old notification\n2\t2\tsignal\tfresh.status\tsignal: fresh notification\n3\t3\tsignal\tfresh.status\tsignal: another fresh notification\n",
+  "mainClaim": "1\n2\n",
+  "armLog": "arm pid=31571\nready=1\narm pid=31999\nready=2\nconfirmed generation=alarm-2 watcher=31999\n"
+}

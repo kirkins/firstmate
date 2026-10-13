@@ -1,0 +1,108 @@
+{
+  "sdk": "1.1.0",
+  "checkpoints": [
+    {
+      "stage": "urgent alarm beside one routine alert and human follow-up",
+      "queue": [
+        "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: pending routine alert\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+        "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: event requiring urgent confirmation alarm\n\nwatcher: FAILED - handling delivery confirmation was rejected (status=2 generation=alarm-3 watcherPid=53700)\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+        "A separate human follow-up remains intact beside both alerts."
+      ],
+      "durableQueue": "1\t1\tcheck\troutine\tdurable routine event\n2\t2\tcheck\talarm\tdurable alarming event\n"
+    },
+    {
+      "stage": "explicit repair result",
+      "result": {
+        "ok": true,
+        "message": "watcher: unchanged - Pi extension already owns an arm child; no manual re-arm needed; call fm_watch_arm_pi again only after a later notification says the cycle is missing, failed, or unhealthy"
+      },
+      "armLog": "arm pid=53022\nready=1\narm pid=53335\nready=2\nconfirmed generation=alarm-2 watcher=53335\narm pid=53700\nready=3\nconfirmed generation=alarm-3 watcher=53700\nconfirmed generation=alarm-3 watcher=53700\n"
+    },
+    {
+      "stage": "alarm consumed once and monitoring repaired",
+      "messages": [
+        {
+          "type": "user_message_start",
+          "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: pending routine alert\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+        },
+        {
+          "type": "user_message_start",
+          "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: event requiring urgent confirmation alarm\n\nwatcher: FAILED - handling delivery confirmation was rejected (status=2 generation=alarm-3 watcherPid=53700)\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+        },
+        {
+          "type": "user_message_start",
+          "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: normal notification after alarm repair\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+        }
+      ],
+      "completions": 5,
+      "durableQueue": "1\t1\tcheck\troutine\tdurable routine event\n2\t2\tcheck\talarm\tdurable alarming event\n"
+    }
+  ],
+  "events": [
+    {
+      "type": "input",
+      "text": "A human request being answered during the notification burst.",
+      "source": "interactive"
+    },
+    {
+      "type": "before_agent_start",
+      "text": "A human request being answered during the notification burst."
+    },
+    {
+      "type": "user_message_start",
+      "text": "A human request being answered during the notification burst."
+    },
+    {
+      "type": "input",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: pending routine alert\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "source": "extension",
+      "streamingBehavior": "followUp"
+    },
+    {
+      "type": "input",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: event requiring urgent confirmation alarm\n\nwatcher: FAILED - handling delivery confirmation was rejected (status=2 generation=alarm-3 watcherPid=53700)\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "source": "extension",
+      "streamingBehavior": "followUp"
+    },
+    {
+      "type": "input",
+      "text": "A separate human follow-up remains intact beside both alerts.",
+      "source": "interactive",
+      "streamingBehavior": "followUp"
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: pending routine alert\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: event requiring urgent confirmation alarm\n\nwatcher: FAILED - handling delivery confirmation was rejected (status=2 generation=alarm-3 watcherPid=53700)\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "user_message_start",
+      "text": "A separate human follow-up remains intact beside both alerts."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": false
+    },
+    {
+      "type": "input",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: normal notification after alarm repair\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "source": "extension"
+    },
+    {
+      "type": "before_agent_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: normal notification after alarm repair\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: normal notification after alarm repair\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": false
+    }
+  ],
+  "armLog": "arm pid=53022\nready=1\narm pid=53335\nready=2\nconfirmed generation=alarm-2 watcher=53335\narm pid=53700\nready=3\nconfirmed generation=alarm-3 watcher=53700\nconfirmed generation=alarm-3 watcher=53700\narm pid=53858\nready=4\nconfirmed generation=alarm-4 watcher=53858\narm pid=53912\nready=5\n"
+}

@@ -1,0 +1,14 @@
+arm pid=53022
+ready=1
+arm pid=53335
+ready=2
+confirmed generation=alarm-2 watcher=53335
+arm pid=53700
+ready=3
+confirmed generation=alarm-3 watcher=53700
+confirmed generation=alarm-3 watcher=53700
+arm pid=53858
+ready=4
+confirmed generation=alarm-4 watcher=53858
+arm pid=53912
+ready=5

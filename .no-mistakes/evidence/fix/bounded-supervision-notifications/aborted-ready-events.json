@@ -1,0 +1,102 @@
+{
+  "mode": "aborted-ready",
+  "sdk": "1.1.0",
+  "checkpoints": [
+    {
+      "stage": "second Escape during delayed readiness",
+      "completions": 2,
+      "pending": 0,
+      "inputCount": 1,
+      "armLog": [
+        "arm pid=57152",
+        "ready=1",
+        "arm pid=57364",
+        "ready=2",
+        "confirmed generation=alarm-2 watcher=57364",
+        "arm pid=57735",
+        "blocked=3"
+      ]
+    },
+    {
+      "stage": "readiness released without automatic prompt",
+      "completions": 2,
+      "pending": 0,
+      "inputCount": 1
+    }
+  ],
+  "events": [
+    {
+      "type": "input",
+      "text": "Human input before the first interruption.",
+      "source": "interactive"
+    },
+    {
+      "type": "before_agent_start",
+      "text": "Human input before the first interruption."
+    },
+    {
+      "type": "user_message_start",
+      "text": "Human input before the first interruption."
+    },
+    {
+      "type": "input",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: retained alarm invitation\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "source": "extension",
+      "streamingBehavior": "followUp"
+    },
+    {
+      "type": "agent_settled",
+      "aborted": true
+    },
+    {
+      "type": "input",
+      "text": "Human input during delayed replay restoration.",
+      "source": "interactive"
+    },
+    {
+      "type": "before_agent_start",
+      "text": "Human input during delayed replay restoration."
+    },
+    {
+      "type": "user_message_start",
+      "text": "Human input during delayed replay restoration."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": true
+    },
+    {
+      "type": "input",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: retained alarm invitation\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.",
+      "source": "extension"
+    },
+    {
+      "type": "before_agent_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: retained alarm invitation\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "user_message_start",
+      "text": "⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: retained alarm invitation\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."
+    },
+    {
+      "type": "agent_settled",
+      "aborted": false
+    }
+  ],
+  "armLog": [
+    "arm pid=57152",
+    "ready=1",
+    "arm pid=57364",
+    "ready=2",
+    "confirmed generation=alarm-2 watcher=57364",
+    "arm pid=57735",
+    "blocked=3",
+    "ready=3",
+    "arm pid=58288",
+    "ready=4",
+    "confirmed generation=alarm-4 watcher=58288",
+    "confirmed generation=alarm-4 watcher=58288",
+    "confirmed generation=alarm-4 watcher=58288"
+  ],
+  "durableQueue": "1\t1\tcheck\talarm-one\tfirst durable event\n2\t2\tcheck\talarm-two\tsecond durable event\n"
+}
