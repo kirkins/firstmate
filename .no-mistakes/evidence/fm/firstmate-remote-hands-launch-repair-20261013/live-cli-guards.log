@@ -1,0 +1,37 @@
+$ bin/fm-remote-hands.sh enabled
+off
+exit-status: 0
+
+$ bin/fm-remote-hands.sh route --class sweep
+local reason=off
+exit-status: 0
+
+$ bin/fm-remote-hands.sh create --class other --name fm-gate-disabled
+error: the remote-hands lane is off; set FM_REMOTE_HANDS (for example FM_REMOTE_HANDS=1) in the environment or /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SVXCJA7AS7JQ3M8EN8WDCH/.test-remote-hands/guard-home/.env to use this command
+exit-status: 1
+
+$ bin/fm-remote-hands.sh prepare --name fm-gate-disabled --repo https://example.invalid/repo.git
+error: the remote-hands lane is off; set FM_REMOTE_HANDS (for example FM_REMOTE_HANDS=1) in the environment or /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SVXCJA7AS7JQ3M8EN8WDCH/.test-remote-hands/guard-home/.env to use this command
+exit-status: 1
+
+$ bin/fm-remote-hands.sh exec --name fm-gate-disabled -- bash -c "touch \"$1\"" gate-probe /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SVXCJA7AS7JQ3M8EN8WDCH/.test-remote-hands/guard-home/must-not-execute
+error: the remote-hands lane is off; set FM_REMOTE_HANDS (for example FM_REMOTE_HANDS=1) in the environment or /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SVXCJA7AS7JQ3M8EN8WDCH/.test-remote-hands/guard-home/.env to use this command
+exit-status: 1
+
+$ bin/fm-remote-hands.sh enabled
+on
+exit-status: 0
+
+$ bin/fm-remote-hands.sh exec --name fm-gate-disabled -- true
+environment: {"FM_REMOTE_HANDS": "0"}
+error: the remote-hands lane is off; set FM_REMOTE_HANDS (for example FM_REMOTE_HANDS=1) in the environment or /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SVXCJA7AS7JQ3M8EN8WDCH/.test-remote-hands/guard-home/.env to use this command
+exit-status: 1
+
+$ bin/fm-remote-hands.sh prepare --name fm-gate-missing-cli --repo https://example.invalid/repo.git
+error: the sbx CLI (>= 0.45.0, docs.docker.com/ai/sandboxes/install/) is required but is not on PATH
+exit-status: 1
+
+$ bin/fm-remote-hands.sh exec --name fm-gate-missing-cli -- true
+error: the sbx CLI (>= 0.45.0, docs.docker.com/ai/sandboxes/install/) is required but is not on PATH
+exit-status: 1
+

@@ -1,0 +1,2 @@
+Running as unit: run-p2729202-i27887823.scope; invocation ID: 29af332dfd4548dd84359d7cb5a509e9
+not ok - prepare must execute its multiline bootstrap and real git clone: expected exit 0, got 127

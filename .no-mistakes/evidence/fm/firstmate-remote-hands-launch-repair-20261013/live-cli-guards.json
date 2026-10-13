@@ -1,0 +1,115 @@
+[
+  {
+    "argv": [
+      "enabled"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "stdout": "off\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "route",
+      "--class",
+      "sweep"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "stdout": "local reason=off\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "create",
+      "--class",
+      "other",
+      "--name",
+      "fm-gate-disabled"
+    ],
+    "env_overrides": {},
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: the remote-hands lane is off; set FM_REMOTE_HANDS (for example FM_REMOTE_HANDS=1) in the environment or /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SVXCJA7AS7JQ3M8EN8WDCH/.test-remote-hands/guard-home/.env to use this command\n"
+  },
+  {
+    "argv": [
+      "prepare",
+      "--name",
+      "fm-gate-disabled",
+      "--repo",
+      "https://example.invalid/repo.git"
+    ],
+    "env_overrides": {},
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: the remote-hands lane is off; set FM_REMOTE_HANDS (for example FM_REMOTE_HANDS=1) in the environment or /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SVXCJA7AS7JQ3M8EN8WDCH/.test-remote-hands/guard-home/.env to use this command\n"
+  },
+  {
+    "argv": [
+      "exec",
+      "--name",
+      "fm-gate-disabled",
+      "--",
+      "bash",
+      "-c",
+      "touch \"$1\"",
+      "gate-probe",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SVXCJA7AS7JQ3M8EN8WDCH/.test-remote-hands/guard-home/must-not-execute"
+    ],
+    "env_overrides": {},
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: the remote-hands lane is off; set FM_REMOTE_HANDS (for example FM_REMOTE_HANDS=1) in the environment or /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SVXCJA7AS7JQ3M8EN8WDCH/.test-remote-hands/guard-home/.env to use this command\n"
+  },
+  {
+    "argv": [
+      "enabled"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "stdout": "on\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "exec",
+      "--name",
+      "fm-gate-disabled",
+      "--",
+      "true"
+    ],
+    "env_overrides": {
+      "FM_REMOTE_HANDS": "0"
+    },
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: the remote-hands lane is off; set FM_REMOTE_HANDS (for example FM_REMOTE_HANDS=1) in the environment or /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SVXCJA7AS7JQ3M8EN8WDCH/.test-remote-hands/guard-home/.env to use this command\n"
+  },
+  {
+    "argv": [
+      "prepare",
+      "--name",
+      "fm-gate-missing-cli",
+      "--repo",
+      "https://example.invalid/repo.git"
+    ],
+    "env_overrides": {},
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: the sbx CLI (>= 0.45.0, docs.docker.com/ai/sandboxes/install/) is required but is not on PATH\n"
+  },
+  {
+    "argv": [
+      "exec",
+      "--name",
+      "fm-gate-missing-cli",
+      "--",
+      "true"
+    ],
+    "env_overrides": {},
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: the sbx CLI (>= 0.45.0, docs.docker.com/ai/sandboxes/install/) is required but is not on PATH\n"
+  }
+]

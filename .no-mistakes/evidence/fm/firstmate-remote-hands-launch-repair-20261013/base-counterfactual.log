@@ -1,0 +1,9 @@
+Running as unit: run-p2699653-i27877485.scope; invocation ID: bd49b679ea9a4fd49d45168d8b7388e4
+ok - fm-remote-hands.sh: help, closed subcommand set, and argument validation
+ok - fm-remote-hands.sh: off by default with a silent route and loud create refusal
+ok - fm-remote-hands.sh: .env activation with the env-wins contract
+ok - fm-remote-hands.sh: routing follows the class peak against local RAM
+ok - fm-remote-hands.sh: routing integrates the heavy slot's public status
+ok - fm-remote-hands.sh: create sizes shape, TTL, allowances, and manifest per class
+ok - fm-remote-hands.sh: exec survives exec-stream teardown via the hosted socket
+not ok - the preserved exec argv must actually launch the nested job shell: expected exit 0, got 127

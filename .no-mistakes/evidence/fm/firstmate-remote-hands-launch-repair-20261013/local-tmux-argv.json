@@ -1,0 +1,15 @@
+{
+  "scope": "Supplemental local Bash/tmux run; sbx/kubectl are test doubles, not live Docker Cloud",
+  "argv": [
+    "",
+    "X=1 y",
+    "one'quote",
+    "\"double\"",
+    "$HOME $(exit 89) `exit 90` ; *",
+    "line one\nline two",
+    "航海 café",
+    "--flag"
+  ],
+  "bytes": 95,
+  "exit": 7
+}

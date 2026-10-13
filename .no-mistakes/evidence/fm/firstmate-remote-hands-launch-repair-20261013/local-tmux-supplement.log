@@ -1,0 +1,33 @@
+SUPPLEMENTAL ONLY: real helper, Bash, git-independent arguments, and tmux; sbx/kubectl remain test doubles. This is not live Docker Cloud evidence.
+helper-sha256: 6025e75dd666aa6f6475d16fc717670ace0faa6a90b740dbafbe10e6aada16a5  /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SVXCJA7AS7JQ3M8EN8WDCH/bin/fm-remote-hands.sh
+tmux 3.7c
+$ bin/fm-remote-hands.sh exec --name local-tmux-supplement -- bash -c <literal-argv-job>
+launched: name=local-tmux-supplement socket=fm-hands log=/tmp/fm-hands.log exit=/tmp/fm-hands.exit
+
+helper-exit: 0
+dedicated-session=fm-hands socket=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SVXCJA7AS7JQ3M8EN8WDCH/.s/tmux-1000/fm-hands
+The separate owned default server was deleted after launch returned; fm-hands job remains alive:
+fm-hands: 1 windows (created Tue Oct 13 00:45:06 2026)
+$ bin/fm-remote-hands.sh wait --name local-tmux-supplement --interval 1 --max-secs 10
+exit=7
+
+helper-exit: 7
+NUL-delimited expected and hosted argv are byte-identical (cmp exit 0):
+3e5c6219196659c6abc91c52385fe76f4dd7356ee8ade55c6b694835d8a5df1e  /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SVXCJA7AS7JQ3M8EN8WDCH/.test-remote-hands/tmp/fm-remote-hands.E4YAyS/expected-argv
+3e5c6219196659c6abc91c52385fe76f4dd7356ee8ade55c6b694835d8a5df1e  /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4SVXCJA7AS7JQ3M8EN8WDCH/.test-remote-hands/tmp/fm-remote-hands.E4YAyS/remote/fm-hands.log
+ 00 58 3d 31 20 79 00 6f 6e 65 27 71 75 6f 74 65
+ 00 22 64 6f 75 62 6c 65 22 00 24 48 4f 4d 45 20
+ 24 28 65 78 69 74 20 38 39 29 20 60 65 78 69 74
+ 20 39 30 60 20 3b 20 2a 00 6c 69 6e 65 20 6f 6e
+ 65 0a 6c 69 6e 65 20 74 77 6f 00 e8 88 aa e6 b5
+ b7 20 63 61 66 c3 a9 00 2d 2d 66 6c 61 67 00
+$ bin/fm-remote-hands.sh exec --name local-tmux-supplement -- true
+launched: name=local-tmux-supplement socket=fm-hands log=/tmp/fm-hands.log exit=/tmp/fm-hands.exit
+
+helper-exit: 0
+$ bin/fm-remote-hands.sh wait --name local-tmux-supplement --interval 1 --max-secs 10
+exit=0
+
+helper-exit: 0
+replacement-job-output-bytes: 0
+replacement-job-exit-marker: 0

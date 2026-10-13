@@ -1,0 +1,24 @@
+Running as unit: run-p2683428-i27847251.scope; invocation ID: e4d83aa9f09748d58fd0265343f6083e
+FM_TEST_BEGIN 2026-10-13T05:35:54Z tests/fm-remote-hands.test.sh family=unclassified expected_gate_skip=none
+ok - fm-remote-hands.sh: help, closed subcommand set, and argument validation
+ok - fm-remote-hands.sh: off by default with a silent route and loud create refusal
+ok - fm-remote-hands.sh: .env activation with the env-wins contract
+ok - fm-remote-hands.sh: routing follows the class peak against local RAM
+ok - fm-remote-hands.sh: routing integrates the heavy slot's public status
+ok - fm-remote-hands.sh: create sizes shape, TTL, allowances, and manifest per class
+ok - fm-remote-hands.sh: exec survives exec-stream teardown via the hosted socket
+ok - fm-remote-hands.sh: preserved argv executes literal arguments and records real job exits
+ok - fm-remote-hands.sh: prepare executes tmux bootstrap, node probe, and literal clone argv
+ok - fm-remote-hands.sh: wait polls the marker and propagates or aborts
+ok - fm-remote-hands.sh: wait keeps polling a reachable sandbox with no marker yet
+ok - fm-remote-hands.sh: copy-in, copy-out, and log drive the artifact paths
+ok - fm-remote-hands.sh: teardown removes the sandbox and its record, even while off
+ok - fm-remote-hands.sh: credentials cross stdin only and never surface
+ok - fm-remote-hands.sh: missing tooling fails closed with named prerequisites
+ok - fm-remote-hands.sh: prepare pins locale, node major, SHA checks, and full clones
+ok - fm-remote-hands.sh: prepare exec streams run under their own bound
+ok - fm-remote-hands.sh: prepare skips the node pin loudly when it cannot name one
+FM_TEST_END 2026-10-13T05:36:06Z tests/fm-remote-hands.test.sh exit=0 duration_ms=11623 gate_skip=false
+FM_TEST_SUMMARY total=1 failed=0 skipped_gate=0 duration_ms=11686
+FM_TEST_SUMMARY_FAMILY family=unclassified count=1 duration_ms=11623 failed=0
+FM_TEST_SLOWEST rank=1 script=tests/fm-remote-hands.test.sh duration_ms=11623

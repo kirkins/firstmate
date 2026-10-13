@@ -1,0 +1,15 @@
+Official package release: https://github.com/docker/sbx-releases/releases/tag/v0.47.0
+DockerSandboxes-linux-arm64-ubuntu2404.deb	sha256:060f64c1f45edc84ec081193c4208d3e8a46fdd882a2e3a9a6ad2373a6adcec6	https://github.com/docker/sbx-releases/releases/download/v0.47.0/DockerSandboxes-linux-arm64-ubuntu2404.deb
+$ isolated workspace sbx version
+sbx version: v0.47.0 0411f50ee4700fe7bd37e6e7e3aced563e850ca9
+exit-status: 0
+
+$ isolated workspace sbx --cloud exec fm-gate-01m4svxcja7as7jq3m8en8wdch -- true
+error: not signed in to Docker
+  try: sbx login
+exit-status: 1
+
+$ docker version --format {{json .}}
+{"Client":{"Version":"29.8.2","ApiVersion":"1.56","DefaultAPIVersion":"1.56","GitCommit":"7fc2dff9bc","GoVersion":"go1.27.1-X:nodwarf5","Os":"linux","Arch":"arm64","BuildTime":"Thu Oct  1 02:21:43 2026","Context":"default"},"Server":null}
+permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+exit-status: 1
