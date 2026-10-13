@@ -1,0 +1,86 @@
+{
+  "head": "201b0a85c3556970b622089bb1ea223e587a90dc",
+  "source_change": "tests/fm-lint.test.sh: retain numeric bounded RSS assertion when /usr/bin/time is executable; assert exact unavailable otherwise. No RSS implementation changes.",
+  "failure": {
+    "artifact": "rss-baseline.txt",
+    "exit": 1,
+    "observed": "the fallback attempts lost per-root RSS reporting: unavailable",
+    "cause": "The test equated enforceable process bounds with an installed optional timing executable."
+  },
+  "verification": [
+    {
+      "artifact": "resource-baseline.txt",
+      "command": "FM_LINT_JOBS=1 FM_LIVE_LINT_RESOURCE=1 bash bin/fm-test-run.sh --jobs 1 tests/fm-lint-resource-binding.test.sh",
+      "exit": 0,
+      "duration_ms": 56197,
+      "execution": "canonical owner acquire firstmate-lint-resource-binding-20261013 --estimate 1024; exact returned systemd-run --user --scope -p MemoryMax=1024M -- wrapper; matching release immediately after"
+    },
+    {
+      "artifact": "focused-final.txt",
+      "command": "FM_LINT_JOBS=1 bash bin/fm-test-run.sh --jobs 1 tests/.fm-lint-rss-focused.test.sh tests/fm-heavy-slot.test.sh",
+      "exit": 0,
+      "duration_ms": 7556,
+      "execution": "same canonical acquire/wrapper/immediate matching release",
+      "selection": "Temporary driver executes only original stub-driven memory-fallback case, bounded and unbounded; excludes later real-linter case and all other fm-lint.test.sh cases."
+    },
+    {
+      "artifact": "canonical-plain-final.txt",
+      "command": "FM_LINT_JOBS=1 bash tests/.fm-lint-canonical.test.sh",
+      "exit": 0,
+      "execution": "Current lint and libraries copied into harmless worktree-local Git fixture with all default inventory roots present; trusted plain sh -c bin/fm-lint.sh uses unchanged actual operator opt-in and canonical global helper; top level acquires its own lint identity, with no other outer hold. Analysis is stubbed. Success and failure each observe actual kernel cap, one worker, empty scope, stopped stragglers and released global slot."
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "query-only inventory does not contend or release holder",
+      "result": "pass",
+      "evidence": "resource-baseline.txt"
+    },
+    {
+      "name": "plain operator-bound entrypoint uses canonical helper, actual 1073741824 memory.max, one worker, exits 0/7 and release",
+      "result": "pass",
+      "evidence": "canonical-plain-final.txt"
+    },
+    {
+      "name": "malformed/non-private/missing-helper/removed-binding/unenforced-cap refusal, without uncapped analysis retry",
+      "result": "pass",
+      "evidence": "resource-baseline.txt"
+    },
+    {
+      "name": "actual global contention names holder, refused lint and non-holder release preserve capacity, matching release clears",
+      "result": "pass",
+      "evidence": "canonical-plain-final.txt"
+    },
+    {
+      "name": "literal variable-looking root, telemetry, executable and SELF survive actual systemd boundary",
+      "result": "pass",
+      "evidence": "resource-baseline.txt"
+    },
+    {
+      "name": "bounded success/failure/signal/deadline: release hook observes populated 0; observed scope processes and TERM-resistant separately grouped stragglers stop; timing intermediary is distinct from watchdog; prompt release",
+      "result": "pass",
+      "evidence": "resource-baseline.txt"
+    },
+    {
+      "name": "ordinary unconfigured caller preserves jobs=2; bounded/unbounded memory fallback preserve unavailable RSS without /usr/bin/time",
+      "result": "pass",
+      "evidence": [
+        "resource-baseline.txt",
+        "focused-final.txt"
+      ]
+    },
+    {
+      "name": "actual installed /usr/bin/time numeric RSS branch",
+      "result": "unsupported on this host",
+      "reason": "/usr/bin/time is absent. Numeric assertion retained; no executable fabricated or installed. Timing-intermediary group regression passed but does not count as actual installed-time RSS evidence."
+    }
+  ],
+  "limitations": [
+    "No full repository suite, real linter, formatter, static analysis, pipeline-control, push, PR, or CI commands run. Workflow test script not run because it requires real actionlint; unconfigured behavior exercised with existing stub fixture instead.",
+    "Daemon-owned automatic Lint proof remains the outer executor dedicated Lint phase; direct plain invocation does not replace it.",
+    "Actual contention with another operator holder was respected; verification resumed only after capacity became free. Final canonical proof passed with a complete fixture inventory."
+  ],
+  "operator_binding_sha256": "5a3b62977195de51f0cd6501cec7eab6ee04391f8172b200133300470cddd620",
+  "preserved": "R1 scope cleanup, R2 literal argv launch, R3 watchdog ancestor detection and all prior commits untouched.",
+  "cleanup": "All matching global holders released promptly. Worktree-local temporary test drivers and fixture roots removed; only tests/fm-lint.test.sh remains changed. Operator private opt-in SHA-256 unchanged."
+}

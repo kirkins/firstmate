@@ -1,0 +1,14 @@
+format	fm-lint-roots-v1
+meta	shellcheck_version	0.11.0
+meta	platform	Linux aarch64
+meta	image_os	unknown
+meta	image_version	unknown
+meta	mode	full
+meta	partition	all
+meta	jobs	1
+meta	bounds_enforced	1
+meta	root_deadline_seconds	1200
+meta	root_kill_grace_seconds	10
+meta	root_memory_limit_kib	12582912
+meta	timing_mechanism	perl
+begin	3	bin/fm-lint.sh	0	full	1791918792080

@@ -1,0 +1,21 @@
+format	fm-lint-roots-v1
+meta	shellcheck_version	0.11.0
+meta	platform	Linux aarch64
+meta	image_os	unknown
+meta	image_version	unknown
+meta	mode	local
+meta	partition	all
+meta	jobs	1
+meta	bounds_enforced	1
+meta	root_deadline_seconds	1200
+meta	root_kill_grace_seconds	5
+meta	root_memory_limit_kib	12582912
+meta	timing_mechanism	perl
+begin	2	tests/clean-b.sh	0	local	1791918988925
+end	2	tests/clean-b.sh	0	local	1791918988925	1791918989005	80	1	findings	unavailable	0
+begin	1	tests/clean-a.sh	1	local	1791918989015
+end	1	tests/clean-a.sh	1	local	1791918989015	1791918989096	81	0	ok	unavailable	0
+meta	roots_begun	2
+meta	roots_completed	2
+meta	roots_unfinished	0
+meta	result_exit	1

@@ -1,0 +1,5 @@
+Native /usr/bin/time: absent (test -x returned false). No absolute-path time binary was created or fabricated.
+The native time-present RSS branch could not be exercised on this host.
+Real same-process-group intermediary fixture: success/failure/interruption/deadline cleanup passed under actual systemd scopes; intermediary PIDs appear in recorded root-group ancestors and differ from the watchdog PIDs.
+Missing-time bounded/unbounded fallback: actual product telemetry and real ShellCheck finding preserved in missing-time/.
+Source head: 8403bae8ff13fc597f50028d2598060985d0edb4

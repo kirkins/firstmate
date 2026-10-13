@@ -1,0 +1,1694 @@
++ . /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/tests/fm-lint-resource-binding.test.sh
+++ set -u
++++ dirname /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/tests/fm-lint-resource-binding.test.sh
+++ . /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/tests/lib.sh
++++ '[' -n 1 ']'
++++ return 0
+++ LINT=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh
++++ fm_test_tmproot fm-lint-binding
++++ local prefix=fm-lint-binding root tmp_base
+++++ fm_test_tmpdir
+++++ local base=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp physical
+++++ base=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp
+++++ '[' -n /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp ']'
+++++ case "$base" in
++++++ CDPATH=
++++++ cd -- /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp
++++++ pwd -P
+++++ case "$base" in
+++++ physical=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp
+++++ base=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp
+++++ '[' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/.git ']'
+++++ printf '%s\n' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp
++++ tmp_base=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp
++++ tmp_base=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp
+++++ mktemp -d /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.XXXXXX
++++ root=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL
+++++ cd -P -- /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL
+++++ pwd -P
++++ root=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL
++++ printf '%s\n%s\n' 3201242 'linux-starttime=18162109 cmdline-hex=626173680074657374732f666d2d6c6f63616c2d7265736f757263652d65766964656e63652e746573742e736800'
++++ printf '%s\n' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL
++++ printf '%s\n' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL
+++ BINDING_TMP=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL
+++ test_lint_binding_validation_and_portable_absence
+++ local out rc
+++ binding_fixture validation
+++ BINDING_CASE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation
+++ BINDING_REPO=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/repo
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/declared home'
+++ BINDING_CONFIG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/config
+++ BINDING_STATE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/trace
+++ BINDING_FAKEBIN=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/repo/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/repo/tests '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/declared home' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/config/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/state /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/trace /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/fakebin
+++ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/repo init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/repo/bin/
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/repo/bin/fm-lint-workflows.sh
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/declared home'
+++ chmod 600 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/config/firstmate/lint-resource-binding.json
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/fakebin/shellcheck
+++ printf '{"home":"/missing","jobs":2,"estimate_mib":256}\n'
+++ rc=0
++++ binding_lint
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/repo
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=0 BINDING_EXIT=0 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=0 FM_LINT_REQUIRE_BOUNDS=0 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh
+++ out=$'binding jobs must be the integer 1\nfm-lint.sh: invalid resource binding /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/config/firstmate/lint-resource-binding.json; refusing uncapped lint.'
+++ rc=2
+++ expect_code 2 2 'a binding cannot request two lint jobs'
+++ local expected=2 actual=2 'label=a binding cannot request two lint jobs'
+++ '[' 2 = 2 ']'
+++ assert_contains $'binding jobs must be the integer 1\nfm-lint.sh: invalid resource binding /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/config/firstmate/lint-resource-binding.json; refusing uncapped lint.' 'jobs must be the integer 1' 'invalid jobs must name the binding problem'
+++ case "$1" in
+++ :
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/trace/children ']'
+++ printf 'invalid JSON\n'
+++ rc=0
++++ binding_lint
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/repo
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=0 BINDING_EXIT=0 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=0 FM_LINT_REQUIRE_BOUNDS=0 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh
+++ out=$'malformed JSON string, neither array, object, number, string or atom, at character offset 0 (before "invalid JSON\\x{a}") at -e line 8.\nfm-lint.sh: invalid resource binding /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/config/firstmate/lint-resource-binding.json; refusing uncapped lint.'
+++ rc=2
+++ expect_code 2 2 'malformed binding must fail closed'
+++ local expected=2 actual=2 'label=malformed binding must fail closed'
+++ '[' 2 = 2 ']'
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/validation/trace/children ']'
+++ binding_fixture permissions
+++ BINDING_CASE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions
+++ BINDING_REPO=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/repo
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/declared home'
+++ BINDING_CONFIG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/config
+++ BINDING_STATE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/trace
+++ BINDING_FAKEBIN=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/repo/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/repo/tests '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/declared home' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/config/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/state /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/trace /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/fakebin
+++ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/repo init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/repo/bin/
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/repo/bin/fm-lint-workflows.sh
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/declared home'
+++ chmod 600 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/config/firstmate/lint-resource-binding.json
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/fakebin/shellcheck
+++ chmod 644 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/config/firstmate/lint-resource-binding.json
+++ rc=0
++++ binding_lint
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/repo
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=0 BINDING_EXIT=0 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=0 FM_LINT_REQUIRE_BOUNDS=0 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh
+++ out=$'binding must be a private user-owned regular file\nfm-lint.sh: invalid resource binding /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/config/firstmate/lint-resource-binding.json; refusing uncapped lint.'
+++ rc=2
+++ expect_code 2 2 'the binding must remain user-private'
+++ local expected=2 actual=2 'label=the binding must remain user-private'
+++ '[' 2 = 2 ']'
+++ assert_contains $'binding must be a private user-owned regular file\nfm-lint.sh: invalid resource binding /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/permissions/config/firstmate/lint-resource-binding.json; refusing uncapped lint.' 'private user-owned regular file' 'record permissions must be diagnosed'
+++ case "$1" in
+++ :
+++ binding_fixture missing-home
+++ BINDING_CASE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home
+++ BINDING_REPO=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/repo
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/declared home'
+++ BINDING_CONFIG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/config
+++ BINDING_STATE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/trace
+++ BINDING_FAKEBIN=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/repo/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/repo/tests '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/declared home' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/config/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/state /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/trace /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/fakebin
+++ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/repo init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/repo/bin/
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/repo/bin/fm-lint-workflows.sh
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/declared home'
+++ chmod 600 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/config/firstmate/lint-resource-binding.json
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/fakebin/shellcheck
+++ rm '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/declared home/bin/fm-heavy-slot.sh'
+++ rc=0
++++ binding_lint
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/repo
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=0 BINDING_EXIT=0 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=0 FM_LINT_REQUIRE_BOUNDS=0 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh
+++ out='fm-lint.sh: declared heavy-slot helper is unavailable: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/declared home/bin/fm-heavy-slot.sh; refusing uncapped lint.'
+++ rc=2
+++ expect_code 2 2 'the declared helper must exist without guessing another home'
+++ local expected=2 actual=2 'label=the declared helper must exist without guessing another home'
+++ '[' 2 = 2 ']'
+++ assert_contains 'fm-lint.sh: declared heavy-slot helper is unavailable: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/missing-home/declared home/bin/fm-heavy-slot.sh; refusing uncapped lint.' 'declared heavy-slot helper is unavailable' 'missing owner must be named'
+++ case "$1" in
+++ :
+++ binding_fixture portable
+++ BINDING_CASE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable
+++ BINDING_REPO=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/repo
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/declared home'
+++ BINDING_CONFIG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/config
+++ BINDING_STATE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/trace
+++ BINDING_FAKEBIN=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/repo/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/repo/tests '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/declared home' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/config/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/state /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/trace /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/fakebin
+++ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/repo init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/repo/bin/
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/repo/bin/fm-lint-workflows.sh
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/declared home'
+++ chmod 600 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/config/firstmate/lint-resource-binding.json
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/fakebin/shellcheck
+++ rm /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/config/firstmate/lint-resource-binding.json
+++ printf '#!/usr/bin/env bash\nexit 99\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/fakebin/systemd-run
+++ rm /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/fakebin/shellcheck
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/fakebin/shellcheck
+++ rc=0
++++ binding_lint
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/repo
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=0 BINDING_EXIT=0 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=0 FM_LINT_REQUIRE_BOUNDS=0 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh
+++ out=$'fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nawk: cmd. line:194: fatal: cannot open file `bin/backends/*.sh\' for reading: No such file or directory'
+++ expect_code 0 0 'unconfigured callers must retain lint without a systemd cap'
+++ local expected=0 actual=0 'label=unconfigured callers must retain lint without a systemd cap'
+++ '[' 0 = 0 ']'
++++ cat /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/portable/trace/telemetry.tsv
+++ assert_contains $'format\tfm-lint-telemetry-v1\ngit_head\tHEAD\nunavailable\ncontent_cksum\t2690036922-185\nshellcheck_version\t0.11.0\nanalysis_mode\tfull\npartition\tall\njobs\t2\nroot_bounds_enforced\t0\nroot_deadline_seconds\tunbounded\nroot_kill_grace_seconds\tunbounded\nroot_memory_limit_kib\tunbounded\nroot_timing_mechanism\tnone\nroot_count\t6\ndirect_lines\tunavailable\ndirect_bytes\t75571\nsource_directives\t2\nsource_boundary_directives\t0\nsource_followed_directives\t2\nsource_target_count\t2\nshard_1_weight_bytes\t57361\nshard_2_weight_bytes\t18211\nwall_seconds\t1\nworker_wall_sum_seconds\tunavailable\nmax_worker_wall_seconds\tunavailable\nuser_seconds\tunavailable\nsystem_seconds\tunavailable\nmax_worker_rss_kib\tunavailable\nworker_rss_sum_kib\tunavailable\nshellcheck_processes_start\t0\nshellcheck_processes_end\t0\nload_average_start\t3.03/3.06/2.55\nload_average_end\t3.03/3.06/2.55\naggregate_cpu_percent_start\t119.70\naggregate_cpu_percent_end\t116.20\nresult_exit\t0' $'jobs\t2' 'ordinary caller jobs changed'
+++ case "$1" in
+++ :
+++ pass 'lint resource binding: malformed/private/home validation and portable absence'
+++ printf 'ok - %s\n' 'lint resource binding: malformed/private/home validation and portable absence'
+++ test_lint_binding_real_scope
+++ local out rc held child_pid parent_pid i task owner_pid started
+++ fm_live_gate default-on FM_LIVE_LINT_RESOURCE systemd-run systemctl
+++ local policy=default-on vars=FM_LIVE_LINT_RESOURCE
+++ shift 2
+++ local var value rest primary requested=0 disabled_by= tool
+++ var_list=()
+++ local -a var_list
+++ case "$policy" in
+++ rest=FM_LIVE_LINT_RESOURCE
+++ '[' -n FM_LIVE_LINT_RESOURCE ']'
+++ var=FM_LIVE_LINT_RESOURCE
+++ '[' FM_LIVE_LINT_RESOURCE = FM_LIVE_LINT_RESOURCE ']'
+++ rest=
+++ '[' -n FM_LIVE_LINT_RESOURCE ']'
+++ var_list+=("$var")
+++ '[' -n '' ']'
+++ '[' 1 -gt 0 ']'
+++ primary=FM_LIVE_LINT_RESOURCE
+++ for var in "${var_list[@]}"
+++ value=1
+++ case "$value" in
+++ requested=1
+++ '[' 1 -eq 0 ']'
+++ for tool in "$@"
+++ command -v systemd-run
+++ continue
+++ for tool in "$@"
+++ command -v systemctl
+++ continue
+++ export DISABLE_AUTOUPDATER=1
+++ DISABLE_AUTOUPDATER=1
+++ return 0
+++ systemctl --user show-environment
+++ binding_fixture contention
+++ BINDING_CASE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention
+++ BINDING_REPO=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/repo
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/declared home'
+++ BINDING_CONFIG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/config
+++ BINDING_STATE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/trace
+++ BINDING_FAKEBIN=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/repo/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/repo/tests '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/declared home' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/config/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/state /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/trace /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/fakebin
+++ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/repo init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/repo/bin/
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/repo/bin/fm-lint-workflows.sh
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/declared home'
+++ chmod 600 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/config/firstmate/lint-resource-binding.json
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/fakebin/shellcheck
+++ binding_slot acquire existing-holder --estimate 256
+++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/trace
+++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
+++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/declared home/bin/fm-heavy-slot.sh' acquire existing-holder --estimate 256
+++ rc=0
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/repo
++++ XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/config
++++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/state
++++ bash bin/fm-lint.sh --list-files
+++ out=$'bin/fm-lint-resource-lib.sh\nbin/fm-lint-workflows.sh\nbin/fm-lint.sh\nbin/fm-timeout-lib.sh\nbin/backends/*.sh\ntests/root.test.sh'
+++ expect_code 0 0 'query-only lint must not contend for a heavy slot'
+++ local expected=0 actual=0 'label=query-only lint must not contend for a heavy slot'
+++ '[' 0 = 0 ']'
+++ assert_contains $'bin/fm-lint-resource-lib.sh\nbin/fm-lint-workflows.sh\nbin/fm-lint.sh\nbin/fm-timeout-lib.sh\nbin/backends/*.sh\ntests/root.test.sh' tests/root.test.sh 'query-only lint must return its real inventory'
+++ case "$1" in
+++ :
++++ binding_slot status
++++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/state
++++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/trace
++++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
++++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/declared home/bin/fm-heavy-slot.sh' status
+++ '[' 'held task=existing-holder pid=3201699 estimate=256MB age=0s expires_in=1800s state=live' '!=' free ']'
+++ rc=0
++++ binding_lint
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/repo
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=0 BINDING_EXIT=0 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=0 FM_LINT_REQUIRE_BOUNDS=0 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh
+++ out='error: heavy slot held by task '\''existing-holder'\'' (pid 3201699, estimate 256MB, held 0s, expires in 1800s); declare a wait and retry acquire later, never run the job uncapped'
+++ rc=6
+++ expect_code 6 6 'occupied canonical slot must refuse plain automatic lint'
+++ local expected=6 actual=6 'label=occupied canonical slot must refuse plain automatic lint'
+++ '[' 6 = 6 ']'
+++ assert_contains 'error: heavy slot held by task '\''existing-holder'\'' (pid 3201699, estimate 256MB, held 0s, expires in 1800s); declare a wait and retry acquire later, never run the job uncapped' 'held by task '\''existing-holder'\''' 'contention must name the holder'
+++ case "$1" in
+++ :
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/trace/children ']'
++++ binding_slot status
++++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/state
++++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/trace
++++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
++++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/declared home/bin/fm-heavy-slot.sh' status
+++ held='held task=existing-holder pid=3201699 estimate=256MB age=0s expires_in=1800s state=live'
+++ assert_contains 'held task=existing-holder pid=3201699 estimate=256MB age=0s expires_in=1800s state=live' 'held task=existing-holder' 'a refused lint must not release another holder'
+++ case "$1" in
+++ :
+++ binding_slot release existing-holder
+++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/trace
+++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
+++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/contention/declared home/bin/fm-heavy-slot.sh' release existing-holder
+++ binding_fixture success
+++ BINDING_CASE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success
+++ BINDING_REPO=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/repo
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/declared home'
+++ BINDING_CONFIG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/config
+++ BINDING_STATE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace
+++ BINDING_FAKEBIN=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/repo/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/repo/tests '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/declared home' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/config/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/state /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/fakebin
+++ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/repo init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/repo/bin/
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/repo/bin/fm-lint-workflows.sh
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/declared home'
+++ chmod 600 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/config/firstmate/lint-resource-binding.json
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/fakebin/shellcheck
+++ BINDING_BOUNDS=1
+++ BINDING_STRAGGLER=1
+++ started=1
+++ rc=0
++++ binding_lint
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/repo
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=0 BINDING_EXIT=0 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=1 FM_LINT_REQUIRE_BOUNDS=1 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh
+++ out=$'acquired: task=lint-3201984-1791918755 estimate=256MB pid=3202001 expires_in=1800s\nrun the memory-heavy job under the cap wrapper:\n  systemd-run --user --scope -p MemoryMax=256M -- <command>\nkeep the job parallelism bounded: no more than -j4\nrelease immediately after the job: \'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh\' release lint-3201984-1791918755\nRunning as unit: lint-3201984-1791918755.scope; invocation ID: 9fecc5d642c94f84984b9416d076d294\nnote: refreshing the heavy slot already held by task \'lint-3201984-1791918755\'\nfm-lint.sh: bound task=lint-3201984-1791918755 jobs=1 MemoryMax=256M memory.max=268435456 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope helper=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/declared home/bin/fm-heavy-slot.sh\nfm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nawk: cmd. line:194: fatal: cannot open file `bin/backends/*.sh\' for reading: No such file or directory\nreleased: task=lint-3201984-1791918755'
+++ expect_code 0 0 'plain automatic entrypoint must pass under the real cap'
+++ local expected=0 actual=0 'label=plain automatic entrypoint must pass under the real cap'
+++ '[' 0 = 0 ']'
+++ assert_contains $'acquired: task=lint-3201984-1791918755 estimate=256MB pid=3202001 expires_in=1800s\nrun the memory-heavy job under the cap wrapper:\n  systemd-run --user --scope -p MemoryMax=256M -- <command>\nkeep the job parallelism bounded: no more than -j4\nrelease immediately after the job: \'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh\' release lint-3201984-1791918755\nRunning as unit: lint-3201984-1791918755.scope; invocation ID: 9fecc5d642c94f84984b9416d076d294\nnote: refreshing the heavy slot already held by task \'lint-3201984-1791918755\'\nfm-lint.sh: bound task=lint-3201984-1791918755 jobs=1 MemoryMax=256M memory.max=268435456 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope helper=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/declared home/bin/fm-heavy-slot.sh\nfm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nawk: cmd. line:194: fatal: cannot open file `bin/backends/*.sh\' for reading: No such file or directory\nreleased: task=lint-3201984-1791918755' 'bound task=lint-' 'bound entrypoint must report the verified holder'
+++ case "$1" in
+++ :
+++ assert_contains $'acquired: task=lint-3201984-1791918755 estimate=256MB pid=3202001 expires_in=1800s\nrun the memory-heavy job under the cap wrapper:\n  systemd-run --user --scope -p MemoryMax=256M -- <command>\nkeep the job parallelism bounded: no more than -j4\nrelease immediately after the job: \'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh\' release lint-3201984-1791918755\nRunning as unit: lint-3201984-1791918755.scope; invocation ID: 9fecc5d642c94f84984b9416d076d294\nnote: refreshing the heavy slot already held by task \'lint-3201984-1791918755\'\nfm-lint.sh: bound task=lint-3201984-1791918755 jobs=1 MemoryMax=256M memory.max=268435456 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope helper=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/declared home/bin/fm-heavy-slot.sh\nfm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nawk: cmd. line:194: fatal: cannot open file `bin/backends/*.sh\' for reading: No such file or directory\nreleased: task=lint-3201984-1791918755' 'jobs=1 MemoryMax=256M' 'bound entrypoint must enforce one job and the owner cap'
+++ case "$1" in
+++ :
++++ cat /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace/telemetry.tsv
+++ assert_contains $'format\tfm-lint-telemetry-v1\ngit_head\tHEAD\nunavailable\ncontent_cksum\t2690036922-185\nshellcheck_version\t0.11.0\nanalysis_mode\tfull\npartition\tall\njobs\t1\nroot_bounds_enforced\t1\nroot_deadline_seconds\t1200\nroot_kill_grace_seconds\t10\nroot_memory_limit_kib\t12582912\nroot_timing_mechanism\tperl\nroot_count\t6\ndirect_lines\tunavailable\ndirect_bytes\t75571\nsource_directives\t2\nsource_boundary_directives\t0\nsource_followed_directives\t2\nsource_target_count\t2\nshard_1_weight_bytes\t57361\nshard_2_weight_bytes\t18211\nwall_seconds\t1\nworker_wall_sum_seconds\tunavailable\nmax_worker_wall_seconds\tunavailable\nuser_seconds\tunavailable\nsystem_seconds\tunavailable\nmax_worker_rss_kib\tunavailable\nworker_rss_sum_kib\tunavailable\nshellcheck_processes_start\t0\nshellcheck_processes_end\t0\nload_average_start\t3.03/3.06/2.55\nload_average_end\t3.27/3.11/2.57\naggregate_cpu_percent_start\t111.20\naggregate_cpu_percent_end\t109.10\nresult_exit\t0' $'jobs\t1' 'actual lint telemetry must report one job'
+++ case "$1" in
+++ :
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace/overlap ']'
+++ IFS=
+++ read -r held
+++ assert_contains 'pid=3203055 cap=268435456 held task=lint-3201984-1791918755 pid=3202110 estimate=256MB age=2s expires_in=1798s state=live' 'cap=268435456 held task=lint-' 'analysis child must see the kernel cap and its live slot'
+++ case "$1" in
+++ :
+++ IFS=
+++ read -r held
+++ assert_contains 'pid=3203141 cap=268435456 held task=lint-3201984-1791918755 pid=3202110 estimate=256MB age=2s expires_in=1798s state=live' 'cap=268435456 held task=lint-' 'analysis child must see the kernel cap and its live slot'
+++ case "$1" in
+++ :
+++ IFS=
+++ read -r held
+++ assert_contains 'pid=3203222 cap=268435456 held task=lint-3201984-1791918755 pid=3202110 estimate=256MB age=2s expires_in=1798s state=live' 'cap=268435456 held task=lint-' 'analysis child must see the kernel cap and its live slot'
+++ case "$1" in
+++ :
+++ IFS=
+++ read -r held
+++ assert_contains 'pid=3203326 cap=268435456 held task=lint-3201984-1791918755 pid=3202110 estimate=256MB age=3s expires_in=1797s state=live' 'cap=268435456 held task=lint-' 'analysis child must see the kernel cap and its live slot'
+++ case "$1" in
+++ :
+++ IFS=
+++ read -r held
+++ assert_contains 'pid=3203407 cap=268435456 held task=lint-3201984-1791918755 pid=3202110 estimate=256MB age=3s expires_in=1797s state=live' 'cap=268435456 held task=lint-' 'analysis child must see the kernel cap and its live slot'
+++ case "$1" in
+++ :
+++ IFS=
+++ read -r held
+++ assert_contains 'pid=3203488 cap=268435456 held task=lint-3201984-1791918755 pid=3202110 estimate=256MB age=3s expires_in=1797s state=live' 'cap=268435456 held task=lint-' 'analysis child must see the kernel cap and its live slot'
+++ case "$1" in
+++ :
+++ IFS=
+++ read -r held
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace/children ']'
++++ grep '^fm-lint.sh: bound '
+++ printf 'resource proof: %s\n' 'fm-lint.sh: bound task=lint-3201984-1791918755 jobs=1 MemoryMax=256M memory.max=268435456 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope helper=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/declared home/bin/fm-heavy-slot.sh'
++++ awk -F '\t' '$1 == "jobs" || $1 == "root_count" {print $1 "=" $2}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace/telemetry.tsv
++++ tr '\n' ' '
+++ printf 'resource proof: %s\n' 'jobs=1 root_count=6 '
++++ head -1 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace/children
+++ printf 'resource proof: %s\n' 'pid=3203055 cap=268435456 held task=lint-3201984-1791918755 pid=3202110 estimate=256MB age=2s expires_in=1798s state=live'
+++ awk -F '\t' '$1 == "root_count" {count=$2} END {exit !(count > 1)}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace/telemetry.tsv
+++ binding_assert_scope_stopped
+++ local pid group
++++ binding_slot status
++++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/state
++++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace
++++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
++++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/declared home/bin/fm-heavy-slot.sh' status
+++ '[' free = free ']'
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace/release-events ']'
+++ grep -q '^populated 1$' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace/release-events
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ IFS=
+++ read -r pid
+++ kill -0 3202047
+++ IFS=
+++ read -r pid
+++ kill -0 3203044
+++ IFS=
+++ read -r pid
+++ kill -0 3203050
+++ IFS=
+++ read -r pid
+++ kill -0 3203055
+++ IFS=
+++ read -r pid
+++ kill -0 3203113
+++ IFS=
+++ read -r pid
+++ kill -0 3203114
+++ IFS=
+++ read -r pid
+++ kill -0 3202047
+++ IFS=
+++ read -r pid
+++ kill -0 3203113
+++ IFS=
+++ read -r pid
+++ kill -0 3203131
+++ IFS=
+++ read -r pid
+++ kill -0 3203137
+++ IFS=
+++ read -r pid
+++ kill -0 3203141
+++ IFS=
+++ read -r pid
+++ kill -0 3203199
+++ IFS=
+++ read -r pid
+++ kill -0 3203200
+++ IFS=
+++ read -r pid
+++ kill -0 3202047
+++ IFS=
+++ read -r pid
+++ kill -0 3203113
+++ IFS=
+++ read -r pid
+++ kill -0 3203131
+++ IFS=
+++ read -r pid
+++ kill -0 3203199
+++ IFS=
+++ read -r pid
+++ kill -0 3203218
+++ IFS=
+++ read -r pid
+++ kill -0 3203222
+++ IFS=
+++ read -r pid
+++ kill -0 3203280
+++ IFS=
+++ read -r pid
+++ kill -0 3203281
+++ IFS=
+++ read -r pid
+++ kill -0 3202047
+++ IFS=
+++ read -r pid
+++ kill -0 3203113
+++ IFS=
+++ read -r pid
+++ kill -0 3203131
+++ IFS=
+++ read -r pid
+++ kill -0 3203199
+++ IFS=
+++ read -r pid
+++ kill -0 3203280
+++ IFS=
+++ read -r pid
+++ kill -0 3203322
+++ IFS=
+++ read -r pid
+++ kill -0 3203326
+++ IFS=
+++ read -r pid
+++ kill -0 3203384
+++ IFS=
+++ read -r pid
+++ kill -0 3203385
+++ IFS=
+++ read -r pid
+++ kill -0 3202047
+++ IFS=
+++ read -r pid
+++ kill -0 3203113
+++ IFS=
+++ read -r pid
+++ kill -0 3203131
+++ IFS=
+++ read -r pid
+++ kill -0 3203199
+++ IFS=
+++ read -r pid
+++ kill -0 3203280
+++ IFS=
+++ read -r pid
+++ kill -0 3203384
+++ IFS=
+++ read -r pid
+++ kill -0 3203403
+++ IFS=
+++ read -r pid
+++ kill -0 3203407
+++ IFS=
+++ read -r pid
+++ kill -0 3203465
+++ IFS=
+++ read -r pid
+++ kill -0 3203466
+++ IFS=
+++ read -r pid
+++ kill -0 3202047
+++ IFS=
+++ read -r pid
+++ kill -0 3203113
+++ IFS=
+++ read -r pid
+++ kill -0 3203131
+++ IFS=
+++ read -r pid
+++ kill -0 3203199
+++ IFS=
+++ read -r pid
+++ kill -0 3203280
+++ IFS=
+++ read -r pid
+++ kill -0 3203384
+++ IFS=
+++ read -r pid
+++ kill -0 3203465
+++ IFS=
+++ read -r pid
+++ kill -0 3203484
+++ IFS=
+++ read -r pid
+++ kill -0 3203488
+++ IFS=
+++ read -r pid
+++ kill -0 3203546
+++ IFS=
+++ read -r pid
+++ kill -0 3203547
+++ IFS=
+++ read -r pid
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace/stragglers ']'
+++ IFS=
+++ read -r pid
+++ kill -0 3203113
+++ IFS=
+++ read -r pid
+++ kill -0 3203199
+++ IFS=
+++ read -r pid
+++ kill -0 3203280
+++ IFS=
+++ read -r pid
+++ kill -0 3203384
+++ IFS=
+++ read -r pid
+++ kill -0 3203465
+++ IFS=
+++ read -r pid
+++ kill -0 3203546
+++ IFS=
+++ read -r pid
+++ awk 'NR % 2 {group=$2; next} $2 == group || $1 != $2 {bad=1} END {exit (bad || NR == 0 || NR % 2)}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace/groups
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success/trace/intermediaries ']'
+++ '[' 10 -lt 20 ']'
+++ binding_fixture success-timed
+++ BINDING_CASE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed
+++ BINDING_REPO=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/repo
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/declared home'
+++ BINDING_CONFIG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/config
+++ BINDING_STATE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace
+++ BINDING_FAKEBIN=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/repo/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/repo/tests '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/declared home' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/config/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/state /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/fakebin
+++ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/repo init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/repo/bin/
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/repo/bin/fm-lint-workflows.sh
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/declared home'
+++ chmod 600 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/config/firstmate/lint-resource-binding.json
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/fakebin/shellcheck
+++ binding_timing_intermediary
+++ mv /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/fakebin/shellcheck /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/fakebin/shellcheck-payload
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/fakebin/shellcheck
+++ started=11
+++ rc=0
++++ binding_lint
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/repo
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=0 BINDING_EXIT=0 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=1 FM_LINT_REQUIRE_BOUNDS=1 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh
+++ out=$'acquired: task=lint-3204459-1791918765 estimate=256MB pid=3204491 expires_in=1800s\nrun the memory-heavy job under the cap wrapper:\n  systemd-run --user --scope -p MemoryMax=256M -- <command>\nkeep the job parallelism bounded: no more than -j4\nrelease immediately after the job: \'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh\' release lint-3204459-1791918765\nRunning as unit: lint-3204459-1791918765.scope; invocation ID: 56b8c3ac5a43428195096411119c5d09\nnote: refreshing the heavy slot already held by task \'lint-3204459-1791918765\'\nfm-lint.sh: bound task=lint-3204459-1791918765 jobs=1 MemoryMax=256M memory.max=268435456 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3204459-1791918765.scope helper=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/declared home/bin/fm-heavy-slot.sh\nfm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nawk: cmd. line:194: fatal: cannot open file `bin/backends/*.sh\' for reading: No such file or directory\nreleased: task=lint-3204459-1791918765'
+++ expect_code 0 0 'scope cleanup must pass with a timing intermediary'
+++ local expected=0 actual=0 'label=scope cleanup must pass with a timing intermediary'
+++ '[' 0 = 0 ']'
+++ binding_assert_scope_stopped
+++ local pid group
++++ binding_slot status
++++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/state
++++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace
++++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
++++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/declared home/bin/fm-heavy-slot.sh' status
+++ '[' free = free ']'
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace/release-events ']'
+++ grep -q '^populated 1$' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace/release-events
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3204459-1791918765.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3204459-1791918765.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3204459-1791918765.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3204459-1791918765.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3204459-1791918765.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3204459-1791918765.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ IFS=
+++ read -r pid
+++ kill -0 3204537
+++ IFS=
+++ read -r pid
+++ kill -0 3205597
+++ IFS=
+++ read -r pid
+++ kill -0 3205613
+++ IFS=
+++ read -r pid
+++ kill -0 3205630
+++ IFS=
+++ read -r pid
+++ kill -0 3205642
+++ IFS=
+++ read -r pid
+++ kill -0 3205716
+++ IFS=
+++ read -r pid
+++ kill -0 3205717
+++ IFS=
+++ read -r pid
+++ kill -0 3204537
+++ IFS=
+++ read -r pid
+++ kill -0 3205716
+++ IFS=
+++ read -r pid
+++ kill -0 3205740
+++ IFS=
+++ read -r pid
+++ kill -0 3205746
+++ IFS=
+++ read -r pid
+++ kill -0 3205750
+++ IFS=
+++ read -r pid
+++ kill -0 3205755
+++ IFS=
+++ read -r pid
+++ kill -0 3205810
+++ IFS=
+++ read -r pid
+++ kill -0 3205811
+++ IFS=
+++ read -r pid
+++ kill -0 3204537
+++ IFS=
+++ read -r pid
+++ kill -0 3205716
+++ IFS=
+++ read -r pid
+++ kill -0 3205740
+++ IFS=
+++ read -r pid
+++ kill -0 3205810
+++ IFS=
+++ read -r pid
+++ kill -0 3205835
+++ IFS=
+++ read -r pid
+++ kill -0 3205839
+++ IFS=
+++ read -r pid
+++ kill -0 3205844
+++ IFS=
+++ read -r pid
+++ kill -0 3205899
+++ IFS=
+++ read -r pid
+++ kill -0 3205900
+++ IFS=
+++ read -r pid
+++ kill -0 3204537
+++ IFS=
+++ read -r pid
+++ kill -0 3205716
+++ IFS=
+++ read -r pid
+++ kill -0 3205740
+++ IFS=
+++ read -r pid
+++ kill -0 3205810
+++ IFS=
+++ read -r pid
+++ kill -0 3205899
+++ IFS=
+++ read -r pid
+++ kill -0 3205925
+++ IFS=
+++ read -r pid
+++ kill -0 3205929
+++ IFS=
+++ read -r pid
+++ kill -0 3205934
+++ IFS=
+++ read -r pid
+++ kill -0 3205992
+++ IFS=
+++ read -r pid
+++ kill -0 3205993
+++ IFS=
+++ read -r pid
+++ kill -0 3204537
+++ IFS=
+++ read -r pid
+++ kill -0 3205716
+++ IFS=
+++ read -r pid
+++ kill -0 3205740
+++ IFS=
+++ read -r pid
+++ kill -0 3205810
+++ IFS=
+++ read -r pid
+++ kill -0 3205899
+++ IFS=
+++ read -r pid
+++ kill -0 3205992
+++ IFS=
+++ read -r pid
+++ kill -0 3206023
+++ IFS=
+++ read -r pid
+++ kill -0 3206027
+++ IFS=
+++ read -r pid
+++ kill -0 3206032
+++ IFS=
+++ read -r pid
+++ kill -0 3206087
+++ IFS=
+++ read -r pid
+++ kill -0 3206088
+++ IFS=
+++ read -r pid
+++ kill -0 3204537
+++ IFS=
+++ read -r pid
+++ kill -0 3205716
+++ IFS=
+++ read -r pid
+++ kill -0 3205740
+++ IFS=
+++ read -r pid
+++ kill -0 3205810
+++ IFS=
+++ read -r pid
+++ kill -0 3205899
+++ IFS=
+++ read -r pid
+++ kill -0 3205992
+++ IFS=
+++ read -r pid
+++ kill -0 3206087
+++ IFS=
+++ read -r pid
+++ kill -0 3206112
+++ IFS=
+++ read -r pid
+++ kill -0 3206116
+++ IFS=
+++ read -r pid
+++ kill -0 3206121
+++ IFS=
+++ read -r pid
+++ kill -0 3206176
+++ IFS=
+++ read -r pid
+++ kill -0 3206177
+++ IFS=
+++ read -r pid
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace/stragglers ']'
+++ IFS=
+++ read -r pid
+++ kill -0 3205716
+++ IFS=
+++ read -r pid
+++ kill -0 3205810
+++ IFS=
+++ read -r pid
+++ kill -0 3205899
+++ IFS=
+++ read -r pid
+++ kill -0 3205992
+++ IFS=
+++ read -r pid
+++ kill -0 3206087
+++ IFS=
+++ read -r pid
+++ kill -0 3206176
+++ IFS=
+++ read -r pid
+++ awk 'NR % 2 {group=$2; next} $2 == group || $1 != $2 {bad=1} END {exit (bad || NR == 0 || NR % 2)}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace/groups
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace/intermediaries ']'
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace/root-group-ancestors ']'
+++ awk 'NR == FNR {ancestors[$1]=1; next} !($1 in ancestors) {bad=1} END {exit bad}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace/root-group-ancestors /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace/intermediaries
+++ awk 'NR == FNR {intermediaries[$1]=1; next} FNR % 2 == 0 && ($1 in intermediaries) {bad=1} END {exit bad}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace/intermediaries /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/success-timed/trace/groups
+++ '[' 10 -lt 20 ']'
+++ binding_fixture failure
+++ BINDING_CASE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure
+++ BINDING_REPO=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/repo
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/declared home'
+++ BINDING_CONFIG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/config
+++ BINDING_STATE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace
+++ BINDING_FAKEBIN=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/repo/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/repo/tests '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/declared home' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/config/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/state /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/fakebin
+++ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/repo init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/repo/bin/
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/repo/bin/fm-lint-workflows.sh
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/declared home'
+++ chmod 600 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/config/firstmate/lint-resource-binding.json
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/fakebin/shellcheck
+++ binding_timing_intermediary
+++ mv /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/fakebin/shellcheck /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/fakebin/shellcheck-payload
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/fakebin/shellcheck
+++ BINDING_EXIT=7
+++ started=21
+++ rc=0
++++ binding_lint
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/repo
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=0 BINDING_EXIT=7 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=1 FM_LINT_REQUIRE_BOUNDS=1 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh
+++ out=$'acquired: task=lint-3207883-1791918775 estimate=256MB pid=3207930 expires_in=1800s\nrun the memory-heavy job under the cap wrapper:\n  systemd-run --user --scope -p MemoryMax=256M -- <command>\nkeep the job parallelism bounded: no more than -j4\nrelease immediately after the job: \'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh\' release lint-3207883-1791918775\nRunning as unit: lint-3207883-1791918775.scope; invocation ID: 70cac2002eb44a3dbcec564160b6b71c\nnote: refreshing the heavy slot already held by task \'lint-3207883-1791918775\'\nfm-lint.sh: bound task=lint-3207883-1791918775 jobs=1 MemoryMax=256M memory.max=268435456 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3207883-1791918775.scope helper=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/declared home/bin/fm-heavy-slot.sh\nfm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nfm-lint: end bin/fm-lint.sh reason=error:7 rc=7 duration_ms=282 rss_kib=unavailable\nfm-lint: end bin/fm-lint-resource-lib.sh reason=error:7 rc=7 duration_ms=281 rss_kib=unavailable\nfm-lint: end bin/fm-lint-workflows.sh reason=error:7 rc=7 duration_ms=287 rss_kib=unavailable\nfm-lint: end bin/fm-timeout-lib.sh reason=error:7 rc=7 duration_ms=284 rss_kib=unavailable\nfm-lint: end bin/backends/*.sh reason=error:7 rc=7 duration_ms=284 rss_kib=unavailable\nfm-lint: end tests/root.test.sh reason=error:7 rc=7 duration_ms=278 rss_kib=unavailable\nawk: cmd. line:194: fatal: cannot open file `bin/backends/*.sh\' for reading: No such file or directory\nreleased: task=lint-3207883-1791918775'
+++ rc=7
+++ unset BINDING_EXIT
+++ expect_code 7 7 'a scoped analysis exit must propagate through the plain entrypoint'
+++ local expected=7 actual=7 'label=a scoped analysis exit must propagate through the plain entrypoint'
+++ '[' 7 = 7 ']'
+++ binding_assert_scope_stopped
+++ local pid group
++++ binding_slot status
++++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/state
++++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace
++++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
++++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/declared home/bin/fm-heavy-slot.sh' status
+++ '[' free = free ']'
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace/release-events ']'
+++ grep -q '^populated 1$' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace/release-events
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3207883-1791918775.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3207883-1791918775.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3207883-1791918775.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3207883-1791918775.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3207883-1791918775.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3207883-1791918775.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ IFS=
+++ read -r pid
+++ kill -0 3208009
+++ IFS=
+++ read -r pid
+++ kill -0 3208188
+++ IFS=
+++ read -r pid
+++ kill -0 3208195
+++ IFS=
+++ read -r pid
+++ kill -0 3208199
+++ IFS=
+++ read -r pid
+++ kill -0 3208204
+++ IFS=
+++ read -r pid
+++ kill -0 3208259
+++ IFS=
+++ read -r pid
+++ kill -0 3208260
+++ IFS=
+++ read -r pid
+++ kill -0 3208009
+++ IFS=
+++ read -r pid
+++ kill -0 3208259
+++ IFS=
+++ read -r pid
+++ kill -0 3208284
+++ IFS=
+++ read -r pid
+++ kill -0 3208290
+++ IFS=
+++ read -r pid
+++ kill -0 3208294
+++ IFS=
+++ read -r pid
+++ kill -0 3208299
+++ IFS=
+++ read -r pid
+++ kill -0 3208354
+++ IFS=
+++ read -r pid
+++ kill -0 3208355
+++ IFS=
+++ read -r pid
+++ kill -0 3208009
+++ IFS=
+++ read -r pid
+++ kill -0 3208259
+++ IFS=
+++ read -r pid
+++ kill -0 3208284
+++ IFS=
+++ read -r pid
+++ kill -0 3208354
+++ IFS=
+++ read -r pid
+++ kill -0 3208380
+++ IFS=
+++ read -r pid
+++ kill -0 3208384
+++ IFS=
+++ read -r pid
+++ kill -0 3208389
+++ IFS=
+++ read -r pid
+++ kill -0 3208444
+++ IFS=
+++ read -r pid
+++ kill -0 3208445
+++ IFS=
+++ read -r pid
+++ kill -0 3208009
+++ IFS=
+++ read -r pid
+++ kill -0 3208259
+++ IFS=
+++ read -r pid
+++ kill -0 3208284
+++ IFS=
+++ read -r pid
+++ kill -0 3208354
+++ IFS=
+++ read -r pid
+++ kill -0 3208444
+++ IFS=
+++ read -r pid
+++ kill -0 3208470
+++ IFS=
+++ read -r pid
+++ kill -0 3208474
+++ IFS=
+++ read -r pid
+++ kill -0 3208479
+++ IFS=
+++ read -r pid
+++ kill -0 3208534
+++ IFS=
+++ read -r pid
+++ kill -0 3208535
+++ IFS=
+++ read -r pid
+++ kill -0 3208009
+++ IFS=
+++ read -r pid
+++ kill -0 3208259
+++ IFS=
+++ read -r pid
+++ kill -0 3208284
+++ IFS=
+++ read -r pid
+++ kill -0 3208354
+++ IFS=
+++ read -r pid
+++ kill -0 3208444
+++ IFS=
+++ read -r pid
+++ kill -0 3208534
+++ IFS=
+++ read -r pid
+++ kill -0 3208566
+++ IFS=
+++ read -r pid
+++ kill -0 3208572
+++ IFS=
+++ read -r pid
+++ kill -0 3208577
+++ IFS=
+++ read -r pid
+++ kill -0 3208632
+++ IFS=
+++ read -r pid
+++ kill -0 3208633
+++ IFS=
+++ read -r pid
+++ kill -0 3208009
+++ IFS=
+++ read -r pid
+++ kill -0 3208259
+++ IFS=
+++ read -r pid
+++ kill -0 3208284
+++ IFS=
+++ read -r pid
+++ kill -0 3208354
+++ IFS=
+++ read -r pid
+++ kill -0 3208444
+++ IFS=
+++ read -r pid
+++ kill -0 3208534
+++ IFS=
+++ read -r pid
+++ kill -0 3208632
+++ IFS=
+++ read -r pid
+++ kill -0 3208658
+++ IFS=
+++ read -r pid
+++ kill -0 3208662
+++ IFS=
+++ read -r pid
+++ kill -0 3208667
+++ IFS=
+++ read -r pid
+++ kill -0 3208723
+++ IFS=
+++ read -r pid
+++ kill -0 3208724
+++ IFS=
+++ read -r pid
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace/stragglers ']'
+++ IFS=
+++ read -r pid
+++ kill -0 3208259
+++ IFS=
+++ read -r pid
+++ kill -0 3208354
+++ IFS=
+++ read -r pid
+++ kill -0 3208444
+++ IFS=
+++ read -r pid
+++ kill -0 3208534
+++ IFS=
+++ read -r pid
+++ kill -0 3208632
+++ IFS=
+++ read -r pid
+++ kill -0 3208723
+++ IFS=
+++ read -r pid
+++ awk 'NR % 2 {group=$2; next} $2 == group || $1 != $2 {bad=1} END {exit (bad || NR == 0 || NR % 2)}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace/groups
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace/intermediaries ']'
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace/root-group-ancestors ']'
+++ awk 'NR == FNR {ancestors[$1]=1; next} !($1 in ancestors) {bad=1} END {exit bad}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace/root-group-ancestors /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace/intermediaries
+++ awk 'NR == FNR {intermediaries[$1]=1; next} FNR % 2 == 0 && ($1 in intermediaries) {bad=1} END {exit bad}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace/intermediaries /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/failure/trace/groups
+++ '[' 9 -lt 20 ']'
+++ unset BINDING_BOUNDS BINDING_STRAGGLER
+++ binding_fixture unavailable-cap
+++ BINDING_CASE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap
+++ BINDING_REPO=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/repo
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/declared home'
+++ BINDING_CONFIG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/config
+++ BINDING_STATE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/trace
+++ BINDING_FAKEBIN=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/repo/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/repo/tests '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/declared home' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/config/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/state /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/trace /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/fakebin
+++ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/repo init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/repo/bin/
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/repo/bin/fm-lint-workflows.sh
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/declared home'
+++ chmod 600 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/config/firstmate/lint-resource-binding.json
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/fakebin/shellcheck
+++ printf '#!/usr/bin/env bash\nexit 99\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/fakebin/systemd-run
+++ rc=0
++++ binding_lint
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/repo
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=0 BINDING_EXIT=0 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=0 FM_LINT_REQUIRE_BOUNDS=0 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh
+++ out=$'acquired: task=lint-3209078-1791918785 estimate=256MB pid=3209095 expires_in=1800s\nrun the memory-heavy job under the cap wrapper:\n  systemd-run --user --scope -p MemoryMax=256M -- <command>\nkeep the job parallelism bounded: no more than -j4\nrelease immediately after the job: \'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh\' release lint-3209078-1791918785\nFailed to stop lint-3209078-1791918785.scope: Unit lint-3209078-1791918785.scope not loaded.\nreleased: task=lint-3209078-1791918785'
+++ rc=99
+++ expect_code 99 99 'a scope-launch failure must propagate without an uncapped retry'
+++ local expected=99 actual=99 'label=a scope-launch failure must propagate without an uncapped retry'
+++ '[' 99 = 99 ']'
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/trace/children ']'
++++ binding_slot status
++++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/state
++++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/trace
++++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
++++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/unavailable-cap/declared home/bin/fm-heavy-slot.sh' status
+++ '[' free = free ']'
+++ binding_fixture forged-cap
+++ BINDING_CASE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap
+++ BINDING_REPO=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/repo
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/declared home'
+++ BINDING_CONFIG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/config
+++ BINDING_STATE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/trace
+++ BINDING_FAKEBIN=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/repo/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/repo/tests '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/declared home' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/config/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/state /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/trace /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/fakebin
+++ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/repo init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/repo/bin/
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/repo/bin/fm-lint-workflows.sh
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/declared home'
+++ chmod 600 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/config/firstmate/lint-resource-binding.json
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/fakebin/shellcheck
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/fakebin/systemd-run
+++ rc=0
++++ binding_lint
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/repo
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=0 BINDING_EXIT=0 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=0 FM_LINT_REQUIRE_BOUNDS=0 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh
+++ out=$'acquired: task=lint-3209244-1791918785 estimate=256MB pid=3209261 expires_in=1800s\nrun the memory-heavy job under the cap wrapper:\n  systemd-run --user --scope -p MemoryMax=256M -- <command>\nkeep the job parallelism bounded: no more than -j4\nrelease immediately after the job: \'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh\' release lint-3209244-1791918785\nnote: refreshing the heavy slot already held by task \'lint-3209244-1791918785\'\nfm-lint.sh: resident-memory cap mismatch: got 1073741824, expected 256MiB; refusing uncapped lint.\nFailed to stop lint-3209244-1791918785.scope: Unit lint-3209244-1791918785.scope not loaded.\nreleased: task=lint-3209244-1791918785'
+++ rc=2
+++ expect_code 2 2 'an unscoped marker must never stand in for a kernel cap'
+++ local expected=2 actual=2 'label=an unscoped marker must never stand in for a kernel cap'
+++ '[' 2 = 2 ']'
+++ assert_contains $'acquired: task=lint-3209244-1791918785 estimate=256MB pid=3209261 expires_in=1800s\nrun the memory-heavy job under the cap wrapper:\n  systemd-run --user --scope -p MemoryMax=256M -- <command>\nkeep the job parallelism bounded: no more than -j4\nrelease immediately after the job: \'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh\' release lint-3209244-1791918785\nnote: refreshing the heavy slot already held by task \'lint-3209244-1791918785\'\nfm-lint.sh: resident-memory cap mismatch: got 1073741824, expected 256MiB; refusing uncapped lint.\nFailed to stop lint-3209244-1791918785.scope: Unit lint-3209244-1791918785.scope not loaded.\nreleased: task=lint-3209244-1791918785' 'resident-memory cap mismatch' 'unenforced wrapper must be diagnosed'
+++ case "$1" in
+++ :
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/trace/children ']'
++++ binding_slot status
++++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/state
++++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/trace
++++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
++++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/forged-cap/declared home/bin/fm-heavy-slot.sh' status
+++ '[' free = free ']'
+++ binding_fixture removed-record
+++ BINDING_CASE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record
+++ BINDING_REPO=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/repo
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/declared home'
+++ BINDING_CONFIG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/config
+++ BINDING_STATE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/trace
+++ BINDING_FAKEBIN=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/repo/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/repo/tests '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/declared home' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/config/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/state /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/trace /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/fakebin
+++ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/repo init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/repo/bin/
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/repo/bin/fm-lint-workflows.sh
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/declared home'
+++ chmod 600 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/config/firstmate/lint-resource-binding.json
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/fakebin/shellcheck
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/fakebin/systemd-run
+++ rc=0
++++ binding_lint
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/repo
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=0 BINDING_EXIT=0 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=0 FM_LINT_REQUIRE_BOUNDS=0 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh
+++ out=$'acquired: task=lint-3209534-1791918785 estimate=256MB pid=3209551 expires_in=1800s\nrun the memory-heavy job under the cap wrapper:\n  systemd-run --user --scope -p MemoryMax=256M -- <command>\nkeep the job parallelism bounded: no more than -j4\nrelease immediately after the job: \'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh\' release lint-3209534-1791918785\nRunning as unit: lint-3209534-1791918785.scope; invocation ID: 45897445d6624395af91768267e8666a\nbinding must be a private user-owned regular file\nfm-lint.sh: invalid resource binding /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/config/firstmate/lint-resource-binding.json; refusing uncapped lint.\nFailed to stop lint-3209534-1791918785.scope: Unit lint-3209534-1791918785.scope not loaded.\nreleased: task=lint-3209534-1791918785'
+++ rc=2
+++ expect_code 2 2 'a binding removed during scoped launch must fail closed'
+++ local expected=2 actual=2 'label=a binding removed during scoped launch must fail closed'
+++ '[' 2 = 2 ']'
+++ assert_contains $'acquired: task=lint-3209534-1791918785 estimate=256MB pid=3209551 expires_in=1800s\nrun the memory-heavy job under the cap wrapper:\n  systemd-run --user --scope -p MemoryMax=256M -- <command>\nkeep the job parallelism bounded: no more than -j4\nrelease immediately after the job: \'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh\' release lint-3209534-1791918785\nRunning as unit: lint-3209534-1791918785.scope; invocation ID: 45897445d6624395af91768267e8666a\nbinding must be a private user-owned regular file\nfm-lint.sh: invalid resource binding /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/config/firstmate/lint-resource-binding.json; refusing uncapped lint.\nFailed to stop lint-3209534-1791918785.scope: Unit lint-3209534-1791918785.scope not loaded.\nreleased: task=lint-3209534-1791918785' 'invalid resource binding' 'removed binding must be diagnosed'
+++ case "$1" in
+++ :
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/trace/children ']'
++++ binding_slot status
++++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/state
++++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/trace
++++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
++++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/removed-record/declared home/bin/fm-heavy-slot.sh' status
+++ '[' free = free ']'
+++ binding_fixture literal-argv
+++ BINDING_CASE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv
+++ BINDING_REPO=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/repo
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/declared home'
+++ BINDING_CONFIG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/config
+++ BINDING_STATE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/trace
+++ BINDING_FAKEBIN=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/repo/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/repo/tests '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/declared home' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/config/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/state /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/trace /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/fakebin
+++ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/repo init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/repo/bin/
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/repo/bin/fm-lint-workflows.sh
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/declared home'
+++ chmod 600 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/config/firstmate/lint-resource-binding.json
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/fakebin/shellcheck
+++ printf '#!/usr/bin/env bash\nif then\n'
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ rc=0
++++ FLAVOR=clean
++++ BINDING_LITERAL_ROOT=1
++++ binding_lint --telemetry '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/trace/${FLAVOR}.tsv' 'tests/${FLAVOR}.sh'
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/repo
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=0 BINDING_EXIT=0 BINDING_LITERAL_ROOT=1 BINDING_STRAGGLER=0 FM_LINT_REQUIRE_BOUNDS=0 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh --telemetry '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/trace/${FLAVOR}.tsv' 'tests/${FLAVOR}.sh'
+++ out=$'acquired: task=lint-3209722-1791918786 estimate=256MB pid=3209733 expires_in=1800s\nrun the memory-heavy job under the cap wrapper:\n  systemd-run --user --scope -p MemoryMax=256M -- <command>\nkeep the job parallelism bounded: no more than -j4\nrelease immediately after the job: \'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh\' release lint-3209722-1791918786\nRunning as unit: lint-3209722-1791918786.scope; invocation ID: bd53c41584c94af783e60be576d33ad2\nnote: refreshing the heavy slot already held by task \'lint-3209722-1791918786\'\nfm-lint.sh: bound task=lint-3209722-1791918786 jobs=1 MemoryMax=256M memory.max=268435456 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3209722-1791918786.scope helper=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/declared home/bin/fm-heavy-slot.sh\nfm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\ntests/${FLAVOR}.sh: fixture finding\nFailed to stop lint-3209722-1791918786.scope: Unit lint-3209722-1791918786.scope not loaded.\nreleased: task=lint-3209722-1791918786'
+++ rc=1
+++ expect_code 1 1 'the literal defective root must not expand to the clean alternative'
+++ local expected=1 actual=1 'label=the literal defective root must not expand to the clean alternative'
+++ '[' 1 = 1 ']'
++++ cat /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/trace/requested-roots
+++ '[' 'tests/${FLAVOR}.sh' = 'tests/${FLAVOR}.sh' ']'
+++ '[' -f '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/trace/${FLAVOR}.tsv' ']'
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/trace/clean.tsv ']'
++++ binding_slot status
++++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/state
++++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/trace
++++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
++++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/literal-argv/declared home/bin/fm-heavy-slot.sh' status
+++ '[' free = free ']'
+++ binding_fixture 'paths-${FLAVOR}'
+++ BINDING_CASE='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}'
+++ BINDING_REPO='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/repo'
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/declared home'
+++ BINDING_CONFIG='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/config'
+++ BINDING_STATE='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/state'
+++ BINDING_TRACE='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/trace'
+++ BINDING_FAKEBIN='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/fakebin'
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/repo/bin' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/repo/tests' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/declared home' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/config/firstmate' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/state' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/trace' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/fakebin'
+++ git -C '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/repo' init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/repo/bin/'
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/repo/bin/fm-lint-workflows.sh'
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/declared home'
+++ chmod 600 '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/config/firstmate/lint-resource-binding.json'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/fakebin/shellcheck'
++++ command -v bash
+++ ln -s /usr/bin/bash '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/fakebin/bash'
+++ rc=0
++++ FLAVOR=clean
++++ binding_lint
++++ cd '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/repo'
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK 'XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/config' 'XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/state' 'BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/trace' 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=0 BINDING_EXIT=0 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=0 FM_LINT_REQUIRE_BOUNDS=0 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 'FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/trace/telemetry.tsv' 'PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin' sh -c 'bin/fm-lint.sh "$@"' sh
+++ out=$'acquired: task=lint-3210165-1791918787 estimate=256MB pid=3210182 expires_in=1800s\nrun the memory-heavy job under the cap wrapper:\n  systemd-run --user --scope -p MemoryMax=256M -- <command>\nkeep the job parallelism bounded: no more than -j4\nrelease immediately after the job: \'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh\' release lint-3210165-1791918787\nRunning as unit: lint-3210165-1791918787.scope; invocation ID: 2f15b386391b4d40a1bb19d68d338294\nnote: refreshing the heavy slot already held by task \'lint-3210165-1791918787\'\nfm-lint.sh: bound task=lint-3210165-1791918787 jobs=1 MemoryMax=256M memory.max=268435456 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3210165-1791918787.scope helper=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/declared home/bin/fm-heavy-slot.sh\nfm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nawk: cmd. line:194: fatal: cannot open file `bin/backends/*.sh\' for reading: No such file or directory\nFailed to stop lint-3210165-1791918787.scope: Unit lint-3210165-1791918787.scope not loaded.\nreleased: task=lint-3210165-1791918787'
+++ expect_code 0 0 'scope launch must preserve literal SELF and executable paths'
+++ local expected=0 actual=0 'label=scope launch must preserve literal SELF and executable paths'
+++ '[' 0 = 0 ']'
+++ '[' -s '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/trace/children' ']'
++++ binding_slot status
++++ XDG_STATE_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/state'
++++ BINDING_TRACE='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/trace'
++++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
++++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/paths-${FLAVOR}/declared home/bin/fm-heavy-slot.sh' status
+++ '[' free = free ']'
+++ binding_fixture signal
+++ BINDING_CASE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal
+++ BINDING_REPO=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/repo
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/declared home'
+++ BINDING_CONFIG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/config
+++ BINDING_STATE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace
+++ BINDING_FAKEBIN=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/repo/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/repo/tests '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/declared home' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/config/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/state /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/fakebin
+++ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/repo init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/repo/bin/
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/repo/bin/fm-lint-workflows.sh
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/declared home'
+++ chmod 600 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/config/firstmate/lint-resource-binding.json
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/fakebin/shellcheck
+++ binding_timing_intermediary
+++ mv /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/fakebin/shellcheck /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/fakebin/shellcheck-payload
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/fakebin/shellcheck
+++ BINDING_BOUNDS=1
+++ BINDING_STRAGGLER=1
+++ parent_pid=3211130
+++ (( i=0 ))
+++ BINDING_BLOCK=1
+++ (( i<200 ))
+++ binding_lint
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/repo
++++ command -v systemd-run
+++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=1 BINDING_EXIT=0 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=1 FM_LINT_REQUIRE_BOUNDS=1 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ sleep 0.1
+++ (( i++ ))
+++ (( i<200 ))
+++ '[' '!' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
+++ break
+++ '[' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/ready ']'
++++ sed -n 's/^pid=\([0-9]*\).*/\1/p' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/children
++++ head -1
+++ child_pid=3211482
++++ binding_slot status
++++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/state
++++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace
++++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
++++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/declared home/bin/fm-heavy-slot.sh' status
+++ held='held task=lint-3211131-1791918789 pid=3211260 estimate=256MB age=3s expires_in=1797s state=live'
++++ printf '%s\n' 'held task=lint-3211131-1791918789 pid=3211260 estimate=256MB age=3s expires_in=1797s state=live'
++++ sed -n 's/^held task=\([^ ]*\).*/\1/p'
+++ task=lint-3211131-1791918789
+++ owner_pid=3211131-1791918789
+++ owner_pid=3211131
+++ started=38
+++ kill -TERM 3211131
+++ rc=0
+++ wait 3211130
+++ rc=143
+++ expect_code 143 143 'interruption must propagate its signal exit'
+++ local expected=143 actual=143 'label=interruption must propagate its signal exit'
+++ '[' 143 = 143 ']'
+++ binding_assert_scope_stopped
+++ local pid group
++++ binding_slot status
++++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/state
++++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace
++++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
++++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/declared home/bin/fm-heavy-slot.sh' status
+++ '[' free = free ']'
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/release-events ']'
+++ grep -q '^populated 1$' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/release-events
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3211131-1791918789.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ IFS=
+++ read -r pid
+++ kill -0 3211196
+++ IFS=
+++ read -r pid
+++ kill -0 3211467
+++ IFS=
+++ read -r pid
+++ kill -0 3211473
+++ IFS=
+++ read -r pid
+++ kill -0 3211477
+++ IFS=
+++ read -r pid
+++ kill -0 3211482
+++ IFS=
+++ read -r pid
+++ kill -0 3211538
+++ IFS=
+++ read -r pid
+++ kill -0 3211539
+++ IFS=
+++ read -r pid
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/stragglers ']'
+++ IFS=
+++ read -r pid
+++ kill -0 3211538
+++ IFS=
+++ read -r pid
+++ awk 'NR % 2 {group=$2; next} $2 == group || $1 != $2 {bad=1} END {exit (bad || NR == 0 || NR % 2)}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/groups
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/intermediaries ']'
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/root-group-ancestors ']'
+++ awk 'NR == FNR {ancestors[$1]=1; next} !($1 in ancestors) {bad=1} END {exit bad}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/root-group-ancestors /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/intermediaries
+++ awk 'NR == FNR {intermediaries[$1]=1; next} FNR % 2 == 0 && ($1 in intermediaries) {bad=1} END {exit bad}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/intermediaries /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/trace/groups
+++ '[' 5 -lt 20 ']'
+++ kill -0 3211482
+++ binding_fixture deadline
+++ BINDING_CASE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline
+++ BINDING_REPO=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/repo
+++ BINDING_HOME='/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/declared home'
+++ BINDING_CONFIG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/config
+++ BINDING_STATE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/state
+++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace
+++ BINDING_FAKEBIN=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/repo/bin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/repo/tests '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/declared home' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/config/firstmate /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/state /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/fakebin
+++ git -C /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/repo init -q
+++ mkdir -p '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/declared home/bin'
+++ ln -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/declared home/bin/fm-timeout-lib.sh'
+++ cat
+++ chmod +x '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/declared home/bin/fm-heavy-slot.sh'
+++ cp /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint-resource-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/repo/bin/
+++ printf '#!/usr/bin/env bash\nexit 0\n'
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/repo/bin/fm-lint-workflows.sh
+++ printf '#!/usr/bin/env bash\nprintf "ok\\n"\n'
+++ perl -MJSON::PP -e 'print encode_json({home => $ARGV[0], jobs => 1, estimate_mib => 256})' '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/declared home'
+++ chmod 600 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/config/firstmate/lint-resource-binding.json
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/fakebin/shellcheck
+++ binding_timing_intermediary
+++ mv /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/fakebin/shellcheck /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/fakebin/shellcheck-payload
+++ cat
+++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/fakebin/shellcheck
+++ cat
+++ BINDING_BLOCK=1
+++ started=43
+++ rc=0
++++ binding_lint
++++ cd /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/repo
+++++ command -v systemd-run
++++ env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/config XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/state BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace 'BINDING_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/declared home' BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh BINDING_REAL_SYSTEMD_RUN=/usr/bin/systemd-run BINDING_BLOCK=1 BINDING_EXIT=0 BINDING_LITERAL_ROOT=0 BINDING_STRAGGLER=1 FM_LINT_REQUIRE_BOUNDS=1 FM_LINT_ROOT_GRACE=10 FM_LINT_JOBS=2 FM_LINT_TELEMETRY=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace/telemetry.tsv PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin sh -c 'bin/fm-lint.sh "$@"' sh
+++ out=$'acquired: task=lint-3214966-1791918797 estimate=256MB pid=3215167 expires_in=1800s\nrun the memory-heavy job under the cap wrapper:\n  systemd-run --user --scope -p MemoryMax=256M -- <command>\nkeep the job parallelism bounded: no more than -j4\nrelease immediately after the job: \'/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh\' release lint-3214966-1791918797\nRunning as unit: lint-3214966-1791918797.scope; invocation ID: ebba9fddfe764055a5ad5ab0c0db87ed\nnote: refreshing the heavy slot already held by task \'lint-3214966-1791918797\'\nfm-lint.sh: bound task=lint-3214966-1791918797 jobs=1 MemoryMax=256M memory.max=268435456 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3214966-1791918797.scope helper=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/declared home/bin/fm-heavy-slot.sh\nfm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nreleased: task=lint-3214966-1791918797'
+++ rc=124
+++ unset BINDING_BLOCK
+++ expect_code 124 124 'whole-job deadline must propagate the timed-out exit'
+++ local expected=124 actual=124 'label=whole-job deadline must propagate the timed-out exit'
+++ '[' 124 = 124 ']'
++++ cat /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace/job-bound
+++ '[' '1770 5' = '1770 5' ']'
+++ binding_assert_scope_stopped
+++ local pid group
++++ binding_slot status
++++ XDG_STATE_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/state
++++ BINDING_TRACE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace
++++ BINDING_OWNER_HELPER=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh
++++ '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/declared home/bin/fm-heavy-slot.sh' status
+++ '[' free = free ']'
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace/release-events ']'
+++ grep -q '^populated 1$' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace/release-events
+++ IFS=
+++ read -r group
+++ case "$group" in
+++ '[' -e /sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3214966-1791918797.scope/cgroup.events ']'
+++ IFS=
+++ read -r group
+++ IFS=
+++ read -r pid
+++ kill -0 3215585
+++ IFS=
+++ read -r pid
+++ kill -0 3216922
+++ IFS=
+++ read -r pid
+++ kill -0 3216928
+++ IFS=
+++ read -r pid
+++ kill -0 3216932
+++ IFS=
+++ read -r pid
+++ kill -0 3216937
+++ IFS=
+++ read -r pid
+++ kill -0 3216992
+++ IFS=
+++ read -r pid
+++ kill -0 3216993
+++ IFS=
+++ read -r pid
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace/stragglers ']'
+++ IFS=
+++ read -r pid
+++ kill -0 3216992
+++ IFS=
+++ read -r pid
+++ awk 'NR % 2 {group=$2; next} $2 == group || $1 != $2 {bad=1} END {exit (bad || NR == 0 || NR % 2)}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace/groups
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace/intermediaries ']'
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace/root-group-ancestors ']'
+++ awk 'NR == FNR {ancestors[$1]=1; next} !($1 in ancestors) {bad=1} END {exit bad}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace/root-group-ancestors /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace/intermediaries
+++ awk 'NR == FNR {intermediaries[$1]=1; next} FNR % 2 == 0 && ($1 in intermediaries) {bad=1} END {exit bad}' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace/intermediaries /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace/groups
+++ '[' 14 -lt 25 ']'
+++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace/children ']'
++++ sed -n 's/^pid=\([0-9]*\).*/\1/p' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/deadline/trace/children
++++ head -1
+++ child_pid=3216937
+++ kill -0 3216937
+++ unset BINDING_BOUNDS BINDING_STRAGGLER
+++ pass 'lint resource binding: real cap, one job, contention, ownership, exits, signal and deadline release'
+++ printf 'ok - %s\n' 'lint resource binding: real cap, one job, contention, ownership, exits, signal and deadline release'
++ set +x

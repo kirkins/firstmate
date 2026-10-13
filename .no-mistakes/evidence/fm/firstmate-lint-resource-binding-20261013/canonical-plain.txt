@@ -1,0 +1,53 @@
+acquired: task=lint-3114448-1791918466 estimate=1024MB pid=3114464 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=1024M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/Documents/firstmate/bin/fm-heavy-slot.sh' release lint-3114448-1791918466
+Running as unit: lint-3114448-1791918466.scope; invocation ID: 47c6960e9739461185adba243c27b6d5
+note: refreshing the heavy slot already held by task 'lint-3114448-1791918466'
+fm-lint.sh: bound task=lint-3114448-1791918466 jobs=1 MemoryMax=1024M memory.max=1073741824 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3114448-1791918466.scope helper=/home/kirkins/Documents/firstmate/bin/fm-heavy-slot.sh
+fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)
+fm-lint.sh: full ShellCheck extended analysis enabled
+awk: cmd. line:194: fatal: cannot open file `bin/backends/*.sh' for reading: No such file or directory
+released: task=lint-3114448-1791918466
+canonical child: pid=3114889 cap=1073741824 held task=lint-3114448-1791918466 pid=3114639 estimate=1024MB age=2s expires_in=1798s state=live
+canonical child: pid=3114984 cap=1073741824 held task=lint-3114448-1791918466 pid=3114639 estimate=1024MB age=3s expires_in=1797s state=live
+canonical child: pid=3115065 cap=1073741824 held task=lint-3114448-1791918466 pid=3114639 estimate=1024MB age=3s expires_in=1797s state=live
+canonical child: pid=3115147 cap=1073741824 held task=lint-3114448-1791918466 pid=3114639 estimate=1024MB age=3s expires_in=1797s state=live
+canonical child: pid=3115229 cap=1073741824 held task=lint-3114448-1791918466 pid=3114639 estimate=1024MB age=3s expires_in=1797s state=live
+canonical child: pid=3115310 cap=1073741824 held task=lint-3114448-1791918466 pid=3114639 estimate=1024MB age=4s expires_in=1796s state=live
+ok - canonical plain entrypoint: actual 1024MiB cap, one job, exit 0, empty scope and free slot
+acquired: task=lint-3115682-1791918476 estimate=1024MB pid=3115709 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=1024M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/Documents/firstmate/bin/fm-heavy-slot.sh' release lint-3115682-1791918476
+Running as unit: lint-3115682-1791918476.scope; invocation ID: f0d38a1cd1fb427fa8dffb1afd9ae028
+note: refreshing the heavy slot already held by task 'lint-3115682-1791918476'
+fm-lint.sh: bound task=lint-3115682-1791918476 jobs=1 MemoryMax=1024M memory.max=1073741824 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3115682-1791918476.scope helper=/home/kirkins/Documents/firstmate/bin/fm-heavy-slot.sh
+fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)
+fm-lint.sh: full ShellCheck extended analysis enabled
+fm-lint: end bin/fm-lint.sh reason=error:7 rc=7 duration_ms=281 rss_kib=unavailable
+fm-lint: end bin/fm-lint-resource-lib.sh reason=error:7 rc=7 duration_ms=234 rss_kib=unavailable
+fm-lint: end bin/fm-lint-workflows.sh reason=error:7 rc=7 duration_ms=276 rss_kib=unavailable
+fm-lint: end bin/fm-timeout-lib.sh reason=error:7 rc=7 duration_ms=229 rss_kib=unavailable
+fm-lint: end bin/backends/*.sh reason=error:7 rc=7 duration_ms=233 rss_kib=unavailable
+fm-lint: end tests/root.test.sh reason=error:7 rc=7 duration_ms=232 rss_kib=unavailable
+awk: cmd. line:194: fatal: cannot open file `bin/backends/*.sh' for reading: No such file or directory
+released: task=lint-3115682-1791918476
+canonical child: pid=3115937 cap=1073741824 held task=lint-3115682-1791918476 pid=3115818 estimate=1024MB age=2s expires_in=1798s state=live
+canonical child: pid=3116024 cap=1073741824 held task=lint-3115682-1791918476 pid=3115818 estimate=1024MB age=2s expires_in=1798s state=live
+canonical child: pid=3116115 cap=1073741824 held task=lint-3115682-1791918476 pid=3115818 estimate=1024MB age=3s expires_in=1797s state=live
+canonical child: pid=3116198 cap=1073741824 held task=lint-3115682-1791918476 pid=3115818 estimate=1024MB age=3s expires_in=1797s state=live
+canonical child: pid=3116288 cap=1073741824 held task=lint-3115682-1791918476 pid=3115818 estimate=1024MB age=3s expires_in=1797s state=live
+canonical child: pid=3116422 cap=1073741824 held task=lint-3115682-1791918476 pid=3115818 estimate=1024MB age=3s expires_in=1797s state=live
+ok - canonical plain entrypoint: actual 1024MiB cap, one job, exit 7, empty scope and free slot
+acquired: task=firstmate-lint-resource-binding-20261013 estimate=1024MB pid=3116959 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=1024M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/Documents/firstmate/bin/fm-heavy-slot.sh' release firstmate-lint-resource-binding-20261013
+error: heavy slot held by task 'firstmate-lint-resource-binding-20261013' (pid 3116959, estimate 1024MB, held 0s, expires in 1800s); declare a wait and retry acquire later, never run the job uncapped
+error: release refused - the live heavy slot is held by task 'firstmate-lint-resource-binding-20261013' (pid 3116959), not 'lint-nonholder'; a non-holder never clears a live slot (expired slots clear for anyone)
+released: task=firstmate-lint-resource-binding-20261013
+ok - actual global contention names and preserves the holder; matching release frees capacity

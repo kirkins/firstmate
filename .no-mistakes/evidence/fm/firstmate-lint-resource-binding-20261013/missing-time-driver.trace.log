@@ -1,0 +1,143 @@
+++ test -x /usr/bin/time
+++ echo no
++ printf 'portable evidence: /usr/bin/time executable=%s\n' no
++ test_memory_failure_retries_without_external_sources
++ local tmp fakebin fixture out rc log rss_kib require_bounds=0 mode
++ modes=('0')
++ local -a modes
++ fm_lint_bounds_supported
++ '[' -r /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-timeout-lib.sh ']'
++ ulimit -v 65536
++ command -v perl
++ return 0
++ require_bounds=1
++ modes=(1 0)
+++ fm_test_tmproot fm-lint-memory-fallback
+++ local prefix=fm-lint-memory-fallback root tmp_base
++++ fm_test_tmpdir
++++ local base=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp physical
++++ base=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp
++++ '[' -n /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp ']'
++++ case "$base" in
+++++ CDPATH=
+++++ cd -- /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp
+++++ pwd -P
++++ case "$base" in
++++ physical=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp
++++ base=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp
++++ '[' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/.git ']'
++++ printf '%s\n' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp
+++ tmp_base=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp
+++ tmp_base=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp
++++ mktemp -d /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.XXXXXX
+++ root=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq
++++ cd -P -- /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq
++++ pwd -P
+++ root=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq
+++ printf '%s\n%s\n' 3292622 'linux-starttime=18187858 cmdline-hex=626173680074657374732f666d2d6c6f63616c2d6d697373696e672d74696d652e746573742e736800'
+++ printf '%s\n' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq
+++ printf '%s\n' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq
++ tmp=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq
+++ fm_fakebin /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq
+++ local dir=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq fakebin=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/fakebin
+++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/fakebin
+++ printf '%s\n' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/fakebin
++ fakebin=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/fakebin
++ fixture=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh
++ log=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/flags.log
++ printf '#!/usr/bin/env bash\n# shellcheck source=lib.sh\nexit 0\n'
++ cat
++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/fakebin/shellcheck
++ for mode in "${modes[@]}"
++ :
++ rc=0
+++ PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin
+++ FM_LINT_JOBS=1
+++ FM_LINT_REQUIRE_BOUNDS=1
+++ FM_TEST_FALLBACK_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/flags.log
+++ /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh --telemetry /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.1.tsv /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh
++ out=$'fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nfm-lint: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh hit the memory ceiling with --external-sources (reason=memory rc=251); retried without it; fallback passed with cross-file codes excluded (SC1091,SC2034,SC2153,SC2329)'
++ '[' 0 -eq 0 ']'
++ assert_grep $'source_directives\t1' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.1.tsv 'telemetry lost the root'\''s source directive'
++ grep -F -- $'source_directives\t1' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.1.tsv
++ assert_grep $'source_followed_directives\t0' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.1.tsv 'telemetry counted a source directive that the passing fallback did not follow'
++ grep -F -- $'source_followed_directives\t0' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.1.tsv
+++ cat /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/flags.log
+++ printf 'yes\tnone\nno\tSC1091,SC2034,SC2153,SC2329'
++ '[' $'yes\tnone\nno\tSC1091,SC2034,SC2153,SC2329' = $'yes\tnone\nno\tSC1091,SC2034,SC2153,SC2329' ']'
++ assert_contains $'fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nfm-lint: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh hit the memory ceiling with --external-sources (reason=memory rc=251); retried without it; fallback passed with cross-file codes excluded (SC1091,SC2034,SC2153,SC2329)' 'hit the memory ceiling with --external-sources (reason=memory rc=251)' 'the fallback was not identified in the output'
++ case "$1" in
++ :
++ assert_contains $'fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nfm-lint: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh hit the memory ceiling with --external-sources (reason=memory rc=251); retried without it; fallback passed with cross-file codes excluded (SC1091,SC2034,SC2153,SC2329)' 'fallback passed with cross-file codes excluded (SC1091,SC2034,SC2153,SC2329)' 'the narrower fallback result was not disclosed'
++ case "$1" in
++ :
++ awk -F '\t' '$1 == "end" && $3 ~ /teardown\.sh$/ && $9 == 0 && $10 == "memory-fallback" { found=1 } END { exit !found }' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.1.roots.tsv
+++ awk -F '\t' '$1 == "end" && $3 ~ /teardown\.sh$/ { print $11 }' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.1.roots.tsv
++ rss_kib=unavailable
++ '[' 1 -eq 1 ']'
++ assert_grep $'meta\tbounds_enforced\t1' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.1.roots.tsv 'the bounded fallback did not enforce bounds'
++ grep -F -- $'meta\tbounds_enforced\t1' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.1.roots.tsv
++ '[' -x /usr/bin/time ']'
++ '[' unavailable = unavailable ']'
++ for mode in "${modes[@]}"
++ :
++ rc=0
+++ PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin
+++ FM_LINT_JOBS=1
+++ FM_LINT_REQUIRE_BOUNDS=0
+++ FM_TEST_FALLBACK_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/flags.log
+++ /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh --telemetry /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.0.tsv /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh
++ out=$'fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nfm-lint: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh hit the memory ceiling with --external-sources (reason=memory rc=251); retried without it; fallback passed with cross-file codes excluded (SC1091,SC2034,SC2153,SC2329)'
++ '[' 0 -eq 0 ']'
++ assert_grep $'source_directives\t1' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.0.tsv 'telemetry lost the root'\''s source directive'
++ grep -F -- $'source_directives\t1' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.0.tsv
++ assert_grep $'source_followed_directives\t0' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.0.tsv 'telemetry counted a source directive that the passing fallback did not follow'
++ grep -F -- $'source_followed_directives\t0' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.0.tsv
+++ cat /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/flags.log
+++ printf 'yes\tnone\nno\tSC1091,SC2034,SC2153,SC2329'
++ '[' $'yes\tnone\nno\tSC1091,SC2034,SC2153,SC2329' = $'yes\tnone\nno\tSC1091,SC2034,SC2153,SC2329' ']'
++ assert_contains $'fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nfm-lint: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh hit the memory ceiling with --external-sources (reason=memory rc=251); retried without it; fallback passed with cross-file codes excluded (SC1091,SC2034,SC2153,SC2329)' 'hit the memory ceiling with --external-sources (reason=memory rc=251)' 'the fallback was not identified in the output'
++ case "$1" in
++ :
++ assert_contains $'fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nfm-lint: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh hit the memory ceiling with --external-sources (reason=memory rc=251); retried without it; fallback passed with cross-file codes excluded (SC1091,SC2034,SC2153,SC2329)' 'fallback passed with cross-file codes excluded (SC1091,SC2034,SC2153,SC2329)' 'the narrower fallback result was not disclosed'
++ case "$1" in
++ :
++ awk -F '\t' '$1 == "end" && $3 ~ /teardown\.sh$/ && $9 == 0 && $10 == "memory-fallback" { found=1 } END { exit !found }' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.0.roots.tsv
+++ awk -F '\t' '$1 == "end" && $3 ~ /teardown\.sh$/ { print $11 }' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.0.roots.tsv
++ rss_kib=unavailable
++ '[' 0 -eq 1 ']'
++ assert_grep $'meta\tbounds_enforced\t0' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.0.roots.tsv 'the unbounded fallback unexpectedly enforced bounds'
++ grep -F -- $'meta\tbounds_enforced\t0' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/pass.0.roots.tsv
++ '[' unavailable = unavailable ']'
++ pinned_ready
++ command -v shellcheck
+++ shellcheck --version
+++ awk '/^version:/ {print $2; exit}'
++ '[' 0.11.0 = 0.11.0 ']'
++ local real_shellcheck
+++ command -v shellcheck
++ real_shellcheck=/home/kirkins/.local/bin/shellcheck
++ cat
++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/fakebin/shellcheck
++ printf '#!/usr/bin/env bash\nx=$1\nprintf "%%s\\n" $x\n'
++ rc=0
+++ PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/fakebin:/home/kirkins/.local/bin:/home/kirkins/.codex/tmp/arg0/codex-arg0Fnkf4y:/home/kirkins/.local/share/mise/installs/claude/latest:/home/kirkins/.local/share/mise/installs/codex/latest/bin:/home/kirkins/.local/share/mise/installs/copilot/latest:/home/kirkins/.local/share/mise/installs/cursor-agent/latest/bin:/home/kirkins/.local/share/mise/installs/gemini/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/gh/latest/gh_2.102.0_linux_arm64/bin:/home/kirkins/.local/share/mise/installs/github-can1357-oh-my-pi/latest:/home/kirkins/.local/share/mise/installs/http-muse/latest:/home/kirkins/.local/share/mise/installs/npm-xai-official-grok/latest/node_modules/.bin:/home/kirkins/.local/share/mise/installs/opencode/latest:/home/kirkins/.local/share/mise/installs/pi/1.2.0/pi:/home/kirkins/.local/share/mise/installs/pipx-hermes-agent/latest/bin:/home/kirkins/.local/share/mise/shims:/home/kirkins/go/bin:/home/kirkins/.cargo/bin:/home/kirkins/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/share/dotnet:/home/kirkins/.dotnet/tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin
+++ FM_REAL_SHELLCHECK=/home/kirkins/.local/bin/shellcheck
+++ FM_LINT_JOBS=1
+++ FM_LINT_REQUIRE_BOUNDS=1
+++ /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-lint.sh --telemetry /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/finding.tsv /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh
++ out=$'fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nfm-lint: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh hit the memory ceiling with --external-sources (reason=memory rc=251); retried without it; fallback reason=findings rc=1\n\nIn /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh line 3:\nprintf "%s\\n" $x\n              ^-- SC2086 (info): Double quote to prevent globbing and word splitting.\n\nDid you mean:\nprintf "%s\\n" "$x"\n\nFor more information:\n  https://www.shellcheck.net/wiki/SC2086 -- Double quote to prevent globbing ...'
++ rc=1
++ '[' 1 -eq 1 ']'
++ assert_contains $'fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nfm-lint: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh hit the memory ceiling with --external-sources (reason=memory rc=251); retried without it; fallback reason=findings rc=1\n\nIn /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh line 3:\nprintf "%s\\n" $x\n              ^-- SC2086 (info): Double quote to prevent globbing and word splitting.\n\nDid you mean:\nprintf "%s\\n" "$x"\n\nFor more information:\n  https://www.shellcheck.net/wiki/SC2086 -- Double quote to prevent globbing ...' 'fallback reason=findings rc=1' 'the fallback finding was not identified'
++ case "$1" in
++ :
++ assert_contains $'fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)\nfm-lint.sh: full ShellCheck extended analysis enabled\nfm-lint: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh hit the memory ceiling with --external-sources (reason=memory rc=251); retried without it; fallback reason=findings rc=1\n\nIn /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/teardown.sh line 3:\nprintf "%s\\n" $x\n              ^-- SC2086 (info): Double quote to prevent globbing and word splitting.\n\nDid you mean:\nprintf "%s\\n" "$x"\n\nFor more information:\n  https://www.shellcheck.net/wiki/SC2086 -- Double quote to prevent globbing ...' SC2086 'the real fallback finding was not reported'
++ case "$1" in
++ :
++ awk -F '\t' '$1 == "end" && $3 ~ /teardown\.sh$/ && $9 == 1 && $10 == "findings" { found=1 } END { exit !found }' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-memory-fallback.GjPrpq/finding.roots.tsv
++ pass 'memory failures retry without source following, exclude cross-file codes, and preserve a real fallback finding'
++ printf 'ok - %s\n' 'memory failures retry without source following, exclude cross-file codes, and preserve a real fallback finding'
++ capture_fallback_evidence
++ local rc=0 fixture
++ set +x

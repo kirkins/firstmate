@@ -1,0 +1,11 @@
+acquired: task=lint-3211131-1791918789 estimate=256MB pid=3211149 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=256M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/bin/fm-heavy-slot.sh' release lint-3211131-1791918789
+Running as unit: lint-3211131-1791918789.scope; invocation ID: 2cef27ae16c64e0e92c2f86162d2f5b3
+note: refreshing the heavy slot already held by task 'lint-3211131-1791918789'
+fm-lint.sh: bound task=lint-3211131-1791918789 jobs=1 MemoryMax=256M memory.max=268435456 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3211131-1791918789.scope helper=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.validation-temp/tmp/fm-lint-binding.DrfRUL/signal/declared home/bin/fm-heavy-slot.sh
+fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)
+fm-lint.sh: full ShellCheck extended analysis enabled
+released: task=lint-3211131-1791918789

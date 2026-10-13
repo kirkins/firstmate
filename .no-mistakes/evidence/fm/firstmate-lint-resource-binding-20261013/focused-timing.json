@@ -1,0 +1,64 @@
+{
+  "families": [
+    {
+      "count": 1,
+      "duration_ms": 1404,
+      "failed": 0,
+      "name": "pure-contract-unit"
+    },
+    {
+      "count": 3,
+      "duration_ms": 67059,
+      "failed": 0,
+      "name": "unclassified"
+    }
+  ],
+  "finished_at": "2026-10-13T19:13:43Z",
+  "run_id": "fm-test-run-1791918754402-3201197",
+  "scripts": [
+    {
+      "duration_ms": 57033,
+      "exit": 0,
+      "expected_gate_skip": "none",
+      "family": "unclassified",
+      "gate_skip": false,
+      "gate_skip_reason": "",
+      "path": "tests/fm-local-resource-evidence.test.sh"
+    },
+    {
+      "duration_ms": 4598,
+      "exit": 0,
+      "expected_gate_skip": "none",
+      "family": "unclassified",
+      "gate_skip": false,
+      "gate_skip_reason": "",
+      "path": "tests/fm-heavy-slot.test.sh"
+    },
+    {
+      "duration_ms": 1404,
+      "exit": 0,
+      "expected_gate_skip": "none",
+      "family": "pure-contract-unit",
+      "gate_skip": false,
+      "gate_skip_reason": "",
+      "path": "tests/fm-lint-workflows.test.sh"
+    },
+    {
+      "duration_ms": 5428,
+      "exit": 0,
+      "expected_gate_skip": "none",
+      "family": "unclassified",
+      "gate_skip": false,
+      "gate_skip_reason": "",
+      "path": "tests/fm-local-missing-time.test.sh"
+    }
+  ],
+  "selection": "scripts;jobs=1",
+  "started_at": "2026-10-13T19:12:34Z",
+  "summary": {
+    "duration_ms": 68665,
+    "failed": 0,
+    "skipped_gate": 0,
+    "total": 4
+  }
+}

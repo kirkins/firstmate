@@ -1,0 +1,275 @@
+Source head: 8403bae8ff13fc597f50028d2598060985d0edb4
+Actual generated process/cgroup records retained from the current-source behavioral driver.
+
+CASE success
+children:
+pid=3203055 cap=268435456 held task=lint-3201984-1791918755 pid=3202110 estimate=256MB age=2s expires_in=1798s state=live
+pid=3203141 cap=268435456 held task=lint-3201984-1791918755 pid=3202110 estimate=256MB age=2s expires_in=1798s state=live
+pid=3203222 cap=268435456 held task=lint-3201984-1791918755 pid=3202110 estimate=256MB age=2s expires_in=1798s state=live
+pid=3203326 cap=268435456 held task=lint-3201984-1791918755 pid=3202110 estimate=256MB age=3s expires_in=1797s state=live
+pid=3203407 cap=268435456 held task=lint-3201984-1791918755 pid=3202110 estimate=256MB age=3s expires_in=1797s state=live
+pid=3203488 cap=268435456 held task=lint-3201984-1791918755 pid=3202110 estimate=256MB age=3s expires_in=1797s state=live
+scopes:
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3201984-1791918755.scope
+groups:
+3203055 3203055
+3203050 3203050
+3203141 3203141
+3203137 3203137
+3203222 3203222
+3203218 3203218
+3203326 3203326
+3203322 3203322
+3203407 3203407
+3203403 3203403
+3203488 3203488
+3203484 3203484
+stragglers:
+3203113
+3203199
+3203280
+3203384
+3203465
+3203546
+release-events:
+populated 0
+populated 0
+populated 0
+populated 0
+populated 0
+populated 0
+jobs	1
+root_bounds_enforced	1
+root_count	6
+result_exit	0
+
+CASE success-timed
+children:
+pid=3205642 cap=268435456 held task=lint-3204459-1791918765 pid=3204600 estimate=256MB age=3s expires_in=1797s state=live
+pid=3205755 cap=268435456 held task=lint-3204459-1791918765 pid=3204600 estimate=256MB age=3s expires_in=1797s state=live
+pid=3205844 cap=268435456 held task=lint-3204459-1791918765 pid=3204600 estimate=256MB age=3s expires_in=1797s state=live
+pid=3205934 cap=268435456 held task=lint-3204459-1791918765 pid=3204600 estimate=256MB age=3s expires_in=1797s state=live
+pid=3206032 cap=268435456 held task=lint-3204459-1791918765 pid=3204600 estimate=256MB age=4s expires_in=1796s state=live
+pid=3206121 cap=268435456 held task=lint-3204459-1791918765 pid=3204600 estimate=256MB age=4s expires_in=1796s state=live
+scopes:
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3204459-1791918765.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3204459-1791918765.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3204459-1791918765.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3204459-1791918765.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3204459-1791918765.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3204459-1791918765.scope
+groups:
+3205642 3205630
+3205613 3205613
+3205755 3205750
+3205746 3205746
+3205844 3205839
+3205835 3205835
+3205934 3205929
+3205925 3205925
+3206032 3206027
+3206023 3206023
+3206121 3206116
+3206112 3206112
+root-group-ancestors:
+3205630
+3205750
+3205839
+3205929
+3206027
+3206116
+intermediaries:
+3205630
+3205750
+3205839
+3205929
+3206027
+3206116
+stragglers:
+3205716
+3205810
+3205899
+3205992
+3206087
+3206176
+release-events:
+populated 0
+populated 0
+populated 0
+populated 0
+populated 0
+populated 0
+jobs	1
+root_bounds_enforced	1
+root_count	6
+result_exit	0
+
+CASE failure
+children:
+pid=3208204 cap=268435456 held task=lint-3207883-1791918775 pid=3208072 estimate=256MB age=2s expires_in=1798s state=live
+pid=3208299 cap=268435456 held task=lint-3207883-1791918775 pid=3208072 estimate=256MB age=3s expires_in=1797s state=live
+pid=3208389 cap=268435456 held task=lint-3207883-1791918775 pid=3208072 estimate=256MB age=3s expires_in=1797s state=live
+pid=3208479 cap=268435456 held task=lint-3207883-1791918775 pid=3208072 estimate=256MB age=3s expires_in=1797s state=live
+pid=3208577 cap=268435456 held task=lint-3207883-1791918775 pid=3208072 estimate=256MB age=4s expires_in=1796s state=live
+pid=3208667 cap=268435456 held task=lint-3207883-1791918775 pid=3208072 estimate=256MB age=4s expires_in=1796s state=live
+scopes:
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3207883-1791918775.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3207883-1791918775.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3207883-1791918775.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3207883-1791918775.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3207883-1791918775.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3207883-1791918775.scope
+groups:
+3208204 3208199
+3208195 3208195
+3208299 3208294
+3208290 3208290
+3208389 3208384
+3208380 3208380
+3208479 3208474
+3208470 3208470
+3208577 3208572
+3208566 3208566
+3208667 3208662
+3208658 3208658
+root-group-ancestors:
+3208199
+3208294
+3208384
+3208474
+3208572
+3208662
+intermediaries:
+3208199
+3208294
+3208384
+3208474
+3208572
+3208662
+stragglers:
+3208259
+3208354
+3208444
+3208534
+3208632
+3208723
+release-events:
+populated 0
+populated 0
+populated 0
+populated 0
+populated 0
+populated 0
+jobs	1
+root_bounds_enforced	1
+root_count	6
+result_exit	7
+
+CASE signal
+children:
+pid=3211482 cap=268435456 held task=lint-3211131-1791918789 pid=3211260 estimate=256MB age=3s expires_in=1797s state=live
+scopes:
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3211131-1791918789.scope
+groups:
+3211482 3211477
+3211473 3211473
+root-group-ancestors:
+3211477
+intermediaries:
+3211477
+stragglers:
+3211538
+release-events:
+populated 0
+
+CASE deadline
+children:
+pid=3216937 cap=268435456 held task=lint-3214966-1791918797 pid=3216122 estimate=256MB age=2s expires_in=1798s state=live
+scopes:
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3214966-1791918797.scope
+groups:
+3216937 3216932
+3216928 3216928
+root-group-ancestors:
+3216932
+intermediaries:
+3216932
+stragglers:
+3216992
+release-events:
+populated 0
+job-bound:
+1770 5
+
+CASE literal-argv
+children:
+pid=3209932 cap=268435456 held task=lint-3209722-1791918786 pid=3209836 estimate=256MB age=0s expires_in=1800s state=live
+scopes:
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3209722-1791918786.scope
+groups:
+3209932 3209926
+3209779 3209779
+root-group-ancestors:
+3209926
+release-events:
+populated 0
+requested-roots:
+tests/${FLAVOR}.sh
+
+CASE paths-${FLAVOR}
+children:
+pid=3210399 cap=268435456 held task=lint-3210165-1791918787 pid=3210291 estimate=256MB age=0s expires_in=1800s state=live
+pid=3210489 cap=268435456 held task=lint-3210165-1791918787 pid=3210291 estimate=256MB age=0s expires_in=1800s state=live
+pid=3210627 cap=268435456 held task=lint-3210165-1791918787 pid=3210291 estimate=256MB age=1s expires_in=1799s state=live
+pid=3210705 cap=268435456 held task=lint-3210165-1791918787 pid=3210291 estimate=256MB age=1s expires_in=1799s state=live
+pid=3210784 cap=268435456 held task=lint-3210165-1791918787 pid=3210291 estimate=256MB age=1s expires_in=1799s state=live
+pid=3210862 cap=268435456 held task=lint-3210165-1791918787 pid=3210291 estimate=256MB age=1s expires_in=1799s state=live
+scopes:
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3210165-1791918787.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3210165-1791918787.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3210165-1791918787.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3210165-1791918787.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3210165-1791918787.scope
+/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3210165-1791918787.scope
+groups:
+3210399 3210393
+3210228 3210228
+3210489 3210483
+3210228 3210228
+3210627 3210483
+3210228 3210228
+3210705 3210483
+3210228 3210228
+3210784 3210483
+3210228 3210228
+3210862 3210483
+3210228 3210228
+root-group-ancestors:
+3210393
+3210483
+3210483
+3210483
+3210483
+3210483
+release-events:
+populated 0
+populated 0
+populated 0
+populated 0
+populated 0
+populated 0
+jobs	1
+root_bounds_enforced	0
+root_count	6
+result_exit	0
+
+CASE portable
+jobs	2
+root_bounds_enforced	0
+root_count	6
+result_exit	0

@@ -1,0 +1,29 @@
+format	fm-lint-roots-v1
+meta	shellcheck_version	0.11.0
+meta	platform	Linux aarch64
+meta	image_os	unknown
+meta	image_version	unknown
+meta	mode	full
+meta	partition	all
+meta	jobs	2
+meta	bounds_enforced	0
+meta	root_deadline_seconds	unbounded
+meta	root_kill_grace_seconds	unbounded
+meta	root_memory_limit_kib	unbounded
+meta	timing_mechanism	none
+begin	1	bin/fm-lint-resource-lib.sh	1	full	1791918754947
+begin	3	bin/fm-lint.sh	0	full	1791918754950
+end	1	bin/fm-lint-resource-lib.sh	1	full	1791918754947	1791918754958	11	0	ok	unavailable	1
+begin	2	bin/fm-lint-workflows.sh	1	full	1791918754959
+end	3	bin/fm-lint.sh	0	full	1791918754950	1791918754964	14	0	ok	unavailable	1
+end	2	bin/fm-lint-workflows.sh	1	full	1791918754959	1791918754970	11	0	ok	unavailable	1
+begin	4	bin/fm-timeout-lib.sh	1	full	1791918754971
+end	4	bin/fm-timeout-lib.sh	1	full	1791918754971	1791918754984	13	0	ok	unavailable	1
+begin	5	bin/backends/*.sh	1	full	1791918754985
+end	5	bin/backends/*.sh	1	full	1791918754985	1791918754997	12	0	ok	unavailable	1
+begin	6	tests/root.test.sh	1	full	1791918754997
+end	6	tests/root.test.sh	1	full	1791918754997	1791918755009	12	0	ok	unavailable	1
+meta	roots_begun	6
+meta	roots_completed	6
+meta	roots_unfinished	0
+meta	result_exit	0

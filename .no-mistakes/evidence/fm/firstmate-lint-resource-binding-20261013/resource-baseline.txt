@@ -1,0 +1,11 @@
+Running as unit: run-p3038968-i40770554.scope; invocation ID: 91192472022340979800eb408266ac01
+FM_TEST_BEGIN 2026-10-13T19:03:38Z tests/fm-lint-resource-binding.test.sh family=unclassified expected_gate_skip=none
+ok - lint resource binding: malformed/private/home validation and portable absence
+resource proof: fm-lint.sh: bound task=lint-3040669-1791918220 jobs=1 MemoryMax=256M memory.max=268435456 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3040669-1791918220.scope helper=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V7WVYY8990PVF2KHGYMYVG/.test-phase/tmp/fm-lint-binding.YCFTk7/success/declared home/bin/fm-heavy-slot.sh
+resource proof: jobs=1 root_count=6 
+resource proof: pid=3041754 cap=268435456 held task=lint-3040669-1791918220 pid=3040796 estimate=256MB age=2s expires_in=1798s state=live
+ok - lint resource binding: real cap, one job, contention, ownership, exits, signal and deadline release
+FM_TEST_END 2026-10-13T19:04:35Z tests/fm-lint-resource-binding.test.sh exit=0 duration_ms=56120 gate_skip=false
+FM_TEST_SUMMARY total=1 failed=0 skipped_gate=0 duration_ms=56197
+FM_TEST_SUMMARY_FAMILY family=unclassified count=1 duration_ms=56120 failed=0
+FM_TEST_SLOWEST rank=1 script=tests/fm-lint-resource-binding.test.sh duration_ms=56120

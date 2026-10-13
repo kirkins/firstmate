@@ -1,0 +1,274 @@
+Source head: 8403bae8ff13fc597f50028d2598060985d0edb4
+Disposable opt-in: {"home": "/home/kirkins/Documents/firstmate", "jobs": 1, "estimate_mib": 1024}
+No outer slot: each plain entrypoint self-acquires the canonical owner.
+$ (cd disposable-repo; FM_LINT_JOBS=1 FM_LINT_REQUIRE_BOUNDS=1 bin/fm-lint.sh) [success]
+error: heavy slot held by task 'opencode-go-fleet-restoration-20261013' (pid 3239942, estimate 1500MB, held 12s, expires in 1788s); declare a wait and retry acquire later, never run the job uncapped
+entrypoint exit=6; elapsed_seconds=0.073
+canonical slot after entrypoint=held task=opencode-go-fleet-restoration-20261013 pid=3239942 estimate=1500MB age=12s expires_in=1788s state=live
+owned scope after entrypoint=removed
+Source head: 8403bae8ff13fc597f50028d2598060985d0edb4
+Disposable opt-in: {"home": "/home/kirkins/Documents/firstmate", "jobs": 1, "estimate_mib": 1024}
+No outer slot: each plain entrypoint self-acquires the canonical owner.
+$ (cd disposable-repo; FM_LINT_JOBS=1 FM_LINT_REQUIRE_BOUNDS=1 bin/fm-lint.sh) [success]
+acquired: task=lint-3251393-1791918897 estimate=1024MB pid=3251414 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=1024M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/Documents/firstmate/bin/fm-heavy-slot.sh' release lint-3251393-1791918897
+Running as unit: lint-3251393-1791918897.scope; invocation ID: c9ce8167e4bf463781392e147048babe
+note: refreshing the heavy slot already held by task 'lint-3251393-1791918897'
+fm-lint.sh: bound task=lint-3251393-1791918897 jobs=1 MemoryMax=1024M memory.max=1073741824 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3251393-1791918897.scope helper=/home/kirkins/Documents/firstmate/bin/fm-heavy-slot.sh
+Independent kernel memory.max=1073741824
+Independent canonical ownership=held task=lint-3251393-1791918897 pid=3251528 estimate=1024MB age=0s expires_in=1800s state=live
+fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)
+fm-lint.sh: local changed-file mode; ShellCheck source following disabled
+awk: cmd. line:194: fatal: cannot open file `bin/backends/*.sh' for reading: No such file or directory
+fm-lint-workflows.sh: actionlint 1.7.12 (pinned 1.7.12)
+fm-lint-workflows.sh: 1 workflow files valid
+Failed to stop lint-3251393-1791918897.scope: Unit lint-3251393-1791918897.scope not loaded.
+released: task=lint-3251393-1791918897
+entrypoint exit=0; elapsed_seconds=3.009
+canonical slot after entrypoint=free
+owned scope after entrypoint=removed
+Generated telemetry:
+format	fm-lint-telemetry-v1
+git_head	afae9534f0d930e08c49d7002ce9fb4c18667d45
+content_cksum	888655962-62
+shellcheck_version	0.11.0
+analysis_mode	local
+partition	all
+jobs	1
+root_bounds_enforced	1
+root_deadline_seconds	1200
+root_kill_grace_seconds	5
+root_memory_limit_kib	12582912
+root_timing_mechanism	perl
+root_count	2
+direct_lines	4
+direct_bytes	78
+source_directives	0
+source_boundary_directives	0
+source_followed_directives	0
+source_target_count	0
+shard_1_weight_bytes	39
+shard_2_weight_bytes	39
+wall_seconds	1
+worker_wall_sum_seconds	unavailable
+max_worker_wall_seconds	unavailable
+user_seconds	unavailable
+system_seconds	unavailable
+max_worker_rss_kib	unavailable
+worker_rss_sum_kib	unavailable
+shellcheck_processes_start	0
+shellcheck_processes_end	0
+load_average_start	2.53/2.98/2.60
+load_average_end	2.53/2.98/2.60
+aggregate_cpu_percent_start	148.40
+aggregate_cpu_percent_end	310.60
+result_exit	0
+
+$ (cd disposable-repo; FM_LINT_JOBS=1 FM_LINT_REQUIRE_BOUNDS=1 bin/fm-lint.sh) [findings]
+acquired: task=lint-3252550-1791918900 estimate=1024MB pid=3252571 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=1024M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/Documents/firstmate/bin/fm-heavy-slot.sh' release lint-3252550-1791918900
+Running as unit: lint-3252550-1791918900.scope; invocation ID: 4076a0df382145e48b2eb3056c2e9f82
+note: refreshing the heavy slot already held by task 'lint-3252550-1791918900'
+fm-lint.sh: bound task=lint-3252550-1791918900 jobs=1 MemoryMax=1024M memory.max=1073741824 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3252550-1791918900.scope helper=/home/kirkins/Documents/firstmate/bin/fm-heavy-slot.sh
+Independent kernel memory.max=1073741824
+Independent canonical ownership=held task=lint-3252550-1791918900 pid=3252686 estimate=1024MB age=0s expires_in=1800s state=live
+fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)
+fm-lint.sh: local changed-file mode; ShellCheck source following disabled
+
+In tests/clean-b.sh line 3:
+printf "%s\n" $value
+              ^----^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean:
+printf "%s\n" "$value"
+
+For more information:
+  https://www.shellcheck.net/wiki/SC2086 -- Double quote to prevent globbing ...
+awk: cmd. line:194: fatal: cannot open file `bin/backends/*.sh' for reading: No such file or directory
+fm-lint-workflows.sh: actionlint 1.7.12 (pinned 1.7.12)
+fm-lint-workflows.sh: 1 workflow files valid
+Failed to stop lint-3252550-1791918900.scope: Unit lint-3252550-1791918900.scope not loaded.
+released: task=lint-3252550-1791918900
+entrypoint exit=1; elapsed_seconds=3.012
+canonical slot after entrypoint=free
+owned scope after entrypoint=removed
+Generated telemetry:
+format	fm-lint-telemetry-v1
+git_head	afae9534f0d930e08c49d7002ce9fb4c18667d45
+content_cksum	104073417-62
+shellcheck_version	0.11.0
+analysis_mode	local
+partition	all
+jobs	1
+root_bounds_enforced	1
+root_deadline_seconds	1200
+root_kill_grace_seconds	5
+root_memory_limit_kib	12582912
+root_timing_mechanism	perl
+root_count	2
+direct_lines	5
+direct_bytes	89
+source_directives	0
+source_boundary_directives	0
+source_followed_directives	0
+source_target_count	0
+shard_1_weight_bytes	50
+shard_2_weight_bytes	39
+wall_seconds	0
+worker_wall_sum_seconds	unavailable
+max_worker_wall_seconds	unavailable
+user_seconds	unavailable
+system_seconds	unavailable
+max_worker_rss_kib	unavailable
+worker_rss_sum_kib	unavailable
+shellcheck_processes_start	0
+shellcheck_processes_end	0
+load_average_start	2.53/2.98/2.60
+load_average_end	2.53/2.98/2.60
+aggregate_cpu_percent_start	107.00
+aggregate_cpu_percent_end	106.60
+result_exit	1
+
+Both current-source plain invocations satisfied their observable contracts.
+Source head: 8403bae8ff13fc597f50028d2598060985d0edb4
+Disposable opt-in: {"home": "/home/kirkins/Documents/firstmate", "jobs": 1, "estimate_mib": 1024}
+No outer slot: each plain entrypoint self-acquires the canonical owner.
+$ (cd disposable-repo; FM_LINT_JOBS=1 FM_LINT_REQUIRE_BOUNDS=1 bin/fm-lint.sh) [success]
+error: heavy slot held by task 'opencode-go-fleet-restoration-20261013' (pid 3262000, estimate 1500MB, held 33s, expires in 1767s); declare a wait and retry acquire later, never run the job uncapped
+entrypoint exit=6; elapsed_seconds=0.097
+canonical slot after entrypoint=held task=opencode-go-fleet-restoration-20261013 pid=3262000 estimate=1500MB age=33s expires_in=1767s state=live
+CONTENTION: no analysis; existing holder preserved. Waiting is required before re-driving.
+Source head: 8403bae8ff13fc597f50028d2598060985d0edb4
+Disposable opt-in: {"home": "/home/kirkins/Documents/firstmate", "jobs": 1, "estimate_mib": 1024}
+No outer slot: each plain entrypoint self-acquires the canonical owner.
+$ (cd disposable-repo; FM_LINT_JOBS=1 FM_LINT_REQUIRE_BOUNDS=1 bin/fm-lint.sh) [success]
+acquired: task=lint-3275589-1791918983 estimate=1024MB pid=3275610 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=1024M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/Documents/firstmate/bin/fm-heavy-slot.sh' release lint-3275589-1791918983
+Running as unit: lint-3275589-1791918983.scope; invocation ID: a919c49c8a074c4390e106f1efa25b44
+note: refreshing the heavy slot already held by task 'lint-3275589-1791918983'
+fm-lint.sh: bound task=lint-3275589-1791918983 jobs=1 MemoryMax=1024M memory.max=1073741824 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3275589-1791918983.scope helper=/home/kirkins/Documents/firstmate/bin/fm-heavy-slot.sh
+Independent kernel memory.max=1073741824
+Independent canonical ownership=held task=lint-3275589-1791918983 pid=3275724 estimate=1024MB age=0s expires_in=1800s state=live
+fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)
+fm-lint.sh: local changed-file mode; ShellCheck source following disabled
+fm-lint-workflows.sh: actionlint 1.7.12 (pinned 1.7.12)
+fm-lint-workflows.sh: 1 workflow files valid
+Failed to stop lint-3275589-1791918983.scope: Unit lint-3275589-1791918983.scope not loaded.
+released: task=lint-3275589-1791918983
+entrypoint exit=0; elapsed_seconds=3.207
+canonical slot after entrypoint=free
+owned scope after entrypoint=removed
+Generated telemetry:
+format	fm-lint-telemetry-v1
+git_head	cd63713156e5a11cc7dc1e48738bfb2c2f2a1657
+content_cksum	888655962-62
+shellcheck_version	0.11.0
+analysis_mode	local
+partition	all
+jobs	1
+root_bounds_enforced	1
+root_deadline_seconds	1200
+root_kill_grace_seconds	5
+root_memory_limit_kib	12582912
+root_timing_mechanism	perl
+root_count	2
+direct_lines	4
+direct_bytes	78
+source_directives	0
+source_boundary_directives	0
+source_followed_directives	0
+source_target_count	0
+shard_1_weight_bytes	39
+shard_2_weight_bytes	39
+wall_seconds	1
+worker_wall_sum_seconds	unavailable
+max_worker_wall_seconds	unavailable
+user_seconds	unavailable
+system_seconds	unavailable
+max_worker_rss_kib	unavailable
+worker_rss_sum_kib	unavailable
+shellcheck_processes_start	0
+shellcheck_processes_end	0
+load_average_start	2.89/2.92/2.61
+load_average_end	2.89/2.92/2.61
+aggregate_cpu_percent_start	114.60
+aggregate_cpu_percent_end	114.20
+result_exit	0
+
+$ (cd disposable-repo; FM_LINT_JOBS=1 FM_LINT_REQUIRE_BOUNDS=1 bin/fm-lint.sh) [findings]
+acquired: task=lint-3276138-1791918986 estimate=1024MB pid=3276159 expires_in=1800s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=1024M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: '/home/kirkins/Documents/firstmate/bin/fm-heavy-slot.sh' release lint-3276138-1791918986
+Running as unit: lint-3276138-1791918986.scope; invocation ID: 95807cac42d04beb9f5f03c4d84e53a0
+note: refreshing the heavy slot already held by task 'lint-3276138-1791918986'
+fm-lint.sh: bound task=lint-3276138-1791918986 jobs=1 MemoryMax=1024M memory.max=1073741824 cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/lint-3276138-1791918986.scope helper=/home/kirkins/Documents/firstmate/bin/fm-heavy-slot.sh
+Independent kernel memory.max=1073741824
+Independent canonical ownership=held task=lint-3276138-1791918986 pid=3276273 estimate=1024MB age=0s expires_in=1800s state=live
+fm-lint.sh: ShellCheck 0.11.0 (pinned 0.11.0)
+fm-lint.sh: local changed-file mode; ShellCheck source following disabled
+
+In tests/clean-b.sh line 3:
+printf "%s\n" $value
+              ^----^ SC2086 (info): Double quote to prevent globbing and word splitting.
+
+Did you mean:
+printf "%s\n" "$value"
+
+For more information:
+  https://www.shellcheck.net/wiki/SC2086 -- Double quote to prevent globbing ...
+fm-lint-workflows.sh: actionlint 1.7.12 (pinned 1.7.12)
+fm-lint-workflows.sh: 1 workflow files valid
+Failed to stop lint-3276138-1791918986.scope: Unit lint-3276138-1791918986.scope not loaded.
+released: task=lint-3276138-1791918986
+entrypoint exit=1; elapsed_seconds=2.999
+canonical slot after entrypoint=free
+owned scope after entrypoint=removed
+Generated telemetry:
+format	fm-lint-telemetry-v1
+git_head	cd63713156e5a11cc7dc1e48738bfb2c2f2a1657
+content_cksum	104073417-62
+shellcheck_version	0.11.0
+analysis_mode	local
+partition	all
+jobs	1
+root_bounds_enforced	1
+root_deadline_seconds	1200
+root_kill_grace_seconds	5
+root_memory_limit_kib	12582912
+root_timing_mechanism	perl
+root_count	2
+direct_lines	5
+direct_bytes	89
+source_directives	0
+source_boundary_directives	0
+source_followed_directives	0
+source_target_count	0
+shard_1_weight_bytes	50
+shard_2_weight_bytes	39
+wall_seconds	1
+worker_wall_sum_seconds	unavailable
+max_worker_wall_seconds	unavailable
+user_seconds	unavailable
+system_seconds	unavailable
+max_worker_rss_kib	unavailable
+worker_rss_sum_kib	unavailable
+shellcheck_processes_start	0
+shellcheck_processes_end	0
+load_average_start	2.89/2.92/2.61
+load_average_end	2.89/2.92/2.61
+aggregate_cpu_percent_start	113.60
+aggregate_cpu_percent_end	114.20
+result_exit	1
+
+Both current-source plain invocations satisfied their observable contracts.
