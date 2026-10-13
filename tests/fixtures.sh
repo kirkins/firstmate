@@ -30,6 +30,52 @@ export FM_TEST_NO_MISTAKES_FAKE_VERSION="no-mistakes version v${FM_TEST_NO_MISTA
 export FM_TEST_NO_MISTAKES_FAKE_VERSION_TS="${FM_TEST_NO_MISTAKES_FAKE_VERSION} 2026-06-27T00:02:18Z"
 export FM_TEST_GH_AXI_VERSION=0.1.29
 
+# Select only the credential platform; uname without -s still answers the
+# real host so file metadata fixtures remain portable on Linux and macOS.
+fm_test_fake_forgejo_platform() {  # <fakebin>
+  local fakebin=$1 real_uname
+  real_uname=$(command -v uname)
+  cat > "$fakebin/uname" <<SH
+#!/usr/bin/env bash
+if [ "\${1:-}" = -s ]; then
+  [ "\${FM_TEST_PLATFORM_FAIL:-0}" = 0 ] || exit 1
+  printf '%s\\n' "\${FM_TEST_CREDENTIAL_PLATFORM:-Linux}"
+  exit 0
+fi
+exec "$real_uname" "\$@"
+SH
+  cat > "$fakebin/security" <<'SH'
+#!/usr/bin/env bash
+printf 'security %s\n' "$*" >> "${FM_TEST_FORGEJO_ST_LOG:-/dev/null}"
+[ "${FM_TEST_SECURITY_FAIL:-0}" = 0 ] || exit 1
+[ "$*" = "find-generic-password -s ${FM_TEST_KEYCHAIN_HOST:-git.example.dev}/forgejo-cli -w" ] || exit 1
+printf 'selected-account %s\n' "${FM_TEST_KEYCHAIN_ACCOUNT:-stored-forgejo-account}" >> "${FM_TEST_FORGEJO_ST_LOG:-/dev/null}"
+printf '%s' "${FM_TEST_KEYCHAIN_TOKEN-nativeforgejotoken0123456789abcdef0123456789}"
+SH
+  chmod +x "$fakebin/uname" "$fakebin/security"
+}
+
+# Mirror a fixture and its base PATH without one tool, including any installed
+# real copy, so missing native dependencies are proved on either host platform.
+fm_test_forgejo_path_without() {  # <dest> <tool> <fakebin> <base-path>
+  local dest=$1 omit=$2 fakebin=$3 base_path=$4 bindir entry name
+  mkdir -p "$dest"
+  while IFS= read -r bindir; do
+    [ -d "$bindir" ] || continue
+    for entry in "$bindir"/*; do
+      [ -e "$entry" ] || continue
+      name=${entry##*/}
+      [ "$name" = "$omit" ] && continue
+      [ -e "$dest/$name" ] || ln -s "$entry" "$dest/$name" 2>/dev/null
+    done
+  done <<EOF
+$fakebin
+$(printf '%s\n' "$base_path" | tr ':' '\n')
+EOF
+  ! PATH="$dest" command -v "$omit" >/dev/null 2>&1 \
+    || fail "the $omit-free search path still resolved $omit"
+}
+
 # --- fake no-mistakes -------------------------------------------------------
 
 # fm_test_fake_no_mistakes <fakebin>

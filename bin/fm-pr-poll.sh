@@ -10,9 +10,11 @@
 # and jq for Forgejo, so an upstream checkout needs no extra tooling to follow
 # the first two. The Gerrit and Forgejo branches additionally need jq, which
 # bin/fm-pr-check.sh refuses to arm either watch without. The Forgejo branch
-# also needs secret-tool for the instance token, read fresh each poll from the
-# same keyring slot the operator helper stack keys by host; it reaches curl as
-# a header read from a file descriptor rather than an argument.
+# uses bin/fm-pr-lib.sh's native credential accessor, read fresh each poll; it
+# reaches curl as a header read from a file descriptor rather than an argument.
+# The canonical --validated invocation loads the library beside this program.
+# A copied .check.sh resolves its code root through FM_ROOT_OVERRIDE, FM_HOME,
+# or the parent of its state directory; sidecar bytes never select code.
 set -u
 LC_ALL=C
 export LC_ALL
@@ -139,19 +141,22 @@ case "$provider" in
       .|..|-*|*.git|*[!A-Za-z0-9._-]*) exit 0 ;;
     esac
     [ "$url" = "https://$host/$path/pulls/$number" ] || exit 0
-    # The REST read needs curl and jq for the request and the record, and
-    # secret-tool for the instance token from the same keyring slot the
-    # operator helper stack keys by host. The token shape is rechecked because
-    # the fd header below is built from it; a slot that changed into anything
-    # else stays silent rather than sending a malformed credential.
+    # Select credentials through the shared owner after validating identity.
+    # Missing code, platform, tool, or token stays silent, never a merge.
+    { set +x; } 2>/dev/null
     command -v curl >/dev/null 2>&1 || exit 0
     command -v jq >/dev/null 2>&1 || exit 0
-    command -v secret-tool >/dev/null 2>&1 || exit 0
-    token=$(secret-tool lookup service "$host/forgejo-cli/omarchy" 2>/dev/null) || exit 0
-    case "$token" in
-      ''|*[!A-Za-z0-9_-]*) exit 0 ;;
+    poll_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd) || exit 0
+    case "${BASH_SOURCE[0]}" in
+      *.check.sh)
+        pr_lib_root=${FM_ROOT_OVERRIDE:-${FM_HOME:-$(cd "$poll_dir/.." && pwd)}}
+        pr_lib="$pr_lib_root/bin/fm-pr-lib.sh"
+        ;;
+      *) pr_lib="$poll_dir/fm-pr-lib.sh" ;;
     esac
-    [ "${#token}" -ge 20 ] && [ "${#token}" -le 256 ] || exit 0
+    # shellcheck source=bin/fm-pr-lib.sh
+    . "$pr_lib" 2>/dev/null || exit 0
+    token=$(fm_pr_forgejo_token "$host") || exit 0
     json=$(curl -sS --max-time 30 -H @/dev/fd/3 \
       3< <(printf 'Authorization: token %s\n' "$token") \
       "https://$host/api/v1/repos/$owner/$repo/pulls/$number" 2>/dev/null) || exit 0

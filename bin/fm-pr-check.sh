@@ -108,21 +108,26 @@ if [ "$PROVIDER" = gerrit ]; then
   fi
 fi
 # The Forgejo poll reads the instance REST API, so it needs curl and jq, and
-# secret-tool for the instance token from the same keyring slot the operator
-# helper stack keys by host. A slot that cannot be read arms a watch that can
+# the native credential tool selected by bin/fm-pr-lib.sh for the host's
+# operator service. A slot that cannot be read arms a watch that can
 # never fire, so the token is proven readable here rather than discovered
 # missing by a silent poll.
 FORGEJO_MISSING=
 if [ "$PROVIDER" = forgejo ]; then
+  if ! fm_pr_forgejo_credential_select "$HOST"; then
+    echo "error: watching a Forgejo pull request requires a readable supported credential platform (Linux or macOS)" >&2
+    exit 1
+  fi
   command -v curl >/dev/null 2>&1 || FORGEJO_MISSING="curl"
   command -v jq >/dev/null 2>&1 || FORGEJO_MISSING="${FORGEJO_MISSING:+$FORGEJO_MISSING and }jq"
-  command -v secret-tool >/dev/null 2>&1 || FORGEJO_MISSING="${FORGEJO_MISSING:+$FORGEJO_MISSING and }secret-tool"
+  command -v "$FM_PR_FORGEJO_CREDENTIAL_TOOL" >/dev/null 2>&1 \
+    || FORGEJO_MISSING="${FORGEJO_MISSING:+$FORGEJO_MISSING and }$FM_PR_FORGEJO_CREDENTIAL_TOOL"
   if [ -n "$FORGEJO_MISSING" ]; then
     echo "error: watching a Forgejo pull request requires $FORGEJO_MISSING on PATH" >&2
     exit 1
   fi
   if ! fm_pr_forgejo_token "$HOST" >/dev/null; then
-    echo "error: watching a Forgejo pull request on $HOST requires an API token in the Linux keyring under service $HOST/forgejo-cli/omarchy" >&2
+    echo "error: watching a Forgejo pull request on $HOST requires an API token in $FM_PR_FORGEJO_CREDENTIAL_STORE under service $FM_PR_FORGEJO_CREDENTIAL_SERVICE" >&2
     exit 1
   fi
 fi

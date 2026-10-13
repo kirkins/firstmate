@@ -113,8 +113,9 @@
 # request's head is read back after it, with a head that moved reported loudly
 # as commits this run did not verify. A recorded pr_head that disagrees with
 # the live head is reported rather than trusted, as on GitLab. Reading that
-# state needs curl, jq, and secret-tool, and the instance token readable from
-# the keyring slot the operator helper stack keys by host; any one absent stops
+# state needs curl, jq, and the native credential tool selected by
+# bin/fm-pr-lib.sh, with the instance token readable from the operator service
+# keyed by host; any one absent stops
 # the merge before any state is recorded. The token itself is never placed on
 # a command line: it reaches curl as a header read from a file descriptor.
 # A Forgejo pull request is merged only for a task whose project binds it to
@@ -504,20 +505,25 @@ if [ "$PROVIDER" = github ]; then
   fi
 fi
 # The Forgejo reads and the merge call are REST through curl with jq for the
-# payloads and secret-tool for the instance token, and the token must be
-# readable from the keyring slot the operator helper stack keys by host,
+# payloads and the native credential accessor in bin/fm-pr-lib.sh, whose
+# operator service must be readable for the validated host,
 # because a missing one is discovered only by a merge that cannot run.
 FORGEJO_MISSING=
 if [ "$PROVIDER" = forgejo ]; then
+  if ! fm_pr_forgejo_credential_select "$PR_HOST"; then
+    echo "error: merging a Forgejo pull request requires a readable supported credential platform (Linux or macOS)" >&2
+    exit 1
+  fi
   command -v curl >/dev/null 2>&1 || FORGEJO_MISSING="curl"
   command -v jq >/dev/null 2>&1 || FORGEJO_MISSING="${FORGEJO_MISSING:+$FORGEJO_MISSING and }jq"
-  command -v secret-tool >/dev/null 2>&1 || FORGEJO_MISSING="${FORGEJO_MISSING:+$FORGEJO_MISSING and }secret-tool"
+  command -v "$FM_PR_FORGEJO_CREDENTIAL_TOOL" >/dev/null 2>&1 \
+    || FORGEJO_MISSING="${FORGEJO_MISSING:+$FORGEJO_MISSING and }$FM_PR_FORGEJO_CREDENTIAL_TOOL"
   if [ -n "$FORGEJO_MISSING" ]; then
     echo "error: merging a Forgejo pull request requires $FORGEJO_MISSING on PATH" >&2
     exit 1
   fi
   if ! fm_pr_forgejo_token "$PR_HOST" >/dev/null; then
-    echo "error: merging a Forgejo pull request on $PR_HOST requires an API token in the Linux keyring under service $PR_HOST/forgejo-cli/omarchy" >&2
+    echo "error: merging a Forgejo pull request on $PR_HOST requires an API token in $FM_PR_FORGEJO_CREDENTIAL_STORE under service $FM_PR_FORGEJO_CREDENTIAL_SERVICE" >&2
     exit 1
   fi
 fi

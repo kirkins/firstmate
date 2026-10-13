@@ -5,6 +5,8 @@ set -u
 
 # shellcheck source=tests/lib.sh disable=SC1091
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+# shellcheck source=tests/fixtures.sh
+. "$(dirname "${BASH_SOURCE[0]}")/fixtures.sh"
 # shellcheck source=/dev/null
 . "$ROOT/bin/fm-pr-lib.sh"
 # shellcheck source=/dev/null
@@ -128,6 +130,7 @@ make_case() {
   fakebin="$dir/fakebin"
   fake_root="$dir/root"
   mkdir -p "$dir/home/state" "$dir/home/data" "$dir/home/config" "$dir/wt" "$fakebin" "$fake_root/bin"
+  fm_test_fake_forgejo_platform "$fakebin"
   git -C "$dir/wt" init -q
   git -C "$dir/wt" commit -q --allow-empty -m init
   git -C "$dir/wt" update-ref refs/remotes/origin/main "$(git -C "$dir/wt" rev-parse HEAD)"
@@ -305,6 +308,7 @@ done
 case "$hdr" in
   'Authorization: token '*) printf 'auth-header-read\n' >&2 ;;
 esac
+[ -z "${FM_TEST_EXPECT_TOKEN:-}" ] || [ "$hdr" = "Authorization: token $FM_TEST_EXPECT_TOKEN" ] || exit 1
 [ "${FM_TEST_CURL_FAIL:-0}" = 0 ] || exit 1
 emit() {
   if [ -n "$out" ]; then
@@ -417,7 +421,7 @@ run_check_entry() {
     FM_TEST_GERRIT_AXI_LOG="$dir/gerrit-axi.log" \
     FM_TEST_FORGEJO_DIR="$dir" FM_TEST_FORGEJO_CURL_LOG="$dir/forgejo-curl.log" \
     FM_TEST_FORGEJO_ST_LOG="$dir/forgejo-st.log" \
-    PATH="$dir/fakebin:$BASE_PATH" \
+    PATH="${FM_TEST_PR_CHECK_PATH:-$dir/fakebin:$BASE_PATH}" \
     "$PR_CHECK" "$@"
 }
 
@@ -1101,7 +1105,7 @@ make_poll_fixture() {
 
 run_poll() {
   local dir=$1
-  FM_TEST_GH_LOG="$dir/gh.log" FM_TEST_GLAB_LOG="$dir/glab.log" \
+  FM_ROOT_OVERRIDE="$ROOT" FM_TEST_GH_LOG="$dir/gh.log" FM_TEST_GLAB_LOG="$dir/glab.log" \
     FM_TEST_GERRIT_AXI_LOG="$dir/gerrit-axi.log" \
     FM_TEST_FORGEJO_DIR="$dir" FM_TEST_FORGEJO_CURL_LOG="$dir/forgejo-curl.log" \
     FM_TEST_FORGEJO_ST_LOG="$dir/forgejo-st.log" \
@@ -1908,6 +1912,115 @@ make_forgejo_project() {  # <dir> <origin>
 FORGEJO_URL=https://git.example.dev/owner/repo/pulls/9
 FORGEJO_HEAD=0123456789abcdef0123456789abcdef01234567
 FORGEJO_TOKEN_BYTES=forgejotoken0123456789abcdef0123456789
+
+test_forgejo_native_keychain_registration_and_poll() (
+  local dir host account url out native_token
+  native_token=nativeforgejotoken0123456789abcdef0123456789
+  for host in git.example.dev forge.other.example; do
+    account=mac-operator
+    [ "$host" = git.example.dev ] || account=another-operator
+    dir=$(make_case "native-keychain-$host")
+    ln -sf "$REAL_JQ" "$dir/fakebin/jq"
+    make_forgejo_project "$dir" "https://$host/owner/repo.git"
+    write_task_meta "$dir" task-a
+    url="https://$host/owner/repo/pulls/9"
+    FM_TEST_CREDENTIAL_PLATFORM=Darwin FM_TEST_ST_FAIL=1 FM_TEST_EXPECT_TOKEN="$native_token" \
+      FM_TEST_KEYCHAIN_HOST="$host" FM_TEST_KEYCHAIN_ACCOUNT="$account" \
+      run_check_entry "$dir" task-a "$url" > "$dir/stdout" 2> "$dir/stderr" \
+      || fail "native Keychain registration failed: $(cat "$dir/stderr")"
+    grep -qxF "pr=$url" "$dir/home/state/task-a.meta" || fail "native registration lost its URL"
+    grep -qxF "pr_head=$FORGEJO_HEAD" "$dir/home/state/task-a.meta" || fail "native registration lost its head"
+    grep -qxF "security find-generic-password -s $host/forgejo-cli -w" "$dir/forgejo-st.log" \
+      || fail "native lookup used the wrong host service"
+    grep -qxF "selected-account $account" "$dir/forgejo-st.log" \
+      || fail "native lookup did not retain the stored Forgejo account"
+    ! grep -q secret-tool "$dir/forgejo-st.log" || fail "native lookup used the Linux keyring"
+    out=$(FM_TEST_CREDENTIAL_PLATFORM=Darwin FM_TEST_ST_FAIL=1 FM_TEST_EXPECT_TOKEN="$native_token" \
+      FM_TEST_KEYCHAIN_HOST="$host" FM_TEST_KEYCHAIN_ACCOUNT="$account" run_poll "$dir")
+    [ -z "$out" ] || fail "native poll reported an open pull as merged"
+    out=$(FM_TEST_CREDENTIAL_PLATFORM=Darwin FM_TEST_ST_FAIL=1 FM_TEST_EXPECT_TOKEN="$native_token" \
+      FM_TEST_KEYCHAIN_HOST="$host" FM_TEST_KEYCHAIN_ACCOUNT="$account" \
+      FM_TEST_FORGEJO_MERGED=true run_poll "$dir")
+    [ "$out" = merged ] || fail "native sidecar poll did not report a merged pull"
+    out=$(env FM_TEST_CREDENTIAL_PLATFORM=Darwin FM_TEST_ST_FAIL=1 FM_TEST_EXPECT_TOKEN="$native_token" \
+      FM_TEST_KEYCHAIN_HOST="$host" FM_TEST_KEYCHAIN_ACCOUNT="$account" \
+      FM_TEST_FORGEJO_MERGED=true FM_TEST_FORGEJO_CURL_LOG="$dir/forgejo-curl.log" \
+      FM_TEST_FORGEJO_ST_LOG="$dir/forgejo-st.log" PATH="$dir/fakebin:$BASE_PATH" \
+      bash "$POLL" --validated forgejo "$url" "$host" owner/repo 9)
+    [ "$out" = merged ] || fail "native canonical validated poll did not report a merged pull"
+    : > "$dir/api-response"
+    FM_TEST_CREDENTIAL_PLATFORM=Darwin FM_TEST_ST_FAIL=1 FM_TEST_EXPECT_TOKEN="$native_token" \
+      FM_TEST_KEYCHAIN_HOST="$host" FM_TEST_KEYCHAIN_ACCOUNT="$account" \
+      FM_TEST_FORGEJO_CURL_LOG="$dir/forgejo-curl.log" FM_TEST_FORGEJO_ST_LOG="$dir/forgejo-st.log" \
+      PATH="$dir/fakebin:$BASE_PATH" bash -x -c \
+      '. "$1"; fm_pr_forgejo_api GET "$2" /repos/owner/repo/pulls/9 "$3"' \
+      -- "$ROOT/bin/fm-pr-lib.sh" "$host" "$dir/api-response" > "$dir/trace.out" 2> "$dir/trace.err" \
+      || fail "traced native API read failed"
+    env FM_TEST_CREDENTIAL_PLATFORM=Darwin FM_TEST_ST_FAIL=1 FM_TEST_EXPECT_TOKEN="$native_token" \
+      FM_TEST_KEYCHAIN_HOST="$host" FM_TEST_KEYCHAIN_ACCOUNT="$account" \
+      FM_TEST_FORGEJO_MERGED=true FM_TEST_FORGEJO_CURL_LOG="$dir/forgejo-curl.log" \
+      FM_TEST_FORGEJO_ST_LOG="$dir/forgejo-st.log" PATH="$dir/fakebin:$BASE_PATH" \
+      bash -x "$POLL" --validated forgejo "$url" "$host" owner/repo 9 \
+      > "$dir/poll-trace.out" 2> "$dir/poll-trace.err" || fail "traced native poll failed"
+    ! grep -rF "$native_token" "$dir/home/state" "$dir/stdout" "$dir/stderr" \
+      "$dir/forgejo-curl.log" "$dir/forgejo-st.log" "$dir/trace.out" "$dir/trace.err" \
+      "$dir/poll-trace.out" "$dir/poll-trace.err" >/dev/null \
+      || fail "native credential escaped into state, output, or process arguments"
+  done
+  pass "native Keychain registration and both poll interfaces preserve host/account binding and token transport"
+)
+
+test_forgejo_native_keychain_failures() (
+  local dir problem rc out native_path credential_platform security_fail keychain_token platform_fail
+  for problem in missing-tool missing-token empty-token malformed-token platform-failed platform-unknown; do
+    dir=$(make_case "native-keychain-$problem")
+    ln -sf "$REAL_JQ" "$dir/fakebin/jq"
+    make_forgejo_project "$dir" https://git.example.dev/owner/repo.git
+    write_task_meta "$dir" task-a
+    cp "$dir/home/state/task-a.meta" "$dir/meta.before"
+    security_fail=0
+    keychain_token=nativeforgejotoken0123456789abcdef0123456789
+    platform_fail=0
+    credential_platform=Darwin
+    native_path="$dir/fakebin:$BASE_PATH"
+    case "$problem" in
+      missing-tool)
+        fm_test_forgejo_path_without "$dir/no-security" security "$dir/fakebin" "$BASE_PATH"
+        native_path="$dir/no-security"
+        rm "$dir/fakebin/security"
+        ;;
+      missing-token) security_fail=1 ;;
+      empty-token) keychain_token= ;;
+      malformed-token) keychain_token='invalid token bytes' ;;
+      platform-failed) platform_fail=1 ;;
+      platform-unknown) credential_platform=UnknownOS ;;
+    esac
+    set +e
+    FM_TEST_CREDENTIAL_PLATFORM="$credential_platform" FM_TEST_SECURITY_FAIL="$security_fail" \
+      FM_TEST_KEYCHAIN_TOKEN="$keychain_token" FM_TEST_PLATFORM_FAIL="$platform_fail" \
+      FM_TEST_PR_CHECK_PATH="$native_path" run_check_entry "$dir" task-a "$FORGEJO_URL" \
+      > "$dir/stdout" 2> "$dir/stderr"
+    rc=$?
+    set -e
+    [ "$rc" -ne 0 ] || fail "native registration accepted $problem"
+    if [ "$problem" = missing-tool ]; then
+      grep -qF 'requires security on PATH' "$dir/stderr" || fail "missing native tool was reported as missing credentials"
+    fi
+    if [ "$problem" = missing-token ]; then
+      grep -qF 'macOS Keychain' "$dir/stderr" || fail "missing native credential did not name its store"
+    fi
+    cmp -s "$dir/meta.before" "$dir/home/state/task-a.meta" || fail "$problem changed task metadata"
+    [ ! -e "$dir/home/state/task-a.check.sh" ] || fail "$problem armed a poll"
+    out=$(env FM_TEST_CREDENTIAL_PLATFORM="$credential_platform" FM_TEST_SECURITY_FAIL="$security_fail" \
+      FM_TEST_KEYCHAIN_TOKEN="$keychain_token" FM_TEST_PLATFORM_FAIL="$platform_fail" \
+      FM_TEST_FORGEJO_MERGED=true FM_TEST_FORGEJO_CURL_LOG="$dir/forgejo-curl.log" \
+      FM_TEST_FORGEJO_ST_LOG="$dir/forgejo-st.log" PATH="$native_path" \
+      bash "$POLL" --validated forgejo "$FORGEJO_URL" git.example.dev owner/repo 9)
+    [ -z "$out" ] || fail "native poll emitted despite $problem"
+    [ ! -s "$dir/forgejo-curl.log" ] || fail "$problem reached the HTTP client"
+  done
+  pass "native registration refuses unavailable tools, credentials, or platform and polling stays silent"
+)
 
 # Arming records a Forgejo pull request only for a task whose project binds it
 # to the same instance and repository, records the REST-reported head, and arms
@@ -3905,6 +4018,8 @@ SH
   pass "device re-record publication waits without rewriting its registration"
 }
 
+test_forgejo_native_keychain_registration_and_poll || exit 1
+test_forgejo_native_keychain_failures || exit 1
 test_parser_matrix
 test_gitlab_merge_watch
 test_gerrit_merge_watch
