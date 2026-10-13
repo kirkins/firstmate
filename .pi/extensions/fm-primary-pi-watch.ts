@@ -1274,7 +1274,7 @@ export default function (pi: ExtensionAPI) {
   }
 
   pi.on?.("before_agent_start", (event, ctx) => {
-    if (!generationIsLive(generation) || !ctx.isIdle?.()) return;
+    if (!("prompt" in event) || !generationIsLive(generation) || !ctx.isIdle?.()) return;
     generation.context = ctx;
     for (const wake of generation.unconsumedWakes.values()) {
       if (wake.content === event.prompt) wake.duringRun = false;

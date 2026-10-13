@@ -3590,6 +3590,10 @@ if (beforeAgentStarts !== 0) throw new Error(`streaming follow-ups raised before
 // Even the exact pre-start prompt and an unrelated human message cannot
 // release the latch before the actual user message joins the running run.
 handlers.get("before_agent_start")?.({ prompt: prompts[0] }, {});
+handlers.get("before_agent_start")?.({
+  messageType: "custom",
+  message: { role: "custom", customType: "other-extension", content: prompts[0], display: false },
+}, { isIdle: () => true });
 consumeQueued("A separate human instruction");
 writeFileSync(`${process.env.FM_TRIGGER_FILE}.3`, "close\n");
 await waitFor(() => arms() === 4, "successor after the third streaming-time delivery");

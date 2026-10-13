@@ -1700,8 +1700,14 @@ ${context.command}
     // getEntries() here loses the captain request that the next wake may answer.
     // Stage it verbatim and remember the future persisted index for turn_end's
     // duplicate suppression. Operational extension injections are not dialog.
-    const prompt = event.prompt;
-    processingOpenedThisRun = queuedProcessingContent !== null && prompt === queuedProcessingContent;
+    // Pi 1.1 supplies prompt for both starts; Pi 1.2 separates custom starts.
+    const start: { prompt?: string; message?: { role?: string; customType?: string; content?: unknown } } = event;
+    const prompt = start.prompt;
+    processingOpenedThisRun = queuedProcessingContent !== null && (
+      prompt === queuedProcessingContent ||
+      (start.message !== undefined && isProcessingCustomMessage(start.message) && start.message.content === queuedProcessingContent)
+    );
+    if (prompt === undefined) return;
     const trimmed = prompt.trim();
     if (!trimmed || isOperationalUserText(trimmed)) return;
     const file = currentMainSession.getSessionFile() ?? "";
