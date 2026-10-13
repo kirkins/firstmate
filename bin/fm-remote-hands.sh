@@ -611,7 +611,7 @@ base="https://nodejs.org/dist/latest-v'"$LOCAL_NODE_MAJOR"'.x"
 file=$(curl -fsSL "$base/" | grep -oE "node-v[0-9]+\.[0-9]+\.[0-9]+-linux-${arch}\.tar\.xz" | head -n 1)
 [ -n "$file" ] || { echo "node tarball not found under $base" >&2; exit 1; }
 curl -fsSL -o /tmp/fm-node.tar.xz "$base/$file"
-(cd /tmp && curl -fsSL "$base/SHASUMS256.txt" | grep -F " $file" | sha256sum -c -)
+(cd /tmp && curl -fsSL "$base/SHASUMS256.txt" | grep -F " $file" | sed "s| $file$| fm-node.tar.xz|" | sha256sum -c -) || { echo "node tarball checksum verification failed" >&2; exit 1; }
 sudo tar -xJf /tmp/fm-node.tar.xz -C /usr/local --strip-components=1
 hash -r
 node --version'

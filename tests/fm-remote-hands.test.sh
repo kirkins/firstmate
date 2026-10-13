@@ -607,6 +607,82 @@ test_prepare_without_local_node_pins_nothing_loudly() {
   pass "fm-remote-hands.sh: prepare skips the node pin loudly when it cannot name one"
 }
 
+test_prepare_verifies_downloaded_archive_before_extraction() {
+  make_home prep-checksum-home >/dev/null
+  local real_sha archive_backup had_archive=0 mode expected
+  real_sha=$(command -v sha256sum)
+  printf 'node archive fixture\n' > "$TMP_ROOT/node-archive"
+  expected=$("$real_sha" "$TMP_ROOT/node-archive" | cut -d' ' -f1)
+  if [ -e /tmp/fm-node.tar.xz ]; then
+    cp /tmp/fm-node.tar.xz "$TMP_ROOT/archive-backup"
+    had_archive=1
+  fi
+  cat > "$FAKEBIN/curl" <<'SH'
+#!/usr/bin/env bash
+case "$*" in
+  */latest-v*.x/)
+    printf '%s\n' 'node-v20.10.0-linux-x64.tar.xz'
+    ;;
+  *SHASUMS256.txt)
+    case "$FM_FAKE_CHECKSUM_MODE" in
+      missing) ;;
+      wrong) printf '%064d  node-v20.10.0-linux-x64.tar.xz\n' 0 ;;
+      *) printf '%s  node-v20.10.0-linux-x64.tar.xz\n' "$FM_FAKE_EXPECTED_SHA" ;;
+    esac
+    ;;
+  *)
+    cp "$FM_FAKE_ARCHIVE" /tmp/fm-node.tar.xz
+    ;;
+esac
+SH
+  cat > "$FAKEBIN/uname" <<'SH'
+#!/usr/bin/env bash
+printf '%s\n' x64
+SH
+  cat > "$FAKEBIN/sudo" <<'SH'
+#!/usr/bin/env bash
+if [ "$1" = apt-get ]; then exit 0; fi
+exec "$@"
+SH
+  cat > "$FAKEBIN/tar" <<'SH'
+#!/usr/bin/env bash
+printf 'extracted\n' >> "$FM_FAKE_EXTRACTION_LOG"
+SH
+  cat > "$FAKEBIN/sha256sum" <<SH
+#!/usr/bin/env bash
+if [ "\${FM_FAKE_CHECKSUM_MODE:-}" = verifier-error ]; then exit 9; fi
+exec "$real_sha" "\$@"
+SH
+  cat > "$FAKEBIN/git" <<'SH'
+#!/usr/bin/env bash
+case "$1" in
+  clone) exit 0 ;;
+  -C) printf '%s\n' fake-head ;;
+esac
+SH
+  chmod +x "$FAKEBIN/curl" "$FAKEBIN/uname" "$FAKEBIN/sudo" "$FAKEBIN/tar" "$FAKEBIN/sha256sum" "$FAKEBIN/git"
+  for mode in good missing wrong verifier-error; do
+    rm -f "$TMP_ROOT/extracted"
+    : > "$EXEC_SEQ"
+    printf '22.22.1\n' > "$EXEC_SEQ"
+    : > "$EXEC_CALLS"
+    hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 FM_FAKE_CHECKSUM_MODE="$mode" \
+      FM_FAKE_EXPECTED_SHA="$expected" FM_FAKE_ARCHIVE="$TMP_ROOT/node-archive" \
+      FM_FAKE_EXTRACTION_LOG="$TMP_ROOT/extracted" -- prepare --name t-checksum \
+      --repo https://github.com/kirkins/firstmate --node-major 20
+    if [ "$mode" = good ]; then
+      expect_code 0 "$HANDS_STATUS" "a correct digest must permit extraction and prepare ($HANDS_STDERR)"
+      [ -s "$TMP_ROOT/extracted" ] || fail "a correct digest must reach extraction (stderr: $HANDS_STDERR; sandbox: $(cat "$SBX_LOG"))"
+    else
+      [ "$HANDS_STATUS" -ne 0 ] || fail "$mode checksum must fail prepare"
+      [ ! -e "$TMP_ROOT/extracted" ] || fail "$mode checksum must stop before extraction"
+      assert_contains "$HANDS_STDERR" "checksum verification failed" "$mode checksum must explain the failure"
+    fi
+  done
+  if [ "$had_archive" -eq 1 ]; then cp "$TMP_ROOT/archive-backup" /tmp/fm-node.tar.xz; else rm -f /tmp/fm-node.tar.xz; fi
+  pass "fm-remote-hands.sh: prepare verifies the downloaded Node archive before extraction"
+}
+
 test_help_and_usage_plumbing
 test_off_by_default_is_a_hard_noop
 test_env_file_activation_and_env_wins
@@ -624,3 +700,4 @@ test_missing_tools_fail_closed
 test_prepare_pins_the_fidelity_recipe
 test_prepare_runs_exec_streams_under_the_prepare_bound
 test_prepare_without_local_node_pins_nothing_loudly
+test_prepare_verifies_downloaded_archive_before_extraction
