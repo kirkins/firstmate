@@ -3842,6 +3842,15 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 const handlers = new Map(), prompts = [];
 let idle = false;
+let authenticated = true;
+const ctx = {
+  isIdle: () => idle,
+  model: { provider: "local-credential-proof" },
+  modelRegistry: {
+    hasConfiguredAuth: () => authenticated,
+    getProviderAuth: async () => undefined,
+  },
+};
 const pi = {
   on(event, handler) { handlers.set(event, handler); },
   registerCommand() {}, registerTool() {},
@@ -3861,7 +3870,7 @@ async function waitFor(predicate, label) {
 }
 writeFileSync(`${process.env.FM_HOME}/state/.lock`, `${process.pid}\n`);
 (await import(pathToFileURL(process.env.PLUGIN).href)).default(pi);
-await handlers.get("session_start")?.({ reason: "startup" }, {});
+await handlers.get("session_start")?.({ reason: "startup" }, ctx);
 await waitFor(() => arms() === 1, "initial arm");
 handlers.get("session_before_compact")?.({ reason: "manual" }, { isIdle: () => idle });
 close(1);
@@ -3887,6 +3896,28 @@ close(4);
 await waitFor(() => prompts.length === 2 && arms() === 5, "new invitation after actual consumption");
 if (!prompts[1].includes("check: manual wake 4")) throw new Error("compaction recovery retained a consumed invitation");
 if (readFileSync(`${process.env.FM_HOME}/state/.wake-queue`, "utf8").trim().split("\n").length !== 4) throw new Error("actual consumption acknowledged durable work");
+handlers.get("message_start")?.({ message: { role: "user", content: [{ type: "text", text: prompts[1] }] } }, {});
+idle = true;
+authenticated = false;
+close(5);
+await waitFor(() => arms() === 6, "successor while logged out");
+await pause();
+if (prompts.length !== 2) throw new Error("missing credentials created a phantom invitation");
+authenticated = true;
+close(6);
+await waitFor(() => prompts.length === 3 && arms() === 7, "fresh close restores credential-rejected invitation");
+if (!prompts[2].includes("check: manual wake 5")) throw new Error("credential recovery lost the rejected wake");
+close(7);
+await waitFor(() => arms() === 8, "successor during idle invitation construction");
+await pause();
+if (prompts.length !== 3) throw new Error("idle construction released an unconsumed invitation");
+handlers.get("message_start")?.({ message: { role: "user", content: [{ type: "text", text: "ordinary human input" }] } }, {});
+if (prompts.length !== 3) throw new Error("human input released an unrelated invitation");
+handlers.get("message_start")?.({ message: { role: "user", content: [{ type: "text", text: prompts[2] }] } }, {});
+close(8);
+await waitFor(() => prompts.length === 4 && arms() === 9, "new invitation after credential-recovery consumption");
+if (!prompts[3].includes("check: manual wake 8")) throw new Error("exact consumption did not release the credential-recovery invitation");
+if (readFileSync(`${process.env.FM_HOME}/state/.wake-queue`, "utf8").trim().split("\n").length !== 8) throw new Error("credential delivery acknowledged durable work");
 await handlers.get("session_shutdown")?.({ reason: "quit" }, {});
 process.exit(0);
 EOF
@@ -3894,7 +3925,7 @@ EOF
   status=$?
   expect_code 0 "$status" "Pi manual compaction ($mode) must defer unaccepted wakes through the true completion boundary"
   [ -z "$out" ] || fail "Pi manual compaction test printed output: $out"
-  pass "Pi manual compaction ($mode) preserves retryable wakes and resumes one invitation after completion"
+  pass "Pi manual compaction ($mode) and credential rejection preserve retryable wakes and bounded idle delivery"
 }
 
 test_pi_dequeued_replay_respects_abort_during_readiness() {

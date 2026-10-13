@@ -40,7 +40,7 @@ import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { ExtensionAPI, Theme } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
 import { Box, Container, Text, type Component } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 import { registerFirstmateTool } from "./lib/fm-native-contract.ts";
@@ -118,6 +118,7 @@ type SessionGeneration = {
   // branch-handled one (finished).
   unconsumedWakes: Map<string, UnconsumedWake>;
   dequeuedReplayDeferred: boolean;
+  context: ExtensionContext | null;
   manualCompaction: { finishing: boolean; isIdle: (() => boolean) | null } | null;
   // A verified successor's failure close that arrived while the pipeline was
   // still delivering the wake it was started for; its bounded retry runs once
@@ -531,6 +532,7 @@ function createGeneration(): SessionGeneration {
     cleanupFailure: "",
     unconsumedWakes: new Map(),
     dequeuedReplayDeferred: false,
+    context: null,
     manualCompaction: null,
     deferredClose: null,
   };
@@ -655,6 +657,15 @@ export default function (pi: ExtensionAPI) {
     if (!generationIsLive(owner)) return false;
     if (pending) retainActionableAlarm(owner, pending, message);
     if (pending?.delivered) return true;
+    const ctx = owner.context;
+    if (pending && ctx?.modelRegistry && ctx.isIdle?.()) {
+      const model = ctx.model;
+      if (!model || (!ctx.modelRegistry.hasConfiguredAuth(model) && !await ctx.modelRegistry.getProviderAuth(model.provider))) {
+        return false;
+      }
+      if (!generationIsLive(owner)) return false;
+      if (pending.delivered) return true;
+    }
     if (pending && owner.manualCompaction) {
       const compaction = owner.manualCompaction;
       // session_compact runs before Pi clears its compaction controller.
@@ -1286,8 +1297,9 @@ export default function (pi: ExtensionAPI) {
     if (!generation.dequeuedReplayDeferred) void processPendingActionables(generation);
   });
 
-  pi.on?.("session_start", async () => {
+  pi.on?.("session_start", async (_event, ctx) => {
     if (generation.stopping) generation = createGeneration();
+    generation.context = ctx;
     activateGeneration(generation);
     if (lockOwnership() !== "owned") return;
     activateOwnedWatch(generation);
