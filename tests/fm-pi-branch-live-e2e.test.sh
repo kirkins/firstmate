@@ -1299,9 +1299,6 @@ try {
   assert.equal(messages.filter((message) => message.role === "user").length, 2);
   assert.equal(entries.filter((entry) => entry.type === "custom_message" && entry.customType === "fm-live-custom-probe").length, 3);
   assert.equal(messages.filter((message) => message.role === "assistant" && message.stopReason === "stop").length, 5);
-  if (process.env.FM_PI_CUSTOM_START_EVIDENCE) {
-    writeFileSync(process.env.FM_PI_CUSTOM_START_EVIDENCE, JSON.stringify({ events, errors, entries }, null, 2));
-  }
   console.log("CUSTOM_START_OK");
 } finally {
   session?.dispose();
