@@ -14,31 +14,38 @@
 // Stale callbacks from a prior generation are no-ops against the active replacement.
 //
 // Delivery versus consumption (stated once here):
-// A main follow-up is delivered once Pi accepts it (sendUserMessage resolves).
-// The successor pipeline never waits for the model to read it: a follow-up
-// queued while main is streaming joins the running run without ever raising
-// before_agent_start, so waiting on that event stalls every later close.
-// Consumption is tracked only so a replacement can replay a follow-up Pi had
-// not consumed. An idle main consumes at before_agent_start; a streaming main
-// consumes at the user message_start carrying the exact wake text; either
-// event finishes the pending record, and a still-unconsumed record rides the
-// replacement handoff.
+// Pi acceptance never means consumption. At most one routine main follow-up
+// remains unconsumed; later routine closes share its invitation to drain the
+// durable queue without removing or acknowledging any queue row. The successor
+// pipeline and branch offers continue independently, and watcher failures
+// bypass this bound. Only the user message_start carrying the exact wake text
+// consumes a follow-up. before_agent_start precedes message construction and
+// cannot prove consumption. Unrelated human input keeps Pi's ordinary delivery
+// and cannot release the invitation. An unconsumed follow-up rides a replacement
+// handoff. An empty-queue settlement marks only follow-ups offered during an
+// active run as dequeued for replay; idle construction and settlement-deferred
+// prompts remain in flight outside Pi's public queue. An aborted run defers
+// dequeue replay until a new watcher close
+// or a later non-aborted settlement so Escape remains an actual stop.
+// Pi's void sendUserMessage return alone does not prove acceptance. Idle
+// deliveries without a selected model or configured/resolvable provider
+// authentication stay pending for retry on a fresh close.
+// Manual compaction rejects extension prompts without observable acceptance.
+// Its lifecycle holds pending deliveries until its completion and an idle
+// context or agent_start prove Pi can accept them; no phantom invitation is
+// recorded, and the next close retries the still-pending durable work.
+// Replay retains its tracking across successor readiness and checks the live
+// generation and latest abort deferral before delivery. Fresh restoration or
+// confirmation failures are retained before deferral, even if main consumed
+// the old invitation; only consumption of the updated alarm retires it.
 //
-// Postures (stated once here; docs/pi-supervision-branch.md "Postures"):
-// the away-posture record state/.afk-contract is read as a file at every
-// routing decision, never inferred from chat. While it exists every
-// actionable row is offered to the branch as eligible and main is offered
-// nothing the branch can take; a wake the branch declines or cannot take
-// (a broken branch, an unresolvable or corrupt queue) and every
-// watcher-failure alarm still reach main exactly as attended, because only
-// main can repair supervision itself. Nothing else about delivery or
-// consumption changes.
+// docs/pi-supervision-branch.md "Postures" owns posture-dependent routing.
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { ExtensionAPI, Theme } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
 import { Box, Container, Text, type Component } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 import { registerFirstmateTool } from "./lib/fm-native-contract.ts";
@@ -94,6 +101,9 @@ type WatchToolRenderContext = {
 type UnconsumedWake = {
   content: string;
   pending: PendingActionableClose;
+  routine: boolean;
+  duringRun: boolean;
+  dequeued?: true;
 };
 
 type SessionGeneration = {
@@ -113,6 +123,9 @@ type SessionGeneration = {
   // replacement began reads it to tell a main-queued wake (replayed) from a
   // branch-handled one (finished).
   unconsumedWakes: Map<string, UnconsumedWake>;
+  dequeuedReplayDeferred: boolean;
+  context: ExtensionContext | null;
+  manualCompaction: { finishing: boolean; isIdle: (() => boolean) | null } | null;
   // A verified successor's failure close that arrived while the pipeline was
   // still delivering the wake it was started for; its bounded retry runs once
   // that delivery settles instead of being skipped by the single-flight guard.
@@ -524,6 +537,9 @@ function createGeneration(): SessionGeneration {
     pendingActionables: [],
     cleanupFailure: "",
     unconsumedWakes: new Map(),
+    dequeuedReplayDeferred: false,
+    context: null,
+    manualCompaction: null,
     deferredClose: null,
   };
 }
@@ -626,34 +642,81 @@ export default function (pi: ExtensionAPI) {
     !calmPresentation.stockExportRendering &&
     !calmTranscriptClassIsVisible(itemClass);
 
+  function retainActionableAlarm(
+    owner: SessionGeneration,
+    pending: PendingActionableClose,
+    message: string,
+  ): void {
+    if (!message.includes("watcher: FAILED") || pending.message === message) return;
+    pending.message = message;
+    delete pending.delivered;
+    const wake = owner.unconsumedWakes.get(pending.token);
+    if (wake) wake.routine = false;
+    if (!owner.pendingActionables.some((item) => item.token === pending.token)) owner.pendingActionables.push(pending);
+  }
+
   async function sendWake(
     owner: SessionGeneration,
     message: string,
     pending?: PendingActionableClose,
   ): Promise<boolean> {
     if (!generationIsLive(owner)) return false;
+    if (pending) retainActionableAlarm(owner, pending, message);
+    if (pending?.delivered) return true;
+    const ctx = owner.context;
+    if (pending && ctx?.modelRegistry && ctx.isIdle?.()) {
+      const model = ctx.model;
+      if (!model || (!ctx.modelRegistry.hasConfiguredAuth(model) && !await ctx.modelRegistry.getProviderAuth(model.provider))) {
+        return false;
+      }
+      if (!generationIsLive(owner)) return false;
+      if (pending.delivered) return true;
+    }
+    if (pending && owner.manualCompaction) {
+      const compaction = owner.manualCompaction;
+      // session_compact runs before Pi clears its compaction controller.
+      // A later idle read, or agent_start below, proves that boundary passed.
+      if (!compaction.finishing || !compaction.isIdle?.()) return false;
+      owner.manualCompaction = null;
+    }
+    const routine = pending !== undefined && !message.includes("watcher: FAILED");
+    // A restoration or confirmation alarm is part of the unconsumed notice,
+    // so replacement and dequeue recovery must retain it even if repair later
+    // succeeds. It must not become a routine invitation on replay.
+    if (pending && owner.unconsumedWakes.get(pending.token)?.dequeued && owner.dequeuedReplayDeferred) return false;
+    if (routine) {
+      const queued = [...owner.unconsumedWakes.values()].find(
+        (wake) => wake.routine && !wake.dequeued && wake.pending.token !== pending.token,
+      );
+      if (queued) {
+        appendExtensionLog(`coalesce token=${pending.token} anchor=${queued.pending.token}`);
+        owner.unconsumedWakes.delete(pending.token);
+        return true;
+      }
+    }
     const content = encodeFirstmateOperationalInput(
       "watcher",
       `FIRSTMATE WATCHER WAKE: ${message}\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.`,
     );
-    if (pending) owner.unconsumedWakes.set(pending.token, { content, pending });
+    if (pending) owner.unconsumedWakes.set(pending.token, { content, pending, routine, duringRun: ctx?.isIdle?.() === false });
     try {
       await pi.sendUserMessage(content, { deliverAs: "followUp" });
     } catch (error) {
       if (pending) owner.unconsumedWakes.delete(pending.token);
       throw error;
     }
-    // Accepted by Pi. A generation replaced while Pi was accepting it may
-    // have lost the follow-up with the old session, so report it undelivered
+    // Offered under the delivery-versus-consumption contract above. A generation
+    // replaced during the offer may have lost it, so report it undelivered
     // and let the replacement replay the still-pending record.
     return generationIsLive(owner);
   }
 
-  // Pi consumed a main follow-up: an idle main at before_agent_start, a
-  // streaming main at the user message_start that joins the running run.
+  // The actual user message_start is shared by idle prompts and streaming
+  // follow-ups; Pi has removed that exact text from its queue at this point.
   function consumeWake(owner: SessionGeneration, text: string): void {
     for (const [token, wake] of owner.unconsumedWakes) {
       if (wake.content !== text) continue;
+      if (!text.includes(wake.pending.message)) return;
       owner.unconsumedWakes.delete(token);
       wake.pending.delivered = true;
       try {
@@ -730,6 +793,9 @@ export default function (pi: ExtensionAPI) {
     recovery?: { generation: string; watcherPid: string },
   ): Promise<boolean> {
     if (!generationIsLive(owner)) return false;
+    retainActionableAlarm(owner, pending, message);
+    if (pending.delivered) return true;
+    if (owner.unconsumedWakes.get(pending.token)?.dequeued && owner.dequeuedReplayDeferred) return false;
     if (recovery) {
       const confirmed = confirmHandlingDeliveryWithRetry(recovery);
       appendExtensionLog(
@@ -739,6 +805,8 @@ export default function (pi: ExtensionAPI) {
       // routes like a confirmed delivery below, with no failure appended, and
       // retires nothing.
       if (!confirmed.ok && !confirmed.superseded) {
+        const alarm = `${message}\n\n${confirmed.detail}`;
+        retainActionableAlarm(owner, pending, alarm);
         const failedPid = recovery.watcherPid;
         const current = owner.child;
         const currentRecovery = current ? armRecovery.get(current) : undefined;
@@ -751,14 +819,15 @@ export default function (pi: ExtensionAPI) {
           appendExtensionLog(`retire pid=${failedPid} reason=confirm-failure`);
           await retireArm(current);
         }
-        return await sendWake(owner, `${message}\n\n${confirmed.detail}`, pending);
+        return await sendWake(owner, alarm, pending);
       }
     }
-    if (!repairFailed) {
+    if (!repairFailed && !message.includes("watcher: FAILED")) {
       const branchDelivery = offerWakeToBranch(message);
       if (branchDelivery) {
         try {
           await branchDelivery;
+          owner.unconsumedWakes.delete(pending.token);
           return true;
         } catch {}
       }
@@ -778,6 +847,9 @@ export default function (pi: ExtensionAPI) {
   ): void {
     if (owner.pendingActionables.some((item) => item.token === pending.token)) return;
     owner.pendingActionables.push(pending);
+    // A new watcher close can renew an invitation Escape removed; cleanup
+    // callbacks alone must never undo an explicit abort.
+    owner.dequeuedReplayDeferred = false;
     if (owner.stopping && owner.replacement) {
       let replacementPending = pending;
       try {
@@ -838,10 +910,12 @@ export default function (pi: ExtensionAPI) {
             surfaceCleanupFailure(owner, error);
           }
         }
-        // A record Pi has accepted but not consumed is neither redelivered
-        // nor finished here: consumption finishes it, replacement replays it.
+        // Keep accepted records until consumption, but allow replay when Pi
+        // dequeued them and the latest abort deferral has cleared.
         const pending = owner.pendingActionables.find(
-          (item) => !item.delivered && !owner.unconsumedWakes.has(item.token),
+          (item) => !item.delivered &&
+            (!owner.unconsumedWakes.has(item.token) ||
+              (owner.unconsumedWakes.get(item.token)?.dequeued && !owner.dequeuedReplayDeferred)),
         );
         if (!pending) break;
         const existingClaim = replacementCoordinator.deliveries.get(pending.token);
@@ -918,8 +992,8 @@ export default function (pi: ExtensionAPI) {
         owner.restoring = false;
         if (owner.pendingActionables.some((pending) => pending.delivered)) schedulePendingCleanup(owner);
         // No bare arm is launched here. A generation without a child at this
-        // point has either delivered a typed restoration failure after its
-        // bounded retries, which hands repair to main through fm_watch_arm_pi
+        // point has either retained a typed restoration failure after its
+        // bounded retries for main to repair through fm_watch_arm_pi
         // (one more silent launch past the bound could hold a hung child that
         // the repair call would then report as "unchanged"), or lost a
         // verified successor during the delivery, which takes the ordinary
@@ -1199,16 +1273,48 @@ export default function (pi: ExtensionAPI) {
     return result;
   }
 
-  pi.on?.("before_agent_start", (event) => {
-    consumeWake(generation, event.prompt);
+  pi.on?.("before_agent_start", (event, ctx) => {
+    if (!("prompt" in event) || !generationIsLive(generation) || !ctx.isIdle?.()) return;
+    generation.context = ctx;
+    for (const wake of generation.unconsumedWakes.values()) {
+      if (wake.content === event.prompt) wake.duringRun = false;
+    }
   });
   pi.on?.("message_start", (event) => {
     if (event.message.role !== "user") return;
     consumeWake(generation, userMessageText(event.message.content));
   });
+  pi.on?.("session_before_compact", (event, ctx) => {
+    if (event.reason !== "manual" || !generationIsLive(generation)) return;
+    generation.manualCompaction = {
+      finishing: false,
+      isIdle: typeof ctx.isIdle === "function" ? () => ctx.isIdle() : null,
+    };
+  });
+  const finishManualCompaction = (reason: string): void => {
+    if (reason === "manual" && generationIsLive(generation) && generation.manualCompaction) {
+      generation.manualCompaction.finishing = true;
+    }
+  };
+  pi.on?.("session_compact", (event) => finishManualCompaction(event.reason));
+  pi.on?.("session_compact_failed", (event) => finishManualCompaction(event.reason));
+  pi.on?.("agent_start", () => {
+    if (generationIsLive(generation)) generation.manualCompaction = null;
+  });
+  pi.on?.("agent_settled", (event, ctx) => {
+    if (!generationIsLive(generation) || typeof ctx.hasPendingMessages !== "function" || ctx.hasPendingMessages()) return;
+    for (const wake of generation.unconsumedWakes.values()) {
+      if (wake.duringRun) wake.dequeued = true;
+    }
+    generation.dequeuedReplayDeferred = event.aborted === true;
+    // A delivery still in flight keeps its consumption record and notices
+    // the dequeue on its next loop; an idle pipeline can replay immediately.
+    if (!generation.dequeuedReplayDeferred) void processPendingActionables(generation);
+  });
 
-  pi.on?.("session_start", async () => {
+  pi.on?.("session_start", async (_event, ctx) => {
     if (generation.stopping) generation = createGeneration();
+    generation.context = ctx;
     activateGeneration(generation);
     if (lockOwnership() !== "owned") return;
     activateOwnedWatch(generation);

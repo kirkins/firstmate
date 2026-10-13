@@ -125,7 +125,7 @@ A close the engine takes is handled as in [One wake](#one-wake), with the dialog
 A handled wake with only routine outcomes never reaches main.
 A handled wake that recorded a captain outcome while the captain is still attended exits with one `supervision-host: branch-outcome:` line naming its store rows, without the close it handled; see [Captain outcomes](#captain-outcomes).
 A turn that fails hands its close to main with one `supervision-host:` line, as away.
-Main-only rows that share the queue with the branch's rows stay queued for main, which is woken for each on its own triggering close, as on Pi.
+Main-only rows that share the queue with the branch's rows stay queued for main, which is woken for each on its own triggering close.
 The engine turn runs beside a captain who is present, so its guarded actions take the task leases that keep it and main off the same task.
 
 ### Away
@@ -239,7 +239,7 @@ So the owner's next arm starts from the same state as without the host, and the 
 - An unverified successor.
 - A refused handoff.
 - An unreadable queue.
-- Rows main already claimed.
+- A main claim overlapping the requested grant at publication.
 - A missing engine or node.
 - A dialog mirror that cannot be read, on an attended wake.
 - A session latched after repeated engine errors, inside its cooldown; see [The broken-session latch](#the-broken-session-latch).

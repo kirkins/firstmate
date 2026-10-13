@@ -46,7 +46,7 @@ Some wakes stay on main:
 - Every watcher-failure alarm also stays on main.
 
 All of that describes the attended posture.
-The away posture, recorded by `state/.afk-contract`, hands every row to the branch and parks main (see "Postures" below).
+[Postures](#postures) owns away routing, retained main claims, and main parking.
 
 ### How outcomes reach main
 
@@ -101,8 +101,7 @@ What is never offered, or falls back to main:
 - When a triggering close has no acceptor (extension absent, branch broken), it keeps today's wake-to-main path.
 - Watcher-failure alarms always go to main, because only main can repair the watcher cycle.
 
-Under the away-posture record, the check-kind and decision-owned exclusions lift and every actionable row is offered ("Postures" below).
-The no-acceptor fallback and the alarms still reach main in that posture.
+[Postures](#postures) owns away routing and its main fallback.
 
 #### Decision-owned rows
 
@@ -141,7 +140,7 @@ The wake message itself retains its existing shape, so other harness-arm scripts
 Heartbeat handling remains independent.
 A fleet-wide heartbeat keeps its own all-or-nothing rule (see "Heartbeat routing" below): it takes every branch-ownable unread row or none of them.
 A co-present main-owned check row no longer defers that review to main.
-That row is not fleet context the branch is missing, and main is woken for it on its own triggering close.
+That row is not fleet context the branch is missing, and its triggering close follows the watcher's main-delivery contract.
 
 ### The branch itself
 
@@ -173,7 +172,7 @@ Those checks and the store calls around them are awaited rather than synchronous
 An explicit queue inside the extension is what keeps them serialized (see "Off-thread delivery" below).
 
 Every accepted path that cannot reach a working branch rejects its settlement to the watcher.
-The watcher retains delivery ownership and routes the wake to main as a follow-up, which counts as delivered once Pi accepts it.
+The watcher retains delivery ownership under the delivery-versus-consumption contract in `.pi/extensions/fm-primary-pi-watch.ts`, including coverage by an existing routine invitation.
 A broken branch declines later offers, so they take that path directly.
 
 After wake rows are claimed, a branch prompt counts as handled only when `fm_branch_report` appends a durable outcome before that prompt settles.
@@ -269,15 +268,20 @@ Every other fleet-wide or unresolvable wake, and every watcher-failure alarm, st
 
 The branch recomputes eligibility immediately before prompting the branch to drain.
 It publishes the exact eligible row set to `state/.branch-eligible-rows` through `writeEligibleRowsSnapshot`.
+The selector validates the whole unread queue and main's claim record, then excludes sequences already claimed by main from the new grant.
+An old main-owned routine row therefore cannot block a fresh unclaimed routine row.
+Unread decisions retain their trigger precedence even when main has already claimed their rows.
+An unreadable, malformed, or symlinked main claim fails the selection closed.
+A newly arrived main-only row does not revoke an independently eligible offer; the recheck grants only the remaining eligible rows.
+If no eligible rows remain, an ordinary accepted offer settles without another branch prompt; an accepted away-only offer rejects back to the watcher.
 
-After an independently eligible wake has already been offered, a newly-arrived main-owned row observed at that pre-drain recheck does not revoke the offer.
-Instead, that row is excluded from the eligible set.
-Whatever else is currently eligible still reaches the branch, and the main-owned row stays queued for main's own drain.
 [`watcher-continuity.md`](watcher-continuity.md#per-actor-acknowledgement) owns the consume-side guarantee that neither actor can present or acknowledge the other's claim.
 
 Heartbeat keeps its own all-or-nothing recheck over the rows it can claim: it takes every branch-ownable unread row or none of them.
 An unresolvable task-local row still defers the whole review to main.
 
+A main claim racing Pi grant publication triggers one fresh eligibility scan and one retry for the remaining unclaimed rows.
+The atomic grant still refuses any overlapping ownership; a second race falls back to main.
 A producer can still append a row in the instant between that final check and drain startup.
 This accepted residual follows the confused-agent-grade boundary above rather than claiming adversarial queue isolation.
 
@@ -359,9 +363,10 @@ The mirror never carries tool calls, tool results, operational injections, or th
 Mirroring happens at two points:
 
 - The idle path mirrors at main's turn end.
-- At `before_agent_start`, Pi's authoritative prompt is staged verbatim before SessionManager persists that user entry.
+- At a user-message `before_agent_start`, Pi's authoritative prompt is staged verbatim before SessionManager persists that user entry.
   The complete current captain message therefore precedes any branch wake accepted after that boundary.
   The later persisted copy is suppressed, and older dialog entries remain bounded.
+  Pi's prompt-less custom-message starts do not stage captain text.
 
 The mirror cursor is durable (`state/.branch-mirror-cursor`), so within one main session only not-yet-mirrored dialog is replayed.
 
@@ -478,8 +483,8 @@ The branch accepts it without a project only when every branch-ownable row obser
 A heartbeat is never vetoed or ridden into main by a co-present check row or decision-owned signal/stale row.
 Those rows are main-owned while attended.
 They are excluded from what the branch may claim and left queued for main.
-Main is woken for each on its own watcher cycle, so nothing starves by being left behind.
-Under the away-posture record the branch claims them too ("Postures" below).
+Their triggering closes follow the bounded main-delivery contract in `.pi/extensions/fm-primary-pi-watch.ts`.
+[Postures](#postures) owns their away routing.
 
 Deferring the fleet review to main merely because some unrelated merge poll or Relay mention happened to be sitting unread put a routine review in the captain's chat for a reason that had nothing to do with the fleet.
 That coupling is gone.
@@ -563,8 +568,9 @@ A leftover `state/.afk` flag declines nothing.
 
 ### While the record exists
 
-- Every actionable row is branch-eligible.
-  Check rows, decision-owned signal and stale rows, and heartbeat rows are claimed by the branch on whatever wake finds them unread.
+- Every unclaimed actionable row is branch-eligible.
+  This includes check rows, decision-owned signal and stale rows, and heartbeat rows.
+  Existing main claims remain with main under the [pre-drain recheck](#pre-drain-recheck).
   The trigger class no longer forces a batch to main.
   The two vetoes that describe a broken queue, an unresolvable task-local row and a structurally invalid row, stay vetoes in both postures.
   A prompt that claims a check row is not scoped by task, so the branch may report it as `fleet`.
@@ -701,7 +707,7 @@ Other tests remain where they were:
 
 ### Live guards
 
-`FM_PI_BRANCH_LIVE_E2E=1 tests/fm-pi-branch-live-e2e.test.sh` exercises the real installed Pi SDK's immediate active-transcript appendEntry rendering, persistence, custom-entry model exclusion, branch-session surfaces, and watcher-owned fallback after rejected branch settlement.
+`FM_PI_BRANCH_LIVE_E2E=1 tests/fm-pi-branch-live-e2e.test.sh` exercises the real installed Pi SDK's immediate active-transcript appendEntry rendering, persistence, custom-entry model exclusion, branch-session surfaces, watcher-owned fallback after rejected branch settlement, and prompt-less custom turns between user prompts with both tracked extensions loaded.
 
 `FM_PI_BRANCH_RESPONSIVENESS_E2E=1 tests/fm-pi-branch-responsiveness-live-e2e.test.sh` answers the question only a real TUI can.
 It types into an isolated Pi pane while outcomes are delivered and fails if keystroke echo leaves the class of the same machine's extension-free floor.
