@@ -44,8 +44,10 @@
 #     LANG=C.UTF-8 LC_ALL=C.UTF-8, `prepare` clones the full repository
 #     (never --depth, and `git fetch --unshallow` when a shallow clone
 #     exists), pins node to the local machine's major version (or
-#     --node-major), verifying the nodejs.org tarball against SHASUMS256.txt,
-#     and installs only the documented closed tool set. pi and zellij are
+#     --node-major), and installs only the documented closed tool set.
+#     The downloaded /tmp/fm-node.tar.xz is verified against the distribution
+#     archive's entry in SHASUMS256.txt; any verification failure aborts
+#     preparation before extraction. pi and zellij are
 #     never installed: tool-absent classes are clean gate-skips by design.
 #   - Routing: `route` never touches the cloud. It reads the machine's heavy
 #     slot through bin/fm-heavy-slot.sh's public `status` (no file parsing, no
