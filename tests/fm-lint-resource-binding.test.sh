@@ -319,17 +319,17 @@ SH
   [ ! -e "$BINDING_TRACE/children" ] || fail 'scoped re-entry silently lost its binding'
   [ "$(binding_slot status)" = free ] || fail 'removed binding leaked the slot'
   binding_fixture literal-argv
-  printf '#!/usr/bin/env bash\nif then\n' > "$BINDING_REPO/tests/"'${FLAVOR}.sh'
+  printf '#!/usr/bin/env bash\nif then\n' > "$BINDING_REPO/tests/\${FLAVOR}.sh"
   printf '#!/usr/bin/env bash\nexit 0\n' > "$BINDING_REPO/tests/clean.sh"
   rc=0
   out=$(FLAVOR=clean BINDING_LITERAL_ROOT=1 binding_lint \
-    --telemetry "$BINDING_TRACE/"'${FLAVOR}.tsv' 'tests/${FLAVOR}.sh' 2>&1) || rc=$?
+    --telemetry "$BINDING_TRACE/\${FLAVOR}.tsv" "tests/\${FLAVOR}.sh" 2>&1) || rc=$?
   expect_code 1 "$rc" 'the literal defective root must not expand to the clean alternative'
-  [ "$(cat "$BINDING_TRACE/requested-roots")" = 'tests/${FLAVOR}.sh' ] || fail 'scope launch rewrote the requested root'
-  [ -f "$BINDING_TRACE/"'${FLAVOR}.tsv' ] || fail 'scope launch rewrote the telemetry path'
+  [ "$(cat "$BINDING_TRACE/requested-roots")" = "tests/\${FLAVOR}.sh" ] || fail 'scope launch rewrote the requested root'
+  [ -f "$BINDING_TRACE/\${FLAVOR}.tsv" ] || fail 'scope launch rewrote the telemetry path'
   [ ! -e "$BINDING_TRACE/clean.tsv" ] || fail 'scope launch wrote telemetry to the expanded alternative'
   [ "$(binding_slot status)" = free ] || fail 'literal argument lint leaked the slot'
-  binding_fixture 'paths-${FLAVOR}'
+  binding_fixture "paths-\${FLAVOR}"
   ln -s "$(command -v bash)" "$BINDING_FAKEBIN/bash"
   rc=0; out=$(FLAVOR=clean binding_lint 2>&1) || rc=$?
   expect_code 0 "$rc" 'scope launch must preserve literal SELF and executable paths'
