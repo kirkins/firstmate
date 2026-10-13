@@ -601,19 +601,24 @@ if [ "$CMD" = prepare ]; then
   remote_hands_valid_positive_int "${LOCAL_NODE_MAJOR:-}" || LOCAL_NODE_MAJOR=
   # shellcheck disable=SC2016  # $-expansions in this script run in the sandbox shell, not here.
   APT_AND_NODE_SCRIPT='export LANG=C.UTF-8 LC_ALL=C.UTF-8
-sudo apt-get update -qq && sudo apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time'
+sudo apt-get update -qq
+sudo apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time'
   SANDBOX_MAJOR=$(printf '%s' "$SANDBOX_NODE" | cut -d. -f1)
   if [ -n "$LOCAL_NODE_MAJOR" ] && [ "$SANDBOX_MAJOR" != "$LOCAL_NODE_MAJOR" ]; then
     echo "prepare: sandbox node '$(printf '%s' "$SANDBOX_NODE" | tr -d '[:space:]')' -> local major $LOCAL_NODE_MAJOR; installing from nodejs.org" >&2
     # shellcheck disable=SC2016  # $-expansions in the appended script run in the sandbox shell.
     APT_AND_NODE_SCRIPT="$APT_AND_NODE_SCRIPT"'
 arch=$(uname -m)
+case "$arch" in
+  aarch64) arch=arm64 ;;
+  x86_64) arch=x64 ;;
+esac
 base="https://nodejs.org/dist/latest-v'"$LOCAL_NODE_MAJOR"'.x"
-file=$(curl -fsSL "$base/" | grep -oE "node-v[0-9]+\.[0-9]+\.[0-9]+-linux-${arch}\.tar\.xz" | head -n 1)
+file=$(curl -fsSL "$base/" | grep -oE "node-v[0-9]+\.[0-9]+\.[0-9]+-linux-${arch}\.tar\.xz" | sed -n "1p")
 [ -n "$file" ] || { echo "node tarball not found under $base" >&2; exit 1; }
-curl -fsSL -o /tmp/fm-node.tar.xz "$base/$file"
-(cd /tmp && curl -fsSL "$base/SHASUMS256.txt" | grep -F " $file" | sed "s| $file$| fm-node.tar.xz|" | sha256sum -c -) || { echo "node tarball checksum verification failed" >&2; exit 1; }
-sudo tar -xJf /tmp/fm-node.tar.xz -C /usr/local --strip-components=1
+curl -fsSL -o "/tmp/$file" "$base/$file"
+(cd /tmp && curl -fsSL "$base/SHASUMS256.txt" | grep -F " $file" | sha256sum -c -) || { checksum_rc=$?; echo "node tarball checksum verification failed" >&2; exit "$checksum_rc"; }
+sudo tar -xJf "/tmp/$file" -C /usr/local --strip-components=1
 hash -r
 node --version'
   elif [ -z "$LOCAL_NODE_MAJOR" ]; then
@@ -630,8 +635,8 @@ else
   git clone'"$( [ -z "$BRANCH" ] || printf ' --branch %s' "$(remote_hands_q "$BRANCH")" )"' '"$(remote_hands_q "$REPO")"' "$dest"
 fi
 git -C "$dest" rev-parse HEAD'
-  remote_hands_run "$NAME" "$APT_AND_NODE_SCRIPT"
-  remote_hands_run "$NAME" "$CLONE_SCRIPT"
+  remote_hands_run "$NAME" $'set -euo pipefail\n'"$APT_AND_NODE_SCRIPT"
+  remote_hands_run "$NAME" $'set -euo pipefail\n'"$CLONE_SCRIPT"
   printf 'prepare: name=%s repo=%s dest=%s\n' "$NAME" "$REPO" "$DEST"
   exit 0
 fi

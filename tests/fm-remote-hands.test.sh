@@ -62,6 +62,8 @@ case "\$1 \$2" in
       args=()
       for arg in "\$@"; do
         arg=\${arg//\/tmp\/fm-hands/\$FM_FAKE_SBX_REMOTE_TMP\/fm-hands}
+        arg=\${arg//\/tmp\/\\\$file/\$FM_FAKE_SBX_REMOTE_TMP\/\\\$file}
+        arg=\${arg//'(cd /tmp &&'/'(cd "'\$FM_FAKE_SBX_REMOTE_TMP'" &&'}
         args+=("\$arg")
       done
       set -- "\${args[@]}"
@@ -444,6 +446,167 @@ test_prepare_executes_bootstrap_and_literal_clone_arguments() {
   pass "fm-remote-hands.sh: prepare executes tmux bootstrap, node probe, and literal clone argv"
 }
 
+make_preparation_tools() {
+  mkdir -p "$TMP_ROOT/prepbin" "$TMP_ROOT/node-install/bin" "$TMP_ROOT/node-release"
+  cat > "$TMP_ROOT/node-install/bin/node" <<'SH'
+#!/usr/bin/env bash
+printf '%s\n' 20.0.0
+SH
+  chmod +x "$TMP_ROOT/node-install/bin/node"
+  local arch dir
+  for arch in arm64 x64; do
+    dir="node-v22.10.0-linux-$arch"
+    mkdir -p "$TMP_ROOT/node-release/$dir/bin"
+    cat > "$TMP_ROOT/node-release/$dir/bin/node" <<'SH'
+#!/usr/bin/env bash
+if [ "$1" = --version ]; then
+  printf '%s\n' node >> "$FM_FAKE_PREP_LOG"
+  [ "${FM_FAKE_PREP_FAIL:-}" != node ] || exit 31
+  printf '%s\n' v22.10.0
+else
+  printf '%s\n' 22.10.0
+fi
+SH
+    chmod +x "$TMP_ROOT/node-release/$dir/bin/node"
+    tar -cJf "$TMP_ROOT/node-release/$dir.tar.xz" -C "$TMP_ROOT/node-release" "$dir" \
+      || fail "could not build synthetic Node archive"
+  done
+  (cd "$TMP_ROOT/node-release" && sha256sum node-*.tar.xz) > "$TMP_ROOT/node-release/SHASUMS256.txt" \
+    || fail "could not checksum synthetic Node archives"
+  cat > "$TMP_ROOT/prepbin/uname" <<'SH'
+#!/usr/bin/env bash
+printf '%s\n' "$FM_FAKE_PREP_ARCH"
+SH
+  cat > "$TMP_ROOT/prepbin/curl" <<'SH'
+#!/usr/bin/env bash
+case "$*" in
+  */SHASUMS256.txt) stage=checksum-download ;;
+  */) stage=index ;;
+  *) stage=download ;;
+esac
+printf '%s\n' "$stage $*" >> "$FM_FAKE_PREP_LOG"
+case "$stage" in
+  index)
+    printf '%s\n' node-v22.10.0-linux-arm64.tar.xz node-v22.10.0-linux-x64.tar.xz
+    ;;
+  checksum-download)
+    if [ "${FM_FAKE_PREP_FAIL:-}" = checksum ]; then
+      sed 's/^[0-9a-f]*/0000000000000000000000000000000000000000000000000000000000000000/' "$FM_FAKE_PREP_RELEASE/SHASUMS256.txt"
+    else
+      cat "$FM_FAKE_PREP_RELEASE/SHASUMS256.txt"
+    fi
+    ;;
+  download)
+    [ "${FM_FAKE_PREP_FAIL:-}" != download ] || exit 31
+    [ "$1 $2" = '-fsSL -o' ] || exit 94
+    cp "$FM_FAKE_PREP_RELEASE/${4##*/}" "$3" || exit 95
+    ;;
+esac
+[ "${FM_FAKE_PREP_FAIL:-}" != "$stage" ] || exit 31
+SH
+  cat > "$TMP_ROOT/prepbin/sudo" <<'SH'
+#!/usr/bin/env bash
+case "$1" in
+  apt-get) stage=$2 ;;
+  tar) stage=extract ;;
+  *) exit 93 ;;
+esac
+printf '%s\n' "$stage $*" >> "$FM_FAKE_PREP_LOG"
+[ "${FM_FAKE_PREP_FAIL:-}" != "$stage" ] || exit 31
+if [ "$stage" = extract ]; then
+  [ "$2" = -xJf ] && [ "$4" = -C ] && [ "$5" = /usr/local ] && [ "$6" = --strip-components=1 ] || exit 96
+  exec "$FM_FAKE_PREP_TAR" -xJf "$3" -C "$FM_FAKE_PREP_INSTALL" --strip-components=1
+fi
+SH
+  cat > "$TMP_ROOT/prepbin/git" <<'SH'
+#!/usr/bin/env bash
+printf 'git %s\n' "$*" >> "$FM_FAKE_PREP_LOG"
+if [ "${FM_FAKE_PREP_FAIL:-}" = clone ] && [ "$1" = clone ]; then
+  "$FM_FAKE_PREP_GIT" "$@" || exit "$?"
+  exit 31
+fi
+if [ "${FM_FAKE_PREP_FAIL:-}" = fetch ] && [ "$3" = fetch ]; then exit 31; fi
+exec "$FM_FAKE_PREP_GIT" "$@"
+SH
+  chmod +x "$TMP_ROOT/prepbin/"*
+}
+
+prepare_fixture() {
+  local dest=$1 arch=$2 failure=${3:-}
+  : > "$TMP_ROOT/prep.log"
+  hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EXECUTE=1 \
+    FM_FAKE_PREP_ARCH="$arch" FM_FAKE_PREP_FAIL="$failure" \
+    FM_FAKE_PREP_LOG="$TMP_ROOT/prep.log" FM_FAKE_PREP_RELEASE="$TMP_ROOT/node-release" \
+    FM_FAKE_PREP_INSTALL="$TMP_ROOT/node-install" \
+    FM_FAKE_PREP_TAR="$PREP_REAL_TAR" FM_FAKE_PREP_GIT="$PREP_REAL_GIT" -- \
+    prepare --name t-node-prepare --repo "file://$TMP_ROOT/prep-source" --dest "$dest" --node-major 22
+}
+
+test_prepare_installs_node_and_stops_on_every_required_failure() {
+  make_home prep-install-home >/dev/null
+  local saved_path=$ACTIVE_PATH arch archive dest stage expected
+  PREP_REAL_TAR=$(command -v tar)
+  PREP_REAL_GIT=$(command -v git)
+  git init -q "$TMP_ROOT/prep-source" || fail "could not create preparation source"
+  printf '%s\n' fixture > "$TMP_ROOT/prep-source/fixture.txt"
+  git -C "$TMP_ROOT/prep-source" add fixture.txt
+  git -C "$TMP_ROOT/prep-source" -c user.name=Fixture -c user.email=fixture@example.invalid commit -qm fixture \
+    || fail "could not commit preparation source"
+  ACTIVE_PATH="$TMP_ROOT/node-install/bin:$TMP_ROOT/prepbin:$ACTIVE_PATH"
+  for arch in aarch64 x86_64 arm64 x64; do
+    make_preparation_tools
+    dest="$TMP_ROOT/prep-$arch"
+    prepare_fixture "$dest" "$arch"
+    expect_code 0 "$HANDS_STATUS" "mismatched Node major must install and clone on $arch"
+    case "$arch" in aarch64|arm64) archive=arm64 ;; *) archive=x64 ;; esac
+    assert_grep "https://nodejs.org/dist/latest-v22.x/node-v22.10.0-linux-$archive.tar.xz" "$TMP_ROOT/prep.log" \
+      "the download must use the published $archive archive"
+    assert_contains "$HANDS_STDOUT" ': OK' "the downloaded archive must pass real checksum verification"
+    assert_contains "$HANDS_STDOUT" 'v22.10.0' "the extracted Node must execute"
+    cmp -s "$TMP_ROOT/prep-source/fixture.txt" "$dest/fixture.txt" || fail "Node installation did not proceed to clone"
+  done
+  for stage in update install index download checksum-download checksum extract node; do
+    make_preparation_tools
+    dest="$TMP_ROOT/failed-$stage"
+    prepare_fixture "$dest" aarch64 "$stage"
+    expected=31
+    [ "$stage" != checksum ] || expected=1
+    expect_code "$expected" "$HANDS_STATUS" "$stage failure must stop preparation"
+    assert_absent "$dest" "$stage failure must stop before cloning"
+    assert_no_grep 'git clone' "$TMP_ROOT/prep.log" "$stage failure must never invoke cloning"
+    assert_not_contains "$HANDS_STDOUT" 'prepare: name=' "$stage failure must not report success"
+    case "$stage" in
+      checksum|checksum-download)
+        assert_no_grep 'extract' "$TMP_ROOT/prep.log" "checksum failure must prevent extraction"
+        ;;
+      update)
+        assert_no_grep 'install' "$TMP_ROOT/prep.log" "update failure must prevent installation"
+        ;;
+    esac
+  done
+  make_preparation_tools
+  prepare_fixture "$TMP_ROOT/failed-clone" x86_64 clone
+  expect_code 31 "$HANDS_STATUS" "a clone failure must propagate even when HEAD exists"
+  assert_no_grep 'rev-parse HEAD' "$TMP_ROOT/prep.log" "clone failure must stop before the HEAD query"
+  local shallow="$TMP_ROOT/prep-shallow"
+  "$PREP_REAL_GIT" clone -q --depth 1 "file://$TMP_ROOT/prep-source" "$shallow" \
+    || fail "could not create shallow preparation fixture"
+  prepare_fixture "$shallow" x86_64 fetch
+  expect_code 31 "$HANDS_STATUS" "unshallow failure must propagate despite a valid HEAD"
+  [ -f "$shallow/.git/shallow" ] || fail "failed fetch must retain the shallow fixture"
+  assert_no_grep 'rev-parse HEAD' "$TMP_ROOT/prep.log" "fetch failure must stop before the HEAD query"
+  prepare_fixture "$shallow" x86_64
+  expect_code 0 "$HANDS_STATUS" "an existing shallow clone must unshallow successfully"
+  assert_absent "$shallow/.git/shallow" "successful preparation must leave a full clone"
+  [ "$("$PREP_REAL_GIT" -C "$shallow" rev-parse HEAD)" = "$("$PREP_REAL_GIT" -C "$TMP_ROOT/prep-source" rev-parse HEAD)" ] \
+    || fail "unshallow must retain the expected HEAD"
+  prepare_fixture "$shallow" x86_64
+  expect_code 0 "$HANDS_STATUS" "an existing full clone must prepare successfully"
+  assert_no_grep 'fetch --unshallow' "$TMP_ROOT/prep.log" "a full clone must not fetch unnecessarily"
+  ACTIVE_PATH=$saved_path
+  pass "fm-remote-hands.sh: Node architecture mapping and every preparation failure execute correctly"
+}
+
 test_wait_propagates_the_hosted_exit_code() {
   make_home wait-home >/dev/null
   reset_logs
@@ -775,6 +938,7 @@ test_create_sizes_shapes_ttl_and_allowances
 test_exec_hosts_the_job_on_a_dedicated_tmux_socket
 test_exec_preserves_literal_argv_and_job_exit
 test_prepare_executes_bootstrap_and_literal_clone_arguments
+test_prepare_installs_node_and_stops_on_every_required_failure
 test_wait_propagates_the_hosted_exit_code
 test_wait_keeps_polling_a_reachable_sandbox_with_no_marker_yet
 test_copy_and_log_paths
