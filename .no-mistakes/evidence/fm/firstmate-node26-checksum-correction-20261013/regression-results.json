@@ -1,0 +1,30 @@
+[
+  {
+    "name": "current",
+    "pass_": true,
+    "exit": 0,
+    "sentinel_preserved": true,
+    "cleanup": true
+  },
+  {
+    "name": "portable-shasum",
+    "pass_": true,
+    "exit": 0,
+    "sentinel_preserved": true,
+    "cleanup": true
+  },
+  {
+    "name": "login-reordered",
+    "pass_": true,
+    "exit": 0,
+    "sentinel_preserved": true,
+    "cleanup": true
+  },
+  {
+    "name": "old-installer-login-reordered",
+    "pass_": true,
+    "exit": 1,
+    "sentinel_preserved": true,
+    "cleanup": true
+  }
+]

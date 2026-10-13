@@ -1,0 +1,11 @@
+acquired: task=checksum-focused estimate=256MB pid=143752 expires_in=600s
+run the memory-heavy job under the cap wrapper:
+  systemd-run --user --scope -p MemoryMax=256M -- <command>
+keep the job parallelism bounded: no more than -j4
+release immediately after the job: 'bin/fm-heavy-slot.sh' release checksum-focused
+portable: expected exit 0; sentinel preserved; all fixture roots and registries removed
+reordered: expected exit 0; sentinel preserved; all fixture roots and registries removed
+old: expected exit 1; sentinel preserved; all fixture roots and registries removed
+held task=checksum-focused pid=143752 estimate=256MB age=1s expires_in=599s state=live
+v26.10.0
+released: task=checksum-focused

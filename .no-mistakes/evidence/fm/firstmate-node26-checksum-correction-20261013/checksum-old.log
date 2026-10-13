@@ -1,0 +1,243 @@
+Running as unit: run-p145362-i37894144.scope; invocation ID: 1b51ea61fc1a4a4b82dba5eaf9ad95d2
+scenario=old
+FM_LINT_JOBS=1
+enforced_memory_max_bytes=268435456
+fixture_root=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld
+ok - fm-remote-hands.sh: fake exec restores fixture PATH after login initialization
++ test_prepare_verifies_downloaded_archive_before_extraction
++ make_home prep-checksum-home
++ local home
++ home=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/prep-checksum-home
++ shift
++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/prep-checksum-home
++ '[' 0 -gt 0 ']'
++ HOME_UNDER_TEST=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/prep-checksum-home
++ printf '%s\n' /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/prep-checksum-home
++ sha_args=()
++ local real_sha sha_args mode expected
+++ command -v sha256sum
++ real_sha=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/path/normal/sha256sum
++ :
++ printf 'node archive fixture\n'
+++ cut '-d ' -f1
+++ /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/path/normal/sha256sum /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/node-archive
++ expected=2e6bac2e4b76a1235b8486930affc73baaeadd39427c006a8a21f34f925afff0
++ mkdir -p /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/download
++ cat
++ cat
++ cat
++ cat
++ cat
++ cat
++ chmod +x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/fakebin/curl /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/fakebin/uname /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/fakebin/sudo /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/fakebin/tar /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/fakebin/sha256sum /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/fakebin/git
++ for mode in good missing wrong verifier-error
++ rm -f /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/extracted
++ :
++ printf '22.22.1\n'
++ :
++ hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 FM_FAKE_CHECKSUM_MODE=good FM_FAKE_EXPECTED_SHA=2e6bac2e4b76a1235b8486930affc73baaeadd39427c006a8a21f34f925afff0 FM_FAKE_ARCHIVE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/node-archive FM_FAKE_DOWNLOAD_DIR=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/download FM_FAKE_EXTRACTION_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/extracted -- prepare --name t-checksum --repo https://github.com/kirkins/firstmate --node-major 20
++ hands_original FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 FM_FAKE_CHECKSUM_MODE=good FM_FAKE_EXPECTED_SHA=2e6bac2e4b76a1235b8486930affc73baaeadd39427c006a8a21f34f925afff0 FM_FAKE_ARCHIVE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/node-archive FM_FAKE_DOWNLOAD_DIR=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/download FM_FAKE_EXTRACTION_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/extracted -- prepare --name t-checksum --repo https://github.com/kirkins/firstmate --node-major 20
++ envs=()
++ local envs
++ '[' FM_REMOTE_HANDS=1 '!=' -- ']'
++ envs+=("$1")
++ shift
++ '[' FM_FAKE_SBX_EVAL=1 '!=' -- ']'
++ envs+=("$1")
++ shift
++ '[' FM_FAKE_CHECKSUM_MODE=good '!=' -- ']'
++ envs+=("$1")
++ shift
++ '[' FM_FAKE_EXPECTED_SHA=2e6bac2e4b76a1235b8486930affc73baaeadd39427c006a8a21f34f925afff0 '!=' -- ']'
++ envs+=("$1")
++ shift
++ '[' FM_FAKE_ARCHIVE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/node-archive '!=' -- ']'
++ envs+=("$1")
++ shift
++ '[' FM_FAKE_DOWNLOAD_DIR=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/download '!=' -- ']'
++ envs+=("$1")
++ shift
++ '[' FM_FAKE_EXTRACTION_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/extracted '!=' -- ']'
++ envs+=("$1")
++ shift
++ '[' -- '!=' -- ']'
++ shift
+++ env FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 FM_FAKE_CHECKSUM_MODE=good FM_FAKE_EXPECTED_SHA=2e6bac2e4b76a1235b8486930affc73baaeadd39427c006a8a21f34f925afff0 FM_FAKE_ARCHIVE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/node-archive FM_FAKE_DOWNLOAD_DIR=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/download FM_FAKE_EXTRACTION_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/extracted FM_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/prep-checksum-home PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/path/normal FM_FAKE_SBX_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/sbx.argv.log FM_FAKE_KUBECTL_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/kubectl.argv.log FM_FAKE_SBX_EXEC_SEQ=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/exec-sequence.txt FM_FAKE_SBX_EXEC_CALLS=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/exec-calls.txt FM_TEST_SEAM=1 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/old-installer.sh prepare --name t-checksum --repo https://github.com/kirkins/firstmate --node-major 20
++ HANDS_STDOUT=$'node-v20.10.0-linux-x64.tar.xz: FAILED open or read\n26.10.0\nfake-head\nprepare: name=t-checksum repo=https://github.com/kirkins/firstmate dest=/home/agent/workspace/firstmate'
++ HANDS_STATUS=0
+++ cat /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/stderr
++ HANDS_STDERR=$'prepare: sandbox node \'26.10.0\' -> local major 20; installing from nodejs.org\nsha256sum: node-v20.10.0-linux-x64.tar.xz: No such file or directory\nsha256sum: WARNING: 1 listed file could not be read'
++ local mode=unknown arg
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ mode=good
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
+++ '[' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/extracted ']'
+++ echo yes
++ printf 'prepare mode=%s exit=%s extraction=%s\n' good 0 yes
+prepare mode=good exit=0 extraction=yes
++ printf '%s\n' $'node-v20.10.0-linux-x64.tar.xz: FAILED open or read\n26.10.0\nfake-head\nprepare: name=t-checksum repo=https://github.com/kirkins/firstmate dest=/home/agent/workspace/firstmate' $'prepare: sandbox node \'26.10.0\' -> local major 20; installing from nodejs.org\nsha256sum: node-v20.10.0-linux-x64.tar.xz: No such file or directory\nsha256sum: WARNING: 1 listed file could not be read'
+node-v20.10.0-linux-x64.tar.xz: FAILED open or read
+26.10.0
+fake-head
+prepare: name=t-checksum repo=https://github.com/kirkins/firstmate dest=/home/agent/workspace/firstmate
+prepare: sandbox node '26.10.0' -> local major 20; installing from nodejs.org
+sha256sum: node-v20.10.0-linux-x64.tar.xz: No such file or directory
+sha256sum: WARNING: 1 listed file could not be read
++ '[' good = good ']'
++ expect_code 0 0 $'a correct digest must permit extraction and prepare (prepare: sandbox node \'26.10.0\' -> local major 20; installing from nodejs.org\nsha256sum: node-v20.10.0-linux-x64.tar.xz: No such file or directory\nsha256sum: WARNING: 1 listed file could not be read)'
++ local expected=0 actual=0 $'label=a correct digest must permit extraction and prepare (prepare: sandbox node \'26.10.0\' -> local major 20; installing from nodejs.org\nsha256sum: node-v20.10.0-linux-x64.tar.xz: No such file or directory\nsha256sum: WARNING: 1 listed file could not be read)'
++ '[' 0 = 0 ']'
++ '[' -s /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/extracted ']'
++ for mode in good missing wrong verifier-error
++ rm -f /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/extracted
++ :
++ printf '22.22.1\n'
++ :
++ hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 FM_FAKE_CHECKSUM_MODE=missing FM_FAKE_EXPECTED_SHA=2e6bac2e4b76a1235b8486930affc73baaeadd39427c006a8a21f34f925afff0 FM_FAKE_ARCHIVE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/node-archive FM_FAKE_DOWNLOAD_DIR=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/download FM_FAKE_EXTRACTION_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/extracted -- prepare --name t-checksum --repo https://github.com/kirkins/firstmate --node-major 20
++ hands_original FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 FM_FAKE_CHECKSUM_MODE=missing FM_FAKE_EXPECTED_SHA=2e6bac2e4b76a1235b8486930affc73baaeadd39427c006a8a21f34f925afff0 FM_FAKE_ARCHIVE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/node-archive FM_FAKE_DOWNLOAD_DIR=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/download FM_FAKE_EXTRACTION_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/extracted -- prepare --name t-checksum --repo https://github.com/kirkins/firstmate --node-major 20
++ envs=()
++ local envs
++ '[' FM_REMOTE_HANDS=1 '!=' -- ']'
++ envs+=("$1")
++ shift
++ '[' FM_FAKE_SBX_EVAL=1 '!=' -- ']'
++ envs+=("$1")
++ shift
++ '[' FM_FAKE_CHECKSUM_MODE=missing '!=' -- ']'
++ envs+=("$1")
++ shift
++ '[' FM_FAKE_EXPECTED_SHA=2e6bac2e4b76a1235b8486930affc73baaeadd39427c006a8a21f34f925afff0 '!=' -- ']'
++ envs+=("$1")
++ shift
++ '[' FM_FAKE_ARCHIVE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/node-archive '!=' -- ']'
++ envs+=("$1")
++ shift
++ '[' FM_FAKE_DOWNLOAD_DIR=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/download '!=' -- ']'
++ envs+=("$1")
++ shift
++ '[' FM_FAKE_EXTRACTION_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/extracted '!=' -- ']'
++ envs+=("$1")
++ shift
++ '[' -- '!=' -- ']'
++ shift
+++ env FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 FM_FAKE_CHECKSUM_MODE=missing FM_FAKE_EXPECTED_SHA=2e6bac2e4b76a1235b8486930affc73baaeadd39427c006a8a21f34f925afff0 FM_FAKE_ARCHIVE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/node-archive FM_FAKE_DOWNLOAD_DIR=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/download FM_FAKE_EXTRACTION_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/extracted FM_HOME=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/prep-checksum-home PATH=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/fakebin:/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/path/normal FM_FAKE_SBX_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/sbx.argv.log FM_FAKE_KUBECTL_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/kubectl.argv.log FM_FAKE_SBX_EXEC_SEQ=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/exec-sequence.txt FM_FAKE_SBX_EXEC_CALLS=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/exec-calls.txt FM_TEST_SEAM=1 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/old-installer.sh prepare --name t-checksum --repo https://github.com/kirkins/firstmate --node-major 20
++ HANDS_STDOUT=$'26.10.0\nfake-head\nprepare: name=t-checksum repo=https://github.com/kirkins/firstmate dest=/home/agent/workspace/firstmate'
++ HANDS_STATUS=0
+++ cat /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/stderr
++ HANDS_STDERR=$'prepare: sandbox node \'26.10.0\' -> local major 20; installing from nodejs.org\nsha256sum: \'standard input\': no properly formatted checksum lines found'
++ local mode=unknown arg
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ mode=missing
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
++ for arg in "$@"
++ case "$arg" in
+++ '[' -e /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld/extracted ']'
+++ echo yes
++ printf 'prepare mode=%s exit=%s extraction=%s\n' missing 0 yes
+prepare mode=missing exit=0 extraction=yes
++ printf '%s\n' $'26.10.0\nfake-head\nprepare: name=t-checksum repo=https://github.com/kirkins/firstmate dest=/home/agent/workspace/firstmate' $'prepare: sandbox node \'26.10.0\' -> local major 20; installing from nodejs.org\nsha256sum: \'standard input\': no properly formatted checksum lines found'
+26.10.0
+fake-head
+prepare: name=t-checksum repo=https://github.com/kirkins/firstmate dest=/home/agent/workspace/firstmate
+prepare: sandbox node '26.10.0' -> local major 20; installing from nodejs.org
+sha256sum: 'standard input': no properly formatted checksum lines found
++ '[' missing = good ']'
++ '[' 0 -ne 0 ']'
++ fail 'missing checksum must fail prepare'
++ printf 'not ok - %s\n' 'missing checksum must fail prepare'
+not ok - missing checksum must fail prepare
++ exit 1
++ fm_test_cleanup
++ local d
++ fm_test_reap_watchers
++ local state lock_home $'seen=\n'
++ '[' -f /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/.fm-test-watcher.145372.FRvb8p ']'
++ IFS=
++ read -r state
++ rm -f /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/.fm-test-watcher.145372.FRvb8p
++ fm_test_reap_procevent_homes
++ local home claim_root $'seen=\n'
++ '[' -f /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/.fm-test-procevent.145372.hYsVmU ']'
++ IFS=$'\t'
++ read -r home claim_root
++ rm -f /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/.fm-test-procevent.145372.hYsVmU
++ for d in "${FM_TEST_CLEANUP_DIRS[@]:-}"
++ '[' -n '' ']'
++ '[' -f /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/.fm-test-cleanup.145372.A2WaW0 ']'
++ IFS=
++ read -r d
++ '[' -n /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld ']'
++ fm_test_remove_tree /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld
++ local dir=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld
++ '[' -d /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld ']'
++ '[' '!' -L /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld ']'
++ find /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld -type d -exec chmod u+rwx '{}' +
++ rm -rf /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/fm-remote-hands.NZMmld
++ IFS=
++ read -r d
++ rm -f /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/tmp/old/.fm-test-cleanup.145372.A2WaW0
+
+observed_regression_exit=1
+private_archive_sentinel_preserved=fbe066edf0daf207f017a5def79312069c6d03f46c638e7331bfb651eabab923  /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/host-tmp/fm-node.tar.xz
+fixture_cleanup_after_exit=complete
+login_PATH_reorder_events=6
+login initialized PATH=/usr/bin:/bin
+login initialized PATH=/usr/bin:/bin
+login initialized PATH=/usr/bin:/bin
+login initialized PATH=/usr/bin:/bin
+login initialized PATH=/usr/bin:/bin
+login initialized PATH=/usr/bin:/bin

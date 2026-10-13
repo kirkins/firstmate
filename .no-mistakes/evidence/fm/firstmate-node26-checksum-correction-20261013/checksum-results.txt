@@ -1,0 +1,55 @@
+Head: 02bce572ab4f71b2b31127566c24e997e26b3b82
+Only the three previously requested focused regressions were run.
+Executable: bin/fm-remote-hands.sh prepare; existing test functions provided disposable external cloud/tool fixtures.
+No network: bwrap --unshare-net. No cloud workload, real downloads, package installations, or host archive writes.
+Private /tmp bind and disposable HOME were inside the run worktree; the host filesystem was read-only and operator home hidden.
+GNU sha256sum absent from initial portable PATH; shasum symlink resolved to /usr/bin/core_perl/shasum.
+Each scenario ran sequentially under the isolated heavy slot with FM_LINT_JOBS=1 and systemd MemoryMax=256M; observed cgroup memory.max=268435456.
+Login PATH reordering used real bash -lc startup and a disposable .bash_profile setting PATH=/usr/bin:/bin; this is Linux portability evidence, not a native macOS run.
+Historical installer: git show 54a50463^:bin/fm-remote-hands.sh; target test definitions remained unchanged.
+
+SCENARIO portable
+prepare mode=good exit=0 extraction=yes
+fm-node.tar.xz: OK
+prepare mode=missing exit=1 extraction=no
+node tarball checksum verification failed
+prepare mode=wrong exit=1 extraction=no
+fm-node.tar.xz: FAILED
+node tarball checksum verification failed
+prepare mode=verifier-error exit=1 extraction=no
+node tarball checksum verification failed
+ok - fm-remote-hands.sh: prepare verifies the downloaded Node archive before extraction
+observed_regression_exit=0
+private_archive_sentinel_preserved=fbe066edf0daf207f017a5def79312069c6d03f46c638e7331bfb651eabab923  /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/host-tmp/fm-node.tar.xz
+fixture_cleanup_after_exit=complete
+login_PATH_reorder_events=9
+
+SCENARIO reordered
+ok - fm-remote-hands.sh: fake exec restores fixture PATH after login initialization
+prepare mode=good exit=0 extraction=yes
+fm-node.tar.xz: OK
+prepare mode=missing exit=1 extraction=no
+node tarball checksum verification failed
+prepare mode=wrong exit=1 extraction=no
+fm-node.tar.xz: FAILED
+node tarball checksum verification failed
+prepare mode=verifier-error exit=1 extraction=no
+node tarball checksum verification failed
+ok - fm-remote-hands.sh: prepare verifies the downloaded Node archive before extraction
+observed_regression_exit=0
+private_archive_sentinel_preserved=fbe066edf0daf207f017a5def79312069c6d03f46c638e7331bfb651eabab923  /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/host-tmp/fm-node.tar.xz
+fixture_cleanup_after_exit=complete
+login_PATH_reorder_events=9
+
+SCENARIO old
+ok - fm-remote-hands.sh: fake exec restores fixture PATH after login initialization
+prepare mode=good exit=0 extraction=yes
+prepare mode=missing exit=0 extraction=yes
+not ok - missing checksum must fail prepare
+observed_regression_exit=1
+private_archive_sentinel_preserved=fbe066edf0daf207f017a5def79312069c6d03f46c638e7331bfb651eabab923  /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.test-phase-checksum/host-tmp/fm-node.tar.xz
+fixture_cleanup_after_exit=complete
+login_PATH_reorder_events=6
+
+Old installer exit 1 was the required negative control, not a current-head failure.
+Node before and after: v26.10.0. No tracked files changed.

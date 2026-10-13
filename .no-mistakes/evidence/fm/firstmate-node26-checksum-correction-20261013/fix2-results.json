@@ -1,0 +1,67 @@
+{
+  "tested_head_sha": "02bce572ab4f71b2b31127566c24e997e26b3b82",
+  "focused": [
+    {
+      "name": "old-installer-login-reordered",
+      "pass_": true,
+      "exit": 1,
+      "sentinel_preserved": true,
+      "cleanup": true
+    },
+    {
+      "name": "portable-shasum",
+      "pass_": true,
+      "exit": 0,
+      "sentinel_preserved": true,
+      "cleanup": true
+    },
+    {
+      "name": "login-reordered",
+      "pass_": true,
+      "exit": 0,
+      "sentinel_preserved": true,
+      "cleanup": true
+    }
+  ],
+  "local_cli": [
+    {
+      "mode": "old-installer-login-reordered",
+      "regression_exit": 1,
+      "pass_": true,
+      "sentinel_preserved": true,
+      "fixture_cleanup_complete": true,
+      "requests": [
+        "/dist/latest-v26.x/",
+        "/dist/latest-v26.x/node-v26.10.0-linux-aarch64.tar.xz",
+        "/dist/latest-v26.x/SHASUMS256.txt"
+      ]
+    },
+    {
+      "mode": "portable-shasum",
+      "regression_exit": 0,
+      "pass_": true,
+      "sentinel_preserved": true,
+      "fixture_cleanup_complete": true,
+      "requests": [
+        "/dist/latest-v26.x/",
+        "/dist/latest-v26.x/node-v26.10.0-linux-aarch64.tar.xz",
+        "/dist/latest-v26.x/SHASUMS256.txt"
+      ]
+    },
+    {
+      "mode": "login-reordered",
+      "regression_exit": 0,
+      "pass_": true,
+      "sentinel_preserved": true,
+      "fixture_cleanup_complete": true,
+      "requests": [
+        "/dist/latest-v26.x/",
+        "/dist/latest-v26.x/node-v26.10.0-linux-aarch64.tar.xz",
+        "/dist/latest-v26.x/SHASUMS256.txt"
+      ]
+    }
+  ],
+  "source_changes": false,
+  "memory_cap_bytes": 536870912,
+  "FM_LINT_JOBS": 1
+}

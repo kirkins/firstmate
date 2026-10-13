@@ -1,0 +1,49 @@
+login-reordered: process virtual-memory hard cap=512MiB; FM_LINT_JOBS=1; network namespace isolated
+SHA backend: sha256sum=/usr/bin/sha256sum shasum=/usr/bin/core_perl/shasum
+ok - fm-remote-hands.sh: fake exec restores fixture PATH after login initialization
+prepare invocation: FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 FM_FAKE_CHECKSUM_MODE=good FM_FAKE_EXPECTED_SHA=2e6bac2e4b76a1235b8486930affc73baaeadd39427c006a8a21f34f925afff0 FM_FAKE_ARCHIVE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/tmp/login-reordered/fm-remote-hands.Zv30vT/node-archive FM_FAKE_DOWNLOAD_DIR=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/tmp/login-reordered/fm-remote-hands.Zv30vT/download FM_FAKE_EXTRACTION_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/tmp/login-reordered/fm-remote-hands.Zv30vT/extracted -- prepare --name t-checksum --repo https://github.com/kirkins/firstmate --node-major 20
+exit=0
+stdout:
+fm-node.tar.xz: OK
+26.10.0
+fake-head
+prepare: name=t-checksum repo=https://github.com/kirkins/firstmate dest=/home/agent/workspace/firstmate
+stderr:
+prepare: sandbox node '26.10.0' -> local major 20; installing from nodejs.org
+login PATH reordered before payload
+login PATH reordered before payload
+archive private=yes extraction=reached
+prepare invocation: FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 FM_FAKE_CHECKSUM_MODE=missing FM_FAKE_EXPECTED_SHA=2e6bac2e4b76a1235b8486930affc73baaeadd39427c006a8a21f34f925afff0 FM_FAKE_ARCHIVE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/tmp/login-reordered/fm-remote-hands.Zv30vT/node-archive FM_FAKE_DOWNLOAD_DIR=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/tmp/login-reordered/fm-remote-hands.Zv30vT/download FM_FAKE_EXTRACTION_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/tmp/login-reordered/fm-remote-hands.Zv30vT/extracted -- prepare --name t-checksum --repo https://github.com/kirkins/firstmate --node-major 20
+exit=1
+stdout:
+
+stderr:
+prepare: sandbox node '26.10.0' -> local major 20; installing from nodejs.org
+login PATH reordered before payload
+sha256sum: 'standard input': no properly formatted checksum lines found
+node tarball checksum verification failed
+archive private=yes extraction=absent
+prepare invocation: FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 FM_FAKE_CHECKSUM_MODE=wrong FM_FAKE_EXPECTED_SHA=2e6bac2e4b76a1235b8486930affc73baaeadd39427c006a8a21f34f925afff0 FM_FAKE_ARCHIVE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/tmp/login-reordered/fm-remote-hands.Zv30vT/node-archive FM_FAKE_DOWNLOAD_DIR=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/tmp/login-reordered/fm-remote-hands.Zv30vT/download FM_FAKE_EXTRACTION_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/tmp/login-reordered/fm-remote-hands.Zv30vT/extracted -- prepare --name t-checksum --repo https://github.com/kirkins/firstmate --node-major 20
+exit=1
+stdout:
+fm-node.tar.xz: FAILED
+stderr:
+prepare: sandbox node '26.10.0' -> local major 20; installing from nodejs.org
+login PATH reordered before payload
+sha256sum: WARNING: 1 computed checksum did NOT match
+node tarball checksum verification failed
+archive private=yes extraction=absent
+prepare invocation: FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 FM_FAKE_CHECKSUM_MODE=verifier-error FM_FAKE_EXPECTED_SHA=2e6bac2e4b76a1235b8486930affc73baaeadd39427c006a8a21f34f925afff0 FM_FAKE_ARCHIVE=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/tmp/login-reordered/fm-remote-hands.Zv30vT/node-archive FM_FAKE_DOWNLOAD_DIR=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/tmp/login-reordered/fm-remote-hands.Zv30vT/download FM_FAKE_EXTRACTION_LOG=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/tmp/login-reordered/fm-remote-hands.Zv30vT/extracted -- prepare --name t-checksum --repo https://github.com/kirkins/firstmate --node-major 20
+exit=1
+stdout:
+
+stderr:
+prepare: sandbox node '26.10.0' -> local major 20; installing from nodejs.org
+login PATH reordered before payload
+node tarball checksum verification failed
+archive private=yes extraction=absent
+ok - fm-remote-hands.sh: prepare verifies the downloaded Node archive before extraction
+
+actual_exit=0 expected_exit=0
+sentinel_preserved=True SHA256=8b3ecafeb87099601d7c9b45ab23e2bb4b0cf02b8d977989ccf7950c98d5b3eb
+fixture_cleanup_complete=True

@@ -1,0 +1,26 @@
+Real fm-remote-hands prepare, disposable bubblewrap namespace, local TLS origin, actual curl/sha256sum/tar/git, archived installed Node 26.10.0. No external downloads, cloud, package installs, or production credentials.
+process virtual-memory hard cap=512MiB; FM_LINT_JOBS=1
+command: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/bin/fm-remote-hands.sh prepare --name checksum-local --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/live/repo --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/live/clone-wrong --node-major 26
+stdout:
+fm-node.tar.xz: FAILED
+stderr:
+prepare: sandbox node '' -> local major 26; installing from nodejs.org
+sandbox prerequisites already provisioned; package installation disabled
+sandbox prerequisites already provisioned; package installation disabled
+sha256sum: WARNING: 1 computed checksum did NOT match
+node tarball checksum verification failed
+observed state:
+{
+  "mode": "wrong",
+  "exit": 1,
+  "installed": false,
+  "cloned": false,
+  "downloaded_as_fm_node": true,
+  "distribution_filename_absent": true,
+  "pass_": true,
+  "requests": [
+    "/dist/latest-v26.x/",
+    "/dist/latest-v26.x/node-v26.10.0-linux-aarch64.tar.xz",
+    "/dist/latest-v26.x/SHASUMS256.txt"
+  ]
+}

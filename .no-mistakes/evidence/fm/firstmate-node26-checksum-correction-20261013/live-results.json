@@ -1,0 +1,58 @@
+[
+  {
+    "mode": "good",
+    "exit": 0,
+    "installed": true,
+    "cloned": true,
+    "downloaded_as_fm_node": true,
+    "distribution_filename_absent": true,
+    "pass_": true,
+    "requests": [
+      "/dist/latest-v26.x/",
+      "/dist/latest-v26.x/node-v26.10.0-linux-aarch64.tar.xz",
+      "/dist/latest-v26.x/SHASUMS256.txt"
+    ]
+  },
+  {
+    "mode": "wrong",
+    "exit": 1,
+    "installed": false,
+    "cloned": false,
+    "downloaded_as_fm_node": true,
+    "distribution_filename_absent": true,
+    "pass_": true,
+    "requests": [
+      "/dist/latest-v26.x/",
+      "/dist/latest-v26.x/node-v26.10.0-linux-aarch64.tar.xz",
+      "/dist/latest-v26.x/SHASUMS256.txt"
+    ]
+  },
+  {
+    "mode": "missing",
+    "exit": 1,
+    "installed": false,
+    "cloned": false,
+    "downloaded_as_fm_node": true,
+    "distribution_filename_absent": true,
+    "pass_": true,
+    "requests": [
+      "/dist/latest-v26.x/",
+      "/dist/latest-v26.x/node-v26.10.0-linux-aarch64.tar.xz",
+      "/dist/latest-v26.x/SHASUMS256.txt"
+    ]
+  },
+  {
+    "mode": "verifier-error",
+    "exit": 1,
+    "installed": false,
+    "cloned": false,
+    "downloaded_as_fm_node": true,
+    "distribution_filename_absent": true,
+    "pass_": true,
+    "requests": [
+      "/dist/latest-v26.x/",
+      "/dist/latest-v26.x/node-v26.10.0-linux-aarch64.tar.xz",
+      "/dist/latest-v26.x/SHASUMS256.txt"
+    ]
+  }
+]

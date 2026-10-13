@@ -1,0 +1,35 @@
+Unchanged preparation CLI in isolated local shell transport; real curl via local TLS origin, real SHA backend, real tar, real Node26, real git. Portable case uses the test SHA-command adapter to real shasum; reordering cases restore PATH in transport after simulated login initialization. No native macOS/cloud coverage claimed.
+process address-space hard cap=536870912 bytes; FM_LINT_JOBS=1; network namespace isolated
+command: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/old-bin/fm-remote-hands.sh prepare --name checksum-local --repo file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/live/repo --dest /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/live/clone-old-installer-login-reordered --node-major 26
+stdout:
+node-v26.10.0-linux-aarch64.tar.xz: FAILED open or read
+v26.10.0
+3e6a347c36c2cd7eb6580c9896e2041f50761afd
+prepare: name=checksum-local repo=file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/live/repo dest=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/live/clone-old-installer-login-reordered
+product_exit=0
+before cleanup: real_node_installed=yes real_repo_cloned=yes
+not ok - verification failure continued to real extraction and cloning
+fixture EXIT cleanup ran
+stderr:
+prepare: sandbox node '' -> local major 26; installing from nodejs.org
+login PATH reordered before payload
+sandbox prerequisites already provisioned; package installation disabled
+sandbox prerequisites already provisioned; package installation disabled
+sha256sum: node-v26.10.0-linux-aarch64.tar.xz: No such file or directory
+sha256sum: WARNING: 1 listed file could not be read
+real tar extraction requested
+login PATH reordered before payload
+Cloning into '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4V016HPH5A3J4VTRRX6MZKS/.checksum-lab/live/clone-old-installer-login-reordered'...
+observed state:
+{
+  "mode": "old-installer-login-reordered",
+  "regression_exit": 1,
+  "pass_": true,
+  "sentinel_preserved": true,
+  "fixture_cleanup_complete": true,
+  "requests": [
+    "/dist/latest-v26.x/",
+    "/dist/latest-v26.x/node-v26.10.0-linux-aarch64.tar.xz",
+    "/dist/latest-v26.x/SHASUMS256.txt"
+  ]
+}
