@@ -46,7 +46,7 @@ Some wakes stay on main:
 - Every watcher-failure alarm also stays on main.
 
 All of that describes the attended posture.
-The away posture, recorded by `state/.afk-contract`, hands every row to the branch and parks main (see "Postures" below).
+[Postures](#postures) owns away routing, retained main claims, and main parking.
 
 ### How outcomes reach main
 

@@ -22,9 +22,14 @@
 // consumes a follow-up. before_agent_start precedes message construction and
 // cannot prove consumption. Unrelated human input keeps Pi's ordinary delivery
 // and cannot release the invitation. An unconsumed follow-up rides a replacement
-// handoff. After Pi settles with no queued messages, a dequeued follow-up is
-// offered again. An aborted run defers that replay until a new watcher close
+// handoff. An empty-queue settlement marks only follow-ups offered during an
+// active run as dequeued for replay; idle construction and settlement-deferred
+// prompts remain in flight outside Pi's public queue. An aborted run defers
+// dequeue replay until a new watcher close
 // or a later non-aborted settlement so Escape remains an actual stop.
+// Pi's void sendUserMessage return alone does not prove acceptance. Idle
+// deliveries without a selected model or configured/resolvable provider
+// authentication stay pending for retry on a fresh close.
 // Manual compaction rejects extension prompts without observable acceptance.
 // Its lifecycle holds pending deliveries until its completion and an idle
 // context or agent_start prove Pi can accept them; no phantom invitation is
@@ -700,8 +705,8 @@ export default function (pi: ExtensionAPI) {
       if (pending) owner.unconsumedWakes.delete(pending.token);
       throw error;
     }
-    // Accepted by Pi. A generation replaced while Pi was accepting it may
-    // have lost the follow-up with the old session, so report it undelivered
+    // Offered under the delivery-versus-consumption contract above. A generation
+    // replaced during the offer may have lost it, so report it undelivered
     // and let the replacement replay the still-pending record.
     return generationIsLive(owner);
   }
