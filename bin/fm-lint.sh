@@ -46,6 +46,29 @@
 # run holds at most JOBS concurrent ShellCheck processes. Diagnostics replay
 # in stable shard/root order. FM_LINT_JOBS=1 changes concurrency, not diagnostics
 # or exit selection.
+# A machine-local operator opt-in at
+# ${XDG_CONFIG_HOME:-$HOME/.config}/firstmate/lint-resource-binding.json binds
+# this same entrypoint, including daemon-owned automatic lint, to a heavy slot.
+# The private, user-owned regular JSON file has exactly three fields: "home" (the
+# absolute, canonical operational-home path), "jobs" (1), and "estimate_mib"
+# (a positive integer peak estimate of at most nine digits). The declared home's executable
+# bin/fm-heavy-slot.sh owns admission and the printed systemd scope wrapper;
+# lint never guesses a home from its clone or duplicates the cap rounding.
+# When opted in, every real lint invocation forces jobs=1, proves the scope's
+# kernel memory.max and live slot ownership before analysis, and refuses a
+# missing helper, invalid record, occupied slot, or unavailable cap without
+# running lint. The whole-job watchdog allows 1770 seconds plus a five-second
+# termination grace; scope cleanup allows five further seconds, all inside the
+# slot's explicit 1800-second lease. Lint releases its own slot after stopping
+# every process in its owned scope; if scope shutdown cannot be confirmed,
+# lint retains the slot. A killed outer owner may leave a hold until its
+# ordinary heartbeat expiry.
+# Opted-in lint requires a Linux user systemd manager, cgroup v2 memory
+# controls, systemd-run support for --expand-environment=no, and JSON::PP from
+# the existing Perl dependency. Scope launch preserves literal command
+# arguments; unsupported scope/cap behavior never retries uncapped.
+# With no record, Linux/macOS/CI callers retain their ordinary behavior and
+# dependencies; query-only --help/--required-version/--list-files take no slot.
 # --partition 1of2/2of2 splits the entire canonical inventory across
 # two CI runners, each with those same concurrency-limited workers.
 # Partitions are complete, disjoint, and byte-weight balanced; --list-files
@@ -106,7 +129,7 @@
 #   fm-lint.sh                         lint the context-selected file set (see above)
 #   fm-lint.sh --fast [path]...       local lint with extended analysis disabled
 #   fm-lint.sh <path>...               lint explicit roots with the same config
-#   fm-lint.sh --jobs <1|2> [path]...  override concurrent worker count
+#   fm-lint.sh --jobs <1|2> [path]...  select workers (resource binding forces 1)
 #   fm-lint.sh --partition <1of2|2of2> lint one canonical CI partition (see fallback above)
 #   fm-lint.sh --telemetry <path> ...  write a quiet metrics snapshot
 #   fm-lint.sh --required-version      print the ShellCheck pin
@@ -709,6 +732,7 @@ fm_lint_run_backend_purity() {
   }
 }
 
+LINT_ARGS=("$@")
 JOBS=${FM_LINT_JOBS:-2}
 TELEMETRY=${FM_LINT_TELEMETRY:-}
 FAST=0
@@ -918,6 +942,18 @@ SHELLCHECK_BIN=$(command -v shellcheck)
 if ! PERL_BIN=$(command -v perl); then
   printf 'fm-lint.sh: perl is required for bounded worker cleanup.\n' >&2
   exit 127
+fi
+# The binding is resolved by the lint process, not the AXI client. Private
+# worker/root modes returned earlier; only a real top-level lint enters here.
+binding_file="${XDG_CONFIG_HOME:-$HOME/.config}/firstmate/lint-resource-binding.json"
+if [ -e "$binding_file" ] || [ -L "$binding_file" ] || [ -n "${FM_LINT_RESOURCE_TASK:-}" ]; then
+  [ -r "$SELF_DIR/fm-lint-resource-lib.sh" ] || {
+    printf 'fm-lint.sh: resource binding exists but fm-lint-resource-lib.sh is unavailable; refusing uncapped lint.\n' >&2
+    exit 2
+  }
+  # shellcheck source=bin/fm-lint-resource-lib.sh
+  . "$SELF_DIR/fm-lint-resource-lib.sh"
+  fm_lint_resource_enter "$binding_file" "${LINT_ARGS[@]}"
 fi
 resolved=$("$SHELLCHECK_BIN" --version | awk '/^version:/ {print $2; exit}')
 printf 'fm-lint.sh: ShellCheck %s (pinned %s)\n' "$resolved" "$REQUIRED_SHELLCHECK" >&2
