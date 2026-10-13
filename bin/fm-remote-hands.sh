@@ -92,7 +92,8 @@
 #       Launch one long job on the sandbox's fm-hands tmux socket with the
 #       UTF-8 locale pinned; the job's combined output lands in
 #       /tmp/fm-hands.log and its exit code in /tmp/fm-hands.exit. Returns
-#       immediately after launching.
+#       immediately after launching. Command arguments remain literal;
+#       pass bash -lc '<script>' explicitly for shell syntax.
 #   fm-remote-hands.sh wait --name <name> [--interval <s>] [--max-secs <s>]
 #       Poll the exit marker until the hosted job finishes, then print
 #       `exit=<n>` and exit with the job's own exit code. Three consecutive
@@ -126,9 +127,9 @@
 #                                    # (node probe, apt, clone); 10..3600
 #
 # Exit codes: 0 ok (including every decided `route` line and a propagated job
-# exit of 0), the hosted job's own nonzero exit code from `wait`, 1 failure
-# (missing sbx/kubectl/credential, unreachable sandbox, wait timeout), 2
-# usage.
+# exit of 0), the hosted job's own nonzero exit code from `wait`, a failed
+# remote script's exit code from `prepare`, 1 failure (missing
+# sbx/kubectl/credential, unreachable sandbox, wait timeout), 2 usage.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
