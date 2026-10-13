@@ -1199,6 +1199,7 @@ fm_pr_gerrit_read_revision() {  # <host> <number>
 # OS username. An unreadable or unsupported platform never selects a store.
 # These fields also let registration and merge name a missing platform tool
 # separately from a missing credential, without a second selection contract.
+# shellcheck disable=SC2034 # Output fields are consumed by registration and merge callers.
 fm_pr_forgejo_credential_select() {  # <host>
   local platform
   FM_PR_FORGEJO_CREDENTIAL_TOOL=

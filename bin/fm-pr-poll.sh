@@ -87,20 +87,20 @@ case "$provider" in
     # A GitLab project sits under at least one group at no fixed depth, and
     # GitLab reserves the "-" segment as its route separator.
     rest=$path
-    segments=0
+    segment_count=0
     while [ -n "$rest" ]; do
       case "$rest" in
         */*) segment=${rest%%/*}; rest=${rest#*/} ;;
         *) segment=$rest; rest= ;;
       esac
-      segments=$((segments + 1))
-      [ "$segments" -le 20 ] || exit 0
+      segment_count=$((segment_count + 1))
+      [ "$segment_count" -le 20 ] || exit 0
       [ "${#segment}" -ge 1 ] && [ "${#segment}" -le 255 ] || exit 0
       case "$segment" in
         .|..|-*|*.git|*.atom|*[!A-Za-z0-9._-]*) exit 0 ;;
       esac
     done
-    [ "$segments" -ge 2 ] || exit 0
+    [ "$segment_count" -ge 2 ] || exit 0
     [ "$url" = "https://$host/$path/-/merge_requests/$number" ] || exit 0
     # glab resolves the instance from the project URL passed to -R, so the host
     # comes from the validated record rather than glab's configured default.
@@ -179,20 +179,20 @@ case "$provider" in
     # group, so one segment is canonical here where GitLab needs two, and Gerrit
     # reserves no route segment inside it.
     rest=$path
-    segments=0
+    segment_count=0
     while [ -n "$rest" ]; do
       case "$rest" in
         */*) segment=${rest%%/*}; rest=${rest#*/} ;;
         *) segment=$rest; rest= ;;
       esac
-      segments=$((segments + 1))
-      [ "$segments" -le 20 ] || exit 0
+      segment_count=$((segment_count + 1))
+      [ "$segment_count" -le 20 ] || exit 0
       [ "${#segment}" -ge 1 ] && [ "${#segment}" -le 255 ] || exit 0
       case "$segment" in
         .|..|-*|*.git|*[!A-Za-z0-9._-]*) exit 0 ;;
       esac
     done
-    [ "$segments" -ge 1 ] || exit 0
+    [ "$segment_count" -ge 1 ] || exit 0
     [ "$url" = "https://$host/c/$path/+/$number" ] || exit 0
     # gerrit-axi resolves its server from the current directory's origin remote
     # first, and the watcher runs in no repository, so the host must be passed
