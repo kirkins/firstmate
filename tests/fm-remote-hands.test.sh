@@ -28,6 +28,14 @@ EXEC_SEQ="$TMP_ROOT/exec-sequence.txt"
 EXEC_CALLS="$TMP_ROOT/exec-calls.txt"
 FAKE_DOCKER_ID=fake-docker-id
 FAKE_DOCKER_PAT=fake-pat-never-print-me-0123456789
+CHECKSUM_ARGS=()
+if CHECKSUM_TOOL=$(command -v sha256sum); then
+  :
+elif CHECKSUM_TOOL=$(command -v shasum); then
+  CHECKSUM_ARGS=(-a 256)
+else
+  fail "checksum regression requires sha256sum or shasum"
+fi
 
 # make_fake_tools: fake sbx, fake kubectl, and a fake local node.
 make_fake_tools() {
@@ -446,6 +454,16 @@ test_prepare_executes_bootstrap_and_literal_clone_arguments() {
   pass "fm-remote-hands.sh: prepare executes tmux bootstrap, node probe, and literal clone argv"
 }
 
+make_checksum_adapter() {
+  cat > "$1/sha256sum" <<SH
+#!/usr/bin/env bash
+if [ "\${FM_FAKE_CHECKSUM_MODE:-}" = verifier-error ]; then exit 9; fi
+cd "\$FM_FAKE_DOWNLOAD_DIR" || exit 1
+exec $(printf '%q' "$CHECKSUM_TOOL") ${CHECKSUM_ARGS[*]:-} "\$@"
+SH
+  chmod +x "$1/sha256sum"
+}
+
 make_preparation_tools() {
   mkdir -p "$TMP_ROOT/prepbin" "$TMP_ROOT/node-install/bin" "$TMP_ROOT/node-release"
   cat > "$TMP_ROOT/node-install/bin/node" <<'SH'
@@ -471,7 +489,7 @@ SH
     tar -cJf "$TMP_ROOT/node-release/$dir.tar.xz" -C "$TMP_ROOT/node-release" "$dir" \
       || fail "could not build synthetic Node archive"
   done
-  (cd "$TMP_ROOT/node-release" && sha256sum node-*.tar.xz) > "$TMP_ROOT/node-release/SHASUMS256.txt" \
+  (cd "$TMP_ROOT/node-release" && "$CHECKSUM_TOOL" ${CHECKSUM_ARGS[@]+"${CHECKSUM_ARGS[@]}"} node-*.tar.xz) > "$TMP_ROOT/node-release/SHASUMS256.txt" \
     || fail "could not checksum synthetic Node archives"
   cat > "$TMP_ROOT/prepbin/uname" <<'SH'
 #!/usr/bin/env bash
@@ -528,6 +546,7 @@ fi
 if [ "${FM_FAKE_PREP_FAIL:-}" = fetch ] && [ "$3" = fetch ]; then exit 31; fi
 exec "$FM_FAKE_PREP_GIT" "$@"
 SH
+  make_checksum_adapter "$TMP_ROOT/prepbin"
   chmod +x "$TMP_ROOT/prepbin/"*
 }
 
@@ -538,6 +557,7 @@ prepare_fixture() {
     FM_FAKE_PREP_ARCH="$arch" FM_FAKE_PREP_FAIL="$failure" \
     FM_FAKE_PREP_LOG="$TMP_ROOT/prep.log" FM_FAKE_PREP_RELEASE="$TMP_ROOT/node-release" \
     FM_FAKE_PREP_INSTALL="$TMP_ROOT/node-install" \
+    FM_FAKE_DOWNLOAD_DIR="$TMP_ROOT/remote" \
     FM_FAKE_PREP_TAR="$PREP_REAL_TAR" FM_FAKE_PREP_GIT="$PREP_REAL_GIT" -- \
     prepare --name t-node-prepare --repo "file://$TMP_ROOT/prep-source" --dest "$dest" --node-major 22
 }
@@ -849,16 +869,9 @@ SH
 
 test_prepare_verifies_downloaded_archive_before_extraction() {
   make_home prep-checksum-home >/dev/null
-  local real_sha sha_args=() mode expected
-  if real_sha=$(command -v sha256sum); then
-    :
-  elif real_sha=$(command -v shasum); then
-    sha_args=(-a 256)
-  else
-    fail "checksum regression requires sha256sum or shasum"
-  fi
+  local mode expected
   printf 'node archive fixture\n' > "$TMP_ROOT/node-archive"
-  expected=$("$real_sha" ${sha_args[@]+"${sha_args[@]}"} "$TMP_ROOT/node-archive" | cut -d' ' -f1)
+  expected=$("$CHECKSUM_TOOL" ${CHECKSUM_ARGS[@]+"${CHECKSUM_ARGS[@]}"} "$TMP_ROOT/node-archive" | cut -d' ' -f1)
   mkdir -p "$TMP_ROOT/download"
   cat > "$FAKEBIN/curl" <<'SH'
 #!/usr/bin/env bash
@@ -893,12 +906,7 @@ SH
 [ "$1" = -xJf ] && [ -f "$FM_FAKE_DOWNLOAD_DIR/${2##*/}" ] || exit 1
 printf 'extracted\n' >> "$FM_FAKE_EXTRACTION_LOG"
 SH
-  cat > "$FAKEBIN/sha256sum" <<SH
-#!/usr/bin/env bash
-if [ "\${FM_FAKE_CHECKSUM_MODE:-}" = verifier-error ]; then exit 9; fi
-cd "\$FM_FAKE_DOWNLOAD_DIR" || exit 1
-exec "$real_sha" ${sha_args[*]:-} "\$@"
-SH
+  make_checksum_adapter "$FAKEBIN"
   cat > "$FAKEBIN/git" <<'SH'
 #!/usr/bin/env bash
 case "$1" in
