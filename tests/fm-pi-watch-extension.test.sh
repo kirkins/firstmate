@@ -3667,6 +3667,128 @@ EOF
   pass "Pi streaming-time wake delivery bounds routine invitations and preserves successors and unconsumed replay"
 }
 
+test_pi_dequeued_replay_respects_abort_during_readiness() {
+  local mode=$1 repo home plugin log trigger out status
+  repo="$TMP_ROOT/pi-replay-readiness-$mode-root"
+  home="$TMP_ROOT/pi-replay-readiness-$mode-home"
+  log="$TMP_ROOT/pi-replay-readiness-$mode.log"
+  trigger="$TMP_ROOT/pi-replay-readiness-$mode.trigger"
+  mkdir -p "$repo/bin" "$home/state" "$home/config"
+  install_pi_watch_extension_fixture "$repo"
+  plugin="$repo/.pi/extensions/fm-primary-pi-watch.ts"
+  cat > "$repo/bin/fm-watch-arm.sh" <<'SH'
+#!/usr/bin/env bash
+if [ "${1:-}" = --handling-delivered ]; then
+  [ ! -e "$FM_TRIGGER_FILE.reject-confirm" ] || exit 2
+  exit 0
+fi
+printf 'arm=%s\n' "$$" >> "${FM_ARM_LOG:?}"
+count=$(grep -c '^arm=' "$FM_ARM_LOG")
+trap 'exit 0' TERM INT
+if [ "$count" -eq 3 ]; then
+  while [ ! -e "$FM_TRIGGER_FILE.release-ready" ]; do sleep 0.02; done
+fi
+printf 'watcher: started pid=%s (beacon fresh) recovery-generation=replay-%s\n' "$$" "$count"
+printf 'ready=%s\n' "$count" >> "$FM_ARM_LOG"
+while [ ! -e "$FM_TRIGGER_FILE.$count" ]; do sleep 0.02; done
+printf '%s\t%s\tsignal\treplay-%s.status\tsignal: replay wake %s\n' \
+  "$count" "$count" "$count" "$count" >> "$FM_HOME/state/.wake-queue"
+printf 'signal: replay wake %s\n' "$count"
+SH
+  chmod +x "$repo/bin/fm-watch-arm.sh"
+  out=$(PLUGIN="$plugin" FM_HOME="$home" FM_ROOT_OVERRIDE="$repo" FM_ARM_LOG="$log" FM_TRIGGER_FILE="$trigger" FM_REPLAY_MODE="$mode" node --input-type=module 2>&1 <<'EOF'
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
+
+const handlers = new Map();
+const prompts = [];
+const pi = {
+  on(event, handler) { handlers.set(event, handler); },
+  registerCommand() {},
+  registerTool() {},
+  sendUserMessage: async (message) => { prompts.push(message); },
+  events: { on() {}, emit() {} },
+};
+const logRows = () => existsSync(process.env.FM_ARM_LOG)
+  ? readFileSync(process.env.FM_ARM_LOG, "utf8").trim().split("\n") : [];
+const arms = () => logRows().filter((row) => row.startsWith("arm=")).length;
+const close = (count) => writeFileSync(`${process.env.FM_TRIGGER_FILE}.${count}`, "close\n");
+const settle = (aborted) => handlers.get("agent_settled")?.({ aborted }, { hasPendingMessages: () => false });
+const consume = (text) => handlers.get("message_start")?.({ message: { role: "user", content: [{ type: "text", text }] } }, {});
+const durableRows = () => readFileSync(`${process.env.FM_HOME}/state/.wake-queue`, "utf8").trim().split("\n");
+async function waitFor(pred, label) {
+  for (let i = 0; i < 500; i += 1) {
+    if (pred()) return;
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+  throw new Error(`timeout waiting for ${label}`);
+}
+const pause = () => new Promise((resolve) => setTimeout(resolve, 150));
+const alarm = process.env.FM_REPLAY_MODE === "alarm";
+const rejectPath = `${process.env.FM_TRIGGER_FILE}.reject-confirm`;
+writeFileSync(`${process.env.FM_HOME}/state/.lock`, `${process.pid}\n`);
+const mod = await import(pathToFileURL(process.env.PLUGIN).href);
+mod.default(pi);
+await handlers.get("session_start")?.({ reason: "startup" }, {});
+await waitFor(() => arms() === 1, "initial arm");
+if (alarm) writeFileSync(rejectPath, "reject\n");
+close(1);
+await waitFor(() => prompts.length === 1 && arms() === 2, "initial unconsumed invitation");
+const anchor = prompts[0];
+if (!anchor.includes("signal: replay wake 1")) throw new Error("wrong replay anchor");
+if (alarm && !anchor.includes("watcher: FAILED - handling delivery confirmation was rejected")) throw new Error("missing initial alarm");
+if (alarm) unlinkSync(rejectPath);
+settle(true);
+close(2);
+await waitFor(() => arms() === 3, "replay successor blocked before readiness");
+if (logRows().includes("ready=3")) throw new Error("readiness pause was not exercised");
+if (prompts.length !== 1) throw new Error("replay prompted before readiness");
+consume("A human instruction during replay restoration");
+settle(true);
+writeFileSync(`${process.env.FM_TRIGGER_FILE}.release-ready`, "ready\n");
+await waitFor(() => logRows().includes("ready=3"), "released successor readiness");
+await pause();
+if (prompts.length !== 1) throw new Error(`readiness continuation undid Escape: ${prompts.join(" | ")}`);
+if (arms() !== 3 || durableRows().length !== 2) throw new Error("aborted replay changed successor ownership or durable rows");
+
+close(3);
+const resumedCount = alarm ? 3 : 2;
+await waitFor(() => arms() === 4 && prompts.length === resumedCount, "fresh close resumes retained invitations");
+await pause();
+if (prompts.length !== resumedCount || prompts.filter((message) => message === anchor).length !== 2) {
+  throw new Error(`fresh close lost or duplicated the replay: ${prompts.join(" | ")}`);
+}
+if (durableRows().length !== 3) throw new Error("resumed replay removed durable rows");
+
+await handlers.get("session_shutdown")?.({ reason: "new" }, {});
+const handoffPath = `${process.env.FM_HOME}/state/extensions/pi-primary-watch/session-replacement-actionable.json`;
+const handoff = JSON.parse(readFileSync(handoffPath, "utf8"));
+if (handoff.pending.length !== resumedCount - 1) throw new Error(`wrong replacement handoff: ${JSON.stringify(handoff)}`);
+mod.default(pi);
+await handlers.get("session_start")?.({ reason: "new" }, {});
+const replacementCount = resumedCount * 2 - 1;
+await waitFor(() => arms() === 5 && prompts.length === replacementCount, "replacement replay");
+await pause();
+if (prompts.length !== replacementCount || prompts.filter((message) => message === anchor).length !== 3) {
+  throw new Error(`replacement lost or duplicated the retained invitation: ${prompts.join(" | ")}`);
+}
+for (const message of prompts.slice(resumedCount)) consume(message);
+await waitFor(() => !existsSync(handoffPath), "consumed replacement handoff cleanup");
+settle(false);
+await pause();
+if (prompts.length !== replacementCount) throw new Error("consumed invitation replayed at settlement");
+close(5);
+await waitFor(() => arms() === 6 && prompts.length === replacementCount + 1, "new invitation after consumption");
+if (durableRows().length !== 4) throw new Error("replacement or consumption changed durable queue rows");
+process.exit(0);
+EOF
+)
+  status=$?
+  expect_code 0 "$status" "Pi $mode replay must respect Escape during successor readiness"
+  [ -z "$out" ] || fail "Pi $mode readiness replay test printed output: $out"
+  pass "Pi $mode replay respects Escape during readiness and resumes without loss"
+}
+
 # A verified successor can die while the wake it was started for is still
 # being delivered (a branch turn can take minutes). Its failure close arrives
 # while the pipeline is busy, so the ordinary retry path must be deferred to
@@ -5306,6 +5428,8 @@ test_pi_session_transition_generation_owner
 test_pi_session_replacement_carries_inflight_actionable_close
 test_pi_streaming_followup_is_replayed_after_replacement
 test_pi_streaming_time_delivery_keeps_the_successor_chain
+test_pi_dequeued_replay_respects_abort_during_readiness routine
+test_pi_dequeued_replay_respects_abort_during_readiness alarm
 test_pi_successor_failure_during_delivery_is_retried_after_delivery
 test_pi_late_retiring_actionable_reaches_replacement
 test_pi_replacement_tokens_are_process_unique

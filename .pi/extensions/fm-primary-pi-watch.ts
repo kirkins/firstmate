@@ -637,13 +637,20 @@ export default function (pi: ExtensionAPI) {
     pending?: PendingActionableClose,
   ): Promise<boolean> {
     if (!generationIsLive(owner)) return false;
+    if (pending?.delivered) return true;
     const routine = pending !== undefined && !message.includes("watcher: FAILED");
+    // A restoration or confirmation alarm is part of the unconsumed notice,
+    // so replacement and dequeue recovery must retain it even if repair later
+    // succeeds. It must not become a routine invitation on replay.
+    if (pending && !routine) pending.message = message;
+    if (pending && owner.unconsumedWakes.get(pending.token)?.dequeued && owner.dequeuedReplayDeferred) return false;
     if (routine) {
       const queued = [...owner.unconsumedWakes.values()].find(
         (wake) => wake.routine && !wake.dequeued && wake.pending.token !== pending.token,
       );
       if (queued) {
         appendExtensionLog(`coalesce token=${pending.token} anchor=${queued.pending.token}`);
+        owner.unconsumedWakes.delete(pending.token);
         return true;
       }
     }
@@ -651,10 +658,6 @@ export default function (pi: ExtensionAPI) {
       "watcher",
       `FIRSTMATE WATCHER WAKE: ${message}\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.`,
     );
-    // A restoration or confirmation alarm is part of the unconsumed notice,
-    // so replacement and dequeue recovery must retain it even if repair later
-    // succeeds. It must not become a routine invitation on replay.
-    if (pending && !routine) pending.message = message;
     if (pending) owner.unconsumedWakes.set(pending.token, { content, pending, routine });
     try {
       await pi.sendUserMessage(content, { deliverAs: "followUp" });
@@ -749,6 +752,8 @@ export default function (pi: ExtensionAPI) {
     recovery?: { generation: string; watcherPid: string },
   ): Promise<boolean> {
     if (!generationIsLive(owner)) return false;
+    if (pending.delivered) return true;
+    if (owner.unconsumedWakes.get(pending.token)?.dequeued && owner.dequeuedReplayDeferred) return false;
     if (recovery) {
       const confirmed = confirmHandlingDeliveryWithRetry(recovery);
       appendExtensionLog(
@@ -778,6 +783,7 @@ export default function (pi: ExtensionAPI) {
       if (branchDelivery) {
         try {
           await branchDelivery;
+          owner.unconsumedWakes.delete(pending.token);
           return true;
         } catch {}
       }
@@ -892,9 +898,6 @@ export default function (pi: ExtensionAPI) {
           }
         };
         try {
-          if (owner.unconsumedWakes.get(pending.token)?.dequeued) {
-            owner.unconsumedWakes.delete(pending.token);
-          }
           // A new restoration supersedes whatever became of the previous
           // successor; only a failure during this delivery is retried after it.
           owner.deferredClose = null;
