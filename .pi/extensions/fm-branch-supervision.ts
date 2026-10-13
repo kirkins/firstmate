@@ -1695,9 +1695,10 @@ ${context.command}
     if (!(await enqueueDelivery(() => actingAsOwner(promptGeneration)))) return;
     if (promptGeneration !== generation || !currentMainSession || !collectCurrentMainDialog()) return;
 
-    // This event is Pi's authoritative complete current prompt. At this point
-    // SessionManager still contains only the preceding dialog, so relying on
-    // getEntries() here loses the captain request that the next wake may answer.
+    // Only the user-message variant carries Pi's authoritative current prompt;
+    // custom-message starts carry no captain text to stage. SessionManager still
+    // contains only the preceding dialog at a user start, so getEntries() alone
+    // loses the captain request that the next wake may answer.
     // Stage it verbatim and remember the future persisted index for turn_end's
     // duplicate suppression. Operational extension injections are not dialog.
     // Pi 1.1 supplies prompt for both starts; Pi 1.2 separates custom starts.

@@ -64,9 +64,18 @@ if [ "${1:-}" = --handling-delivered ]; then
   printf 'confirmed generation=%s watcher=%s\n' "$2" "$4" >> "${FM_LIVE_WATCH_LOG:?}"
   exit 0
 fi
+trap 'exit 0' TERM INT
+# The real --restart owner retires the predecessor before watching for work.
+# Leaving it alive lets the old generation steal the replacement's trigger.
+if [ -n "${FM_WATCH_PREDECESSOR_ARM_PID:-}" ]; then
+  kill -TERM "$FM_WATCH_PREDECESSOR_ARM_PID" 2>/dev/null || true
+  for _ in $(seq 1 100); do
+    kill -0 "$FM_WATCH_PREDECESSOR_ARM_PID" 2>/dev/null || break
+    sleep 0.02
+  done
+fi
 printf 'arm pid=%s\n' "$$" >> "${FM_LIVE_WATCH_LOG:?}"
 printf 'watcher: started pid=%s (beacon fresh) recovery-generation=live-sdk-generation\n' "$$"
-trap 'exit 0' TERM INT
 printf 'ready pid=%s\n' "$$" >> "${FM_LIVE_WATCH_LOG:?}"
 while :; do
   [ -d "${FM_HOME:?}/state" ] || exit 0
@@ -935,6 +944,7 @@ const loader = new DefaultResourceLoader({
       });
     },
   }],
+  noExtensions: true,
   noSkills: true,
   noPromptTemplates: true,
   noThemes: true,
@@ -975,6 +985,9 @@ const waitFor = async (predicate, label) => {
   throw new Error(`timeout waiting for ${label}; events=${JSON.stringify(events)}`);
 };
 
+// Bind the real session_start lifecycle so the watcher has main's context
+// before its first delivery, as it does in Pi's interactive and print modes.
+await session.bindExtensions({});
 const armTool = session.getToolDefinition("fm_watch_arm_pi");
 if (!armTool) throw new Error("the real tool registry did not expose fm_watch_arm_pi");
 const armed = await armTool.execute("live-stream-arm", {}, undefined, undefined, {});
@@ -1198,6 +1211,112 @@ if [ "$status" -ne 0 ] || [ "$out" != "RETRY_OK" ]; then
 fi
 done
 pass "real Pi SDK $PI_VERSION suppresses only empty or exact-repeat retry finals, retains first and differing replies after reopen, buffers retry streaming, and keeps outcomes retryable"
+
+# Pi 1.2 starts idle custom-message runs with a different before_agent_start
+# variant. Load both tracked consumers through the real extension runner and
+# use a disposable HTTP provider to prove custom turns and later user turns
+# complete without swallowed extension errors or lost persisted messages.
+customhome="$TMP_ROOT/custom-home"
+customdir="$TMP_ROOT/custom-agent-dir"
+mkdir -p "$customhome/state" "$customhome/config" "$customdir"
+BRANCH_PLUGIN="$repo/.pi/extensions/fm-branch-supervision.ts" \
+  WATCH_PLUGIN="$repo/.pi/extensions/fm-primary-pi-watch.ts" \
+  FM_HOME="$customhome" FM_ROOT_OVERRIDE="$ROOT" \
+  PI_CODING_AGENT_DIR="$customdir" PI_PACKAGE_DIR="$PI_PACKAGE_DIR" \
+  node --input-type=module > "$TMP_ROOT/custom-output" 2>&1 <<'EOF'
+import assert from "node:assert/strict";
+import { writeFileSync } from "node:fs";
+import { createServer } from "node:http";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const requests = [];
+const server = createServer(async (req, res) => {
+  let body = "";
+  for await (const chunk of req) body += chunk;
+  requests.push(JSON.parse(body));
+  res.writeHead(200, { "content-type": "text/event-stream" });
+  const chunk = (delta, finish_reason) => `data: ${JSON.stringify({
+    id: "custom-start-probe", object: "chat.completion.chunk", created: 1,
+    model: "custom-start", choices: [{ index: 0, delta, finish_reason }],
+  })}\n\n`;
+  res.end(chunk({ role: "assistant", content: "CUSTOM_START_OK" }, null)
+    + chunk({}, "stop") + "data: [DONE]\n\n");
+});
+await new Promise((ready) => server.listen(0, "127.0.0.1", ready));
+const agentDir = resolve(process.env.PI_CODING_AGENT_DIR);
+writeFileSync(`${agentDir}/models.json`, JSON.stringify({ providers: {
+  "fm-custom-start": {
+    baseUrl: `http://127.0.0.1:${server.address().port}/v1`,
+    api: "openai-completions", apiKey: "disposable-local-provider",
+    models: [{ id: "custom-start", name: "Custom start probe", contextWindow: 8192, maxTokens: 128 }],
+  },
+} }));
+writeFileSync(`${process.env.FM_HOME}/state/.lock`, `${process.pid}\n`);
+const { DefaultResourceLoader, ModelRuntime, ModelRegistry, SessionManager, SettingsManager, createAgentSession } =
+  await import(pathToFileURL(`${process.env.PI_PACKAGE_DIR}/dist/index.js`).href);
+const events = [];
+const errors = [];
+const settings = SettingsManager.create(process.cwd(), agentDir);
+const loader = new DefaultResourceLoader({
+  cwd: process.cwd(), agentDir, settingsManager: settings,
+  additionalExtensionPaths: [process.env.BRANCH_PLUGIN, process.env.WATCH_PLUGIN],
+  noExtensions: true, noSkills: true, noPromptTemplates: true, noThemes: true, noContextFiles: true,
+  extensionFactories: [{ name: "custom-start-observer", factory(pi) {
+    pi.on("before_agent_start", (event) => {
+      events.push({ messageType: event.messageType, hasPrompt: "prompt" in event });
+    });
+  } }],
+});
+await loader.reload();
+const runtime = await ModelRuntime.create({ authPath: `${agentDir}/auth.json`, modelsPath: `${agentDir}/models.json` });
+const registry = new ModelRegistry(runtime);
+await registry.refresh();
+const manager = SessionManager.create(process.cwd(), `${process.env.FM_HOME}/sessions`);
+let session;
+try {
+  const created = await createAgentSession({
+    cwd: process.cwd(), sessionManager: manager, settingsManager: settings,
+    resourceLoader: loader, modelRuntime: runtime,
+    model: registry.find("fm-custom-start", "custom-start"), noTools: "builtin",
+  });
+  session = created.session;
+  assert.deepEqual(created.extensionsResult.errors, [], "both tracked extensions must load");
+  assert.ok(session.getToolDefinition("fm_branch_processed"), "the branch extension must be registered");
+  assert.ok(session.getToolDefinition("fm_watch_arm_pi"), "the watcher extension must be registered");
+  await session.bindExtensions({ onError: (error) => errors.push(error) });
+  await session.prompt("User request before custom turns");
+  for (let index = 1; index <= 3; index++) {
+    await session.sendCustomMessage({ customType: "fm-live-custom-probe", content: `Custom turn ${index}`, display: true }, { triggerTurn: true });
+  }
+  await session.prompt("User request after custom turns");
+  assert.deepEqual(errors, [], "custom turns must not produce caught extension errors");
+  assert.deepEqual(events, [
+    { messageType: "user", hasPrompt: true },
+    ...Array.from({ length: 3 }, () => ({ messageType: "custom", hasPrompt: false })),
+    { messageType: "user", hasPrompt: true },
+  ]);
+  assert.equal(requests.length, 5, "each turn must reach the real provider transport");
+  const reopened = SessionManager.open(manager.getSessionFile());
+  const entries = reopened.getEntries();
+  const messages = entries.filter((entry) => entry.type === "message").map((entry) => entry.message);
+  assert.equal(messages.filter((message) => message.role === "user").length, 2);
+  assert.equal(entries.filter((entry) => entry.type === "custom_message" && entry.customType === "fm-live-custom-probe").length, 3);
+  assert.equal(messages.filter((message) => message.role === "assistant" && message.stopReason === "stop").length, 5);
+  console.log("CUSTOM_START_OK");
+} finally {
+  session?.dispose();
+  server.closeAllConnections();
+  await new Promise((done) => server.close(done));
+}
+process.exit(0);
+EOF
+status=$?
+out=$(cat "$TMP_ROOT/custom-output")
+if [ "$status" -ne 0 ] || [ "$out" != "CUSTOM_START_OK" ]; then
+  fail "real-SDK idle custom-message start guard failed against pi-coding-agent $PI_VERSION: $out"
+fi
+pass "real Pi SDK $PI_VERSION runs three prompt-less custom turns between user prompts with both extensions loaded, no extension errors, and persisted replies"
 
 # Manual compaction has no agent settlement and rejects extension prompts.
 # Hold both its preparation and success hooks through the real runtime, then
