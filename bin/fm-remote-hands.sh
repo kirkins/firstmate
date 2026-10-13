@@ -389,14 +389,12 @@ remote_hands_login() {
     || { echo "error: sbx login failed against the credentials from cluster secret '$FM_REMOTE_HANDS_SECRET'" >&2; exit 1; }
 }
 
-# Run one short script inside the sandbox under the fidelity locale. sbx
-# exec joins the post-`--` words and re-evaluates them through the remote
-# shell, so the script must travel as one single-quoted argument - the exact
-# shape the live proof ran end to end
-# (data/docker-sandboxes-first-proof-20261011/report.md, section 5).
+# sbx exec preserves the post-`--` argument vector. Pass the script directly
+# as bash -lc's command argument; shell quoting belongs only inside scripts
+# that themselves construct another shell command (clone and tmux below).
 remote_hands_run() {
   local name=$1 script=$2
-  remote_hands_sbx --cloud exec "$name" -- bash -lc "$(remote_hands_q "$script")"
+  remote_hands_sbx --cloud exec "$name" -- bash -lc "$script"
 }
 
 remote_hands_manifest_path() {
@@ -654,11 +652,9 @@ if [ "$CMD" = exec ]; then
 printf "%s\n" "$?" > '"$JOB_EXIT"
   LAUNCH='rm -f '"$JOB_LOG"' '"$JOB_EXIT"'
 tmux -L '"$SBX_SOCKET"' new-session -d -s '"$SBX_SOCKET"' bash -lc '"$(remote_hands_q "$JOB_SCRIPT")"
-  # Same proof-pinned exec shape as remote_hands_run: one single-quoted
-  # payload re-evaluated by the joining remote shell.
   remote_hands_pin_sbx_state
   remote_hands_login
-  remote_hands_sbx --cloud exec "$NAME" -- bash -lc "$(remote_hands_q "$LAUNCH")"
+  remote_hands_run "$NAME" "$LAUNCH"
   printf 'launched: name=%s socket=%s log=%s exit=%s\n' "$NAME" "$SBX_SOCKET" "$JOB_LOG" "$JOB_EXIT"
   exit 0
 fi
