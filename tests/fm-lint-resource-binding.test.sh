@@ -20,7 +20,23 @@ binding_fixture() {  # <name>
   BINDING_FAKEBIN="$BINDING_CASE/fakebin"
   mkdir -p "$BINDING_REPO/bin" "$BINDING_REPO/tests" "$BINDING_HOME" \
     "$BINDING_CONFIG/firstmate" "$BINDING_STATE" "$BINDING_TRACE" "$BINDING_FAKEBIN"
-  ln -s "$ROOT/bin" "$BINDING_HOME/bin"
+  git -C "$BINDING_REPO" init -q || fail 'cannot isolate lint fixture Git context'
+  mkdir -p "$BINDING_HOME/bin"
+  ln -s "$ROOT/bin/fm-timeout-lib.sh" "$BINDING_HOME/bin/fm-timeout-lib.sh"
+  cat > "$BINDING_HOME/bin/fm-heavy-slot.sh" <<'SH'
+#!/usr/bin/env bash
+if [ "${1:-}" = release ] && [ -f "$BINDING_TRACE/scopes" ]; then
+  while IFS= read -r group; do
+    if [ -e "/sys/fs/cgroup$group/cgroup.events" ]; then
+      cat "/sys/fs/cgroup$group/cgroup.events" >> "$BINDING_TRACE/release-events"
+    else
+      printf 'populated 0\n' >> "$BINDING_TRACE/release-events"
+    fi
+  done < "$BINDING_TRACE/scopes"
+fi
+exec "$BINDING_OWNER_HELPER" "$@"
+SH
+  chmod +x "$BINDING_HOME/bin/fm-heavy-slot.sh"
   cp "$LINT" "$ROOT/bin/fm-lint-resource-lib.sh" "$ROOT/bin/fm-timeout-lib.sh" "$BINDING_REPO/bin/"
   printf '#!/usr/bin/env bash\nexit 0\n' > "$BINDING_REPO/bin/fm-lint-workflows.sh"
   chmod +x "$BINDING_REPO/bin/fm-lint-workflows.sh"
@@ -37,9 +53,36 @@ fi
 mkdir "$BINDING_TRACE/inflight" || { printf 'overlap\n' >> "$BINDING_TRACE/overlap"; exit 90; }
 trap 'rmdir "$BINDING_TRACE/inflight"' EXIT
 group=$(awk -F: '$1 == 0 {print $3}' /proc/self/cgroup 2>/dev/null)
+printf '%s\n' "$group" >> "$BINDING_TRACE/scopes"
 cap=$(cat "/sys/fs/cgroup$group/memory.max" 2>/dev/null || printf unavailable)
 held=$("$BINDING_HOME/bin/fm-heavy-slot.sh" status)
 printf 'pid=%s cap=%s %s\n' "$$" "$cap" "$held" >> "$BINDING_TRACE/children"
+if [ "${BINDING_STRAGGLER:-0}" = 1 ]; then
+  perl -MPOSIX=setpgid -e '
+    pipe(my $read, my $write) or die $!;
+    my $pid = fork;
+    die $! unless defined $pid;
+    if (!$pid) {
+      close $read;
+      setpgid(0, 0) == 0 or die $!;
+      $SIG{TERM} = "IGNORE";
+      close STDIN; close STDOUT; close STDERR;
+      open my $fh, ">>", "$ENV{BINDING_TRACE}/stragglers" or die $!;
+      print $fh "$$\n";
+      close $fh;
+      print $write "ready\n";
+      close $write;
+      sleep 60;
+      exit 0;
+    }
+    close $write;
+    <$read> or die "straggler did not start";
+  '
+fi
+cat "/sys/fs/cgroup$group/cgroup.procs" >> "$BINDING_TRACE/scope-pids" 2>/dev/null || true
+printf '%s %s\n' "$$" "$(ps -o pgid= -p "$$" | tr -d ' ')" >> "$BINDING_TRACE/groups"
+printf '%s %s\n' "$PPID" "$(ps -o pgid= -p "$PPID" | tr -d ' ')" >> "$BINDING_TRACE/groups"
+touch "$BINDING_TRACE/ready"
 if [ "${BINDING_BLOCK:-0}" = 1 ]; then sleep 60; else sleep 0.1; fi
 exit "${BINDING_EXIT:-0}"
 SH
@@ -47,7 +90,8 @@ SH
 }
 
 binding_slot() {
-  XDG_STATE_HOME="$BINDING_STATE" "$BINDING_HOME/bin/fm-heavy-slot.sh" "$@"
+  XDG_STATE_HOME="$BINDING_STATE" BINDING_TRACE="$BINDING_TRACE" \
+    BINDING_OWNER_HELPER="$ROOT/bin/fm-heavy-slot.sh" "$BINDING_HOME/bin/fm-heavy-slot.sh" "$@"
 }
 
 # Exercise the plain command selected by automatic Lint through its real
@@ -58,11 +102,46 @@ binding_lint() {
     cd "$BINDING_REPO" || exit 1
     env -u FM_LINT_RESOURCE_TASK XDG_CONFIG_HOME="$BINDING_CONFIG" XDG_STATE_HOME="$BINDING_STATE" \
       BINDING_TRACE="$BINDING_TRACE" BINDING_HOME="$BINDING_HOME" \
+      BINDING_OWNER_HELPER="$ROOT/bin/fm-heavy-slot.sh" \
       BINDING_REAL_SYSTEMD_RUN="$(command -v systemd-run)" \
       BINDING_BLOCK="${BINDING_BLOCK:-0}" BINDING_EXIT="${BINDING_EXIT:-0}" \
+      BINDING_STRAGGLER="${BINDING_STRAGGLER:-0}" \
+      FM_LINT_REQUIRE_BOUNDS="${BINDING_BOUNDS:-0}" FM_LINT_ROOT_GRACE=10 \
       FM_LINT_JOBS=2 FM_LINT_TELEMETRY="$BINDING_TRACE/telemetry.tsv" \
       PATH="$BINDING_FAKEBIN:$PATH" sh -c 'bin/fm-lint.sh'
   )
+}
+
+binding_assert_scope_stopped() {
+  local pid group
+  [ "$(binding_slot status)" = free ] || fail 'lint did not release promptly after scope cleanup'
+  [ -s "$BINDING_TRACE/release-events" ] || fail 'release did not observe its analysis scope'
+  if grep -q '^populated 1$' "$BINDING_TRACE/release-events"; then
+    fail 'capacity was released while the analysis scope still had processes'
+  fi
+  while IFS= read -r group; do
+    case "$group" in */lint-*.scope) ;; *) fail 'analysis did not enter its own lint scope' ;; esac
+    if [ -e "/sys/fs/cgroup$group/cgroup.events" ]; then
+      grep -q '^populated 0$' "/sys/fs/cgroup$group/cgroup.events" || fail 'analysis scope remains populated'
+    fi
+  done < "$BINDING_TRACE/scopes"
+  while IFS= read -r pid; do
+    if kill -0 "$pid" 2>/dev/null; then
+      case "$(ps -o stat= -p "$pid" | tr -d ' ')" in
+        Z*|'') ;; *) fail "analysis scope left process $pid executing" ;;
+      esac
+    fi
+  done < "$BINDING_TRACE/scope-pids"
+  [ -s "$BINDING_TRACE/stragglers" ] || fail 'scope cleanup checked no separately grouped straggler'
+  while IFS= read -r pid; do
+    if kill -0 "$pid" 2>/dev/null; then
+      case "$(ps -o stat= -p "$pid" | tr -d ' ')" in
+        Z*|'') ;; *) fail 'scope cleanup left a TERM-resistant straggler executing' ;;
+      esac
+    fi
+  done < "$BINDING_TRACE/stragglers"
+  awk 'NR % 2 {group=$2; next} $2 == group {bad=1} END {exit (bad || NR == 0 || NR % 2)}' "$BINDING_TRACE/groups" \
+    || fail 'required-bounds fixture did not exercise distinct process groups'
 }
 
 test_lint_binding_validation_and_portable_absence() {
@@ -83,7 +162,7 @@ test_lint_binding_validation_and_portable_absence() {
   expect_code 2 "$rc" 'the binding must remain user-private'
   assert_contains "$out" 'private user-owned regular file' 'record permissions must be diagnosed'
   binding_fixture missing-home
-  rm "$BINDING_HOME/bin"
+  rm "$BINDING_HOME/bin/fm-heavy-slot.sh"
   rc=0; out=$(binding_lint 2>&1) || rc=$?
   expect_code 2 "$rc" 'the declared helper must exist without guessing another home'
   assert_contains "$out" 'declared heavy-slot helper is unavailable' 'missing owner must be named'
@@ -108,7 +187,7 @@ SH
 }
 
 test_lint_binding_real_scope() {
-  local out rc held child_pid parent_pid i task owner_pid
+  local out rc held child_pid parent_pid i task owner_pid started
   fm_live_gate default-on FM_LIVE_LINT_RESOURCE systemd-run systemctl
   if ! systemctl --user show-environment >/dev/null 2>&1; then
     if [ "${FM_LIVE_LINT_RESOURCE:-${FM_LIVE:-0}}" = 1 ]; then fail 'real lint resource proof requires systemd-run and an available user manager'; fi
@@ -131,6 +210,9 @@ test_lint_binding_real_scope() {
   assert_contains "$held" 'held task=existing-holder' 'a refused lint must not release another holder'
   binding_slot release existing-holder >/dev/null
   binding_fixture success
+  BINDING_BOUNDS=1
+  BINDING_STRAGGLER=1
+  started=$SECONDS
   rc=0; out=$(binding_lint 2>&1) || rc=$?
   expect_code 0 "$rc" 'plain automatic entrypoint must pass under the real cap'
   assert_contains "$out" 'bound task=lint-' 'bound entrypoint must report the verified holder'
@@ -146,13 +228,17 @@ test_lint_binding_real_scope() {
   printf 'resource proof: %s\n' "$(head -1 "$BINDING_TRACE/children")"
   awk -F '\t' '$1 == "root_count" {count=$2} END {exit !(count > 1)}' "$BINDING_TRACE/telemetry.tsv" \
     || fail 'single-job proof must exercise multiple roots'
-  [ "$(binding_slot status)" = free ] || fail 'successful automatic lint did not release promptly'
+  binding_assert_scope_stopped
+  [ "$((SECONDS - started))" -lt 20 ] || fail 'successful lint scope release was not prompt'
   binding_fixture failure
   BINDING_EXIT=7
+  started=$SECONDS
   rc=0; out=$(binding_lint 2>&1) || rc=$?
   unset BINDING_EXIT
   expect_code 7 "$rc" 'a scoped analysis exit must propagate through the plain entrypoint'
-  [ "$(binding_slot status)" = free ] || fail 'failed lint did not release promptly'
+  binding_assert_scope_stopped
+  [ "$((SECONDS - started))" -lt 20 ] || fail 'failed lint scope release was not prompt'
+  unset BINDING_BOUNDS BINDING_STRAGGLER
   binding_fixture unavailable-cap
   printf '#!/usr/bin/env bash\nexit 99\n' > "$BINDING_FAKEBIN/systemd-run"
   chmod +x "$BINDING_FAKEBIN/systemd-run"
@@ -186,19 +272,23 @@ SH
   [ ! -e "$BINDING_TRACE/children" ] || fail 'scoped re-entry silently lost its binding'
   [ "$(binding_slot status)" = free ] || fail 'removed binding leaked the slot'
   binding_fixture signal
+  BINDING_BOUNDS=1
+  BINDING_STRAGGLER=1
   BINDING_BLOCK=1 binding_lint > "$BINDING_TRACE/output" 2>&1 &
   parent_pid=$!
-  for ((i=0; i<200; i++)); do [ ! -s "$BINDING_TRACE/children" ] || break; sleep 0.1; done
-  [ -s "$BINDING_TRACE/children" ] || { kill "$parent_pid" 2>/dev/null || true; fail 'signal fixture never entered its bound analysis'; }
+  for ((i=0; i<200; i++)); do [ ! -e "$BINDING_TRACE/ready" ] || break; sleep 0.1; done
+  [ -e "$BINDING_TRACE/ready" ] || { kill "$parent_pid" 2>/dev/null || true; fail 'signal fixture never entered its bound analysis'; }
   child_pid=$(sed -n 's/^pid=\([0-9]*\).*/\1/p' "$BINDING_TRACE/children" | head -1)
   # Signal the actual outer lint owner, rather than the fixture shell.
   held=$(binding_slot status)
   task=$(printf '%s\n' "$held" | sed -n 's/^held task=\([^ ]*\).*/\1/p')
   owner_pid=${task#lint-}; owner_pid=${owner_pid%%-*}
+  started=$SECONDS
   kill -TERM "$owner_pid"
   rc=0; wait "$parent_pid" || rc=$?
   expect_code 143 "$rc" 'interruption must propagate its signal exit'
-  [ "$(binding_slot status)" = free ] || fail 'interrupted lint did not release promptly'
+  binding_assert_scope_stopped
+  [ "$((SECONDS - started))" -lt 20 ] || fail 'interrupted lint scope release was not prompt'
   if kill -0 "$child_pid" 2>/dev/null; then
     [ "$(ps -o stat= -p "$child_pid" | tr -d ' ')" = Z ] || fail 'interrupted lint left an analysis child executing'
   fi
@@ -209,24 +299,31 @@ SH
   cat > "$BINDING_REPO/bin/fm-timeout-lib.sh" <<'SH'
 #!/usr/bin/env bash
 fm_exec_timed() {
-  printf '%s %s\n' "$1" "$2" > "$BINDING_TRACE/job-bound"
-  shift 2
   # shellcheck source=bin/fm-timeout-lib.sh
   . "$BINDING_HOME/bin/fm-timeout-lib.sh"
-  fm_exec_timed 3 1 "$@"
+  if [ "$1" = 1770 ]; then
+    printf '%s %s\n' "$1" "$2" > "$BINDING_TRACE/job-bound"
+    shift 2
+    fm_exec_timed 8 1 "$@"
+  else
+    fm_exec_timed "$@"
+  fi
 }
 SH
   BINDING_BLOCK=1
+  started=$SECONDS
   rc=0; out=$(binding_lint 2>&1) || rc=$?
   unset BINDING_BLOCK
   expect_code 124 "$rc" 'whole-job deadline must propagate the timed-out exit'
   [ "$(cat "$BINDING_TRACE/job-bound")" = '1770 5' ] || fail 'whole-job deadline no longer precedes slot expiry'
-  [ "$(binding_slot status)" = free ] || fail 'whole-job deadline leaked the slot'
+  binding_assert_scope_stopped
+  [ "$((SECONDS - started))" -lt 25 ] || fail 'whole-job deadline scope release was not prompt'
   [ -s "$BINDING_TRACE/children" ] || fail 'deadline fixture timed out before entering analysis'
   child_pid=$(sed -n 's/^pid=\([0-9]*\).*/\1/p' "$BINDING_TRACE/children" | head -1)
   if kill -0 "$child_pid" 2>/dev/null; then
     [ "$(ps -o stat= -p "$child_pid" | tr -d ' ')" = Z ] || fail 'whole-job deadline left an analysis child executing'
   fi
+  unset BINDING_BOUNDS BINDING_STRAGGLER
   pass 'lint resource binding: real cap, one job, contention, ownership, exits, signal and deadline release'
 }
 

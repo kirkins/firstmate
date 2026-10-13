@@ -57,10 +57,11 @@
 # When opted in, every real lint invocation forces jobs=1, proves the scope's
 # kernel memory.max and live slot ownership before analysis, and refuses a
 # missing helper, invalid record, occupied slot, or unavailable cap without
-# running lint. The entire invocation is bounded to 1770 seconds plus a
-# five-second termination grace, inside the slot's explicit 1800-second lease,
-# and releases its own slot as soon as the scoped child exits. A killed outer
-# owner may leave a hold until its ordinary heartbeat expiry.
+# running lint. The whole-job watchdog allows 1770 seconds plus a five-second
+# termination grace; scope cleanup allows five further seconds, all inside the
+# slot's explicit 1800-second lease. Lint releases its own slot after stopping
+# every process in its owned scope. A killed outer owner may leave a hold until
+# its ordinary heartbeat expiry.
 # Opted-in lint requires a Linux user systemd manager, cgroup v2 memory
 # controls, and JSON::PP from the existing Perl dependency.
 # With no record, Linux/macOS/CI callers retain their ordinary behavior and

@@ -41,10 +41,19 @@ fm_lint_resource_cap() {  # <acquire-output>; prints the cap from the owner
 
 # shellcheck disable=SC2329 # EXIT and signal traps own this cleanup.
 fm_lint_resource_cleanup() {
+  local state
+  trap '' HUP INT TERM
   if [ -n "${FM_LINT_RESOURCE_RUN_PID:-}" ]; then
     kill -TERM "$FM_LINT_RESOURCE_RUN_PID" 2>/dev/null || true
     wait "$FM_LINT_RESOURCE_RUN_PID" 2>/dev/null || true
     FM_LINT_RESOURCE_RUN_PID=
+  fi
+  if ! systemctl --user stop "$FM_LINT_RESOURCE_OWNER.scope" >&2; then
+    state=$(systemctl --user show "$FM_LINT_RESOURCE_OWNER.scope" -p LoadState --value) || state=
+    if [ "$state" != not-found ]; then
+      printf 'fm-lint.sh: cannot confirm owned scope stopped; retaining heavy slot %s.\n' "$FM_LINT_RESOURCE_OWNER" >&2
+      return 1
+    fi
   fi
   "$FM_LINT_RESOURCE_HELPER" release "$FM_LINT_RESOURCE_OWNER" >&2
 }
@@ -90,6 +99,7 @@ fm_lint_resource_enter() {  # <binding-file> <original lint arguments...>
 
   declare -F fm_exec_timed >/dev/null 2>&1 || fm_lint_resource_refuse 'fm-timeout-lib.sh is unavailable'
   command -v systemd-run >/dev/null 2>&1 || fm_lint_resource_refuse 'systemd-run is unavailable'
+  command -v systemctl >/dev/null 2>&1 || fm_lint_resource_refuse 'systemctl is unavailable'
   task="lint-${BASHPID:-$$}-$(date +%s)"
   advice=$("$FM_LINT_RESOURCE_HELPER" acquire "$task" --estimate "$estimate" --expiry 1800) || exit $?
   FM_LINT_RESOURCE_OWNER=$task
@@ -101,14 +111,12 @@ fm_lint_resource_enter() {  # <binding-file> <original lint arguments...>
   printf '%s\n' "$advice" >&2
   cap=$(fm_lint_resource_cap "$advice")
   case "$cap" in ''|*[!0-9]*) fm_lint_resource_refuse 'heavy-slot owner did not supply an enforceable cap wrapper' ;; esac
-  # The shared watchdog ends this whole invocation before the slot can expire.
-  # systemd-run scope mode executes locally and caps its descendants. The
-  # watchdog signals the command group; lint owns its separate worker groups.
   owner_pid=${BASHPID:-$$}
   (
     # shellcheck disable=SC2034 # The sourced fm_exec_timed reads this owner.
     FM_EXEC_TIMED_OWNER_PID=$owner_pid
-    fm_exec_timed 1770 5 systemd-run --user --scope -p "MemoryMax=${cap}M" -- \
+    fm_exec_timed 1770 5 systemd-run --user --scope -p "MemoryMax=${cap}M" \
+      --unit="$task.scope" -p TimeoutStopSec=5s -- \
       env FM_LINT_RESOURCE_TASK="$task" "${BASH:-bash}" "$SELF" "$@"
   ) &
   FM_LINT_RESOURCE_RUN_PID=$!
