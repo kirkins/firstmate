@@ -1,0 +1,160 @@
+{
+  "candidate": "4f3638e911afa47c30bf6160e1a99ab0474cd2bc",
+  "proof_type": "portable synthetic integration; not native macOS or real Forgejo execution",
+  "records": [
+    {
+      "case": "native-keychain-git.example.dev",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "armed: state/task-a.check.sh\n",
+        "stderr": "",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account mac-operator\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account mac-operator\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account mac-operator\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account mac-operator\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account mac-operator\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account mac-operator\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account mac-operator\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.m8aOj3 -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [fixture]/native-keychain-git.example.dev/api-response -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=[fixture]/native-keychain-git.example.dev/wt\nproject=[fixture]/native-keychain-git.example.dev/project\nkind=ship\nmode=no-mistakes\npr=https://git.example.dev/owner/repo/pulls/9\npr_head=0123456789abcdef0123456789abcdef01234567\n",
+        "home/state/task-a.pr-poll": "forgejo\nhttps://git.example.dev/owner/repo/pulls/9\ngit.example.dev\nowner/repo\n9\n",
+        "trace.out": "200\n",
+        "poll-trace.out": "merged\n"
+      },
+      "trace_privacy": {
+        "trace.out": "synthetic credential absent",
+        "trace.err": "synthetic credential absent",
+        "poll-trace.out": "synthetic credential absent",
+        "poll-trace.err": "synthetic credential absent"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": true,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "native-keychain-forge.other.example",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "armed: state/task-a.check.sh\n",
+        "stderr": "",
+        "forgejo-st.log": "security find-generic-password -s forge.other.example/forgejo-cli -w\nselected-account another-operator\nsecurity find-generic-password -s forge.other.example/forgejo-cli -w\nselected-account another-operator\nsecurity find-generic-password -s forge.other.example/forgejo-cli -w\nselected-account another-operator\nsecurity find-generic-password -s forge.other.example/forgejo-cli -w\nselected-account another-operator\nsecurity find-generic-password -s forge.other.example/forgejo-cli -w\nselected-account another-operator\nsecurity find-generic-password -s forge.other.example/forgejo-cli -w\nselected-account another-operator\nsecurity find-generic-password -s forge.other.example/forgejo-cli -w\nselected-account another-operator\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.QDYNFp -w %{http_code} -X GET -H @/dev/fd/3 https://forge.other.example/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://forge.other.example/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://forge.other.example/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://forge.other.example/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [fixture]/native-keychain-forge.other.example/api-response -w %{http_code} -X GET -H @/dev/fd/3 https://forge.other.example/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -H @/dev/fd/3 https://forge.other.example/api/v1/repos/owner/repo/pulls/9\n",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=[fixture]/native-keychain-forge.other.example/wt\nproject=[fixture]/native-keychain-forge.other.example/project\nkind=ship\nmode=no-mistakes\npr=https://forge.other.example/owner/repo/pulls/9\npr_head=0123456789abcdef0123456789abcdef01234567\n",
+        "home/state/task-a.pr-poll": "forgejo\nhttps://forge.other.example/owner/repo/pulls/9\nforge.other.example\nowner/repo\n9\n",
+        "trace.out": "200\n",
+        "poll-trace.out": "merged\n"
+      },
+      "trace_privacy": {
+        "trace.out": "synthetic credential absent",
+        "trace.err": "synthetic credential absent",
+        "poll-trace.out": "synthetic credential absent",
+        "poll-trace.err": "synthetic credential absent"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": true,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "native-keychain-missing-tool",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: watching a Forgejo pull request requires security on PATH\n",
+        "forgejo-st.log": "",
+        "forgejo-curl.log": "",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=[fixture]/native-keychain-missing-tool/wt\nproject=[fixture]/native-keychain-missing-tool/project\nkind=ship\nmode=no-mistakes\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "native-keychain-missing-token",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: watching a Forgejo pull request on git.example.dev requires an API token in the macOS Keychain under service git.example.dev/forgejo-cli\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\n",
+        "forgejo-curl.log": "",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=[fixture]/native-keychain-missing-token/wt\nproject=[fixture]/native-keychain-missing-token/project\nkind=ship\nmode=no-mistakes\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "native-keychain-empty-token",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: watching a Forgejo pull request on git.example.dev requires an API token in the macOS Keychain under service git.example.dev/forgejo-cli\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\n",
+        "forgejo-curl.log": "",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=[fixture]/native-keychain-empty-token/wt\nproject=[fixture]/native-keychain-empty-token/project\nkind=ship\nmode=no-mistakes\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "native-keychain-malformed-token",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: watching a Forgejo pull request on git.example.dev requires an API token in the macOS Keychain under service git.example.dev/forgejo-cli\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\n",
+        "forgejo-curl.log": "",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=[fixture]/native-keychain-malformed-token/wt\nproject=[fixture]/native-keychain-malformed-token/project\nkind=ship\nmode=no-mistakes\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "native-keychain-platform-failed",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: watching a Forgejo pull request requires a readable supported credential platform (Linux or macOS)\n",
+        "forgejo-st.log": "",
+        "forgejo-curl.log": "",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=[fixture]/native-keychain-platform-failed/wt\nproject=[fixture]/native-keychain-platform-failed/project\nkind=ship\nmode=no-mistakes\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "native-keychain-platform-unknown",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: watching a Forgejo pull request requires a readable supported credential platform (Linux or macOS)\n",
+        "forgejo-st.log": "",
+        "forgejo-curl.log": "",
+        "home/state/task-a.meta": "window=firstmate:fm-task-a\nendpoint_task_id=task-a\nworktree=[fixture]/native-keychain-platform-unknown/wt\nproject=[fixture]/native-keychain-platform-unknown/project\nkind=ship\nmode=no-mistakes\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    }
+  ]
+}

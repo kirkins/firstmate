@@ -1,0 +1,26 @@
+{
+  "candidate": "4f3638e911afa47c30bf6160e1a99ab0474cd2bc",
+  "recovery_only": true,
+  "historical_deviations": {
+    "credential_write": "Earlier Test created and removed a disposable synthetic Linux keyring despite the no-credential-write constraint. Cleanup did not authorize it. This recovery creates no keyring or credentials.",
+    "resource_compliance": "Earlier Test command evidence did not establish heavy-slot acquisition, a memory wrapper, or FM_LINT_JOBS=1. This recovery does not retrospectively claim compliance."
+  },
+  "jobs": [
+    {
+      "subject": "tests/fm-pr-check-security.test.sh",
+      "acquisition": "Authorized heavy-slot helper acquired before launch with estimate 768 MB.",
+      "wrapper": "systemd-run --user --scope -p MemoryMax=768M -- env FM_LINT_JOBS=1 TMPDIR=<worktree>/.test-recovery/tmp GIT_CEILING_DIRECTORIES=<worktree>/.test-recovery/tmp bash bin/fm-test-run.sh --jobs 1 --json <evidence>/recovery-security-timing.json tests/fm-pr-check-security.test.sh",
+      "unit": "run-p4059885-i29211622.scope",
+      "observed_properties": "MemoryPeak=144769024\nMemoryMax=805306368",
+      "release": "Release confirmed immediately after runner exit 0; no overlap with the next job."
+    },
+    {
+      "subject": "tests/fm-pr-merge.test.sh",
+      "acquisition": "Authorized heavy-slot helper freshly acquired after security release with estimate 768 MB.",
+      "wrapper": "systemd-run --user --scope -p MemoryMax=768M -- env FM_LINT_JOBS=1 TMPDIR=<worktree>/.test-recovery/tmp GIT_CEILING_DIRECTORIES=<worktree>/.test-recovery/tmp bash bin/fm-test-run.sh --jobs 1 --json <evidence>/recovery-merge-timing.json tests/fm-pr-merge.test.sh",
+      "unit": "run-p262047-i29618778.scope",
+      "observed_properties": "MemoryPeak=72105984\nMemoryMax=805306368",
+      "release": "Release confirmed immediately after runner exit 0."
+    }
+  ]
+}

@@ -1,0 +1,268 @@
+{
+  "candidate": "4f3638e911afa47c30bf6160e1a99ab0474cd2bc",
+  "proof_type": "portable synthetic integration; not native macOS or real Forgejo execution",
+  "records": [
+    {
+      "case": "native-keychain-merge",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "armed: state/task-x1.check.sh\nverified: https://git.example.dev/owner/repo/pulls/9 is merged (state=closed, merged=true)\n",
+        "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nnotice: recorded head cccccccccccccccccccccccccccccccccccccccc disagrees with the live head 0123456789abcdef0123456789abcdef01234567; verifying the live head\nverified: https://git.example.dev/owner/repo/pulls/9 is open and mergeable, with a successful combined commit status at head 0123456789abcdef0123456789abcdef01234567\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.VbyBag -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.2RW0NY -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-status.cUtNfA -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/commits/0123456789abcdef0123456789abcdef01234567/status\n-H Content-Type: application/json --data {\"Do\":\"squash\"} -sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-merge.HxSQHJ -w %{http_code} -X POST -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9/merge\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.lI7JdN -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/native-keychain-merge/wt\nproject=[fixture]/native-keychain-merge/project\nkind=ship\nmode=no-mistakes\npr=https://git.example.dev/owner/repo/pulls/9\npr_head=0123456789abcdef0123456789abcdef01234567\n",
+        "state/task-x1.merge-authority": "fm-merge-authority-v1\nforgejo\ngit.example.dev\nowner/repo\n9\nattended\n",
+        "state/.wake-queue": "1791877509\t1\tcheck\tmerged-task-x1-https://git.example.dev/owner/repo/pulls/9\tcheck: merge landed: task-x1 https://git.example.dev/owner/repo/pulls/9\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": true,
+        "state/task-x1.merge-authority": true,
+        "state/.wake-queue": true
+      }
+    },
+    {
+      "case": "native-keychain-merge-draft",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "armed: state/task-x1.check.sh\n",
+        "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.example.dev/owner/repo/pulls/9\n  - the pull request is a draft\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.wV3QzG -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.ihllDG -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-status.tPOP62 -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/commits/0123456789abcdef0123456789abcdef01234567/status\n",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/native-keychain-merge-draft/wt\nproject=[fixture]/native-keychain-merge-draft/project\nkind=ship\nmode=no-mistakes\npr=https://git.example.dev/owner/repo/pulls/9\npr_head=0123456789abcdef0123456789abcdef01234567\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "native-keychain-merge-closed",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "armed: state/task-x1.check.sh\n",
+        "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.example.dev/owner/repo/pulls/9\n  - state is \"closed\", not open\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.jtrUL7 -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.dAJhQl -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-status.Jj7lNF -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/commits/0123456789abcdef0123456789abcdef01234567/status\n",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/native-keychain-merge-closed/wt\nproject=[fixture]/native-keychain-merge-closed/project\nkind=ship\nmode=no-mistakes\npr=https://git.example.dev/owner/repo/pulls/9\npr_head=0123456789abcdef0123456789abcdef01234567\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "native-keychain-merge-conflict",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "armed: state/task-x1.check.sh\n",
+        "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.example.dev/owner/repo/pulls/9\n  - mergeable is \"false\", not true\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.X6juOi -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.3KhBrj -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-status.RywfVe -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/commits/0123456789abcdef0123456789abcdef01234567/status\n",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/native-keychain-merge-conflict/wt\nproject=[fixture]/native-keychain-merge-conflict/project\nkind=ship\nmode=no-mistakes\npr=https://git.example.dev/owner/repo/pulls/9\npr_head=0123456789abcdef0123456789abcdef01234567\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "native-keychain-merge-red",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "armed: state/task-x1.check.sh\n",
+        "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.example.dev/owner/repo/pulls/9\n  - the combined commit status at the head is \"failure\", not success\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.ulObmb -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.yX9P2D -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-status.Z0UzgB -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/commits/0123456789abcdef0123456789abcdef01234567/status\n",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/native-keychain-merge-red/wt\nproject=[fixture]/native-keychain-merge-red/project\nkind=ship\nmode=no-mistakes\npr=https://git.example.dev/owner/repo/pulls/9\npr_head=0123456789abcdef0123456789abcdef01234567\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "native-keychain-merge-no-checks",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "armed: state/task-x1.check.sh\n",
+        "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.example.dev/owner/repo/pulls/9\n  - the combined commit status at the head is \"none\", not success\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.M0fx9d -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.bDfbVq -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-status.R6rpcn -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/commits/0123456789abcdef0123456789abcdef01234567/status\n",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/native-keychain-merge-no-checks/wt\nproject=[fixture]/native-keychain-merge-no-checks/project\nkind=ship\nmode=no-mistakes\npr=https://git.example.dev/owner/repo/pulls/9\npr_head=0123456789abcdef0123456789abcdef01234567\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "native-keychain-merge-wrong-binding",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "",
+        "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to record https://git.example.dev/owner/repo/pulls/9 for task task-x1: the project at [fixture]/native-keychain-merge-wrong-binding/project is bound to https://elsewhere.example/owner/other.git, whose host is elsewhere.example, not git.example.dev\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\nsecurity find-generic-password -s git.example.dev/forgejo-cli -w\nselected-account stored-forgejo-account\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.pebxEG -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/native-keychain-merge-wrong-binding/wt\nproject=[fixture]/native-keychain-merge-wrong-binding/project\nkind=ship\nmode=no-mistakes\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "native-keychain-merge-missing-token",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: merging a Forgejo pull request on git.example.dev requires an API token in the macOS Keychain under service git.example.dev/forgejo-cli\n",
+        "forgejo-st.log": "security find-generic-password -s git.example.dev/forgejo-cli -w\n",
+        "forgejo-curl.log": "",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/native-keychain-merge-missing-token/wt\nproject=[fixture]/native-keychain-merge-missing-token/project\nkind=ship\nmode=no-mistakes\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "native-keychain-merge-missing-tool",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: merging a Forgejo pull request requires security on PATH\n",
+        "forgejo-st.log": "",
+        "forgejo-curl.log": "",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/native-keychain-merge-missing-tool/wt\nproject=[fixture]/native-keychain-merge-missing-tool/project\nkind=ship\nmode=no-mistakes\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "forgejo-merges",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "armed: state/task-x1.check.sh\nverified: https://git.example.dev/owner/repo/pulls/9 is merged (state=closed, merged=true)\n",
+        "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://git.example.dev/owner/repo/pulls/9 is open and mergeable, with a successful combined commit status at head 0123456789abcdef0123456789abcdef01234567\n",
+        "forgejo-st.log": "secret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.MRbHW4 -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.lxbYGw -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-status.5Wcfkc -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/commits/0123456789abcdef0123456789abcdef01234567/status\n-H Content-Type: application/json --data {\"Do\":\"squash\"} -sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-merge.kBVdTC -w %{http_code} -X POST -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9/merge\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.ISCLMT -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/forgejo-merges/wt\nproject=[fixture]/forgejo-merges/project\nkind=ship\nmode=no-mistakes\npr=https://git.example.dev/owner/repo/pulls/9\npr_head=0123456789abcdef0123456789abcdef01234567\n",
+        "state/task-x1.merge-authority": "fm-merge-authority-v1\nforgejo\ngit.example.dev\nowner/repo\n9\nattended\n",
+        "state/.wake-queue": "1791877656\t1\tcheck\tmerged-task-x1-https://git.example.dev/owner/repo/pulls/9\tcheck: merge landed: task-x1 https://git.example.dev/owner/repo/pulls/9\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": true,
+        "state/task-x1.merge-authority": true,
+        "state/.wake-queue": true
+      }
+    },
+    {
+      "case": "forgejo-token-invalid-length-19",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: merging a Forgejo pull request on git.example.dev requires an API token in the Linux keyring under service git.example.dev/forgejo-cli/omarchy\n",
+        "forgejo-st.log": "secret-tool lookup service git.example.dev/forgejo-cli/omarchy\n",
+        "forgejo-curl.log": "",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/forgejo-token-invalid-length-19/wt\nproject=[fixture]/forgejo-token-invalid-length-19/project\nkind=ship\nmode=no-mistakes\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "forgejo-token-invalid-length-257",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: merging a Forgejo pull request on git.example.dev requires an API token in the Linux keyring under service git.example.dev/forgejo-cli/omarchy\n",
+        "forgejo-st.log": "secret-tool lookup service git.example.dev/forgejo-cli/omarchy\n",
+        "forgejo-curl.log": "",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/forgejo-token-invalid-length-257/wt\nproject=[fixture]/forgejo-token-invalid-length-257/project\nkind=ship\nmode=no-mistakes\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "forgejo-token-invalid-character",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "",
+        "stderr": "error: merging a Forgejo pull request on git.example.dev requires an API token in the Linux keyring under service git.example.dev/forgejo-cli/omarchy\n",
+        "forgejo-st.log": "secret-tool lookup service git.example.dev/forgejo-cli/omarchy\n",
+        "forgejo-curl.log": "",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/forgejo-token-invalid-character/wt\nproject=[fixture]/forgejo-token-invalid-character/project\nkind=ship\nmode=no-mistakes\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": false,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    },
+    {
+      "case": "forgejo-stale-head",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "armed: state/task-x1.check.sh\nverified: https://git.example.dev/owner/repo/pulls/9 is merged (state=closed, merged=true)\n",
+        "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nnotice: recorded head cccccccccccccccccccccccccccccccccccccccc disagrees with the live head 0123456789abcdef0123456789abcdef01234567; verifying the live head\nverified: https://git.example.dev/owner/repo/pulls/9 is open and mergeable, with a successful combined commit status at head 0123456789abcdef0123456789abcdef01234567\n",
+        "forgejo-st.log": "secret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.WqU0pU -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.FacuGh -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-status.M4kbmr -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/commits/0123456789abcdef0123456789abcdef01234567/status\n-H Content-Type: application/json --data {\"Do\":\"squash\"} -sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-merge.2ioljP -w %{http_code} -X POST -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9/merge\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.s5GISu -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/forgejo-stale-head/wt\nproject=[fixture]/forgejo-stale-head/project\nkind=ship\nmode=no-mistakes\npr=https://git.example.dev/owner/repo/pulls/9\npr_head=0123456789abcdef0123456789abcdef01234567\n",
+        "state/task-x1.merge-authority": "fm-merge-authority-v1\nforgejo\ngit.example.dev\nowner/repo\n9\nattended\n",
+        "state/.wake-queue": "1791877675\t1\tcheck\tmerged-task-x1-https://git.example.dev/owner/repo/pulls/9\tcheck: merge landed: task-x1 https://git.example.dev/owner/repo/pulls/9\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": true,
+        "state/task-x1.merge-authority": true,
+        "state/.wake-queue": true
+      }
+    },
+    {
+      "case": "forgejo-merge-fails",
+      "surface": "real Firstmate shell entrypoints with mock platform, credential tool, and HTTP client",
+      "outputs": {
+        "stdout": "armed: state/task-x1.check.sh\n",
+        "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://git.example.dev/owner/repo/pulls/9 is open and mergeable, with a successful combined commit status at head 0123456789abcdef0123456789abcdef01234567\nerror: the Forgejo merge endpoint answered HTTP 405 rather than accepting the merge of https://git.example.dev/owner/repo/pulls/9; the forge reported: merge strategy is disabled\n",
+        "forgejo-st.log": "secret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\nsecret-tool lookup service git.example.dev/forgejo-cli/omarchy\n",
+        "forgejo-curl.log": "-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.jsqvvv -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-pull.IYdD5p -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9\n-sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-status.QbHUfb -w %{http_code} -X GET -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/commits/0123456789abcdef0123456789abcdef01234567/status\n-H Content-Type: application/json --data {\"Do\":\"squash\"} -sS --max-time 30 -o [candidate]/.test-recovery/tmp/fm-pr-forgejo-merge.7s1Awo -w %{http_code} -X POST -H @/dev/fd/3 https://git.example.dev/api/v1/repos/owner/repo/pulls/9/merge\n",
+        "state/task-x1.meta": "window=fm-task-x1\nworktree=[fixture]/forgejo-merge-fails/wt\nproject=[fixture]/forgejo-merge-fails/project\nkind=ship\nmode=no-mistakes\npr=https://git.example.dev/owner/repo/pulls/9\npr_head=0123456789abcdef0123456789abcdef01234567\n"
+      },
+      "published_artifacts": {
+        "home/state/task-a.check.sh": false,
+        "forgejo-merge-called": true,
+        "state/task-x1.merge-authority": false,
+        "state/.wake-queue": false
+      }
+    }
+  ],
+  "fixture_note": "No supervisor was launched in these disposable CLI fixtures. The emitted watcher warning is expected fixture output and explicitly allows the guarded operation."
+}

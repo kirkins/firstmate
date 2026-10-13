@@ -1,0 +1,20 @@
+Corrected bounded Test verification plan
+
+Candidate: 4f3638e911afa47c30bf6160e1a99ab0474cd2bc.
+Consume supplied native result and manifests as actual native credential-accessor and authenticated-read evidence; verify local source identity without copying private reports into output.
+Separate actual native reads from synthetic Darwin guarded integration and from previous Linux fixture results.
+Retain the earlier credential-write deviation and the lack of demonstrated resource-wrapper compliance.
+The existing two portable behavioral suites cover the executable guarded registration, merge and poll obligations; inspect their assertions to map obligations, not as proof that this recovery ran them.
+No source change or new permanent test is justified by this evidence-only recovery.
+
+Pending focused verification, not executed:
+1. Acquire the required machine-wide heavy slot with the prescribed task identity and 768MB estimate only when acquisition complies with the workspace boundary.
+2. Run tests/fm-pr-check-security.test.sh through bash bin/fm-test-run.sh --jobs 1 with mock credential/HTTP tools, FM_LINT_JOBS=1, an isolated worktree-local TMPDIR and matching GIT_CEILING_DIRECTORIES, under the enforceable wrapper printed by acquisition.
+3. Release immediately after that job, then acquire again and run only tests/fm-pr-merge.test.sh through the same runner and controls; release immediately afterward.
+4. If acquisition refuses, report the holder and do not run uncapped. Remove transient test fixtures afterward, retaining evidence and prepared dependencies.
+No lint, static analysis, complete suite, new credential/keyring, installation, native access, production registration or merge, or pipeline-control action is authorized in this Test recovery.
+
+Exact new blocker:
+The prescribed shared-slot helper writes machine-wide state outside the worktree even for status. The workspace boundary forbids those intentional writes. Redirecting the slot to the worktree would bypass shared coordination and constitute a new resource route. Stop before acquiring or running either suite; return this finding to the outer executor without approving or waiving Test.
+
+Residual native-only coverage remains explicitly limited to the supplied read procedure. Native guarded writes, copied and positive merged polls, failure handling, check/guard integration, tracing and outcome publication were not executed on native macOS. Existing portable fixture coverage remains synthetic, not a live production write verdict.

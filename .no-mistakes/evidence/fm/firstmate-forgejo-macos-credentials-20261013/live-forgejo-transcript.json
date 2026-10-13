@@ -1,0 +1,890 @@
+[
+  {
+    "label": "Register using real Linux keyring and HTTPS",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 0,
+    "stdout": "armed: state/task-lab.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Copied poll remains silent while open",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/register/state/task-lab.check.sh"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Copied poll reports merged",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/register/state/task-lab.check.sh"
+    ],
+    "exit": 0,
+    "stdout": "merged\n",
+    "stderr": "",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Canonical poll reports merged",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh",
+      "--validated",
+      "forgejo",
+      "https://lab.forgejo.test/owner/repo/pulls/9",
+      "lab.forgejo.test",
+      "owner/repo",
+      "9"
+    ],
+    "exit": 0,
+    "stdout": "merged\n",
+    "stderr": "",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Traced API request",
+    "command": [
+      "bash",
+      "-x",
+      "-c",
+      ". \"$1\"; fm_pr_forgejo_api GET \"$2\" /repos/owner/repo/pulls/9 \"$3\"",
+      "--",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-lib.sh",
+      "lab.forgejo.test",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/register/response.json"
+    ],
+    "exit": 0,
+    "stdout": "200\n",
+    "stderr": "+ . /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-lib.sh\n++ FM_PR_PROVIDER=\n++ FM_PR_URL=\n++ FM_PR_HOST=\n++ FM_PR_PATH=\n++ FM_PR_OWNER=\n++ FM_PR_REPO=\n++ FM_PR_NUMBER=\n++ FM_PR_DATA_PROVIDER=\n++ FM_PR_DATA_URL=\n++ FM_PR_DATA_HOST=\n++ FM_PR_DATA_PATH=\n++ FM_PR_DATA_NUMBER=\n++ FM_PR_META_PROVIDER=\n++ FM_PR_META_URL=\n++ FM_PR_META_HOST=\n++ FM_PR_META_PATH=\n++ FM_PR_META_NUMBER=\n++ FM_PR_REG_ID=\n++ FM_PR_REG_PROVIDER=\n++ FM_PR_REG_URL=\n++ FM_PR_REG_HOST=\n++ FM_PR_REG_PATH=\n++ FM_PR_REG_NUMBER=\n++ FM_PR_REG_DATA_HASH=\n++ FM_PR_REG_TEMPLATE_HASH=\n++ FM_PR_REG_DATA_IDENTITY=\n++ FM_PR_REG_CHECK_IDENTITY=\n++ FM_PR_POLL_DATA_TMP=\n++ FM_PR_POLL_CHECK_TMP=\n++ FM_PR_POLL_REG_TMP=\n++ FM_PR_POLL_DATA_DEST=\n++ FM_PR_POLL_CHECK_DEST=\n++ FM_PR_POLL_REG_DEST=\n++ FM_PR_POLL_EXPECT_ID=\n++ FM_PR_POLL_EXPECT_PROVIDER=\n++ FM_PR_POLL_EXPECT_URL=\n++ FM_PR_POLL_EXPECT_HOST=\n++ FM_PR_POLL_EXPECT_PATH=\n++ FM_PR_POLL_EXPECT_NUMBER=\n++ FM_PR_POLL_EXPECT_DATA_HASH=\n++ FM_PR_POLL_EXPECT_TEMPLATE_HASH=\n++ FM_PR_POLL_EXPECT_DATA_IDENTITY=\n++ FM_PR_POLL_EXPECT_CHECK_IDENTITY=\n++ FM_PR_POLL_TEMPLATE=\n++ FM_PR_POLL_STATE_DEVICE=\n++ FM_PR_POLL_SNAPSHOT_ID=\n++ FM_PR_POLL_SNAPSHOT_PROVIDER=\n++ FM_PR_POLL_SNAPSHOT_URL=\n++ FM_PR_POLL_SNAPSHOT_HOST=\n++ FM_PR_POLL_SNAPSHOT_PATH=\n++ FM_PR_POLL_SNAPSHOT_NUMBER=\n++ FM_PR_POLL_SNAPSHOT_DATA_HASH=\n++ FM_PR_POLL_SNAPSHOT_TEMPLATE_HASH=\n++ FM_PR_POLL_SNAPSHOT_DATA_IDENTITY=\n++ FM_PR_POLL_SNAPSHOT_CHECK_IDENTITY=\n++ FM_PR_POLL_SNAPSHOT_REG_HASH=\n++ FM_PR_POLL_SNAPSHOT_REG_IDENTITY=\n++ FM_PR_POLL_REARM_DATA_IDENTITY=\n++ FM_PR_POLL_REARM_CHECK_IDENTITY=\n++ FM_PR_RETIRE_ID=\n++ FM_PR_RETIRE_PROVIDER=\n++ FM_PR_RETIRE_URL=\n++ FM_PR_RETIRE_HOST=\n++ FM_PR_RETIRE_PATH=\n++ FM_PR_RETIRE_NUMBER=\n++ FM_PR_RETIRE_DATA_HASH=\n++ FM_PR_RETIRE_TEMPLATE_HASH=\n++ FM_PR_RETIRE_DATA_IDENTITY=\n++ FM_PR_RETIRE_CHECK_IDENTITY=\n++ FM_PR_RETIRE_REG_HASH=\n++ FM_PR_RETIRE_REG_IDENTITY=\n++ FM_PR_RETIRE_RECEIPT_HASH=\n++ FM_PR_RETIRE_RECEIPT_IDENTITY=\n++ FM_PR_RECORD_STATE=\n++ FM_PR_RECORD_MERGED=\n++ FM_PR_POLL_RETIREMENT_REJECTED=\n+ fm_pr_forgejo_api GET lab.forgejo.test /repos/owner/repo/pulls/9 /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/register/response.json\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Traced canonical poll",
+    "command": [
+      "bash",
+      "-x",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh",
+      "--validated",
+      "forgejo",
+      "https://lab.forgejo.test/owner/repo/pulls/9",
+      "lab.forgejo.test",
+      "owner/repo",
+      "9"
+    ],
+    "exit": 0,
+    "stdout": "merged\n",
+    "stderr": "+ set -u\n+ LC_ALL=C\n+ export LC_ALL\n+ '[' 6 -eq 6 ']'\n+ '[' --validated = --validated ']'\n+ provider=forgejo\n+ url=https://lab.forgejo.test/owner/repo/pulls/9\n+ host=lab.forgejo.test\n+ path=owner/repo\n+ number=9\n+ case \"$number\" in\n+ case \"$number\" in\n+ case \"$provider\" in\n+ '[' 16 -ge 1 ']'\n+ '[' 16 -le 253 ']'\n+ '[' lab.forgejo.test '!=' github.com ']'\n+ case \"$host\" in\n+ '[' 10 -ge 3 ']'\n+ '[' 10 -le 201 ']'\n+ case \"$path\" in\n+ owner=owner\n+ repo=repo\n+ '[' owner/repo = owner/repo ']'\n+ '[' 5 -ge 1 ']'\n+ '[' 5 -le 100 ']'\n+ case \"$owner\" in\n+ '[' 4 -ge 1 ']'\n+ '[' 4 -le 100 ']'\n+ case \"$repo\" in\n+ '[' https://lab.forgejo.test/owner/repo/pulls/9 = https://lab.forgejo.test/owner/repo/pulls/9 ']'\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Merge verifies current head and records confirmed outcome",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 0,
+    "stdout": "armed: state/task-lab.check.sh\nverified: https://lab.forgejo.test/owner/repo/pulls/9 is merged (state=closed, merged=true)\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nnotice: recorded head bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb disagrees with the live head aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; verifying the live head\nverified: https://lab.forgejo.test/owner/repo/pulls/9 is open and mergeable, with a successful combined commit status at head aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/repos/owner/repo/pulls/9/merge",
+        "authenticated": true,
+        "body": "{\"Do\":\"squash\"}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      }
+    ],
+    "persisted_metadata": "window=fm-task-lab\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/merge/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/merge/project\nkind=ship\nmode=no-mistakes\npr=https://lab.forgejo.test/owner/repo/pulls/9\npr_head=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+    "persisted_authority": "fm-merge-authority-v1\nforgejo\nlab.forgejo.test\nowner/repo\n9\nattended\n",
+    "persisted_wake": "1791868506\t1\tcheck\tmerged-task-lab-https://lab.forgejo.test/owner/repo/pulls/9\tcheck: merge landed: task-lab https://lab.forgejo.test/owner/repo/pulls/9\n"
+  },
+  {
+    "label": "Registration refuses draft",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: https://lab.forgejo.test/owner/repo/pulls/9 is a draft pull request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Guard refuses draft",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "armed: state/task-lab.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://lab.forgejo.test/owner/repo/pulls/9\n  - the pull request is a draft\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Guard refuses closed",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "armed: state/task-lab.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://lab.forgejo.test/owner/repo/pulls/9\n  - state is \"closed\", not open\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Guard refuses conflict",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "armed: state/task-lab.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://lab.forgejo.test/owner/repo/pulls/9\n  - mergeable is \"false\", not true\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Guard refuses red",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "armed: state/task-lab.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://lab.forgejo.test/owner/repo/pulls/9\n  - the combined commit status at the head is \"failure\", not success\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Guard refuses no-checks",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "armed: state/task-lab.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://lab.forgejo.test/owner/repo/pulls/9\n  - the combined commit status at the head is \"none\", not success\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Registration refuses wrong-repository",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to record https://lab.forgejo.test/owner/repo/pulls/9 for task task-lab: the project at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/wrong-repository/project is bound to https://lab.forgejo.test/owner/other.git, whose repository is owner/other, not owner/repo\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Guard refuses wrong-repository",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.\nerror: refusing to record https://lab.forgejo.test/owner/repo/pulls/9 for task task-lab: the project at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/wrong-repository/project is bound to https://lab.forgejo.test/owner/other.git, whose repository is owner/other, not owner/repo\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Registration refuses wrong-host",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to record https://lab.forgejo.test/owner/repo/pulls/9 for task task-lab: the project at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/wrong-host/project is bound to https://other.forgejo.test/owner/repo.git, whose host is other.forgejo.test, not lab.forgejo.test\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Guard refuses wrong-host",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.\nerror: refusing to record https://lab.forgejo.test/owner/repo/pulls/9 for task task-lab: the project at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/wrong-host/project is bound to https://other.forgejo.test/owner/repo.git, whose host is other.forgejo.test, not lab.forgejo.test\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "Guard refuses rejected-merge",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "armed: state/task-lab.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://lab.forgejo.test/owner/repo/pulls/9 is open and mergeable, with a successful combined commit status at head aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nerror: the Forgejo merge endpoint answered HTTP 409 rather than accepting the merge of https://lab.forgejo.test/owner/repo/pulls/9; the forge reported: disposable merge conflict\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/repos/owner/repo/pulls/9/merge",
+        "authenticated": true,
+        "body": "{\"Do\":\"squash\"}"
+      }
+    ]
+  },
+  {
+    "label": "Post-merge head movement is reported loudly",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 0,
+    "stdout": "armed: state/task-lab.check.sh\nverified: https://lab.forgejo.test/owner/repo/pulls/9 is merged (state=closed, merged=true)\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://lab.forgejo.test/owner/repo/pulls/9 is open and mergeable, with a successful combined commit status at head aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nactionable: https://lab.forgejo.test/owner/repo/pulls/9 merged at head bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb rather than the verified head aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, so commits this run did not verify may have landed\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status",
+        "authenticated": true,
+        "body": ""
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/repos/owner/repo/pulls/9/merge",
+        "authenticated": true,
+        "body": "{\"Do\":\"squash\"}"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/owner/repo/pulls/9",
+        "authenticated": true,
+        "body": ""
+      }
+    ]
+  },
+  {
+    "label": "fm-pr-check.sh names missing native tool",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: watching a Forgejo pull request requires secret-tool on PATH\n",
+    "requests": []
+  },
+  {
+    "label": "fm-pr-merge.sh names missing native tool",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: merging a Forgejo pull request requires secret-tool on PATH\n",
+    "requests": []
+  },
+  {
+    "label": "Poll stays silent for missing native tool",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh",
+      "--validated",
+      "forgejo",
+      "https://lab.forgejo.test/owner/repo/pulls/9",
+      "lab.forgejo.test",
+      "owner/repo",
+      "9"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "",
+    "requests": []
+  },
+  {
+    "label": "fm-pr-check.sh refuses empty-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: watching a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy\n",
+    "requests": []
+  },
+  {
+    "label": "fm-pr-merge.sh refuses empty-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: merging a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy\n",
+    "requests": []
+  },
+  {
+    "label": "Poll stays silent for empty-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh",
+      "--validated",
+      "forgejo",
+      "https://lab.forgejo.test/owner/repo/pulls/9",
+      "lab.forgejo.test",
+      "owner/repo",
+      "9"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "",
+    "requests": []
+  },
+  {
+    "label": "fm-pr-check.sh refuses malformed-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: watching a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy\n",
+    "requests": []
+  },
+  {
+    "label": "fm-pr-merge.sh refuses malformed-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: merging a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy\n",
+    "requests": []
+  },
+  {
+    "label": "Poll stays silent for malformed-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh",
+      "--validated",
+      "forgejo",
+      "https://lab.forgejo.test/owner/repo/pulls/9",
+      "lab.forgejo.test",
+      "owner/repo",
+      "9"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "",
+    "requests": []
+  },
+  {
+    "label": "fm-pr-check.sh refuses short-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: watching a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy\n",
+    "requests": []
+  },
+  {
+    "label": "fm-pr-merge.sh refuses short-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: merging a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy\n",
+    "requests": []
+  },
+  {
+    "label": "Poll stays silent for short-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh",
+      "--validated",
+      "forgejo",
+      "https://lab.forgejo.test/owner/repo/pulls/9",
+      "lab.forgejo.test",
+      "owner/repo",
+      "9"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "",
+    "requests": []
+  },
+  {
+    "label": "fm-pr-check.sh refuses long-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: watching a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy\n",
+    "requests": []
+  },
+  {
+    "label": "fm-pr-merge.sh refuses long-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: merging a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy\n",
+    "requests": []
+  },
+  {
+    "label": "Poll stays silent for long-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh",
+      "--validated",
+      "forgejo",
+      "https://lab.forgejo.test/owner/repo/pulls/9",
+      "lab.forgejo.test",
+      "owner/repo",
+      "9"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "",
+    "requests": []
+  },
+  {
+    "label": "fm-pr-check.sh refuses missing-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: watching a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy\n",
+    "requests": []
+  },
+  {
+    "label": "fm-pr-merge.sh refuses missing-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh",
+      "task-lab",
+      "https://lab.forgejo.test/owner/repo/pulls/9"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "error: merging a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy\n",
+    "requests": []
+  },
+  {
+    "label": "Poll stays silent for missing-token",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh",
+      "--validated",
+      "forgejo",
+      "https://lab.forgejo.test/owner/repo/pulls/9",
+      "lab.forgejo.test",
+      "owner/repo",
+      "9"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "",
+    "requests": []
+  },
+  {
+    "label": "Token privacy",
+    "result": "All real HTTPS requests authenticated; no synthetic token in argv, traces, output, metadata, authority, or wakes."
+  }
+]

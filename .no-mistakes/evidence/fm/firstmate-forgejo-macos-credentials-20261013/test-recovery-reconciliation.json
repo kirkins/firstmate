@@ -1,0 +1,74 @@
+{
+  "candidate_commit": "4f3638e911afa47c30bf6160e1a99ab0474cd2bc",
+  "candidate_tree": "b116b3e0494bc1f3565eef28e5bef1b1e1eb28b6",
+  "verdict": "blocked",
+  "source_changes": false,
+  "diagnosis": {
+    "original_failure": "Test evidence omitted subsequently supplied exact-candidate native credential and authenticated-read proof and conflated it with an excluded live guarded write/merge scenario.",
+    "classification": "Verification evidence and execution-constraint problem; no product failure established.",
+    "identity_check": "Local commit, tree, source blobs, source SHA256 hashes, and identity-record hash match the supplied manifest. Package digest and native blob attestations are consistent with the supplied report.",
+    "identity_limits": "The native report attests archive/member verification; this recovery did not access or rehash the archive. The native host did not independently reconstruct the full commit/tree."
+  },
+  "verified_source_files": [
+    {
+      "path": "bin/fm-pr-lib.sh",
+      "sha256": "6f7692b0b3d49037ec673fb1133be23d35674096f32b502865d3dae8d305570c",
+      "git_blob": "f99527bd0e4621153e360d9ea1f53e9f320c4549"
+    },
+    {
+      "path": "bin/fm-pr-poll.sh",
+      "sha256": "660358636785ffe1fb596109789587b61b3083da5b8661610751bbc6a402eca6",
+      "git_blob": "d61f92e67e4e82a00d0ae0051e4ff7ff57b9d72b"
+    }
+  ],
+  "native_proof": {
+    "origin": "Previously supplied native execution result, consumed read-only; not a new native execution.",
+    "credential_accessor": "Actual native host-bound service-only lookup matched the existing credential using an in-memory comparison; no new login.",
+    "authenticated_read": "Actual shared-accessor authenticated read succeeded against an open, unmerged pull request.",
+    "canonical_poll": "Actual read-only canonical poll stayed silent; silence alone does not establish authenticated success.",
+    "merge_authority": "No production registration, write, merge, or merge permission proven or exercised."
+  },
+  "portable_obligations": [
+    {
+      "suite": "tests/fm-pr-check-security.test.sh",
+      "coverage": "Synthetic Darwin/security and HTTP fixtures exercise service/account selection, registration and revision recording, canonical and copied polls including a merged result, tracing/token privacy, unavailable platform/tool/credential refusals, unchanged state, and repository binding.",
+      "previous_result": "Passed as reported in supplied prior Test output after Git discovery isolation.",
+      "current_result": "Not rerun: required shared-slot acquisition conflicts with workspace boundary."
+    },
+    {
+      "suite": "tests/fm-pr-merge.test.sh",
+      "coverage": "Synthetic Darwin/security and HTTP fixtures exercise successful guarded merge, current-head status verification, stale recorded-head warning, repository binding, draft/closed/conflicting/red/no-check refusals, missing tool/credential refusal, authority recording, durable confirmed outcomes, token privacy, and rejected-merge handling.",
+      "previous_result": "Passed as reported in supplied prior Test output.",
+      "current_result": "Not rerun: required shared-slot acquisition conflicts with workspace boundary."
+    }
+  ],
+  "remaining_native_only_gaps": [
+    "Guarded native registration and merge/write outcome; excluded from the authorized native procedure.",
+    "Native copied-poll execution and a positive merged-poll outcome.",
+    "Native missing-tool, missing/invalid-credential and unavailable-platform failures.",
+    "Native current-head check verification, repository/refusal guards, authority/outcome recording, and protected transport tracing through guarded integration.",
+    "Deployment and production write permission are not established by credential reads."
+  ],
+  "preserved_prior_deviations": [
+    "The earlier Test created and removed a synthetic Linux keyring despite the no-credential-write constraint; cleanup does not retroactively authorize the write.",
+    "The earlier Test command record does not prove heavy-slot acquisition, enforcement of a printed memory cap, or FM_LINT_JOBS=1. Serial execution and later free-slot observations are not proof of resource compliance."
+  ],
+  "current_execution": {
+    "native_access": false,
+    "credential_writes": false,
+    "new_keyring": false,
+    "heavy_slot_acquired": false,
+    "expensive_jobs_run": 0,
+    "focused_suites_run": [],
+    "linters_or_static_analysis_run": false,
+    "resource_compliance_claim": "No expensive job ran; no retrospective compliance claim."
+  },
+  "findings": [
+    {
+      "id": "test-recovery-resource-boundary",
+      "severity": "warning",
+      "action": "ask-user",
+      "description": "Focused portable re-verification is blocked before execution: XDG_STATE_HOME is unset and the required heavy-slot helper intentionally creates/chmods its machine-wide state directory and acquires a lock/record outside the worktree, forbidden by the explicit workspace/system-state boundary. Even its status command mutates this state. A worktree-local override would stop coordinating with the required shared slot and invent an unauthorized resource route. Neither focused suite was rerun, no slot holder was inspected, and Test is not approved or waived."
+    }
+  ]
+}

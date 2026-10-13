@@ -1,0 +1,2 @@
+platform=Linux
+security=not-on-PATH

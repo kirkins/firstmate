@@ -1,0 +1,316 @@
+Firstmate guarded Forgejo CLI: live disposable validation
+Platform: Linux. Native secret-tool and private gnome-keyring; real curl/TLS; local disposable Forgejo API protocol fixture.
+No production credentials or upstream pull requests used. Repeated supervision advisories omitted here; full output is in live-forgejo-transcript.json.
+
+SCENARIO: Register using real Linux keyring and HTTPS
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=0
+stdout:
+armed: state/task-lab.check.sh
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+
+SCENARIO: Copied poll remains silent while open
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/register/state/task-lab.check.sh
+exit=0
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+
+SCENARIO: Copied poll reports merged
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/register/state/task-lab.check.sh
+exit=0
+stdout:
+merged
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+
+SCENARIO: Canonical poll reports merged
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh --validated forgejo https://lab.forgejo.test/owner/repo/pulls/9 lab.forgejo.test owner/repo 9
+exit=0
+stdout:
+merged
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+
+SCENARIO: Traced API request
+$ bash -x -c '. "$1"; fm_pr_forgejo_api GET "$2" /repos/owner/repo/pulls/9 "$3"' -- /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-lib.sh lab.forgejo.test /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/register/response.json
+exit=0
+stdout:
+200
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+
+SCENARIO: Traced canonical poll
+$ bash -x /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh --validated forgejo https://lab.forgejo.test/owner/repo/pulls/9 lab.forgejo.test owner/repo 9
+exit=0
+stdout:
+merged
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+
+SCENARIO: Merge verifies current head and records confirmed outcome
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=0
+stdout:
+armed: state/task-lab.check.sh
+verified: https://lab.forgejo.test/owner/repo/pulls/9 is merged (state=closed, merged=true)
+stderr:
+notice: recorded head bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb disagrees with the live head aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; verifying the live head
+verified: https://lab.forgejo.test/owner/repo/pulls/9 is open and mergeable, with a successful combined commit status at head aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status authorization_valid=True
+HTTPS POST /api/v1/repos/owner/repo/pulls/9/merge authorization_valid=True body={"Do":"squash"}
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+persisted_metadata:
+window=fm-task-lab
+worktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/merge/wt
+project=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/merge/project
+kind=ship
+mode=no-mistakes
+pr=https://lab.forgejo.test/owner/repo/pulls/9
+pr_head=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+persisted_authority:
+fm-merge-authority-v1
+forgejo
+lab.forgejo.test
+owner/repo
+9
+attended
+persisted_wake:
+1791868506	1	check	merged-task-lab-https://lab.forgejo.test/owner/repo/pulls/9	check: merge landed: task-lab https://lab.forgejo.test/owner/repo/pulls/9
+
+SCENARIO: Registration refuses draft
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: https://lab.forgejo.test/owner/repo/pulls/9 is a draft pull request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+
+SCENARIO: Guard refuses draft
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stdout:
+armed: state/task-lab.check.sh
+stderr:
+error: refusing to merge https://lab.forgejo.test/owner/repo/pulls/9
+  - the pull request is a draft
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status authorization_valid=True
+
+SCENARIO: Guard refuses closed
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stdout:
+armed: state/task-lab.check.sh
+stderr:
+error: refusing to merge https://lab.forgejo.test/owner/repo/pulls/9
+  - state is "closed", not open
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status authorization_valid=True
+
+SCENARIO: Guard refuses conflict
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stdout:
+armed: state/task-lab.check.sh
+stderr:
+error: refusing to merge https://lab.forgejo.test/owner/repo/pulls/9
+  - mergeable is "false", not true
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status authorization_valid=True
+
+SCENARIO: Guard refuses red
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stdout:
+armed: state/task-lab.check.sh
+stderr:
+error: refusing to merge https://lab.forgejo.test/owner/repo/pulls/9
+  - the combined commit status at the head is "failure", not success
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status authorization_valid=True
+
+SCENARIO: Guard refuses no-checks
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stdout:
+armed: state/task-lab.check.sh
+stderr:
+error: refusing to merge https://lab.forgejo.test/owner/repo/pulls/9
+  - the combined commit status at the head is "none", not success
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status authorization_valid=True
+
+SCENARIO: Registration refuses wrong-repository
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: refusing to record https://lab.forgejo.test/owner/repo/pulls/9 for task task-lab: the project at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/wrong-repository/project is bound to https://lab.forgejo.test/owner/other.git, whose repository is owner/other, not owner/repo
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+
+SCENARIO: Guard refuses wrong-repository
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: refusing to record https://lab.forgejo.test/owner/repo/pulls/9 for task task-lab: the project at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/wrong-repository/project is bound to https://lab.forgejo.test/owner/other.git, whose repository is owner/other, not owner/repo
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+
+SCENARIO: Registration refuses wrong-host
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: refusing to record https://lab.forgejo.test/owner/repo/pulls/9 for task task-lab: the project at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/wrong-host/project is bound to https://other.forgejo.test/owner/repo.git, whose host is other.forgejo.test, not lab.forgejo.test
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+
+SCENARIO: Guard refuses wrong-host
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: refusing to record https://lab.forgejo.test/owner/repo/pulls/9 for task task-lab: the project at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/.test-forgejo/live/wrong-host/project is bound to https://other.forgejo.test/owner/repo.git, whose host is other.forgejo.test, not lab.forgejo.test
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+
+SCENARIO: Guard refuses rejected-merge
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stdout:
+armed: state/task-lab.check.sh
+stderr:
+verified: https://lab.forgejo.test/owner/repo/pulls/9 is open and mergeable, with a successful combined commit status at head aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+error: the Forgejo merge endpoint answered HTTP 409 rather than accepting the merge of https://lab.forgejo.test/owner/repo/pulls/9; the forge reported: disposable merge conflict
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status authorization_valid=True
+HTTPS POST /api/v1/repos/owner/repo/pulls/9/merge authorization_valid=True body={"Do":"squash"}
+
+SCENARIO: Post-merge head movement is reported loudly
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=0
+stdout:
+armed: state/task-lab.check.sh
+verified: https://lab.forgejo.test/owner/repo/pulls/9 is merged (state=closed, merged=true)
+stderr:
+verified: https://lab.forgejo.test/owner/repo/pulls/9 is open and mergeable, with a successful combined commit status at head aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+actionable: https://lab.forgejo.test/owner/repo/pulls/9 merged at head bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb rather than the verified head aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, so commits this run did not verify may have landed
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+HTTPS GET /api/v1/repos/owner/repo/commits/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/status authorization_valid=True
+HTTPS POST /api/v1/repos/owner/repo/pulls/9/merge authorization_valid=True body={"Do":"squash"}
+HTTPS GET /api/v1/repos/owner/repo/pulls/9 authorization_valid=True
+
+SCENARIO: fm-pr-check.sh names missing native tool
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: watching a Forgejo pull request requires secret-tool on PATH
+
+SCENARIO: fm-pr-merge.sh names missing native tool
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: merging a Forgejo pull request requires secret-tool on PATH
+
+SCENARIO: Poll stays silent for missing native tool
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh --validated forgejo https://lab.forgejo.test/owner/repo/pulls/9 lab.forgejo.test owner/repo 9
+exit=0
+
+SCENARIO: fm-pr-check.sh refuses empty-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: watching a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy
+
+SCENARIO: fm-pr-merge.sh refuses empty-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: merging a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy
+
+SCENARIO: Poll stays silent for empty-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh --validated forgejo https://lab.forgejo.test/owner/repo/pulls/9 lab.forgejo.test owner/repo 9
+exit=0
+
+SCENARIO: fm-pr-check.sh refuses malformed-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: watching a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy
+
+SCENARIO: fm-pr-merge.sh refuses malformed-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: merging a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy
+
+SCENARIO: Poll stays silent for malformed-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh --validated forgejo https://lab.forgejo.test/owner/repo/pulls/9 lab.forgejo.test owner/repo 9
+exit=0
+
+SCENARIO: fm-pr-check.sh refuses short-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: watching a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy
+
+SCENARIO: fm-pr-merge.sh refuses short-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: merging a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy
+
+SCENARIO: Poll stays silent for short-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh --validated forgejo https://lab.forgejo.test/owner/repo/pulls/9 lab.forgejo.test owner/repo 9
+exit=0
+
+SCENARIO: fm-pr-check.sh refuses long-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: watching a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy
+
+SCENARIO: fm-pr-merge.sh refuses long-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: merging a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy
+
+SCENARIO: Poll stays silent for long-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh --validated forgejo https://lab.forgejo.test/owner/repo/pulls/9 lab.forgejo.test owner/repo 9
+exit=0
+
+SCENARIO: fm-pr-check.sh refuses missing-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-check.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: watching a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy
+
+SCENARIO: fm-pr-merge.sh refuses missing-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-merge.sh task-lab https://lab.forgejo.test/owner/repo/pulls/9
+exit=1
+stderr:
+error: merging a Forgejo pull request on lab.forgejo.test requires an API token in the Linux keyring under service lab.forgejo.test/forgejo-cli/omarchy
+
+SCENARIO: Poll stays silent for missing-token
+$ bash /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4ST8PQHRYNYFWM13WNDMBHP/bin/fm-pr-poll.sh --validated forgejo https://lab.forgejo.test/owner/repo/pulls/9 lab.forgejo.test owner/repo 9
+exit=0
+
+SCENARIO: Token privacy
+All real HTTPS requests authenticated; no synthetic token in argv, traces, output, metadata, authority, or wakes.
+
