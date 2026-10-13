@@ -1671,6 +1671,7 @@ Creation always passes `--on-timeout delete` with the TTL sized as the expected 
 The default sandbox-scoped network allowances cover github.com, GitHub's release/raw CDNs, nodejs.org, the npm registry, and Ubuntu's apt ports; `--allow` extends them per sandbox.
 Long jobs run inside the sandbox under a daemonized tmux on the dedicated `fm-hands` socket so they survive exec-stream teardown, with `wait` polling the exit marker and `log`, `copy-in`, and `copy-out` moving artifacts.
 `prepare` brings a sandbox to the fidelity baseline: the closed apt tool set, node pinned to the local machine's major with a SHA-256-verified nodejs.org tarball, and a full clone (never `--depth`, with `git fetch --unshallow` healing an existing shallow clone).
+For command argument semantics and preparation failure exit codes, see the driver's [header and `--help`](../bin/fm-remote-hands.sh).
 Prepare's exec streams run under their own `FM_REMOTE_HANDS_PREPARE_TIMEOUT` bound (default 900 s), separate from the control-plane `FM_REMOTE_HANDS_TIMEOUT`, because the apt install and the full clone routinely outlast a control-plane call.
 pi and zellij are never installed: tool-absent classes are clean gate-skips, and SHA-pinned lint builds are produced locally and uploaded with `copy-in` rather than rebuilt inside the sandbox.
 

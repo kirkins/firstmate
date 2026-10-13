@@ -45,7 +45,7 @@
 #     (never --depth, and `git fetch --unshallow` when a shallow clone
 #     exists), pins node to the local machine's major version (or
 #     --node-major), and installs only the documented closed tool set.
-#     The downloaded /tmp/fm-node.tar.xz is verified against the distribution
+#     The downloaded Node archive is verified against the distribution
 #     archive's entry in SHASUMS256.txt; any verification failure aborts
 #     preparation before extraction. pi and zellij are
 #     never installed: tool-absent classes are clean gate-skips by design.
@@ -85,7 +85,8 @@
 #       (xz-utils tmux libatomic1 ruby gcc time), node pinned to the local
 #       machine's major (skipped loudly when neither local node nor
 #       --node-major can name one), and a full clone of --repo (default
-#       destination /home/agent/workspace/<repo>). SHA-pinned lint builds are
+#       destination /home/agent/workspace/<repo>). Required setup failures
+#       stop preparation before subsequent work. SHA-pinned lint builds are
 #       uploaded, not installed: produce them locally with the repo's pinned
 #       installers and `copy-in` them, then put them on the sandbox PATH.
 #   fm-remote-hands.sh exec --name <name> -- <command...>
