@@ -2,7 +2,7 @@
 # fm-lint-resource-lib.sh - private resource binding for the lint entrypoint.
 # Sourced by fm-lint.sh, whose header owns the operator opt-in and schema.
 # The declared home's existing heavy-slot helper remains the admission and
-# cap-policy owner; its printed wrapper is decoded as argv, never evaluated.
+# cap-policy owner; the cap is read from its printed wrapper, never evaluated.
 
 fm_lint_resource_refuse() {
   printf 'fm-lint.sh: %s; refusing uncapped lint.\n' "$*" >&2

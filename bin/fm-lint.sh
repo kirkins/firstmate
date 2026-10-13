@@ -60,10 +60,13 @@
 # running lint. The whole-job watchdog allows 1770 seconds plus a five-second
 # termination grace; scope cleanup allows five further seconds, all inside the
 # slot's explicit 1800-second lease. Lint releases its own slot after stopping
-# every process in its owned scope. A killed outer owner may leave a hold until
-# its ordinary heartbeat expiry.
+# every process in its owned scope; if scope shutdown cannot be confirmed,
+# lint retains the slot. A killed outer owner may leave a hold until its
+# ordinary heartbeat expiry.
 # Opted-in lint requires a Linux user systemd manager, cgroup v2 memory
-# controls, and JSON::PP from the existing Perl dependency.
+# controls, systemd-run support for --expand-environment=no, and JSON::PP from
+# the existing Perl dependency. Scope launch preserves literal command
+# arguments; unsupported scope/cap behavior never retries uncapped.
 # With no record, Linux/macOS/CI callers retain their ordinary behavior and
 # dependencies; query-only --help/--required-version/--list-files take no slot.
 # --partition 1of2/2of2 splits the entire canonical inventory across
@@ -126,7 +129,7 @@
 #   fm-lint.sh                         lint the context-selected file set (see above)
 #   fm-lint.sh --fast [path]...       local lint with extended analysis disabled
 #   fm-lint.sh <path>...               lint explicit roots with the same config
-#   fm-lint.sh --jobs <1|2> [path]...  override concurrent worker count
+#   fm-lint.sh --jobs <1|2> [path]...  select workers (resource binding forces 1)
 #   fm-lint.sh --partition <1of2|2of2> lint one canonical CI partition (see fallback above)
 #   fm-lint.sh --telemetry <path> ...  write a quiet metrics snapshot
 #   fm-lint.sh --required-version      print the ShellCheck pin
