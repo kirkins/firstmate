@@ -609,14 +609,17 @@ test_prepare_without_local_node_pins_nothing_loudly() {
 
 test_prepare_verifies_downloaded_archive_before_extraction() {
   make_home prep-checksum-home >/dev/null
-  local real_sha archive_backup had_archive=0 mode expected
-  real_sha=$(command -v sha256sum)
-  printf 'node archive fixture\n' > "$TMP_ROOT/node-archive"
-  expected=$("$real_sha" "$TMP_ROOT/node-archive" | cut -d' ' -f1)
-  if [ -e /tmp/fm-node.tar.xz ]; then
-    cp /tmp/fm-node.tar.xz "$TMP_ROOT/archive-backup"
-    had_archive=1
+  local real_sha sha_args=() mode expected
+  if real_sha=$(command -v sha256sum); then
+    :
+  elif real_sha=$(command -v shasum); then
+    sha_args=(-a 256)
+  else
+    fail "checksum regression requires sha256sum or shasum"
   fi
+  printf 'node archive fixture\n' > "$TMP_ROOT/node-archive"
+  expected=$("$real_sha" ${sha_args[@]+"${sha_args[@]}"} "$TMP_ROOT/node-archive" | cut -d' ' -f1)
+  mkdir -p "$TMP_ROOT/download"
   cat > "$FAKEBIN/curl" <<'SH'
 #!/usr/bin/env bash
 case "$*" in
@@ -631,7 +634,8 @@ case "$*" in
     esac
     ;;
   *)
-    cp "$FM_FAKE_ARCHIVE" /tmp/fm-node.tar.xz
+    [ "$2" = -o ] && [ "$3" = /tmp/fm-node.tar.xz ] || exit 1
+    cp "$FM_FAKE_ARCHIVE" "$FM_FAKE_DOWNLOAD_DIR/fm-node.tar.xz"
     ;;
 esac
 SH
@@ -646,12 +650,14 @@ exec "$@"
 SH
   cat > "$FAKEBIN/tar" <<'SH'
 #!/usr/bin/env bash
+[ "$2" = /tmp/fm-node.tar.xz ] && [ -f "$FM_FAKE_DOWNLOAD_DIR/fm-node.tar.xz" ] || exit 1
 printf 'extracted\n' >> "$FM_FAKE_EXTRACTION_LOG"
 SH
   cat > "$FAKEBIN/sha256sum" <<SH
 #!/usr/bin/env bash
 if [ "\${FM_FAKE_CHECKSUM_MODE:-}" = verifier-error ]; then exit 9; fi
-exec "$real_sha" "\$@"
+cd "\$FM_FAKE_DOWNLOAD_DIR" || exit 1
+exec "$real_sha" ${sha_args[*]:-} "\$@"
 SH
   cat > "$FAKEBIN/git" <<'SH'
 #!/usr/bin/env bash
@@ -668,6 +674,7 @@ SH
     : > "$EXEC_CALLS"
     hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 FM_FAKE_CHECKSUM_MODE="$mode" \
       FM_FAKE_EXPECTED_SHA="$expected" FM_FAKE_ARCHIVE="$TMP_ROOT/node-archive" \
+      FM_FAKE_DOWNLOAD_DIR="$TMP_ROOT/download" \
       FM_FAKE_EXTRACTION_LOG="$TMP_ROOT/extracted" -- prepare --name t-checksum \
       --repo https://github.com/kirkins/firstmate --node-major 20
     if [ "$mode" = good ]; then
@@ -679,7 +686,6 @@ SH
       assert_contains "$HANDS_STDERR" "checksum verification failed" "$mode checksum must explain the failure"
     fi
   done
-  if [ "$had_archive" -eq 1 ]; then cp "$TMP_ROOT/archive-backup" /tmp/fm-node.tar.xz; else rm -f /tmp/fm-node.tar.xz; fi
   pass "fm-remote-hands.sh: prepare verifies the downloaded Node archive before extraction"
 }
 
