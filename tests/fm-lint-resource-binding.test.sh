@@ -80,11 +80,40 @@ if [ "${BINDING_STRAGGLER:-0}" = 1 ]; then
   '
 fi
 cat "/sys/fs/cgroup$group/cgroup.procs" >> "$BINDING_TRACE/scope-pids" 2>/dev/null || true
-printf '%s %s\n' "$$" "$(ps -o pgid= -p "$$" | tr -d ' ')" >> "$BINDING_TRACE/groups"
-printf '%s %s\n' "$PPID" "$(ps -o pgid= -p "$PPID" | tr -d ' ')" >> "$BINDING_TRACE/groups"
+root_group=$(ps -o pgid= -p "$$" | tr -d ' ')
+watchdog_pid=$PPID
+while [ "$watchdog_pid" -gt 1 ]; do
+  watchdog_group=$(ps -o pgid= -p "$watchdog_pid" | tr -d ' ')
+  [ "$watchdog_group" = "$root_group" ] || break
+  printf '%s\n' "$watchdog_pid" >> "$BINDING_TRACE/root-group-ancestors"
+  watchdog_pid=$(ps -o ppid= -p "$watchdog_pid" | tr -d ' ')
+done
+printf '%s %s\n' "$$" "$root_group" >> "$BINDING_TRACE/groups"
+printf '%s %s\n' "$watchdog_pid" "$watchdog_group" >> "$BINDING_TRACE/groups"
 touch "$BINDING_TRACE/ready"
 if [ "${BINDING_BLOCK:-0}" = 1 ]; then sleep 60; else sleep 0.1; fi
+if [ "${BINDING_LITERAL_ROOT:-0}" = 1 ]; then
+  for root in "$@"; do :; done
+  printf '%s\n' "$root" >> "$BINDING_TRACE/requested-roots"
+  case "$root" in
+    'tests/${FLAVOR}.sh') printf '%s: fixture finding\n' "$root"; exit 1 ;;
+    *) exit 0 ;;
+  esac
+fi
 exit "${BINDING_EXIT:-0}"
+SH
+  chmod +x "$BINDING_FAKEBIN/shellcheck"
+}
+
+binding_timing_intermediary() {
+  mv "$BINDING_FAKEBIN/shellcheck" "$BINDING_FAKEBIN/shellcheck-payload"
+  cat > "$BINDING_FAKEBIN/shellcheck" <<'SH'
+#!/usr/bin/env bash
+payload="$(dirname "$0")/shellcheck-payload"
+if [ "${1:-}" = --version ]; then exec "$payload" "$@"; fi
+printf '%s\n' "$$" >> "$BINDING_TRACE/intermediaries"
+"$payload" "$@" &
+wait "$!"
 SH
   chmod +x "$BINDING_FAKEBIN/shellcheck"
 }
@@ -105,10 +134,11 @@ binding_lint() {
       BINDING_OWNER_HELPER="$ROOT/bin/fm-heavy-slot.sh" \
       BINDING_REAL_SYSTEMD_RUN="$(command -v systemd-run)" \
       BINDING_BLOCK="${BINDING_BLOCK:-0}" BINDING_EXIT="${BINDING_EXIT:-0}" \
+      BINDING_LITERAL_ROOT="${BINDING_LITERAL_ROOT:-0}" \
       BINDING_STRAGGLER="${BINDING_STRAGGLER:-0}" \
       FM_LINT_REQUIRE_BOUNDS="${BINDING_BOUNDS:-0}" FM_LINT_ROOT_GRACE=10 \
       FM_LINT_JOBS=2 FM_LINT_TELEMETRY="$BINDING_TRACE/telemetry.tsv" \
-      PATH="$BINDING_FAKEBIN:$PATH" sh -c 'bin/fm-lint.sh'
+      PATH="$BINDING_FAKEBIN:$PATH" sh -c 'bin/fm-lint.sh "$@"' sh "$@"
   )
 }
 
@@ -140,8 +170,17 @@ binding_assert_scope_stopped() {
       esac
     fi
   done < "$BINDING_TRACE/stragglers"
-  awk 'NR % 2 {group=$2; next} $2 == group {bad=1} END {exit (bad || NR == 0 || NR % 2)}' "$BINDING_TRACE/groups" \
+  awk 'NR % 2 {group=$2; next} $2 == group || $1 != $2 {bad=1} END {exit (bad || NR == 0 || NR % 2)}' "$BINDING_TRACE/groups" \
     || fail 'required-bounds fixture did not exercise distinct process groups'
+  if [ -s "$BINDING_TRACE/intermediaries" ]; then
+    [ -s "$BINDING_TRACE/root-group-ancestors" ] || fail 'timing fixture observed no ancestor in the analysis group'
+    awk 'NR == FNR {ancestors[$1]=1; next} !($1 in ancestors) {bad=1} END {exit bad}' \
+      "$BINDING_TRACE/root-group-ancestors" "$BINDING_TRACE/intermediaries" \
+      || fail 'timing intermediary was not observed inside the analysis group'
+    awk 'NR == FNR {intermediaries[$1]=1; next} FNR % 2 == 0 && ($1 in intermediaries) {bad=1} END {exit bad}' \
+      "$BINDING_TRACE/intermediaries" "$BINDING_TRACE/groups" \
+      || fail 'cleanup assertion mistook a timing intermediary for the watchdog'
+  fi
 }
 
 test_lint_binding_validation_and_portable_absence() {
@@ -230,7 +269,15 @@ test_lint_binding_real_scope() {
     || fail 'single-job proof must exercise multiple roots'
   binding_assert_scope_stopped
   [ "$((SECONDS - started))" -lt 20 ] || fail 'successful lint scope release was not prompt'
+  binding_fixture success-timed
+  binding_timing_intermediary
+  started=$SECONDS
+  rc=0; out=$(binding_lint 2>&1) || rc=$?
+  expect_code 0 "$rc" 'scope cleanup must pass with a timing intermediary'
+  binding_assert_scope_stopped
+  [ "$((SECONDS - started))" -lt 20 ] || fail 'timed successful lint scope release was not prompt'
   binding_fixture failure
+  binding_timing_intermediary
   BINDING_EXIT=7
   started=$SECONDS
   rc=0; out=$(binding_lint 2>&1) || rc=$?
@@ -271,7 +318,25 @@ SH
   assert_contains "$out" 'invalid resource binding' 'removed binding must be diagnosed'
   [ ! -e "$BINDING_TRACE/children" ] || fail 'scoped re-entry silently lost its binding'
   [ "$(binding_slot status)" = free ] || fail 'removed binding leaked the slot'
+  binding_fixture literal-argv
+  printf '#!/usr/bin/env bash\nif then\n' > "$BINDING_REPO/tests/"'${FLAVOR}.sh'
+  printf '#!/usr/bin/env bash\nexit 0\n' > "$BINDING_REPO/tests/clean.sh"
+  rc=0
+  out=$(FLAVOR=clean BINDING_LITERAL_ROOT=1 binding_lint \
+    --telemetry "$BINDING_TRACE/"'${FLAVOR}.tsv' 'tests/${FLAVOR}.sh' 2>&1) || rc=$?
+  expect_code 1 "$rc" 'the literal defective root must not expand to the clean alternative'
+  [ "$(cat "$BINDING_TRACE/requested-roots")" = 'tests/${FLAVOR}.sh' ] || fail 'scope launch rewrote the requested root'
+  [ -f "$BINDING_TRACE/"'${FLAVOR}.tsv' ] || fail 'scope launch rewrote the telemetry path'
+  [ ! -e "$BINDING_TRACE/clean.tsv" ] || fail 'scope launch wrote telemetry to the expanded alternative'
+  [ "$(binding_slot status)" = free ] || fail 'literal argument lint leaked the slot'
+  binding_fixture 'paths-${FLAVOR}'
+  ln -s "$(command -v bash)" "$BINDING_FAKEBIN/bash"
+  rc=0; out=$(FLAVOR=clean binding_lint 2>&1) || rc=$?
+  expect_code 0 "$rc" 'scope launch must preserve literal SELF and executable paths'
+  [ -s "$BINDING_TRACE/children" ] || fail 'literal executable and SELF paths did not reach analysis'
+  [ "$(binding_slot status)" = free ] || fail 'literal executable path lint leaked the slot'
   binding_fixture signal
+  binding_timing_intermediary
   BINDING_BOUNDS=1
   BINDING_STRAGGLER=1
   BINDING_BLOCK=1 binding_lint > "$BINDING_TRACE/output" 2>&1 &
@@ -293,6 +358,7 @@ SH
     [ "$(ps -o stat= -p "$child_pid" | tr -d ' ')" = Z ] || fail 'interrupted lint left an analysis child executing'
   fi
   binding_fixture deadline
+  binding_timing_intermediary
   # Compress only the fixture's whole-job watchdog, retaining the real owner
   # and real process-group runner. This proves the slot is released on a
   # bounded hung child without waiting for the production lease to expire.

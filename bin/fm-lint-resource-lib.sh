@@ -115,7 +115,7 @@ fm_lint_resource_enter() {  # <binding-file> <original lint arguments...>
   (
     # shellcheck disable=SC2034 # The sourced fm_exec_timed reads this owner.
     FM_EXEC_TIMED_OWNER_PID=$owner_pid
-    fm_exec_timed 1770 5 systemd-run --user --scope -p "MemoryMax=${cap}M" \
+    fm_exec_timed 1770 5 systemd-run --user --scope --expand-environment=no -p "MemoryMax=${cap}M" \
       --unit="$task.scope" -p TimeoutStopSec=5s -- \
       env FM_LINT_RESOURCE_TASK="$task" "${BASH:-bash}" "$SELF" "$@"
   ) &
