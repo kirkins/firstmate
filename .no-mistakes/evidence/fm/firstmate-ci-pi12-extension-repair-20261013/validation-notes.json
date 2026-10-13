@@ -1,0 +1,12 @@
+{
+  "sdk": "1.2.0",
+  "test_fix": "Streaming-time SDK probe now explicitly loads only its watcher and binds session_start before arming. The original probe reproducibly failed Escape recovery; the bound probe and complete targeted SDK guard passed. Existing assertions and stdout reporting retained; optional FM_PI_CUSTOM_START_EVIDENCE export was not restored.",
+  "live_evidence": [
+    "custom-turns.html",
+    "custom-turns.jsonl",
+    "custom-turn-events.json",
+    "watcher-restart.json"
+  ],
+  "primary_attempt": "Real Pi 1.2.0 was launched on a private 120x40 tmux pane in a marked workspace-local lab. The extension injected nonempty FM_ROOT_OVERRIDE and FM_CONFIG_OVERRIDE into arm children; the gate refused them. No bypass was used. The private tmux server and socket directory were torn down. Direct home-scoped real watcher restart was subsequently driven successfully without overrides.",
+  "ci_boundary": "No pipeline control, push, PR or CI phase was executed. Targeted local checks do not waive either required remote CI check."
+}

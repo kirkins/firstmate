@@ -1,0 +1,53 @@
+ARM_LOG arm pid=3453229
+ready pid=3453229
+arm pid=3453248
+ready pid=3453248
+confirmed generation=live-sdk-generation watcher=3453248
+arm pid=3453269
+ready pid=3453269
+confirmed generation=live-sdk-generation watcher=3453269
+arm pid=3453288
+ready pid=3453288
+confirmed generation=live-sdk-generation watcher=3453288
+arm pid=3453337
+ready pid=3453337
+confirmed generation=live-sdk-generation watcher=3453337
+arm pid=3453382
+ready pid=3453382
+confirmed generation=live-sdk-generation watcher=3453382
+arm pid=3453428
+ready pid=3453428
+confirmed generation=live-sdk-generation watcher=3453428
+
+EXTENSION_LOG 2026-10-13T11:49:48.608Z pid=3453178 restore attempt=0 predecessor=3453229 start=ok pid=3453248
+2026-10-13T11:49:48.624Z pid=3453178 confirm generation=live-sdk-generation watcherPid=3453248 result=confirmed
+2026-10-13T11:49:48.671Z pid=3453178 restore attempt=0 predecessor=3453248 start=ok pid=3453269
+2026-10-13T11:49:48.693Z pid=3453178 confirm generation=live-sdk-generation watcherPid=3453269 result=confirmed
+2026-10-13T11:49:48.694Z pid=3453178 coalesce token=3453178-1791892188668-2 anchor=3453178-1791892188606-1
+2026-10-13T11:49:48.719Z pid=3453178 restore attempt=0 predecessor=3453269 start=ok pid=3453288
+2026-10-13T11:49:48.737Z pid=3453178 confirm generation=live-sdk-generation watcherPid=3453288 result=confirmed
+2026-10-13T11:49:48.738Z pid=3453178 coalesce token=3453178-1791892188715-3 anchor=3453178-1791892188606-1
+2026-10-13T11:49:48.871Z pid=3453178 restore attempt=0 predecessor=3453288 start=ok pid=3453337
+2026-10-13T11:49:48.889Z pid=3453178 confirm generation=live-sdk-generation watcherPid=3453337 result=confirmed
+2026-10-13T11:49:49.027Z pid=3453178 restore attempt=0 predecessor=3453337 start=ok pid=3453382
+2026-10-13T11:49:49.049Z pid=3453178 confirm generation=live-sdk-generation watcherPid=3453382 result=confirmed
+2026-10-13T11:49:49.119Z pid=3453178 restore attempt=0 predecessor=3453382 start=ok pid=3453428
+2026-10-13T11:49:49.150Z pid=3453178 confirm generation=live-sdk-generation watcherPid=3453428 result=confirmed
+2026-10-13T11:49:49.151Z pid=3453178 coalesce token=3453178-1791892189115-6 anchor=3453178-1791892189021-5
+
+STATE_FILES [
+  '.lock',
+  '.pi-turnend-extension-loaded',
+  '.pi-watch-extension-loaded',
+  '.wake-queue',
+  '.watch-extension.log'
+]
+file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.validation-pi12/stream-fixture/stream-debug.mjs:121
+  throw new Error(`timeout waiting for ${label}; events=${JSON.stringify(events)}`);
+        ^
+
+Error: timeout waiting for a fresh watcher close to recover the interrupted invitation; events=[{"type":"input","text":"Reply with exactly the word OK.","source":"interactive"},{"type":"before_agent_start","text":"Reply with exactly the word OK."},{"type":"user_message_start","text":"Reply with exactly the word OK."},{"type":"input","text":"⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: live streaming probe\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.","source":"extension","streamingBehavior":"followUp"},{"type":"input","text":"Human follow-up retained by the live guard.","source":"interactive","streamingBehavior":"followUp"},{"type":"user_message_start","text":"⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: live streaming probe\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."},{"type":"user_message_start","text":"Human follow-up retained by the live guard."},{"type":"agent_settled","aborted":false,"pending":false,"idle":true},{"type":"input","text":"⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: live idle probe\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.","source":"extension"},{"type":"before_agent_start","text":"⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: live idle probe\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."},{"type":"user_message_start","text":"⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: live idle probe\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned."},{"type":"agent_settled","aborted":false,"pending":false,"idle":true},{"type":"input","text":"Hold this isolated interruption probe.","source":"interactive"},{"type":"before_agent_start","text":"Hold this isolated interruption probe."},{"type":"user_message_start","text":"Hold this isolated interruption probe."},{"type":"input","text":"⁣FIRSTMATE_OP: v1 watcher: FIRSTMATE WATCHER WAKE: signal: live Escape probe\n\nRun bin/fm-wake-drain.sh first and handle the queued wake. Watcher continuity is extension-owned.","source":"extension","streamingBehavior":"followUp"},{"type":"agent_settled","aborted":true,"pending":false,"idle":true}]
+    at waitFor (file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.validation-pi12/stream-fixture/stream-debug.mjs:121:9)
+    at async file:///home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.validation-pi12/stream-fixture/stream-debug.mjs:223:1
+
+Node.js v26.10.0

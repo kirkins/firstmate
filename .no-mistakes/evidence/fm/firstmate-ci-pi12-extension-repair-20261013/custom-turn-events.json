@@ -1,0 +1,125 @@
+{
+  "sdk": "1.2.0",
+  "events": [
+    {
+      "messageType": "user",
+      "hasPrompt": true
+    },
+    {
+      "messageType": "custom",
+      "hasPrompt": false
+    },
+    {
+      "messageType": "custom",
+      "hasPrompt": false
+    },
+    {
+      "messageType": "custom",
+      "hasPrompt": false
+    },
+    {
+      "messageType": "user",
+      "hasPrompt": true
+    }
+  ],
+  "errors": [],
+  "providerRequests": 5,
+  "persistedMessages": [
+    {
+      "type": "model_change"
+    },
+    {
+      "type": "thinking_level_change"
+    },
+    {
+      "type": "message",
+      "role": "system",
+      "content": ""
+    },
+    {
+      "type": "message",
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "User request before custom turns"
+        }
+      ]
+    },
+    {
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "CUSTOM_START_OK"
+        }
+      ]
+    },
+    {
+      "type": "custom_message",
+      "customType": "fm-live-custom-probe",
+      "content": "Custom turn 1"
+    },
+    {
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "CUSTOM_START_OK"
+        }
+      ]
+    },
+    {
+      "type": "custom_message",
+      "customType": "fm-live-custom-probe",
+      "content": "Custom turn 2"
+    },
+    {
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "CUSTOM_START_OK"
+        }
+      ]
+    },
+    {
+      "type": "custom_message",
+      "customType": "fm-live-custom-probe",
+      "content": "Custom turn 3"
+    },
+    {
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "CUSTOM_START_OK"
+        }
+      ]
+    },
+    {
+      "type": "message",
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "User request after custom turns"
+        }
+      ]
+    },
+    {
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "CUSTOM_START_OK"
+        }
+      ]
+    }
+  ]
+}

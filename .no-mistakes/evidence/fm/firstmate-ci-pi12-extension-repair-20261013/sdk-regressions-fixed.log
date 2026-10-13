@@ -1,0 +1,11 @@
+ok - real Pi SDK 1.2.0 accepts the branch session construction and preserves an unpromptable wake
+ok - real Pi SDK 1.2.0 rejects a post-construction 429 to watcher-owned main delivery without losing its durable row
+ok - real Pi SDK 1.2.0 applies an explicit branch model on create and over a reopened session's recorded model
+ok - real Pi SDK 1.2.0 reports its own supported effort levels and applies an explicit branch effort over a reopened session's recorded level
+ok - real Pi SDK 1.2.0 immediately renders appendEntry in the active transcript, persists it across reopen, and excludes it from model context
+ok - real Pi SDK 1.2.0 bounds routine follow-ups, retains durable rows and human input, respects Escape, and recovers on a fresh wake
+ok - real Pi SDK 1.2.0 suppresses only empty or exact-repeat retry finals, retains first and differing replies after reopen, buffers retry streaming, and keeps outcomes retryable
+ok - real Pi SDK 1.2.0 runs three prompt-less custom turns between user prompts with both extensions loaded, no extension errors, and persisted replies
+ok - real Pi SDK 1.2.0 defers manual-compaction wakes through completion and restores one durable invitation on a fresh close
+ok - real Pi SDK 1.2.0 keeps logged-out wakes retryable, restores delivery after login, and coalesces idle construction until exact consumption
+ok - real Pi SDK 1.2.0 delivers a settlement-deferred notification exactly once without replaying its idle construction

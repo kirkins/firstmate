@@ -1,0 +1,28 @@
+[
+  {
+    "step": "first-arm",
+    "arm": 3540504,
+    "watcher": 3540551,
+    "output": [
+      "watcher: started pid=3540551 (beacon fresh)\n"
+    ]
+  },
+  {
+    "step": "restart",
+    "arm": 3541744,
+    "watcher": 3542044,
+    "predecessorWatcherAlive": false,
+    "output": [
+      "watcher: started pid=3542044 (beacon fresh) recovery-generation=3540551.1791892440.Nr6Hxn\n"
+    ]
+  },
+  {
+    "step": "fresh-status",
+    "exit": 0,
+    "output": [
+      "watcher: started pid=3542044 (beacon fresh) recovery-generation=3540551.1791892440.Nr6Hxn\n",
+      "signal: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.validation-pi12/restart-home/state/probe.status\n"
+    ],
+    "durableQueue": "1791892442\t1\tsignal\tprobe.status\tsignal: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.validation-pi12/restart-home/state/probe.status\n1791892442\t2\tsignal\tprobe.status\tsignal: /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4TBQE5B5KJ6VF89TWMYKFS0/.validation-pi12/restart-home/state/probe.status\n"
+  }
+]
