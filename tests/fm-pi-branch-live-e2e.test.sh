@@ -67,6 +67,7 @@ fi
 printf 'arm pid=%s\n' "$$" >> "${FM_LIVE_WATCH_LOG:?}"
 printf 'watcher: started pid=%s (beacon fresh) recovery-generation=live-sdk-generation\n' "$$"
 trap 'exit 0' TERM INT
+printf 'ready pid=%s\n' "$$" >> "${FM_LIVE_WATCH_LOG:?}"
 while :; do
   [ -d "${FM_HOME:?}/state" ] || exit 0
   if [ -e "$FM_LIVE_WATCH_TRIGGER" ]; then
@@ -222,6 +223,15 @@ if (!existsSync(`${home}/state/branch-session`)) {
 // A model pin the branch's REAL runtime cannot resolve must refuse the build
 // and reject the offer back to watcher-owned main delivery rather than
 // silently running the branch on whatever model main would have used.
+const armPids = () => readFileSync(process.env.FM_LIVE_WATCH_LOG, "utf8")
+  .split(/\n/).map((line) => line.match(/^arm pid=([0-9]+)$/)?.[1]).filter(Boolean).map(Number);
+const retainedPredecessor = armPids().at(-1);
+const pidAlive = (pid) => {
+  try { process.kill(pid, 0); return true; } catch (error) {
+    if (error.code === "ESRCH") return false;
+    throw error;
+  }
+};
 writeFileSync(`${home}/config/supervision-branch-model`, "openai/no-such-live-model\n");
 for (const handler of piHandlers.get("session_shutdown") ?? []) {
   await handler({ type: "session_shutdown", reason: "new" }, sessionCtx);
@@ -230,6 +240,14 @@ for (const handler of piHandlers.get("session_start") ?? []) {
   await handler({ type: "session_start", reason: "new" }, sessionCtx);
 }
 await waitFor(() => armCount() >= 3, "replacement watcher arm");
+const replacementArm = armPids().at(-1);
+await waitFor(() => readFileSync(process.env.FM_LIVE_WATCH_LOG, "utf8").split(/\n/)
+  .includes(`ready pid=${replacementArm}`), "replacement watcher readiness");
+// This fake arm omits --restart retirement; retire only its captured predecessor
+// once the replacement is ready before injecting the independent model-pin probe.
+if (!retainedPredecessor || retainedPredecessor === replacementArm) throw new Error("missing retained predecessor fixture");
+if (pidAlive(retainedPredecessor)) process.kill(retainedPredecessor, "SIGTERM");
+await waitFor(() => !pidAlive(retainedPredecessor), "retained mock watcher retirement");
 writeFileSync(`${home}/state/.wake-queue`, "1\t2\tsignal\tlive-probe.status\tsignal: live pin probe\n");
 writeFileSync(process.env.FM_LIVE_WATCH_TRIGGER, "signal: live pin probe\n");
 await waitFor(() => mainUserMessages.length === 2, "pinned watcher-owned main delivery");
