@@ -1324,6 +1324,8 @@ fm_pr_forgejo_read_pull() {  # <host> <owner> <repo> <number>
 # The combined commit-status state at one commit: "success", "pending",
 # "failure", or "error" when any status is recorded, and empty when the
 # commit has none, so a caller can tell "no checks" from each real state.
+# A malformed count or an empty state with reported statuses is unreadable,
+# never the empty no-checks result a merge waiver can consume.
 # Forgejo Actions reports its workflows as exactly these statuses, so this is
 # the green-checks read for the merge gate, judged at the head the pull
 # request itself reported.
@@ -1340,6 +1342,8 @@ fm_pr_forgejo_read_status_state() {  # <host> <owner> <repo> <sha>
     if type == "object"
        and (.state | type) == "string" and (.state | test("\\n") | not)
        and (.total_count | type) == "number"
+       and .total_count >= 0 and (.total_count | floor) == .total_count
+       and (.total_count == 0 or .state != "")
     then
       (if .total_count == 0 then "" else .state end)
     else

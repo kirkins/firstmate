@@ -2109,12 +2109,23 @@ case "$method $url" in
         state=closed
         merged=true
       fi
-      emit "{\"state\":\"$state\",\"draft\":${FM_TEST_FORGEJO_DRAFT:-false},\"merged\":$merged,\"mergeable\":${FM_TEST_FORGEJO_MERGEABLE:-true},\"head\":{\"sha\":\"${FM_TEST_FORGEJO_HEAD:-0123456789abcdef0123456789abcdef01234567}\"}}"
+      head=${FM_TEST_FORGEJO_HEAD:-0123456789abcdef0123456789abcdef01234567}
+      if [ "$merged" = true ]; then
+        head=${FM_TEST_FORGEJO_MERGED_HEAD:-$head}
+      fi
+      emit "{\"state\":\"$state\",\"draft\":${FM_TEST_FORGEJO_DRAFT:-false},\"merged\":$merged,\"mergeable\":${FM_TEST_FORGEJO_MERGEABLE:-true},\"head\":{\"sha\":\"$head\"}}"
     fi
     ;;
   'GET https://'*'/api/v1/repos/'*'/commits/'*'/status')
     code=200
-    emit "{\"state\":\"${FM_TEST_FORGEJO_STATUS_STATE:-success}\",\"total_count\":${FM_TEST_FORGEJO_STATUS_COUNT:-1},\"statuses\":[]}"
+    if [ -n "${FM_TEST_FORGEJO_STATUS_RAW:-}" ]; then
+      emit "$FM_TEST_FORGEJO_STATUS_RAW"
+    else
+      emit "{\"state\":\"${FM_TEST_FORGEJO_STATUS_STATE:-success}\",\"total_count\":${FM_TEST_FORGEJO_STATUS_COUNT:-1},\"statuses\":[]}"
+    fi
+    if [ -f "${FM_TEST_FORGEJO_DIR:-/nonexistent}/away-record-after-status" ]; then
+      cp "$FM_TEST_FORGEJO_DIR/away-record-after-status" "$FM_STATE_OVERRIDE/.afk-contract"
+    fi
     ;;
   'POST https://'*'/api/v1/repos/'*'/pulls/'*'/merge')
     code=${FM_TEST_FORGEJO_MERGE_HTTP:-200}
@@ -2412,6 +2423,186 @@ test_forgejo_no_checks_is_not_green() {
   [ -z "$(forgejo_merge_line "$case_dir/forgejo-curl.log")" ] \
     || fail "forgejo-no-checks: a merge ran without any recorded check"
   pass "fm-pr-merge reads a commit with no statuses as no checks, not as green"
+}
+
+# All HTTP and credential operations stay on make_forgejo_case's fake surface,
+# including the concrete URL regression: none reaches the real instance.
+run_forgejo_no_checks_case() {
+  local case_dir=$1
+  shift
+  RC=0
+  FM_TEST_FORGEJO_DIR="$case_dir" \
+  FM_TEST_FORGEJO_CURL_LOG="$case_dir/forgejo-curl.log" \
+  FM_TEST_FORGEJO_ST_LOG="$case_dir/forgejo-st.log" \
+  FM_TEST_FORGEJO_STATUS_COUNT="${FM_TEST_FORGEJO_STATUS_COUNT:-0}" \
+    run_pr_merge "$case_dir" task-x1 "$FJ_URL" "$@" \
+      > "$case_dir/stdout" 2> "$case_dir/stderr" || RC=$?
+}
+
+test_forgejo_no_checks_named_waiver_merges() {
+  local case_dir FJ_HOST FJ_PATH FJ_URL FJ_HEAD
+  FJ_HOST=git.lobbykit.net
+  FJ_PATH=hermes/lobbykit-ios
+  FJ_URL="https://$FJ_HOST/$FJ_PATH/pulls/92"
+  # A synthetic full hash with the reported incident's short-hash prefix.
+  FJ_HEAD=239fda5000000000000000000000000000000000
+  case_dir=$(make_forgejo_case forgejo-named-no-checks)
+  FM_TEST_FORGEJO_HEAD="$FJ_HEAD" run_forgejo_no_checks_case "$case_dir" \
+    --attended-override --allow-no-checks "$FJ_URL" -- --rebase
+  expect_code 0 "$RC" "forgejo-named-no-checks: explicit PR-named waiver should merge: $(cat "$case_dir/stderr")"
+  assert_grep 'no reported checks (explicitly waived)' "$case_dir/stderr" \
+    "forgejo-named-no-checks: waived checks were reported as green"
+  grep -qF "/commits/$FJ_HEAD/status" "$case_dir/forgejo-curl.log" \
+    || fail "forgejo-named-no-checks: checks were not read at the live head"
+  grep -qF -- '--data {"Do":"rebase"}' "$case_dir/forgejo-curl.log" \
+    || fail "forgejo-named-no-checks: merge style was lost"
+  assert_grep "pr=$FJ_URL" "$case_dir/state/task-x1.meta" "waived merge lost its PR identity"
+  assert_grep "pr_head=$FJ_HEAD" "$case_dir/state/task-x1.meta" "waived merge lost its head"
+  [ "$(sed -n 6p "$case_dir/state/task-x1.merge-authority")" = attended ] \
+    || fail "forgejo-named-no-checks: merge authority was not attended"
+  assert_grep "$FJ_URL" "$case_dir/state/.wake-queue" "waived merge lost its landed proof"
+  pass "fm-pr-merge accepts the explicit Forgejo PR-named no-checks waiver with recorded proof"
+}
+
+test_forgejo_no_checks_waiver_authority_refuses() {
+  local case_dir problem url
+  local -a args
+  case_dir=$(make_forgejo_case forgejo-attended-without-waiver)
+  run_forgejo_no_checks_case "$case_dir" --attended-override
+  expect_code 1 "$RC" "forgejo-attended-without-waiver: attended override alone must not waive no checks"
+  [ ! -e "$case_dir/forgejo-merge-called" ] || fail "attended override alone reached the merge endpoint"
+  for problem in missing-override missing-url wrong-url malformed-url noncanonical-url equals duplicate after-separator; do
+    case_dir=$(make_forgejo_case "forgejo-waiver-$problem")
+    args=(--attended-override --allow-no-checks "$FJ_URL")
+    case "$problem" in
+      missing-override) args=(--allow-no-checks "$FJ_URL") ;;
+      missing-url) args=(--attended-override --allow-no-checks) ;;
+      wrong-url) args=(--attended-override --allow-no-checks "https://$FJ_HOST/$FJ_PATH/pulls/10") ;;
+      malformed-url) args=(--attended-override --allow-no-checks 9) ;;
+      noncanonical-url) args=(--attended-override --allow-no-checks "$FJ_URL/") ;;
+      equals) args=(--attended-override "--allow-no-checks=$FJ_URL") ;;
+      duplicate) args+=(--allow-no-checks "$FJ_URL") ;;
+      after-separator) args=(--attended-override -- --allow-no-checks "$FJ_URL") ;;
+    esac
+    run_forgejo_no_checks_case "$case_dir" "${args[@]}"
+    expect_code 2 "$RC" "forgejo-waiver-$problem: invalid waiver authority must refuse"
+    [ ! -s "$case_dir/forgejo-curl.log" ] || fail "forgejo-waiver-$problem: REST ran before waiver validation"
+    assert_no_grep "pr=$FJ_URL" "$case_dir/state/task-x1.meta" "invalid waiver recorded PR metadata"
+  done
+  for problem in github gitlab; do
+    case_dir=$(make_case "forgejo-waiver-$problem")
+    url=https://github.com/example/repo/pull/9
+    [ "$problem" != gitlab ] || url=$MR_URL
+    RC=0
+    run_pr_merge "$case_dir" task-x1 "$url" \
+      --attended-override --allow-no-checks "$FJ_URL" > "$case_dir/stdout" 2> "$case_dir/stderr" || RC=$?
+    expect_code 2 "$RC" "forgejo-waiver-$problem: Forgejo waiver must refuse other providers"
+    assert_grep '--allow-no-checks applies only to Forgejo' "$case_dir/stderr" "wrong-provider refusal was not named"
+  done
+  pass "fm-pr-merge refuses missing, wrong, malformed, repeated, or non-Forgejo waiver authority"
+}
+
+test_forgejo_no_checks_waiver_refuses_records() {
+  local case_dir posture timing
+  for posture in away quiet; do
+    for timing in before after-status; do
+      case_dir=$(make_forgejo_case "forgejo-waiver-$posture-$timing")
+      FM_AFK_MODE="$posture" write_away_record "$case_dir" --words 'merge the named PR'
+      if [ "$timing" = after-status ]; then
+        mv "$case_dir/state/.afk-contract" "$case_dir/away-record-after-status"
+      fi
+      run_forgejo_no_checks_case "$case_dir" --attended-override --allow-no-checks "$FJ_URL"
+      expect_code 2 "$RC" "forgejo-waiver-$posture-$timing: waiver must refuse any posture record"
+      assert_grep '--allow-no-checks is attended-only' "$case_dir/stderr" "record waiver refusal was not named"
+      [ ! -e "$case_dir/forgejo-merge-called" ] || fail "forgejo-waiver-$posture-$timing: POST ran under record"
+      [ ! -e "$case_dir/state/task-x1.merge-authority" ] || fail "refused waiver recorded merge authority"
+    done
+  done
+  pass "fm-pr-merge refuses Forgejo no-checks waivers under away and quiet records, including late publication"
+}
+
+test_forgejo_no_checks_waiver_preserves_guards() {
+  local case_dir problem
+  for problem in red pending error unreadable empty-status fractional-count negative-count draft closed merged conflict bad-head wrong-binding wrong-pr held unreadable-hold bad-style head-override; do
+    case_dir=$(make_forgejo_case "forgejo-waiver-guard-$problem")
+    local status_count=0 status_state=success status_raw='' draft=false state=open merged=false mergeable=true head=$FJ_HEAD
+    local -a args=(--attended-override --allow-no-checks "$FJ_URL")
+    case "$problem" in
+      red|pending|error)
+        status_count=1
+        status_state=$problem
+        [ "$problem" != red ] || status_state=failure
+        ;;
+      unreadable) status_raw='{"state":"success","total_count":"unreadable"}' ;;
+      empty-status) status_raw='{"state":"","total_count":1}' ;;
+      fractional-count) status_raw='{"state":"success","total_count":0.5}' ;;
+      negative-count) status_raw='{"state":"success","total_count":-1}' ;;
+      draft) draft=true ;;
+      closed) state=closed ;;
+      merged) merged=true ;;
+      conflict) mergeable=false ;;
+      bad-head) head=unreadable ;;
+      wrong-binding) git -C "$case_dir/project" remote set-url origin https://elsewhere.example/owner/other.git ;;
+      wrong-pr) printf 'pr=https://%s/%s/pulls/10\n' "$FJ_HOST" "$FJ_PATH" >> "$case_dir/state/task-x1.meta" ;;
+      held)
+        FM_HOME="$case_dir/home" FM_STATE_OVERRIDE="$case_dir/state" \
+          "$ROOT/bin/fm-captain-hold.sh" hold task-x1 --reason 'approval pending' \
+            --title 'Merge guard fixture' --repo fixture >/dev/null || fail "could not create fixture hold"
+        ;;
+      unreadable-hold) chmod 000 "$case_dir/home/data/backlog.md" ;;
+      bad-style) args+=(-- --method rebase) ;;
+      head-override) args+=(-- --sha "$FJ_STALE_HEAD") ;;
+    esac
+    FM_TEST_FORGEJO_STATUS_COUNT="$status_count" FM_TEST_FORGEJO_STATUS_STATE="$status_state" \
+      FM_TEST_FORGEJO_STATUS_RAW="$status_raw" FM_TEST_FORGEJO_DRAFT="$draft" \
+      FM_TEST_FORGEJO_STATE="$state" FM_TEST_FORGEJO_MERGED="$merged" \
+      FM_TEST_FORGEJO_MERGEABLE="$mergeable" FM_TEST_FORGEJO_HEAD="$head" \
+      run_forgejo_no_checks_case "$case_dir" "${args[@]}"
+    chmod 644 "$case_dir/home/data/backlog.md"
+    [ "$RC" -ne 0 ] || fail "forgejo-waiver-guard-$problem: waiver bypassed an existing guard"
+    [ ! -e "$case_dir/forgejo-merge-called" ] || fail "forgejo-waiver-guard-$problem: merge POST ran"
+    [ ! -e "$case_dir/state/task-x1.merge-authority" ] || fail "refused guard recorded merge authority"
+    if [ "$problem" = held ]; then
+      assert_grep 'still held for the captain' "$case_dir/stderr" "waiver bypassed the captain hold"
+    fi
+    case "$problem" in
+      unreadable|empty-status|fractional-count|negative-count)
+        assert_grep 'the combined commit status at the head could not be read' "$case_dir/stderr" \
+          "malformed status was treated as absent checks"
+        ;;
+    esac
+  done
+  pass "fm-pr-merge no-checks waiver preserves status, identity, head, hold, and merge-style guards"
+}
+
+test_forgejo_no_checks_waiver_keeps_merge_proof() {
+  local case_dir problem
+  for problem in unconfirmed moved-head rejected; do
+    case_dir=$(make_forgejo_case "forgejo-waiver-proof-$problem")
+    case "$problem" in
+      unconfirmed)
+        FM_TEST_FORGEJO_STAYS_OPEN=1 run_forgejo_no_checks_case "$case_dir" \
+          --attended-override --allow-no-checks "$FJ_URL"
+        expect_code 0 "$RC" "unconfirmed waived merge must leave the poll armed"
+        [ ! -e "$case_dir/state/.wake-queue" ] || fail "unconfirmed waived merge recorded landing"
+        [ -f "$case_dir/state/task-x1.check.sh" ] || fail "unconfirmed waived merge lost the poll"
+        ;;
+      moved-head)
+        FM_TEST_FORGEJO_MERGED_HEAD="$FJ_STALE_HEAD" run_forgejo_no_checks_case "$case_dir" \
+          --attended-override --allow-no-checks "$FJ_URL"
+        expect_code 0 "$RC" "moved-head waived merge must report the actual landing"
+        assert_grep "merged at head $FJ_STALE_HEAD rather than the verified head $FJ_HEAD" \
+          "$case_dir/stderr" "waived merge silently accepted a moved head"
+        ;;
+      rejected)
+        FM_TEST_FORGEJO_MERGE_HTTP=405 run_forgejo_no_checks_case "$case_dir" \
+          --attended-override --allow-no-checks "$FJ_URL"
+        expect_code 1 "$RC" "rejected waived merge must fail"
+        [ ! -e "$case_dir/state/.wake-queue" ] || fail "rejected waived merge recorded landing"
+        ;;
+    esac
+  done
+  pass "fm-pr-merge waived Forgejo merges retain read-back, head-change, and failure proof"
 }
 
 test_forgejo_stale_recorded_head_is_reported() {
@@ -2974,6 +3165,11 @@ test_forgejo_token_length_and_alphabet_boundaries
 test_forgejo_reports_every_failing_condition
 test_forgejo_already_merged_refuses
 test_forgejo_no_checks_is_not_green
+test_forgejo_no_checks_named_waiver_merges
+test_forgejo_no_checks_waiver_authority_refuses
+test_forgejo_no_checks_waiver_refuses_records
+test_forgejo_no_checks_waiver_preserves_guards
+test_forgejo_no_checks_waiver_keeps_merge_proof
 test_forgejo_stale_recorded_head_is_reported
 test_forgejo_merge_failure_propagates
 test_forgejo_binding_mismatch_refuses_before_merge
