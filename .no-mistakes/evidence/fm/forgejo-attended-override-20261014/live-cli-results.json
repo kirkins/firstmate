@@ -1,0 +1,2713 @@
+[
+  {
+    "name": "before-fix-no-checks",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/base/bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - the combined commit status at the head is \"none\", not success\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/before-fix-no-checks/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/before-fix-no-checks/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "no-waiver",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - the combined commit status at the head is \"none\", not success\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/no-waiver/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/no-waiver/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "attended-alone",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - the combined commit status at the head is \"none\", not success\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/attended-alone/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/attended-alone/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "named-waiver-squash",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--",
+      "--squash"
+    ],
+    "returncode": 0,
+    "stdout": "armed: state/task-x1.check.sh\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is merged (state=closed, merged=true)\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is open and mergeable, with no reported checks (explicitly waived) at head 239fda5000000000000000000000000000000000\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92/merge",
+        "body": "{\"Do\":\"squash\"}",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "message": "local API accepted test merge"
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "closed",
+          "draft": false,
+          "merged": true,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-squash/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-squash/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": "fm-merge-authority-v1\nforgejo\ngit.lobbykit.net\nhermes/lobbykit-ios\n92\nattended\n",
+    "wake_queue": "1791953235\t1\tcheck\tmerged-task-x1-https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\tcheck: merge landed: task-x1 https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n",
+    "poll_armed": true,
+    "meta_at_post": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-squash/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-squash/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "named-waiver-merge",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--",
+      "--merge"
+    ],
+    "returncode": 0,
+    "stdout": "armed: state/task-x1.check.sh\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is merged (state=closed, merged=true)\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is open and mergeable, with no reported checks (explicitly waived) at head 239fda5000000000000000000000000000000000\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92/merge",
+        "body": "{\"Do\":\"merge\"}",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "message": "local API accepted test merge"
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "closed",
+          "draft": false,
+          "merged": true,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-merge/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-merge/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": "fm-merge-authority-v1\nforgejo\ngit.lobbykit.net\nhermes/lobbykit-ios\n92\nattended\n",
+    "wake_queue": "1791953237\t1\tcheck\tmerged-task-x1-https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\tcheck: merge landed: task-x1 https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n",
+    "poll_armed": true,
+    "meta_at_post": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-merge/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-merge/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "named-waiver-rebase",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--",
+      "--rebase"
+    ],
+    "returncode": 0,
+    "stdout": "armed: state/task-x1.check.sh\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is merged (state=closed, merged=true)\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is open and mergeable, with no reported checks (explicitly waived) at head 239fda5000000000000000000000000000000000\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92/merge",
+        "body": "{\"Do\":\"rebase\"}",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "message": "local API accepted test merge"
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "closed",
+          "draft": false,
+          "merged": true,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-rebase/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-rebase/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": "fm-merge-authority-v1\nforgejo\ngit.lobbykit.net\nhermes/lobbykit-ios\n92\nattended\n",
+    "wake_queue": "1791953239\t1\tcheck\tmerged-task-x1-https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\tcheck: merge landed: task-x1 https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n",
+    "poll_armed": true,
+    "meta_at_post": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-rebase/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-rebase/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "no-attended",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: --allow-no-checks requires --attended-override for an explicit PR-named instruction\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/no-attended/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/no-attended/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "no-url",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: --allow-no-checks requires a canonical PR URL\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/no-url/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/no-url/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "wrong-url",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/93"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: --allow-no-checks must name the requested canonical PR URL exactly\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/wrong-url/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/wrong-url/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "malformed-url",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "92"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: --allow-no-checks must name the requested canonical PR URL exactly\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/malformed-url/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/malformed-url/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "trailing-slash",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92/"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: --allow-no-checks must name the requested canonical PR URL exactly\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/trailing-slash/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/trailing-slash/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "equals",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: --allow-no-checks requires a separate canonical PR URL argument\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/equals/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/equals/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "duplicate",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: --allow-no-checks may be specified only once\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/duplicate/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/duplicate/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "after-separator",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: extra merge arguments are not supported on a Forgejo merge; only --squash, --merge, or --rebase selects the merge style\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/after-separator/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/after-separator/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "provider-github",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://github.com/example/repo/pull/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: --allow-no-checks applies only to Forgejo\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/provider-github/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/provider-github/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "provider-gitlab",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://gitlab.invalid/group/repo/-/merge_requests/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: --allow-no-checks applies only to Forgejo\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/provider-gitlab/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/provider-gitlab/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "away-pre",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: --allow-no-checks is attended-only; while any away or quiet record exists the no-checks waiver is refused\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/away-pre/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/away-pre/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "away-late",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 2,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is open and mergeable, with no reported checks (explicitly waived) at head 239fda5000000000000000000000000000000000\nerror: --allow-no-checks is attended-only; while any away or quiet record exists the no-checks waiver is refused\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/away-late/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/away-late/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": {
+      "code": 0,
+      "output": "Away posture recorded at 2026-10-14T04:47:22Z: hold-for-return only. No phone channel is configured; anything that needs you waits for your return. Your away instructions are recorded verbatim; the away session will carry them out where it can, and anything it is unsure of, or that needs you, waits for your return. Destructive, irreversible, and security-sensitive actions are never pre-authorizable, whatever the words say. Expected return: not given. Spend cap: 6 concurrent workers.\nAway posture (recorded):\n  entered: 2026-10-14T04:47:22Z\n  expected return: not given\n  spend cap: 6 concurrent workers\n  reach: hold-for-return only. No phone channel is configured; anything that needs you waits for your return.\n  your words (verbatim):\n    Test record created during status preflight\n"
+    },
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "quiet-pre",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: --allow-no-checks is attended-only; while any away or quiet record exists the no-checks waiver is refused\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/quiet-pre/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/quiet-pre/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "quiet-late",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 2,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is open and mergeable, with no reported checks (explicitly waived) at head 239fda5000000000000000000000000000000000\nerror: --allow-no-checks is attended-only; while any away or quiet record exists the no-checks waiver is refused\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/quiet-late/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/quiet-late/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": {
+      "code": 0,
+      "output": "Quiet mode recorded at 2026-10-14T04:47:24Z: you are present, so nothing waits for your return: every action you ask for, a local landing or a merge included, proceeds now under ordinary attended authority, and quiet mode changes only which updates reach this conversation. Only an explicit /quiet off ends it.\nQuiet mode (recorded):\n  entered: 2026-10-14T04:47:24Z\n  holds: none - you are present, so nothing waits for your return: every action you ask for, a local landing or a merge included, proceeds now under ordinary attended authority, and quiet mode changes only which updates reach this conversation.\n  your words (verbatim):\n    Test record created during status preflight\n"
+    },
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "reported-failure",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - the combined commit status at the head is \"failure\", not success\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "failure",
+          "total_count": 1,
+          "statuses": [
+            {
+              "status": "failure"
+            }
+          ]
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/reported-failure/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/reported-failure/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "reported-pending",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - the combined commit status at the head is \"pending\", not success\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 1,
+          "statuses": [
+            {
+              "status": "pending"
+            }
+          ]
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/reported-pending/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/reported-pending/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "reported-error",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - the combined commit status at the head is \"error\", not success\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "error",
+          "total_count": 1,
+          "statuses": [
+            {
+              "status": "error"
+            }
+          ]
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/reported-error/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/reported-error/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "unreadable-count-string",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - the combined commit status at the head could not be read\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "success",
+          "total_count": "0"
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/unreadable-count-string/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/unreadable-count-string/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "unreadable-empty-state",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - the combined commit status at the head could not be read\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "",
+          "total_count": 1
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/unreadable-empty-state/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/unreadable-empty-state/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "unreadable-fractional",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - the combined commit status at the head could not be read\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "success",
+          "total_count": 0.5
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/unreadable-fractional/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/unreadable-fractional/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "unreadable-negative",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - the combined commit status at the head could not be read\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "success",
+          "total_count": -1
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/unreadable-negative/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/unreadable-negative/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "unreadable-bad-json-shape",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - the combined commit status at the head could not be read\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": []
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/unreadable-bad-json-shape/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/unreadable-bad-json-shape/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "guard-draft",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - the pull request is a draft\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": true,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": true,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-draft/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-draft/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "guard-closed",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - state is \"closed\", not open\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "closed",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "closed",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-closed/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-closed/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "guard-already-merged",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - the pull request is already merged\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": true,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": true,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-already-merged/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-already-merged/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "guard-conflict",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to merge https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n  - mergeable is \"false\", not true\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": false,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": false,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-conflict/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-conflict/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "guard-bad-head",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: could not read the Forgejo pull request head commit before merging\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "unreadable"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "unreadable"
+          }
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-bad-head/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-bad-head/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "guard-pr-identity",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "error: task task-x1 is bound to https://git.lobbykit.net/hermes/lobbykit-ios/pulls/93, not https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-pr-identity/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-pr-identity/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/93\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "guard-captain-hold",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: task task-x1 is still held for the captain; release it before merging\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-captain-hold/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-captain-hold/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "guard-head-override",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--",
+      "--sha",
+      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "error: extra merge arguments must not override the head commit\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-head-override/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-head-override/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "stale-recorded-head",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 0,
+    "stdout": "armed: state/task-x1.check.sh\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is merged (state=closed, merged=true)\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nnotice: recorded head bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb disagrees with the live head 239fda5000000000000000000000000000000000; verifying the live head\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is open and mergeable, with no reported checks (explicitly waived) at head 239fda5000000000000000000000000000000000\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92/merge",
+        "body": "{\"Do\":\"squash\"}",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "message": "local API accepted test merge"
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "closed",
+          "draft": false,
+          "merged": true,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/stale-recorded-head/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/stale-recorded-head/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": "fm-merge-authority-v1\nforgejo\ngit.lobbykit.net\nhermes/lobbykit-ios\n92\nattended\n",
+    "wake_queue": "1791953269\t1\tcheck\tmerged-task-x1-https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\tcheck: merge landed: task-x1 https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n",
+    "poll_armed": true,
+    "meta_at_post": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/stale-recorded-head/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/stale-recorded-head/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "unconfirmed-outcome",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 0,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is open and mergeable, with no reported checks (explicitly waived) at head 239fda5000000000000000000000000000000000\nactionable: Forgejo accepted the merge request for https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 but the pull request reads back state=open, merged=false; the merge poll remains armed\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92/merge",
+        "body": "{\"Do\":\"squash\"}",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "message": "local API accepted test merge"
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/unconfirmed-outcome/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/unconfirmed-outcome/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": "fm-merge-authority-v1\nforgejo\ngit.lobbykit.net\nhermes/lobbykit-ios\n92\nattended\n",
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/unconfirmed-outcome/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/unconfirmed-outcome/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "moved-head-outcome",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 0,
+    "stdout": "armed: state/task-x1.check.sh\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is merged (state=closed, merged=true)\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is open and mergeable, with no reported checks (explicitly waived) at head 239fda5000000000000000000000000000000000\nactionable: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 merged at head bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb rather than the verified head 239fda5000000000000000000000000000000000, so commits this run did not verify may have landed\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92/merge",
+        "body": "{\"Do\":\"squash\"}",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "message": "local API accepted test merge"
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "closed",
+          "draft": false,
+          "merged": true,
+          "mergeable": true,
+          "head": {
+            "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/moved-head-outcome/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/moved-head-outcome/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": "fm-merge-authority-v1\nforgejo\ngit.lobbykit.net\nhermes/lobbykit-ios\n92\nattended\n",
+    "wake_queue": "1791953273\t1\tcheck\tmerged-task-x1-https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\tcheck: merge landed: task-x1 https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n",
+    "poll_armed": true,
+    "meta_at_post": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/moved-head-outcome/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/moved-head-outcome/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "rejected-outcome",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is open and mergeable, with no reported checks (explicitly waived) at head 239fda5000000000000000000000000000000000\nerror: the Forgejo merge endpoint answered HTTP 405 rather than accepting the merge of https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92; the forge reported: local API refused test merge\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92/merge",
+        "body": "{\"Do\":\"squash\"}",
+        "authenticated": true,
+        "response_code": 405,
+        "response": {
+          "message": "local API refused test merge"
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/rejected-outcome/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/rejected-outcome/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/rejected-outcome/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/rejected-outcome/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "before-fix-named-waiver",
+    "command": [
+      "bash",
+      "/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/base/bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: extra merge arguments are not supported on a Forgejo merge; only --squash, --merge, or --rebase selects the merge style\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/before-fix-named-waiver/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/before-fix-named-waiver/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "named-waiver-default",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 0,
+    "stdout": "armed: state/task-x1.check.sh\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is merged (state=closed, merged=true)\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is open and mergeable, with no reported checks (explicitly waived) at head 239fda5000000000000000000000000000000000\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "pending",
+          "total_count": 0,
+          "statuses": []
+        }
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92/merge",
+        "body": "{\"Do\":\"squash\"}",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "message": "local API accepted test merge"
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "closed",
+          "draft": false,
+          "merged": true,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-default/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-default/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": "fm-merge-authority-v1\nforgejo\ngit.lobbykit.net\nhermes/lobbykit-ios\n92\nattended\n",
+    "wake_queue": "1791953331\t1\tcheck\tmerged-task-x1-https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\tcheck: merge landed: task-x1 https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n",
+    "poll_armed": true,
+    "meta_at_post": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-default/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/named-waiver-default/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "guard-project-identity",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nerror: refusing to record https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 for task task-x1: the project at /home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-project-identity/project is bound to https://elsewhere.invalid/other/repo.git, whose host is elsewhere.invalid, not git.lobbykit.net\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-project-identity/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-project-identity/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "guard-invalid-style",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--",
+      "--method",
+      "rebase"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: extra merge arguments are not supported on a Forgejo merge; only --squash, --merge, or --rebase selects the merge style\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-invalid-style/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-invalid-style/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "away-green-without-waiver",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 0,
+    "stdout": "armed: state/task-x1.check.sh\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is merged (state=closed, merged=true)\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is open and mergeable, with a successful combined commit status at head 239fda5000000000000000000000000000000000\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "success",
+          "total_count": 1,
+          "statuses": [
+            {
+              "status": "success"
+            }
+          ]
+        }
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92/merge",
+        "body": "{\"Do\":\"squash\"}",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "message": "local API accepted test merge"
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "closed",
+          "draft": false,
+          "merged": true,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/away-green-without-waiver/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/away-green-without-waiver/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": "fm-merge-authority-v1\nforgejo\ngit.lobbykit.net\nhermes/lobbykit-ios\n92\naway\n",
+    "wake_queue": "1791953377\t1\tcheck\tmerged-task-x1-https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\tcheck: merge landed: task-x1 https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 away\n",
+    "poll_armed": true,
+    "meta_at_post": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/away-green-without-waiver/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/away-green-without-waiver/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "quiet-green-without-waiver",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 0,
+    "stdout": "armed: state/task-x1.check.sh\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is merged (state=closed, merged=true)\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nverified: https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92 is open and mergeable, with a successful combined commit status at head 239fda5000000000000000000000000000000000\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/commits/239fda5000000000000000000000000000000000/status",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "success",
+          "total_count": 1,
+          "statuses": [
+            {
+              "status": "success"
+            }
+          ]
+        }
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92/merge",
+        "body": "{\"Do\":\"squash\"}",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "message": "local API accepted test merge"
+        }
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "closed",
+          "draft": false,
+          "merged": true,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/quiet-green-without-waiver/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/quiet-green-without-waiver/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": "fm-merge-authority-v1\nforgejo\ngit.lobbykit.net\nhermes/lobbykit-ios\n92\nattended\n",
+    "wake_queue": "1791953379\t1\tcheck\tmerged-task-x1-https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\tcheck: merge landed: task-x1 https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\n",
+    "poll_armed": true,
+    "meta_at_post": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/quiet-green-without-waiver/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/quiet-green-without-waiver/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "malformed-posture-record",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "error: --allow-no-checks is attended-only; while any away or quiet record exists the no-checks waiver is refused\n",
+    "requests": [],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/malformed-posture-record/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/malformed-posture-record/project\nkind=ship\nmode=no-mistakes\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": false,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  },
+  {
+    "name": "guard-unreadable-hold",
+    "command": [
+      "bash",
+      "bin/fm-pr-merge.sh",
+      "task-x1",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92",
+      "--attended-override",
+      "--allow-no-checks",
+      "https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92"
+    ],
+    "returncode": 1,
+    "stdout": "armed: state/task-x1.check.sh\n",
+    "stderr": "\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u25cf  WATCHER DOWN - SUPERVISION IS OFF\n\u25cf  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).\n\u25cf  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.\n\u25cf  This is a supervision warning only; the guarded operation WILL still run.\n\u25cf  repair missing watcher supervision according to the session-start block for this harness; do not use shell &.\n\u25cf\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nfm-captain-hold: error: \"EACCES: permission denied, open '/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-unreadable-hold/home/data/backlog.md'\"\nerror: could not determine whether task task-x1 is still held for the captain; refusing to merge\n",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/repos/hermes/lobbykit-ios/pulls/92",
+        "body": "",
+        "authenticated": true,
+        "response_code": 200,
+        "response": {
+          "state": "open",
+          "draft": false,
+          "merged": false,
+          "mergeable": true,
+          "head": {
+            "sha": "239fda5000000000000000000000000000000000"
+          }
+        }
+      }
+    ],
+    "metadata": "window=fm-task-x1\nworktree=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-unreadable-hold/wt\nproject=/home/kirkins/.no-mistakes/worktrees/c3ea402bfbf7/01M4WBAE1XX2YA2VTAA89N489A/.test-forgejo-live/cli/guard-unreadable-hold/project\nkind=ship\nmode=no-mistakes\npr=https://git.lobbykit.net/hermes/lobbykit-ios/pulls/92\npr_head=239fda5000000000000000000000000000000000\n",
+    "authority": null,
+    "wake_queue": null,
+    "poll_armed": true,
+    "meta_at_post": null,
+    "late_record_result": null,
+    "result": "pass",
+    "failures": []
+  }
+]
