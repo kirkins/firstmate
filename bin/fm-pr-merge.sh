@@ -56,8 +56,8 @@
 # context name even for an app-bound requirement, and never waives an unreadable
 # required source or producer read. Both are
 # refused while the away-posture record exists, and neither applies on GitLab
-# or Forgejo, where a merge already requires the head pipeline or the head's
-# checks to have succeeded. After gh returns success, GitHub's live state is read back and
+# or Forgejo; their provider-specific gates below own the check requirements.
+# After gh returns success, GitHub's live state is read back and
 # accepted only when the pull request is merged or in the merge queue. gh's
 # GraphQL API supplies that queue-aware read; when that read fails, gh-axi's
 # own view still proves a landed merge, and every outcome it cannot prove
@@ -169,8 +169,8 @@
 # deletion (--delete-branch, -d and short-flag clusters, and GitLab's
 # --remove-source-branch) are refused by default; --attended-override, parsed
 # before the optional -- separator, re-enables those forge flags for an
-# explicit captain instruction and never skips the live green check, the
-# away-record read, or a captain hold.
+# explicit captain instruction. That override alone never waives a check or
+# bypasses the away-record read or a captain hold.
 #
 # Usage: fm-pr-merge.sh <task-id> <pr-url> [--attended-override] [--allow-red <check-name>] [--allow-missing <check-name>] [--allow-no-checks <pr-url>] [-- <extra forge merge args>]
 #
