@@ -104,9 +104,14 @@
 # live at merge time rather than taken from recorded metadata: the pull request
 # is open, not a draft, not already merged, mergeable, and the combined commit
 # status at the exact current head commit is success. A commit with no statuses
-# reads as no checks rather than green, so a project that runs no CI cannot
-# merge through this path, the same reading the GitLab pipeline condition
-# takes. Every failing condition is reported, not just the first. Forgejo's
+# reads as no checks rather than green. An explicit instruction naming that
+# canonical PR URL may waive only this absence with --attended-override and
+# --allow-no-checks <pr-url>, passed once with the URL as a separate argument.
+# The URL must exactly match the requested canonical URL; this Forgejo-only
+# waiver never permits reported red or pending checks or an unreadable status
+# read, and is refused while any away or quiet record exists, including one
+# published during preflight. Every other merge guard still applies.
+# Every failing condition is reported, not just the first. Forgejo's
 # merge endpoint takes no head parameter, so the binding GitHub buys with
 # --match-head-commit and GitLab with --sha is closed by the reads around the
 # call: the head is verified immediately before it, and the merged pull
@@ -167,7 +172,7 @@
 # explicit captain instruction and never skips the live green check, the
 # away-record read, or a captain hold.
 #
-# Usage: fm-pr-merge.sh <task-id> <pr-url> [--attended-override] [--allow-red <check-name>] [--allow-missing <check-name>] [-- <extra forge merge args>]
+# Usage: fm-pr-merge.sh <task-id> <pr-url> [--attended-override] [--allow-red <check-name>] [--allow-missing <check-name>] [--allow-no-checks <pr-url>] [-- <extra forge merge args>]
 #
 # On GitLab, this script confirms the MR is actually merged before reporting it;
 # an auto-merge-queued or unconfirmed request leaves the poll armed and records
@@ -228,6 +233,7 @@ shift 2
 ATTENDED_OVERRIDE=false
 ALLOW_RED=()
 ALLOW_MISSING=()
+ALLOW_NO_CHECKS=()
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --attended-override)
@@ -258,10 +264,25 @@ while [ "$#" -gt 0 ]; do
       echo "error: --allow-missing requires a separate check name argument" >&2
       exit 2
       ;;
+    --allow-no-checks)
+      [ -n "${2:-}" ] || { echo "error: --allow-no-checks requires a canonical PR URL" >&2; exit 2; }
+      [ "${#ALLOW_NO_CHECKS[@]}" -eq 0 ] || { echo "error: --allow-no-checks may be specified only once" >&2; exit 2; }
+      ALLOW_NO_CHECKS+=("$2")
+      shift 2
+      ;;
+    --allow-no-checks=*)
+      echo "error: --allow-no-checks requires a separate canonical PR URL argument" >&2
+      exit 2
+      ;;
     --) shift; break ;;
     *) break ;;
   esac
 done
+if [ "${#ALLOW_NO_CHECKS[@]}" -gt 0 ]; then
+  [ "$PROVIDER" = forgejo ] || { echo "error: --allow-no-checks applies only to Forgejo" >&2; exit 2; }
+  [ "$ATTENDED_OVERRIDE" = true ] || { echo "error: --allow-no-checks requires --attended-override for an explicit PR-named instruction" >&2; exit 2; }
+  [ "${ALLOW_NO_CHECKS[0]}" = "$URL" ] || { echo "error: --allow-no-checks must name the requested canonical PR URL exactly" >&2; exit 2; }
+fi
 if [ "${#ALLOW_RED[@]}" -gt 0 ]; then
   if [ "$PROVIDER" = gitlab ]; then
     echo "error: --allow-red does not apply to GitLab, where a merge already requires the head pipeline to have succeeded" >&2
@@ -1207,6 +1228,10 @@ hold_away_record_for_merge() {
 
 require_current_away_authority() {
   FM_PR_AWAY_POSTURE=false
+  if [ "${#ALLOW_NO_CHECKS[@]}" -gt 0 ] && fm_afk_contract_present "$STATE"; then
+    echo "error: --allow-no-checks is attended-only; while any away or quiet record exists the no-checks waiver is refused" >&2
+    return 2
+  fi
   if fm_afk_contract_away_present "$STATE"; then
     FM_PR_AWAY_POSTURE=true
     if [ "$PROVIDER" = github ] && [ "$FM_PR_GITHUB_AUTO_REQUESTED" = true ]; then
@@ -1421,6 +1446,7 @@ gitlab_confirm_merged() {
 forgejo_verify_mergeable() {
   local fields line state='' draft='' merged='' mergeable='' live_head=''
   local status_state='' total=0 named=0 refusals=''
+  local status_description='a successful combined commit status'
 
   if ! fields=$(fm_pr_forgejo_read_pull "$PR_HOST" "$PR_OWNER" "$PR_REPO" "$PR_NUMBER"); then
     echo "error: could not read the Forgejo pull request state before merging" >&2
@@ -1471,6 +1497,8 @@ FIELDS
   if ! status_state=$(fm_pr_forgejo_read_status_state "$PR_HOST" "$PR_OWNER" "$PR_REPO" "$live_head"); then
     refusals="$refusals  - the combined commit status at the head could not be read
 "
+  elif [ -z "$status_state" ] && [ "${#ALLOW_NO_CHECKS[@]}" -gt 0 ]; then
+    status_description='no reported checks (explicitly waived)'
   elif [ "$status_state" != success ]; then
     refusals="$refusals  - the combined commit status at the head is \"${status_state:-none}\", not success
 "
@@ -1481,8 +1509,8 @@ FIELDS
     printf '%s' "$refusals" >&2
     return 1
   fi
-  printf 'verified: %s is open and mergeable, with a successful combined commit status at head %s\n' \
-    "$URL" "$live_head" >&2
+  printf 'verified: %s is open and mergeable, with %s at head %s\n' \
+    "$URL" "$status_description" "$live_head" >&2
   FM_PR_MERGE_HEAD=$live_head
 }
 
