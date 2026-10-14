@@ -1192,23 +1192,61 @@ fm_pr_gerrit_read_revision() {  # <host> <number>
 # repository name the project, so no host is hardcoded and a record on any
 # instance resolves the same way a GitLab one does through glab -R.
 
-# The API token for one Forgejo instance, read from the Linux keyring slot the
-# operator helper stack keys by instance host: service
-# "<host>/forgejo-cli/omarchy". The lookup itself is the only credential
+# Select the operator's native credential service for the validated host:
+# Linux uses secret-tool and "<host>/forgejo-cli/omarchy"; macOS uses security
+# and "<host>/forgejo-cli". Both look up by service, retaining the existing
+# account in that service rather than assuming a Forgejo account equals the
+# OS username. An unreadable or unsupported platform never selects a store.
+# These fields also let registration and merge name a missing platform tool
+# separately from a missing credential, without a second selection contract.
+# shellcheck disable=SC2034 # Output fields are consumed by registration and merge callers.
+fm_pr_forgejo_credential_select() {  # <host>
+  local platform
+  FM_PR_FORGEJO_CREDENTIAL_TOOL=
+  FM_PR_FORGEJO_CREDENTIAL_STORE=
+  FM_PR_FORGEJO_CREDENTIAL_SERVICE=
+  fm_pr_forge_host_valid "$1" || return 1
+  platform=$(uname -s 2>/dev/null) || return 1
+  case "$platform" in
+    Linux)
+      FM_PR_FORGEJO_CREDENTIAL_TOOL=secret-tool
+      FM_PR_FORGEJO_CREDENTIAL_STORE='the Linux keyring'
+      FM_PR_FORGEJO_CREDENTIAL_SERVICE="$1/forgejo-cli/omarchy"
+      ;;
+    Darwin)
+      FM_PR_FORGEJO_CREDENTIAL_TOOL=security
+      FM_PR_FORGEJO_CREDENTIAL_STORE='the macOS Keychain'
+      FM_PR_FORGEJO_CREDENTIAL_SERVICE="$1/forgejo-cli"
+      ;;
+    *) return 1 ;;
+  esac
+}
+
+# The API token for one Forgejo instance. The lookup is the only credential
 # access, so the token lands in one shell variable and never on a command
 # line; a slot that is missing, empty, or not a bearer token shape fails here
-# rather than sending a malformed credential.
-fm_pr_forgejo_token() {  # <host>
+# rather than sending a malformed credential. Credential handling disables
+# tracing inside a subshell without changing the caller's tracing posture.
+fm_pr_forgejo_token() (  # <host>
+  { set +x; } 2>/dev/null
   local token
   local LC_ALL=C
-  command -v secret-tool >/dev/null 2>&1 || return 1
-  fm_pr_forge_host_valid "$1" || return 1
-  token=$(secret-tool lookup service "$1/forgejo-cli/omarchy" 2>/dev/null) || return 1
+  fm_pr_forgejo_credential_select "$1" || return 1
+  command -v "$FM_PR_FORGEJO_CREDENTIAL_TOOL" >/dev/null 2>&1 || return 1
+  case "$FM_PR_FORGEJO_CREDENTIAL_TOOL" in
+    secret-tool)
+      token=$(secret-tool lookup service "$FM_PR_FORGEJO_CREDENTIAL_SERVICE" 2>/dev/null) || return 1
+      ;;
+    security)
+      token=$(security find-generic-password -s "$FM_PR_FORGEJO_CREDENTIAL_SERVICE" -w 2>/dev/null) || return 1
+      ;;
+    *) return 1 ;;
+  esac
   # BSD regcomp rejects bounded repetitions above 255, so the optional final
   # character preserves the inclusive 256-byte maximum without exceeding it.
   [[ "$token" =~ ^[A-Za-z0-9_-]{20,255}[A-Za-z0-9_-]?$ ]] || return 1
   printf '%s' "$token"
-}
+)
 
 # One Forgejo REST call. <method> <host> <api-path> <out-file> [<json-body>]
 # writes the response body to <out-file>, prints the HTTP status code, and
@@ -1217,7 +1255,8 @@ fm_pr_forgejo_token() {  # <host>
 # (bin/fm-dispatch-resolve.sh's established shape), so the token never appears
 # in a process argument list, and the instance host and API path both come
 # from the validated identity rather than from any ambient default.
-fm_pr_forgejo_api() {  # <method> <host> <api-path> <out-file> [<json-body>]
+fm_pr_forgejo_api() (  # <method> <host> <api-path> <out-file> [<json-body>]
+  { set +x; } 2>/dev/null
   local method=$1 host=$2 api_path=$3 out=$4 body=${5-} token code
   local LC_ALL=C
   local -a args
@@ -1244,7 +1283,7 @@ fm_pr_forgejo_api() {  # <method> <host> <api-path> <out-file> [<json-body>]
   fi
   code=$(curl "${args[@]}" 3< <(printf 'Authorization: token %s\n' "$token") 2>/dev/null) || return 1
   printf '%s\n' "$code"
-}
+)
 
 # One live reading of a Forgejo pull request as five name=value lines: state,
 # draft, merged, mergeable, head. Every field is type-checked, so an

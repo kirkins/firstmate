@@ -11,6 +11,8 @@ set -u
 
 # shellcheck source=tests/lib.sh
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+# shellcheck source=tests/fixtures.sh
+. "$(dirname "${BASH_SOURCE[0]}")/fixtures.sh"
 fm_git_identity fmtest fmtest@example.invalid
 
 PR_MERGE="$ROOT/bin/fm-pr-merge.sh"
@@ -36,6 +38,7 @@ make_case() {
   case_dir="$TMP_ROOT/$name"
   fakebin="$case_dir/fakebin"
   mkdir -p "$case_dir/state" "$case_dir/home/data" "$case_dir/home/config" "$fakebin"
+  fm_test_fake_forgejo_platform "$fakebin"
   fm_git_init_commit "$case_dir/wt"
   git -C "$case_dir/wt" update-ref refs/remotes/origin/main "$(git -C "$case_dir/wt" rev-parse HEAD)"
   cp "$ROOT/.tasks.toml" "$case_dir/home/.tasks.toml"
@@ -484,7 +487,7 @@ run_pr_merge() {
   FM_TEST_GLAB_LOG="$case_dir/glab.log" \
   FM_TEST_GLAB_JSON="$case_dir/mr.json" \
   HOME="${FM_TEST_USER_HOME:-$case_dir/user-home}" \
-  PATH="$case_dir/fakebin:$PATH" \
+  PATH="${FM_TEST_PR_MERGE_PATH:-$case_dir/fakebin:$PATH}" \
     "$PR_MERGE" "$@"
   rc=$?
   if [ "${case_dir##*/}" = unsafe-url-segment ] && [ "$rc" -eq 2 ]; then
@@ -2084,6 +2087,7 @@ done
 case "$hdr" in
   'Authorization: token '*) printf 'auth-header-read\n' >&2 ;;
 esac
+[ -z "${FM_TEST_EXPECT_TOKEN:-}" ] || [ "$hdr" = "Authorization: token $FM_TEST_EXPECT_TOKEN" ] || exit 1
 [ "${FM_TEST_CURL_FAIL:-0}" = 0 ] || exit 1
 emit() {
   if [ -n "$out" ]; then
@@ -2147,6 +2151,71 @@ SH
 forgejo_merge_line() {
   grep -F '/merge' "$1" || true
 }
+
+test_forgejo_native_keychain_merge() (
+  local case_dir rc problem native_token native_path draft state mergeable status_state status_count security_fail
+  native_token=nativeforgejotoken0123456789abcdef0123456789
+  case_dir=$(make_forgejo_case native-keychain-merge)
+  printf 'pr_head=%s\n' "$FJ_STALE_HEAD" >> "$case_dir/state/task-x1.meta"
+  FM_TEST_CREDENTIAL_PLATFORM=Darwin FM_TEST_ST_FAIL=1 FM_TEST_EXPECT_TOKEN="$native_token" \
+    FM_TEST_FORGEJO_DIR="$case_dir" FM_TEST_FORGEJO_CURL_LOG="$case_dir/forgejo-curl.log" \
+    FM_TEST_FORGEJO_ST_LOG="$case_dir/forgejo-st.log" \
+    run_pr_merge "$case_dir" task-x1 "$FJ_URL" > "$case_dir/stdout" 2> "$case_dir/stderr" \
+    || fail "native Keychain guarded synthetic merge failed: $(cat "$case_dir/stderr")"
+  grep -qxF "security find-generic-password -s $FJ_HOST/forgejo-cli -w" "$case_dir/forgejo-st.log" \
+    || fail "native merge used the wrong credential slot"
+  ! grep -q secret-tool "$case_dir/forgejo-st.log" || fail "native merge used the Linux keyring"
+  grep -qF "/commits/$FJ_HEAD/status" "$case_dir/forgejo-curl.log" || fail "native merge did not verify current-head checks"
+  assert_grep "recorded head $FJ_STALE_HEAD disagrees with the live head $FJ_HEAD" \
+    "$case_dir/stderr" "native merge silently trusted stale metadata"
+  [ -e "$case_dir/forgejo-merge-called" ] || fail "native merge did not reach the fixture merge endpoint"
+  [ -e "$case_dir/state/task-x1.merge-authority" ] || fail "native merge lost its authority record"
+  grep -qF "$FJ_URL" "$case_dir/state/.wake-queue" || fail "native merge lost its confirmed outcome"
+  ! grep -rF "$native_token" "$case_dir/state" "$case_dir/stdout" "$case_dir/stderr" \
+    "$case_dir/forgejo-curl.log" "$case_dir/forgejo-st.log" >/dev/null \
+    || fail "native merge leaked a credential"
+
+  for problem in draft closed conflict red no-checks wrong-binding missing-token missing-tool; do
+    case_dir=$(make_forgejo_case "native-keychain-merge-$problem")
+    draft=false
+    state=open
+    mergeable=true
+    status_state=success
+    status_count=1
+    security_fail=0
+    native_path="$case_dir/fakebin:$BASE_PATH"
+    case "$problem" in
+      draft) draft=true ;;
+      closed) state=closed ;;
+      conflict) mergeable=false ;;
+      red) status_state=failure ;;
+      no-checks) status_count=0 ;;
+      wrong-binding) git -C "$case_dir/project" remote set-url origin https://elsewhere.example/owner/other.git ;;
+      missing-token) security_fail=1 ;;
+      missing-tool)
+        mirror_path_without "$case_dir/no-security" security "$case_dir/fakebin"
+        native_path="$case_dir/no-security"
+        ;;
+    esac
+    set +e
+    FM_TEST_CREDENTIAL_PLATFORM=Darwin FM_TEST_ST_FAIL=1 FM_TEST_EXPECT_TOKEN="$native_token" \
+      FM_TEST_FORGEJO_DIR="$case_dir" FM_TEST_FORGEJO_CURL_LOG="$case_dir/forgejo-curl.log" \
+      FM_TEST_FORGEJO_ST_LOG="$case_dir/forgejo-st.log" FM_TEST_PR_MERGE_PATH="$native_path" \
+      FM_TEST_FORGEJO_DRAFT="$draft" FM_TEST_FORGEJO_STATE="$state" FM_TEST_FORGEJO_MERGEABLE="$mergeable" \
+      FM_TEST_FORGEJO_STATUS_STATE="$status_state" FM_TEST_FORGEJO_STATUS_COUNT="$status_count" \
+      FM_TEST_SECURITY_FAIL="$security_fail" \
+      run_pr_merge "$case_dir" task-x1 "$FJ_URL" > "$case_dir/stdout" 2> "$case_dir/stderr"
+    rc=$?
+    set -e
+    expect_code 1 "$rc" "native guarded merge accepted $problem"
+    [ ! -e "$case_dir/forgejo-merge-called" ] || fail "native $problem bypassed a merge guard"
+    [ ! -e "$case_dir/state/task-x1.merge-authority" ] || fail "native $problem recorded merge authority"
+    if [ "$problem" = missing-tool ]; then
+      assert_grep 'requires security on PATH' "$case_dir/stderr" "native merge did not name its missing tool"
+    fi
+  done
+  pass "native Keychain synthetic merges preserve repository, current-head, check, state, authority, and outcome guards"
+)
 
 test_forgejo_url_resolves_and_merges() {
   local case_dir rc
@@ -2847,6 +2916,7 @@ test_secondmate_without_parent_binding_is_loud() {
   pass "a secondmate home that cannot report upward says so instead of merging in silence"
 }
 
+test_forgejo_native_keychain_merge || exit 1
 test_github_zero_exit_queue_required_refuses_with_exact_retry
 test_github_closed_unqueued_outcome_omits_retry_flags
 test_github_agreeing_queue_rules_keep_retry_guidance

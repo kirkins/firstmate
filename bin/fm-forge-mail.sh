@@ -77,8 +77,8 @@
 #
 # The token is the dedicated least-privilege drain token firstmate stores at
 # setup in the Linux keyring under service "<host>/forgejo-mail/drain"; these
-# scripts never mint one. The accessor copies bin/fm-pr-merge.sh's Forgejo
-# shape: one secret-tool lookup into one shell variable, bearer-shape
+# scripts never mint one. The accessor uses bin/fm-pr-lib.sh's Forgejo token
+# transport shape: one secret-tool lookup into one shell variable, bearer-shape
 # validated, reaching curl only as a header read from a file descriptor, never
 # an argument, a log, or a wake line.
 

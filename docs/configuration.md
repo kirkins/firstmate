@@ -1593,7 +1593,7 @@ The per-poll wake cap bounds the wakes of one `poll` run; the poll reads at most
 **The drain token**
 
 Reads and acknowledgements authenticate with a dedicated least-privilege Forgejo token stored in the Linux keyring under service `<host>/forgejo-mail/drain` at setup time.
-The token reaches `curl` only as a header read from a file descriptor (bin/fm-pr-merge.sh's Forgejo accessor shape) and never appears in an argument list, a log, or a wake line.
+The token reaches `curl` only as a header read from a file descriptor ([`bin/fm-pr-lib.sh`](../bin/fm-pr-lib.sh)'s Forgejo accessor shape) and never appears in an argument list, a log, or a wake line.
 The scripts never mint or rotate the token; a missing slot fails the poll with a named prerequisite.
 
 **Polling and delivery guarantees**
