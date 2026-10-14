@@ -28,6 +28,14 @@ EXEC_SEQ="$TMP_ROOT/exec-sequence.txt"
 EXEC_CALLS="$TMP_ROOT/exec-calls.txt"
 FAKE_DOCKER_ID=fake-docker-id
 FAKE_DOCKER_PAT=fake-pat-never-print-me-0123456789
+CHECKSUM_ARGS=()
+if CHECKSUM_TOOL=$(command -v sha256sum); then
+  :
+elif CHECKSUM_TOOL=$(command -v shasum); then
+  CHECKSUM_ARGS=(-a 256)
+else
+  fail "checksum regression requires sha256sum or shasum"
+fi
 
 # make_fake_tools: fake sbx, fake kubectl, and a fake local node.
 make_fake_tools() {
@@ -38,9 +46,10 @@ make_fake_tools() {
 # record-separator-delimited argument per invocation when FM_FAKE_SBX_ARGV_LOG
 # is armed), consumes login stdin so the driver's pipe never blocks, and
 # answers each --cloud exec call from the next line of the scripted output
-# sequence. FM_FAKE_SBX_EVAL makes exec re-evaluate the words after the --
-# separator through a shell - the semantics the live proof pinned for sbx exec -
-# instead of serving scripted output. FM_FAKE_SBX_EXEC_RC fails every exec to
+# sequence. FM_FAKE_SBX_EXECUTE executes the preserved post-separator argv,
+# as sbx 0.47.0 does, instead of serving scripted output. Only the sandbox's
+# marker paths are remapped into scratch space. Local shell profiles are
+# suppressed so they cannot replace the fixture PATH. FM_FAKE_SBX_EXEC_RC fails every exec to
 # simulate an unreachable sandbox; FM_FAKE_SBX_RC fails everything.
 [ -z "\${FM_FAKE_SBX_LOG:-}" ] || printf '%s\n' "\$*" >> "\$FM_FAKE_SBX_LOG"
 if [ -n "\${FM_FAKE_SBX_ARGV_LOG:-}" ]; then
@@ -56,10 +65,24 @@ fi
 case "\$1 \$2" in
   '--cloud exec')
     if [ "\${FM_FAKE_SBX_EXEC_RC:-0}" != 0 ]; then exit "\${FM_FAKE_SBX_EXEC_RC}"; fi
-    if [ "\${FM_FAKE_SBX_EVAL:-0}" = 1 ]; then
+    if [ "\${FM_FAKE_SBX_EXECUTE:-0}" = 1 ]; then
       shift 4
-      eval "set -- \$*"
-      exec "\$1" "\$2" "export PATH=\$(printf '%q' "\$PATH"); \$3"
+      args=()
+      for arg in "\$@"; do
+        arg=\${arg//\/tmp\/fm-hands/\$FM_FAKE_SBX_REMOTE_TMP\/fm-hands}
+        arg=\${arg//\/tmp\/\\\$file/\$FM_FAKE_SBX_REMOTE_TMP\/\\\$file}
+        arg=\${arg//'(cd /tmp &&'/'(cd "'\$FM_FAKE_SBX_REMOTE_TMP'" &&'}
+        args+=("\$arg")
+      done
+      set -- "\${args[@]}"
+      if [ "\${2:-}" = -lc ]; then
+        set -- "\$1" "\$2" "export PATH=\$(printf '%q' "\$PATH"); \$3" "\${@:4}"
+      fi
+      if [ "\$1" = bash ]; then
+        shift
+        exec bash --noprofile --norc "\$@"
+      fi
+      exec "\$@"
     fi
     seq_file="\${FM_FAKE_SBX_EXEC_SEQ:?}"
     calls_file="\${FM_FAKE_SBX_EXEC_CALLS:?}"
@@ -135,6 +158,7 @@ hands() {
     FM_FAKE_KUBECTL_LOG="$KUBECTL_LOG" \
     FM_FAKE_SBX_EXEC_SEQ="$EXEC_SEQ" \
     FM_FAKE_SBX_EXEC_CALLS="$EXEC_CALLS" \
+    FM_FAKE_SBX_REMOTE_TMP="$TMP_ROOT/remote" \
     FM_TEST_SEAM=1 \
     "$HANDS" "$@" 2>"$TMP_ROOT/stderr"); HANDS_STATUS=$?
   HANDS_STDERR=$(cat "$TMP_ROOT/stderr")
@@ -168,6 +192,7 @@ HOME_UNDER_TEST="$TMP_ROOT/default-home"
 
 make_fake_tools
 link_core_bin
+mkdir -p "$TMP_ROOT/remote"
 
 test_help_and_usage_plumbing() {
   local out status
@@ -343,47 +368,263 @@ test_exec_hosts_the_job_on_a_dedicated_tmux_socket() {
   pass "fm-remote-hands.sh: exec survives exec-stream teardown via the hosted socket"
 }
 
-test_exec_pins_the_proof_exec_argv_shape() {
+# Execute the remote shell and its nested job shell; only sudo and tmux are
+# stand-ins. tmux runs synchronously here to keep the portable test bounded;
+# live smoke evidence separately proves detached job survival.
+make_execution_tools() {
+  mkdir -p "$TMP_ROOT/execbin"
+  cat > "$TMP_ROOT/execbin/tmux" <<'SH'
+#!/usr/bin/env bash
+[ "$1 $2 $3 $4 $5 $6" = '-L fm-hands new-session -d -s fm-hands' ] || exit 91
+printf '%s\n' "$1 $2 $3 $4 $5 $6" > "$FM_FAKE_TMUX_LOG"
+shift 6
+[ "$1" = bash ] || exit 92
+shift
+exec bash --noprofile --norc "$@"
+SH
+  cat > "$TMP_ROOT/execbin/sudo" <<'SH'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$FM_FAKE_APT_LOG"
+[ "$1" = apt-get ] || exit 93
+exit "${FM_FAKE_APT_RC:-0}"
+SH
+  chmod +x "$TMP_ROOT/execbin/tmux" "$TMP_ROOT/execbin/sudo"
+}
+
+test_exec_preserves_literal_argv_and_job_exit() {
   make_home argv-home >/dev/null
+  make_execution_tools
   reset_logs
-  hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_ARGV_LOG="$SBX_ARGV_LOG" -- exec --name t-argv -- make test 'X=1 y'
-  expect_code 0 "$HANDS_STATUS" "exec must succeed against the fake cloud"
-  local n payload launch
-  n=$(tr -cd '\036' < "$SBX_ARGV_LOG" | wc -c | tr -d ' ')
-  [ "$n" -eq 7 ] || fail "exec must hand sbx the proof's seven-word argv (got $n words)"
-  [ "$(awk 'BEGIN{RS="\036"} NR==1 {printf "%s", $0}' "$SBX_ARGV_LOG")" = --cloud ] \
-    || fail "word 1 must be --cloud"
-  [ "$(awk 'BEGIN{RS="\036"} NR==2 {printf "%s", $0}' "$SBX_ARGV_LOG")" = exec ] \
-    || fail "word 2 must be exec"
-  [ "$(awk 'BEGIN{RS="\036"} NR==3 {printf "%s", $0}' "$SBX_ARGV_LOG")" = t-argv ] \
-    || fail "word 3 must be the sandbox name"
-  [ "$(awk 'BEGIN{RS="\036"} NR==4 {printf "%s", $0}' "$SBX_ARGV_LOG")" = -- ] \
-    || fail "word 4 must be the -- separator"
-  [ "$(awk 'BEGIN{RS="\036"} NR==5 {printf "%s", $0}' "$SBX_ARGV_LOG")" = bash ] \
-    || fail "word 5 must be bash"
-  [ "$(awk 'BEGIN{RS="\036"} NR==6 {printf "%s", $0}' "$SBX_ARGV_LOG")" = -lc ] \
-    || fail "word 6 must be -lc"
-  payload=$(awk 'BEGIN{RS="\036"} NR==7 {printf "%s", $0}' "$SBX_ARGV_LOG")
-  case "$payload" in
-    "'"*"'") ;;
-    *) fail "the script must travel as one single-quoted argv word the joining remote shell re-parses" ;;
-  esac
-  launch=$(eval "printf '%s' $payload")
-  assert_contains "$launch" "tmux -L fm-hands new-session -d -s fm-hands bash -lc" \
-    "the payload must unquote to the tmux launch of the job script"
-  case "$launch" in
-    "rm -f /tmp/fm-hands.log /tmp/fm-hands.exit"*) ;;
-    *) fail "the synchronous launch script must clear the previous job's markers before starting tmux" ;;
-  esac
-  # Unquote the second layer the same way the joining remote shell would: the
-  # launch's bash -lc word is the quoted job script the sandbox receives.
-  quoted_job=${launch#*bash -lc }
-  job_script=$(eval "printf '%s' $quoted_job")
-  assert_contains "$job_script" "'make' 'test' 'X=1 y'" \
-    "each command word must stay its own quoted word in the job script"
-  assert_contains "$job_script" 'printf "%s\n" "$?"' \
-    "the job script must record its own exit code in the marker"
-  pass "fm-remote-hands.sh: exec hands sbx the proof-pinned joined-exec argv shape"
+  local saved_path=$ACTIVE_PATH
+  ACTIVE_PATH="$TMP_ROOT/execbin:$ACTIVE_PATH"
+  # Deliberately include empty, multiline, UTF-8, and shell-active arguments.
+  # They must be emitted as bytes, never evaluated by either shell layer.
+  # shellcheck disable=SC2016  # Expansion syntax is literal test input.
+  local args=('' 'X=1 y' "one'quote" '"double"' '$HOME $(exit 89) `exit 90` ; *' $'line one\nline two' '航海 café' '--flag')
+  printf '%s\0' "${args[@]}" > "$TMP_ROOT/expected-argv"
+  # shellcheck disable=SC2016  # These variables expand inside the hosted job shell.
+  hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EXECUTE=1 FM_FAKE_TMUX_LOG="$TMP_ROOT/tmux.log" -- \
+    exec --name t-argv -- bash -c 'test "$LANG/$LC_ALL" = C.UTF-8/C.UTF-8 || exit 88
+printf "%s\0" "$@"
+exit 7' argv-fixture "${args[@]}"
+  expect_code 0 "$HANDS_STATUS" "the preserved exec argv must actually launch the nested job shell"
+  assert_grep '-L fm-hands new-session -d -s fm-hands' "$TMP_ROOT/tmux.log" \
+    "the executing tmux fixture must receive the dedicated socket"
+  cmp -s "$TMP_ROOT/expected-argv" "$TMP_ROOT/remote/fm-hands.log" \
+    || fail "literal hosted argument bytes did not survive both shell layers"
+  hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EXECUTE=1 -- wait --name t-argv --interval 1 --max-secs 2
+  expect_code 7 "$HANDS_STATUS" "wait must read and propagate the actual nested shell's exit marker"
+  assert_contains "$HANDS_STDOUT" 'exit=7' "the nested job exit must be reported"
+  hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EXECUTE=1 FM_FAKE_TMUX_LOG="$TMP_ROOT/tmux.log" -- exec --name t-argv -- true
+  expect_code 0 "$HANDS_STATUS" "a second job must launch after replacing the previous markers"
+  hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EXECUTE=1 -- wait --name t-argv --interval 1 --max-secs 2
+  expect_code 0 "$HANDS_STATUS" "a new successful job must replace the old exit=7 marker"
+  [ ! -s "$TMP_ROOT/remote/fm-hands.log" ] || fail "the new true job must replace the old output"
+  rm -f "$TMP_ROOT/remote/fm-hands.exit" "$TMP_ROOT/remote/fm-hands.log"
+  ACTIVE_PATH=$saved_path
+  pass "fm-remote-hands.sh: preserved argv executes literal arguments and records real job exits"
+}
+
+test_prepare_executes_bootstrap_and_literal_clone_arguments() {
+  make_home prep-execute-home >/dev/null
+  make_execution_tools
+  reset_logs
+  local repo="$TMP_ROOT/repo '航海" dest="$TMP_ROOT/clone '航海" saved_path=$ACTIVE_PATH
+  git init -q "$repo" || fail "could not create the synthetic preparation source"
+  git -C "$repo" checkout -qb fm/fixture || fail "could not create fixture branch"
+  printf '%s\n' 'synthetic only' > "$repo/fixture.txt"
+  git -C "$repo" add fixture.txt
+  git -C "$repo" -c user.name=Fixture -c user.email=fixture@example.invalid commit -qm fixture \
+    || fail "could not commit preparation fixture"
+  ACTIVE_PATH="$TMP_ROOT/execbin:$ACTIVE_PATH"
+  hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EXECUTE=1 FM_FAKE_APT_LOG="$TMP_ROOT/apt.log" -- \
+    prepare --name t-prep-execute --repo "file://$repo" --branch fm/fixture --dest "$dest" --node-major 26
+  expect_code 0 "$HANDS_STATUS" "prepare must execute its multiline bootstrap and real git clone"
+  assert_contains "$HANDS_STDERR" 'already matches local major 26' "the executed node probe must retain the matching-major decision"
+  assert_grep 'apt-get install -y -qq xz-utils tmux libatomic1 ruby gcc time' "$TMP_ROOT/apt.log" \
+    "the required tmux bootstrap must actually reach apt's argv"
+  cmp -s "$repo/fixture.txt" "$dest/fixture.txt" || fail "literal UTF-8/quoted clone paths did not reach git"
+  [ "$(git -C "$repo" rev-parse HEAD)" = "$(git -C "$dest" rev-parse HEAD)" ] || fail "prepare did not clone the exact fixture head"
+  [ "$(git -C "$dest" branch --show-current)" = fm/fixture ] || fail "the branch argument did not survive"
+  hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EXECUTE=1 FM_FAKE_APT_LOG="$TMP_ROOT/apt.log" FM_FAKE_APT_RC=23 -- \
+    prepare --name t-prep-fail --repo "file://$repo" --dest "$TMP_ROOT/never-cloned" --node-major 26
+  expect_code 23 "$HANDS_STATUS" "prepare must propagate the actual bootstrap failure"
+  assert_absent "$TMP_ROOT/never-cloned" "failed bootstrap must stop before clone"
+  ACTIVE_PATH=$saved_path
+  pass "fm-remote-hands.sh: prepare executes tmux bootstrap, node probe, and literal clone argv"
+}
+
+make_checksum_adapter() {
+  cat > "$1/sha256sum" <<SH
+#!/usr/bin/env bash
+if [ "\${FM_FAKE_CHECKSUM_MODE:-}" = verifier-error ]; then exit 9; fi
+cd "\$FM_FAKE_DOWNLOAD_DIR" || exit 1
+exec $(printf '%q' "$CHECKSUM_TOOL") ${CHECKSUM_ARGS[*]:-} "\$@"
+SH
+  chmod +x "$1/sha256sum"
+}
+
+make_preparation_tools() {
+  mkdir -p "$TMP_ROOT/prepbin" "$TMP_ROOT/node-install/bin" "$TMP_ROOT/node-release"
+  cat > "$TMP_ROOT/node-install/bin/node" <<'SH'
+#!/usr/bin/env bash
+printf '%s\n' 20.0.0
+SH
+  chmod +x "$TMP_ROOT/node-install/bin/node"
+  local arch dir
+  for arch in arm64 x64; do
+    dir="node-v22.10.0-linux-$arch"
+    mkdir -p "$TMP_ROOT/node-release/$dir/bin"
+    cat > "$TMP_ROOT/node-release/$dir/bin/node" <<'SH'
+#!/usr/bin/env bash
+if [ "$1" = --version ]; then
+  printf '%s\n' node >> "$FM_FAKE_PREP_LOG"
+  [ "${FM_FAKE_PREP_FAIL:-}" != node ] || exit 31
+  printf '%s\n' v22.10.0
+else
+  printf '%s\n' 22.10.0
+fi
+SH
+    chmod +x "$TMP_ROOT/node-release/$dir/bin/node"
+    tar -cJf "$TMP_ROOT/node-release/$dir.tar.xz" -C "$TMP_ROOT/node-release" "$dir" \
+      || fail "could not build synthetic Node archive"
+  done
+  (cd "$TMP_ROOT/node-release" && "$CHECKSUM_TOOL" ${CHECKSUM_ARGS[@]+"${CHECKSUM_ARGS[@]}"} node-*.tar.xz) > "$TMP_ROOT/node-release/SHASUMS256.txt" \
+    || fail "could not checksum synthetic Node archives"
+  cat > "$TMP_ROOT/prepbin/uname" <<'SH'
+#!/usr/bin/env bash
+printf '%s\n' "$FM_FAKE_PREP_ARCH"
+SH
+  cat > "$TMP_ROOT/prepbin/curl" <<'SH'
+#!/usr/bin/env bash
+case "$*" in
+  */SHASUMS256.txt) stage=checksum-download ;;
+  */) stage=index ;;
+  *) stage=download ;;
+esac
+printf '%s\n' "$stage $*" >> "$FM_FAKE_PREP_LOG"
+case "$stage" in
+  index)
+    printf '%s\n' node-v22.10.0-linux-arm64.tar.xz node-v22.10.0-linux-x64.tar.xz
+    ;;
+  checksum-download)
+    if [ "${FM_FAKE_PREP_FAIL:-}" = checksum ]; then
+      sed 's/^[0-9a-f]*/0000000000000000000000000000000000000000000000000000000000000000/' "$FM_FAKE_PREP_RELEASE/SHASUMS256.txt"
+    else
+      cat "$FM_FAKE_PREP_RELEASE/SHASUMS256.txt"
+    fi
+    ;;
+  download)
+    [ "${FM_FAKE_PREP_FAIL:-}" != download ] || exit 31
+    [ "$1 $2" = '-fsSL -o' ] || exit 94
+    cp "$FM_FAKE_PREP_RELEASE/${4##*/}" "$3" || exit 95
+    ;;
+esac
+[ "${FM_FAKE_PREP_FAIL:-}" != "$stage" ] || exit 31
+SH
+  cat > "$TMP_ROOT/prepbin/sudo" <<'SH'
+#!/usr/bin/env bash
+case "$1" in
+  apt-get) stage=$2 ;;
+  tar) stage=extract ;;
+  *) exit 93 ;;
+esac
+printf '%s\n' "$stage $*" >> "$FM_FAKE_PREP_LOG"
+[ "${FM_FAKE_PREP_FAIL:-}" != "$stage" ] || exit 31
+if [ "$stage" = extract ]; then
+  [ "$2" = -xJf ] && [ "$4" = -C ] && [ "$5" = /usr/local ] && [ "$6" = --strip-components=1 ] || exit 96
+  exec "$FM_FAKE_PREP_TAR" -xJf "$3" -C "$FM_FAKE_PREP_INSTALL" --strip-components=1
+fi
+SH
+  cat > "$TMP_ROOT/prepbin/git" <<'SH'
+#!/usr/bin/env bash
+printf 'git %s\n' "$*" >> "$FM_FAKE_PREP_LOG"
+if [ "${FM_FAKE_PREP_FAIL:-}" = clone ] && [ "$1" = clone ]; then
+  "$FM_FAKE_PREP_GIT" "$@" || exit "$?"
+  exit 31
+fi
+if [ "${FM_FAKE_PREP_FAIL:-}" = fetch ] && [ "$3" = fetch ]; then exit 31; fi
+exec "$FM_FAKE_PREP_GIT" "$@"
+SH
+  make_checksum_adapter "$TMP_ROOT/prepbin"
+  chmod +x "$TMP_ROOT/prepbin/"*
+}
+
+prepare_fixture() {
+  local dest=$1 arch=$2 failure=${3:-}
+  : > "$TMP_ROOT/prep.log"
+  hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EXECUTE=1 \
+    FM_FAKE_PREP_ARCH="$arch" FM_FAKE_PREP_FAIL="$failure" \
+    FM_FAKE_PREP_LOG="$TMP_ROOT/prep.log" FM_FAKE_PREP_RELEASE="$TMP_ROOT/node-release" \
+    FM_FAKE_PREP_INSTALL="$TMP_ROOT/node-install" \
+    FM_FAKE_DOWNLOAD_DIR="$TMP_ROOT/remote" \
+    FM_FAKE_PREP_TAR="$PREP_REAL_TAR" FM_FAKE_PREP_GIT="$PREP_REAL_GIT" -- \
+    prepare --name t-node-prepare --repo "file://$TMP_ROOT/prep-source" --dest "$dest" --node-major 22
+}
+
+test_prepare_installs_node_and_stops_on_every_required_failure() {
+  make_home prep-install-home >/dev/null
+  local saved_path=$ACTIVE_PATH arch archive dest stage expected
+  PREP_REAL_TAR=$(command -v tar)
+  PREP_REAL_GIT=$(command -v git)
+  git init -q "$TMP_ROOT/prep-source" || fail "could not create preparation source"
+  printf '%s\n' fixture > "$TMP_ROOT/prep-source/fixture.txt"
+  git -C "$TMP_ROOT/prep-source" add fixture.txt
+  git -C "$TMP_ROOT/prep-source" -c user.name=Fixture -c user.email=fixture@example.invalid commit -qm fixture \
+    || fail "could not commit preparation source"
+  ACTIVE_PATH="$TMP_ROOT/node-install/bin:$TMP_ROOT/prepbin:$ACTIVE_PATH"
+  for arch in aarch64 x86_64 arm64 x64; do
+    make_preparation_tools
+    dest="$TMP_ROOT/prep-$arch"
+    prepare_fixture "$dest" "$arch"
+    expect_code 0 "$HANDS_STATUS" "mismatched Node major must install and clone on $arch"
+    case "$arch" in aarch64|arm64) archive=arm64 ;; *) archive=x64 ;; esac
+    assert_grep "https://nodejs.org/dist/latest-v22.x/node-v22.10.0-linux-$archive.tar.xz" "$TMP_ROOT/prep.log" \
+      "the download must use the published $archive archive"
+    assert_contains "$HANDS_STDOUT" ': OK' "the downloaded archive must pass real checksum verification"
+    assert_contains "$HANDS_STDOUT" 'v22.10.0' "the extracted Node must execute"
+    cmp -s "$TMP_ROOT/prep-source/fixture.txt" "$dest/fixture.txt" || fail "Node installation did not proceed to clone"
+  done
+  for stage in update install index download checksum-download checksum extract node; do
+    make_preparation_tools
+    dest="$TMP_ROOT/failed-$stage"
+    prepare_fixture "$dest" aarch64 "$stage"
+    expected=31
+    [ "$stage" != checksum ] || expected=1
+    expect_code "$expected" "$HANDS_STATUS" "$stage failure must stop preparation"
+    assert_absent "$dest" "$stage failure must stop before cloning"
+    assert_no_grep 'git clone' "$TMP_ROOT/prep.log" "$stage failure must never invoke cloning"
+    assert_not_contains "$HANDS_STDOUT" 'prepare: name=' "$stage failure must not report success"
+    case "$stage" in
+      checksum|checksum-download)
+        assert_no_grep 'extract' "$TMP_ROOT/prep.log" "checksum failure must prevent extraction"
+        ;;
+      update)
+        assert_no_grep 'install' "$TMP_ROOT/prep.log" "update failure must prevent installation"
+        ;;
+    esac
+  done
+  make_preparation_tools
+  prepare_fixture "$TMP_ROOT/failed-clone" x86_64 clone
+  expect_code 31 "$HANDS_STATUS" "a clone failure must propagate even when HEAD exists"
+  assert_no_grep 'rev-parse HEAD' "$TMP_ROOT/prep.log" "clone failure must stop before the HEAD query"
+  local shallow="$TMP_ROOT/prep-shallow"
+  "$PREP_REAL_GIT" clone -q --depth 1 "file://$TMP_ROOT/prep-source" "$shallow" \
+    || fail "could not create shallow preparation fixture"
+  prepare_fixture "$shallow" x86_64 fetch
+  expect_code 31 "$HANDS_STATUS" "unshallow failure must propagate despite a valid HEAD"
+  [ -f "$shallow/.git/shallow" ] || fail "failed fetch must retain the shallow fixture"
+  assert_no_grep 'rev-parse HEAD' "$TMP_ROOT/prep.log" "fetch failure must stop before the HEAD query"
+  prepare_fixture "$shallow" x86_64
+  expect_code 0 "$HANDS_STATUS" "an existing shallow clone must unshallow successfully"
+  assert_absent "$shallow/.git/shallow" "successful preparation must leave a full clone"
+  [ "$("$PREP_REAL_GIT" -C "$shallow" rev-parse HEAD)" = "$("$PREP_REAL_GIT" -C "$TMP_ROOT/prep-source" rev-parse HEAD)" ] \
+    || fail "unshallow must retain the expected HEAD"
+  prepare_fixture "$shallow" x86_64
+  expect_code 0 "$HANDS_STATUS" "an existing full clone must prepare successfully"
+  assert_no_grep 'fetch --unshallow' "$TMP_ROOT/prep.log" "a full clone must not fetch unnecessarily"
+  ACTIVE_PATH=$saved_path
+  pass "fm-remote-hands.sh: Node architecture mapping and every preparation failure execute correctly"
 }
 
 test_wait_propagates_the_hosted_exit_code() {
@@ -408,12 +649,8 @@ test_wait_propagates_the_hosted_exit_code() {
 
 test_wait_keeps_polling_a_reachable_sandbox_with_no_marker_yet() {
   make_home wait-live-home >/dev/null
-  if [ -e /tmp/fm-hands.exit ]; then
-    pass "fm-remote-hands.sh: wait no-marker case skipped (host has a real /tmp/fm-hands.exit)"
-    return
-  fi
   reset_logs
-  hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 -- wait --name t-live --interval 1 --max-secs 2
+  hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EXECUTE=1 -- wait --name t-live --interval 1 --max-secs 2
   expect_code 1 "$HANDS_STATUS" "a reachable sandbox with no marker yet must end on the wait bound"
   assert_contains "$HANDS_STDERR" "timed out after 2s" "the bound, not a false abort, must end the wait"
   assert_not_contains "$HANDS_STDERR" "unreachable" \
@@ -621,9 +858,9 @@ SH
 printf '%s|%s\n' "$PATH" "$1"
 SH
   chmod +x "$TMP_ROOT/login-shell" "$FAKEBIN/fixture-command"
-  out=$(env PATH="$ACTIVE_PATH" FM_FAKE_SBX_EVAL=1 "$FAKEBIN/sbx" \
-    --cloud exec t-login -- "$(printf '%q' "$TMP_ROOT/login-shell")" -lc \
-    "'fixture-command \"argument with spaces\"'" 2>"$TMP_ROOT/stderr"); status=$?
+  out=$(env PATH="$ACTIVE_PATH" FM_FAKE_SBX_EXECUTE=1 FM_FAKE_SBX_REMOTE_TMP="$TMP_ROOT/remote" "$FAKEBIN/sbx" \
+    --cloud exec t-login -- "$TMP_ROOT/login-shell" -lc \
+    'fixture-command "argument with spaces"' 2>"$TMP_ROOT/stderr"); status=$?
   expect_code 0 "$status" "fake exec must restore fixture commands after login changes PATH"
   [ "$out" = "$ACTIVE_PATH|argument with spaces" ] \
     || fail "fake exec must restore the complete fixture PATH and preserve payload quoting"
@@ -632,16 +869,9 @@ SH
 
 test_prepare_verifies_downloaded_archive_before_extraction() {
   make_home prep-checksum-home >/dev/null
-  local real_sha sha_args=() mode expected
-  if real_sha=$(command -v sha256sum); then
-    :
-  elif real_sha=$(command -v shasum); then
-    sha_args=(-a 256)
-  else
-    fail "checksum regression requires sha256sum or shasum"
-  fi
+  local mode expected
   printf 'node archive fixture\n' > "$TMP_ROOT/node-archive"
-  expected=$("$real_sha" ${sha_args[@]+"${sha_args[@]}"} "$TMP_ROOT/node-archive" | cut -d' ' -f1)
+  expected=$("$CHECKSUM_TOOL" ${CHECKSUM_ARGS[@]+"${CHECKSUM_ARGS[@]}"} "$TMP_ROOT/node-archive" | cut -d' ' -f1)
   mkdir -p "$TMP_ROOT/download"
   cat > "$FAKEBIN/curl" <<'SH'
 #!/usr/bin/env bash
@@ -657,8 +887,8 @@ case "$*" in
     esac
     ;;
   *)
-    [ "$2" = -o ] && [ "$3" = /tmp/fm-node.tar.xz ] || exit 1
-    cp "$FM_FAKE_ARCHIVE" "$FM_FAKE_DOWNLOAD_DIR/fm-node.tar.xz"
+    [ "$2" = -o ] && [ -n "$3" ] || exit 1
+    cp "$FM_FAKE_ARCHIVE" "$FM_FAKE_DOWNLOAD_DIR/${3##*/}"
     ;;
 esac
 SH
@@ -673,15 +903,10 @@ exec "$@"
 SH
   cat > "$FAKEBIN/tar" <<'SH'
 #!/usr/bin/env bash
-[ "$2" = /tmp/fm-node.tar.xz ] && [ -f "$FM_FAKE_DOWNLOAD_DIR/fm-node.tar.xz" ] || exit 1
+[ "$1" = -xJf ] && [ -f "$FM_FAKE_DOWNLOAD_DIR/${2##*/}" ] || exit 1
 printf 'extracted\n' >> "$FM_FAKE_EXTRACTION_LOG"
 SH
-  cat > "$FAKEBIN/sha256sum" <<SH
-#!/usr/bin/env bash
-if [ "\${FM_FAKE_CHECKSUM_MODE:-}" = verifier-error ]; then exit 9; fi
-cd "\$FM_FAKE_DOWNLOAD_DIR" || exit 1
-exec "$real_sha" ${sha_args[*]:-} "\$@"
-SH
+  make_checksum_adapter "$FAKEBIN"
   cat > "$FAKEBIN/git" <<'SH'
 #!/usr/bin/env bash
 case "$1" in
@@ -695,7 +920,7 @@ SH
     : > "$EXEC_SEQ"
     printf '22.22.1\n' > "$EXEC_SEQ"
     : > "$EXEC_CALLS"
-    hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EVAL=1 FM_FAKE_CHECKSUM_MODE="$mode" \
+    hands FM_REMOTE_HANDS=1 FM_FAKE_SBX_EXECUTE=1 FM_FAKE_CHECKSUM_MODE="$mode" \
       FM_FAKE_EXPECTED_SHA="$expected" FM_FAKE_ARCHIVE="$TMP_ROOT/node-archive" \
       FM_FAKE_DOWNLOAD_DIR="$TMP_ROOT/download" \
       FM_FAKE_EXTRACTION_LOG="$TMP_ROOT/extracted" -- prepare --name t-checksum \
@@ -719,7 +944,9 @@ test_route_local_memory_decisions
 test_route_reads_the_real_heavy_slot
 test_create_sizes_shapes_ttl_and_allowances
 test_exec_hosts_the_job_on_a_dedicated_tmux_socket
-test_exec_pins_the_proof_exec_argv_shape
+test_exec_preserves_literal_argv_and_job_exit
+test_prepare_executes_bootstrap_and_literal_clone_arguments
+test_prepare_installs_node_and_stops_on_every_required_failure
 test_wait_propagates_the_hosted_exit_code
 test_wait_keeps_polling_a_reachable_sandbox_with_no_marker_yet
 test_copy_and_log_paths
